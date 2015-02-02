@@ -1,0 +1,708 @@
+/* Algorithm IV (v1.0.0) (learn@algorithmiv.com)
+ * Section: CSS Style Guide
+ * Author: Adam Smith (adamsmith@youlum.com)
+ * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * The MIT License (algorithmiv.com/docs/license) */
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Body & Header Tags
+ * ------------------------------- */
+
+body {
+  padding:0 0 30px;
+  color:#000;
+  font-family:"ff-tisa-sans-web-pro", sans-serif;
+  font-size:0;
+  background:#fff;
+}
+
+#aIV h1 {
+  display:block;
+  padding:0;
+  margin:30px auto 10px;
+  text-align:center;
+  color:#000821;
+  font-size:30px;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Algorithm IV Container
+ * ------------------------------- */
+
+#aIV {
+  display:block;
+  width:90%;
+  padding:0;
+  margin:0 auto;
+  text-align:center;
+  font-size:0;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+}
+#aIV ::-moz-selection { background:#fff }
+#aIV ::selection { background:#fff }
+@media only screen and (min-width:1200px) {
+  #aIV { width:1066px; }
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Search Bar
+ * ------------------------------- */
+
+#aIV .selections {
+  display:block;
+  padding:0;
+  margin:0 auto 30px;
+  text-align:center;
+  font-size:0;
+}
+
+#aIV .selections select {
+  display:inline-block;
+  padding:1px 0 1px 1px;
+  margin:5px 5px;
+  color:#192037;
+  font-family:"ff-tisa-sans-web-pro", sans-serif;
+  font-size:15px;
+  font-weight:700;
+  outline:0;
+  border:1px solid #33394d;
+  cursor:pointer;
+  transition:width 1s;
+}
+
+#aIV .selections select:hover,
+#aIV .selections select:active {
+  color:#000821;
+  border:1px solid #000821;
+}
+
+#aIV select option:hover,
+#aIV select option:active {
+  background:#d8f0fa;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Main Container
+ * ------------------------------- */
+
+#aIV-main {
+  position:relative;
+  display:block;
+  width:100%;
+  font-size:0;
+  opacity:1;
+  -webkit-transition:opacity 500ms;
+  -moz-transition:opacity 500ms;
+  -o-transition:opacity 500ms;
+  transition:opacity 500ms;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Question Navigation
+ * ------------------------------- */
+
+#aIV .main nav {
+  position:relative;
+  top:auto;
+  left:auto;
+  display:none;
+  height:78px;
+  padding:0;
+  margin:20px 0 0;
+  font-size:0;
+}
+
+#aIV .prev,
+#aIV .next {
+  position:absolute;
+  top:0;
+  display:block;
+  width:100px;
+  height:75px;
+  font-size:0;
+  cursor:pointer;
+}
+#aIV .prev {  left:0; }
+#aIV .next { right:0; }
+
+#aIV nav .arrow {
+  position:absolute;
+  top:25px;
+  left:0;
+  z-index:210;
+  display:block;
+  width:100%;
+  height:50px;
+  opacity:0.8;
+  transition:opacity 1s;
+}
+#aIV .prev .arrow { background:url(images/prev-small.png) no-repeat center center; }
+#aIV .next .arrow { background:url(images/next-small.png) no-repeat center center; }
+
+#aIV nav .bg {
+  position:absolute;
+  top:25px;
+  left:0;
+  z-index:205;
+  display:block;
+  width:100%;
+  height:50px;
+  background:#d8f0fa;
+  transition:background 1s;
+}
+
+#aIV nav .title {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:200;
+  display:block;
+  width:100%;
+  height:20px;
+  line-height:20px;
+  text-align:center;
+  color:#000821;
+  font-size:18px;
+  font-weight:700;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+#aIV .prev .arrow:hover,
+#aIV .prev .arrow:active,
+#aIV .next .arrow:hover,
+#aIV .next .arrow:active {
+  opacity:0.9;
+}
+
+#aIV .prev .arrow:hover ~ .bg,
+#aIV .prev .arrow:active ~ .bg,
+#aIV .next .arrow:hover ~ .bg,
+#aIV .next .arrow:active ~ .bg {
+  background:#ebf7fc;
+}
+
+#aIV .prev .arrow:hover ~ .title,
+#aIV .prev .arrow:active ~ .title,
+#aIV .next .arrow:hover ~ .title,
+#aIV .next .arrow:active ~ .title {
+  opacity:0.8;
+}
+
+@media only screen and (min-width:1200px) {
+
+  #aIV .main nav {
+    position:absolute;
+    top:14px;
+    left:0;
+    width:100%;
+    height:85px;
+    margin:0;
+  }
+
+  #aIV .prev,
+  #aIV .next {
+    width:80px;
+    height:90px;
+  }
+
+  #aIV nav .arrow {
+    top:0;
+    height:65px;
+  }
+  #aIV .prev .arrow { background:url(images/prev.png) no-repeat center center; }
+  #aIV .next .arrow { background:url(images/next.png) no-repeat center center; }
+
+  #aIV nav .bg {
+    top:0;
+    height:65px;
+  }
+
+  #aIV nav .title {
+    top:70px;
+  }
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * All Questions Container
+ * ------------------------------- */
+
+#aIV-questions {
+  display:block;
+  width:100%;
+  padding:0;
+  margin:0 auto;
+  font-size:0;
+  opacity:1;
+  -webkit-transition:opacity 500ms;
+  -moz-transition:opacity 500ms;
+  -o-transition:opacity 500ms;
+  transition:opacity 500ms;
+}
+@media only screen and (min-width:1200px) {
+  #aIV-questions { width:calc(100% - 170px) }
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Empty (No Question) Container
+ * ------------------------------- */
+
+#aIV .empty {
+  display:none;
+  padding:20px 28px;
+  text-align:center;
+  line-height:34px;
+  color:#01022e;
+  font-size:24px;
+  font-weight:700;
+  background:#eef9fc;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Each Question Container
+ * ------------------------------- */
+
+#aIV .question {
+  display:block;
+  padding:20px 28px 32px;
+  margin:0 0 20px 0;
+  font-size:0;
+  opacity:0;
+}
+#aIV .shade1 { background:#d8f0fa; }
+#aIV .shade2 { background:#e6f5fc; }
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Question Section Containers
+ * ------------------------------- */
+ 
+#aIV .info,
+#aIV .idContain,
+#aIV .source,
+#aIV .stage,
+#aIV .category,
+#aIV .mainCategory,
+#aIV .subCategory,
+#aIV .problem,
+#aIV .solution,
+#aIV .preContain,
+#aIV .output,
+#aIV .links {
+  display:block;
+  padding:0;
+  margin:20px auto 0;
+  font-size:0;
+  text-align:left;
+}
+
+#aIV .info {
+  margin:0 auto;
+}
+
+#aIV .idContain,
+#aIV .source,
+#aIV .stage {
+  display:inline;
+  margin:0 auto;
+}
+
+#aIV .subCategory {
+  margin:10px auto 0;
+}
+
+#aIV .solution {
+  transition:padding 1s;
+}
+
+#aIV .preContain {
+  position:relative;
+  margin:0 auto;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Question Section Headings
+ * ------------------------------- */
+
+#aIV .info h3,
+#aIV .category h3,
+#aIV .problem h3,
+#aIV .solution h3,
+#aIV .output h3,
+#aIV .links h3 {
+  display:block;
+  padding:0;
+  margin:0 10px 0 0;
+  text-align:left;
+  line-height:34px;
+  color:#192037;
+  font-size:24px;
+  font-weight:700;
+}
+
+#aIV .info h3,
+#aIV .category h3 {
+  display:inline;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Question Section Paragraphs
+ * ------------------------------- */
+
+#aIV .info p,
+#aIV .category p,
+#aIV .problem p,
+#aIV .solution p,
+#aIV .output p,
+#aIV .links p {
+  display:block;
+  padding:0;
+  margin:0 50px 0 0;
+  text-align:left;
+  line-height:34px;
+  color:#192037;
+  font-size:24px;
+  font-weight:400;
+}
+
+#aIV .info p,
+#aIV .category p {
+  display:inline;
+}
+
+#aIV .problem p {
+  -webkit-user-select:text;
+  -moz-user-select:text;
+  -ms-user-select:text;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Question Section Extras
+ * ------------------------------- */
+
+#aIV .links a {
+  display:inline-block;
+  margin-right:20px;
+  line-height:40px;
+}
+
+#aIV img.loader {
+  display:block;
+  padding:0;
+  margin:20px auto;
+  font-size:0;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Main App Error Messages
+ * ------------------------------- */
+
+#aIV .initError,
+#aIV .loadError {
+  display:block;
+  padding:20px 28px;
+  margin:0 0 10px;
+  text-align:center;
+}
+
+#aIV .initError h2,
+#aIV .loadError h2 {
+  display:block;
+  padding:0;
+  margin:0 auto 5px;
+  line-height:34px;
+  color:#f00;
+  font-size:26px;
+  font-weight:700;
+}
+
+#aIV .initError p,
+#aIV .loadError p {
+  display:block;
+  padding:0;
+  margin:0 auto;
+  line-height:34px;
+  color:#192037;
+  font-size:24px;
+  font-weight:400;
+}
+
+#aIV .loadError {
+  display:none;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Solutions Code View
+ * ------------------------------- */
+
+#aIV pre {
+  position:absolute;
+  top:0;
+  left:0;
+  display:block;
+  width:100%;
+  padding:0;
+  margin:0;
+}
+
+#aIV code {
+  position:absolute;
+  top:0;
+  left:0;
+  display:block;
+  width:100%;
+  padding:0;
+  margin:0;
+  background:#fff;
+  overflow-x:auto;
+  transition:width 1s;
+}
+#aIV .shade1 code { border:2px solid #b5e1f5; }
+#aIV .shade2 code { border:2px solid #c7e9f8; }
+#aIV code ::-moz-selection { background:#d8f0fa }
+#aIV code ::selection { background:#d8f0fa }
+
+#aIV code ol {
+  padding:30px 35px 30px 75px;
+  margin:0;
+}
+
+#aIV code li {
+  height:26px;
+  line-height:26px;
+  padding:0;
+  margin:0;
+  color:#babcc3;
+  text-align:left;
+  font-family:"source-code-pro", monospace;
+  font-size:16px;
+  font-weight:500;
+  list-style-type:decimal;
+}
+@media only screen and (min-width:900px) {
+  #aIV code li { font-size:17px }
+}
+@media only screen and (min-width:1050px) {
+  #aIV code li { font-size:18px }
+}
+
+#aIV code li:nth-child(odd) {
+  background:#fafdfe;
+}
+
+#aIV code span {
+  -webkit-user-select:text;
+  -moz-user-select:text;
+  -ms-user-select:text;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Extend Code View Commands
+ * ------------------------------- */
+
+#aIV .extContain {
+  position:absolute;
+  top:25px;
+  right:-4px;
+  display:none;
+  width:55px;
+  height:35px;
+  border-right:solid 2px #d8f0fa;
+  cursor:pointer;
+  transition:right 1s;
+}
+
+#aIV .extBG,
+#aIV .extCloseArrow,
+#aIV .extOpenArrow {
+  position:absolute;
+  top:0;
+  left:0;
+  display:block;
+  width:100%;
+  height:100%;
+  cursor:pointer;
+}
+
+#aIV .extBG {
+  z-index:200;
+  background:#d8f0fa;
+  transition:background 1s;
+}
+
+#aIV .extOpenArrow:hover ~ .extBG,
+#aIV .extOpenArrow:active ~ .extBG {
+  background:#ebf7fc;
+}
+
+#aIV .extCloseArrow {
+  z-index:205;
+  background:url(images/ext-close-small.png) no-repeat center center;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+#aIV .extOpenArrow {
+  z-index:210;
+  background:url(images/ext-open-small.png) no-repeat center center;
+  opacity:0.8;
+  transition:opacity 1s;
+}
+
+#aIV .extHover {
+  position:absolute;
+  top:-25px;
+  right:0;
+  z-index:190;
+  display:block;
+  width:250px;
+  height:20px;
+  font-size:0;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+#aIV .extHover .closeExt,
+#aIV .extHover .openExt {
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:195;
+  display:block;
+  height:20px;
+  line-height:20px;
+  text-align:right;
+  color:#000821;
+  font-size:18px;
+  font-weight:700;
+}
+
+#aIV .extHover .closeExt {
+  display:none;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Syntax Highlighting
+ * ------------------------------- */
+
+#aIV code .comment    { color:#999999 } /* Grey */
+#aIV code .regex      { color:#107b04 } /* Green */
+#aIV code .string     { color:#107b04 } /* Green */
+#aIV code .bracket    { color:#0909db } /* Blue */
+#aIV code .operator   { color:#f70a0a } /* Light Red */
+#aIV code .comma      { color:#0909db } /* Blue */
+#aIV code .semicolon  { color:#0909db } /* Blue */
+#aIV code .colon      { color:#ac9a07 } /* Dark Yellow */
+#aIV code .period     { color:#0909db } /* Blue */
+#aIV code .number     { color:#bc1a1a } /* Dark Red */
+#aIV code .identifier { color:#000000 } /* Black */
+#aIV code .misc       { color:#000000 } /* Black */
+#aIV code .definingKeyword { color:#683804 } /* Brown */
+#aIV code .reservedKeyword { color:#0909db } /* Blue */
+#aIV code .nativeKeyword   { color:#37b2d6 } /* Light Blue */
+#aIV code .valueKeyword    { color:#c50889 } /* Pink */
+#aIV code .clientKeyword   { color:#c50889 } /* Pink */
+#aIV code .jqueryKeyword   { color:#c50889 } /* Pink */
+
+#aIV code span { font-weight:600 }
+#aIV code .comment { font-weight:500 }
+#aIV code .semicolon { font-weight:500 }
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * General Classes
+ * ------------------------------- */
+
+#aIV a.dark {
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV a.dark:hover,
+#aIV a.dark:active {
+  text-decoration:none;
+}
+
+#aIV .error {
+  color:#f00;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Old Browser
+ * ------------------------------- */
+ 
+.old_browser {
+  display:block;
+  padding:30px 0;
+  margin:0 auto;
+  max-width:750px;
+  background:#fff;
+}
+
+.old_browser h1 {
+  display:block;
+  padding:0;
+  margin:0 auto 10px;
+  text-align:center;
+  color:#f00;
+  font-size:28px;
+}
+
+.old_browser p {
+  display:block;
+  padding:0;
+  margin:0 auto;
+  text-align:center;
+  color:#f00;
+  font-size:22px;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Browser Detections
+ * ------------------------------- */
+
+.aIV-scrollbar {
+  position:absolute;
+  top:-9999px;
+  width:100px;
+  height:100px;
+  overflow:scroll;
+}
