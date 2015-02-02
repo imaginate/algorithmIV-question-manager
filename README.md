@@ -14,4 +14,4 @@ Refer to [CONTRIBUTING.md](https://github.com/imaginate/algorithmIV/blob/master/
 ##Contact
 Email learn@algorithmiv.com with any questions.
 
-###Have Fun Mastering the Art of Algorithms!
+###Have Fun Mastering Algorithms!
