@@ -5,15 +5,15 @@
 ##Module Overview
 Public API         | Public Variables   | Public Methods     | Public Classes
 :----------------- | :----------------- | :----------------- | :-----------------
-init               | DEBUG              | getID              | [InitializeModule](#InitializeModule)
-                   | qLen               | getClass           | [SetConfiguration](#SetConfiguration)
-                   | roots              |                    | [WebWorker](#WebWorker)
-                   | flags              |                    | [AddEvents](#AddEvents)
-                   | configuration      |                    | [DisplaySearchBar](#DisplaySearchBar)
-                   | configOptions      |                    | [FormatQuestions](#FormatQuestions)
-                   | searchValues       |                    | [AppendQuestions](#AppendQuestions)
-                   | sources            |                    | [DisplayQuestions](#DisplayQuestions)
-                   | categories         |                    | [PrettifyCode](#PrettifyCode)
+init               | DEBUG              | getID              | [InitializeModule](#initializemodule-class)
+                   | qLen               | getClass           | [SetConfiguration](#setconfiguration-class)
+                   | roots              |                    | [WebWorker](#webworker-class)
+                   | flags              |                    | [AddEvents](#addevents-class)
+                   | configuration      |                    | [DisplaySearchBar](#displaysearchbar-class)
+                   | configOptions      |                    | [FormatQuestions](#formatquestions-class)
+                   | searchValues       |                    | [AppendQuestions](#appendquestions-class)
+                   | sources            |                    | [DisplayQuestions](#displayquestions-class)
+                   | categories         |                    | [PrettifyCode](#prettifycode-class)
                    | questions          |                    |
 
 ##InitializeModule Class
