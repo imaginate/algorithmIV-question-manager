@@ -6,8 +6,8 @@
 Public API         | Public Variables   | Public Methods     | Public Classes
 :----------------- | :----------------- | :----------------- | :-----------------
 init               | DEBUG              | getID              | [InitializeModule](#initializemodule-class)
-                   | qLen               | getClass           | [SetConfiguration](#setconfiguration-class)
-                   | roots              |                    | [WebWorker](#webworker-class)
+                   | qLen               | getTag             | [SetConfiguration](#setconfiguration-class)
+                   | roots              | getClass           | [WebWorker](#webworker-class)
                    | flags              |                    | [AddEvents](#addevents-class)
                    | configuration      |                    | [DisplaySearchBar](#displaysearchbar-class)
                    | configOptions      |                    | [FormatQuestions](#formatquestions-class)

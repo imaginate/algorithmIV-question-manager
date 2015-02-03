@@ -3425,9 +3425,11 @@
         'Note: codeWidth= %O', questions[i].codeWidth
       );
       // Declare method variables
-      var code, part, full, diff;
+      var qs, code, part, full, diff;
+      // Save this question element
+      qs = getID('aIV-q' + i);
       // Save this question's preformatted code element
-      code = getID('aIV-q' + i).getElementsByTagName('code')[0];
+      code = getTag('code', qs)[0];
       // Set width object
       questions[i].codeWidth = {};
       // Save widths
