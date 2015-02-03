@@ -135,7 +135,7 @@ showQuestions      |                    | changeDisplay
 ##PrettifyCode Class
 Public Methods     | Private Variables  | Private Methods    | Private Classes
 :----------------- | :----------------- | :----------------- | :-----------------
-init               | linePadding        | init               | HighlightSyntax
+init               | linePadding        | init               | [HighlightSyntax](#highlightsyntax-class)
                    | paddingLevel       | setPadding         |
                    | likelyRegex        | prepareLine        |
                    | plainNumbers       | formatLines        |

@@ -2,15 +2,16 @@
 ####An outline of all the variables, methods, and classes contained within the [Algorithm IV Web Worker](https://github.com/imaginate/SalgorithmIV/blob/master/src/algorithmIVData.js#L470-2208).
 
 
-Web Worker Overview ||||
+##Web Worker Overview
 Public Variables   | Public Classes
 :----------------- | :-----------------
-configuration      | ParseQuestions
-categories         | FormatQuestion
-sources            | PrettifyCode
-questions          | 
+qLen               | [FormatQuestions](#formatquestions-class)
+configuration      | [PrettifyCode](#prettifycode-class)
+categories         |
+sources            | 
+questions          |
 
-FormatQuestion Class |||
+##FormatQuestions Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | formatted          | init
@@ -23,10 +24,10 @@ init               | formatted          | init
                    |                    | formatOutput
                    |                    | formatLinks
 
-PrettifyCode Class ||||
+##PrettifyCode Class
 Public Methods     | Private Variables  | Private Methods    | Private Classes
 :----------------- | :----------------- | :----------------- | :-----------------
-init               | linePadding        | init               | HighlightSyntax
+init               | linePadding        | init               | [HighlightSyntax](#highlightsyntax-class)
                    | paddingLevel       | setPadding         |
                    | likelyRegex        | prepareLine        |
                    | plainNumbers       | formatLines        |
@@ -36,7 +37,7 @@ init               | linePadding        | init               | HighlightSyntax
                    | keywords           |                    |
                    | commentOpen        |                    |
 
-HighlightSyntax Class |||
+##HighlightSyntax Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | newLine            | _init
