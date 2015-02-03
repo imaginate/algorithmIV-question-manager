@@ -2,21 +2,21 @@
 ####An outline of all the variables, methods, and classes contained within the [Algorithm IV Core Module](https://github.com/imaginate/algorithmIV/blob/master/src/algorithmIVCore.js).
 
 
-Module Overview ||||
+##Module Overview
 Public API         | Public Variables   | Public Methods     | Public Classes
 :----------------- | :----------------- | :----------------- | :-----------------
-init               | DEBUG              | getID              | InitializeModule
-                   | qLen               | getClass           | SetConfiguration
-                   | roots              |                    | WebWorker
-                   | flags              |                    | AddEvents
-                   | configuration      |                    | DisplaySearchBar
-                   | configOptions      |                    | FormatQuestion
-                   | searchValues       |                    | AppendQuestions
-                   | sources            |                    | DisplayQuestions
-                   | categories         |                    | PrettifyCode
+init               | DEBUG              | getID              | [InitializeModule](#InitializeModule)
+                   | qLen               | getClass           | [SetConfiguration](#SetConfiguration)
+                   | roots              |                    | [WebWorker](#WebWorker)
+                   | flags              |                    | [AddEvents](#AddEvents)
+                   | configuration      |                    | [DisplaySearchBar](#DisplaySearchBar)
+                   | configOptions      |                    | [FormatQuestions](#FormatQuestions)
+                   | searchValues       |                    | [AppendQuestions](#AppendQuestions)
+                   | sources            |                    | [DisplayQuestions](#DisplayQuestions)
+                   | categories         |                    | [PrettifyCode](#PrettifyCode)
                    | questions          |                    |
 
-InitializeModule Class ||
+##InitializeModule Class
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
@@ -27,7 +27,7 @@ init               | init
                    | appendError
                    | loadModule
 
-SetConfiguration Class ||
+##SetConfiguration Class
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
@@ -45,7 +45,7 @@ init               | init
                    | setPreCodeHeight
                    | setSearchValues
 
-WebWorker Class |||
+##WebWorker Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | scripts            | init
@@ -55,7 +55,7 @@ init               | scripts            | init
                    |                    | loadComplete
                    |                    | loadError
 
-AddEvents Class ||
+##AddEvents Class
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
@@ -72,7 +72,7 @@ extHoverOut        | addEvent
                    | prevHandler
                    | nextHandler
 
-DisplaySearchBar Class ||
+##DisplaySearchBar Class
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
@@ -85,7 +85,7 @@ updateSubCat       | applyFormat
                    | formatSubCategory
                    | setValues
 
-FormatQuestion Class |||
+##FormatQuestions Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | formatted          | init
@@ -100,7 +100,7 @@ formatCodeView     |                    | clearFormat
                    |                    | setCodeWidth
                    |                    | formatCodeView
 
-AppendQuestions Class ||
+##AppendQuestions Class
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
@@ -115,7 +115,7 @@ q                  | appendEmpty
                    | appendOutput
                    | appendLinks
 
-DisplayQuestions Class |||
+##DisplayQuestions Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 assembleQuestions  | currentOrder       | assembleQuestions
@@ -132,7 +132,7 @@ showQuestions      |                    | changeDisplay
                    |                    | clearDisplay
                    |                    | reverseOrder
 
-PrettifyCode Class ||||
+##PrettifyCode Class
 Public Methods     | Private Variables  | Private Methods    | Private Classes
 :----------------- | :----------------- | :----------------- | :-----------------
 init               | linePadding        | init               | HighlightSyntax
@@ -145,7 +145,7 @@ init               | linePadding        | init               | HighlightSyntax
                    | keywords           |                    |
                    | commentOpen        |                    |
 
-HighlightSyntax Class |||
+##HighlightSyntax Class
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | newLine            | _init
