@@ -377,16 +377,19 @@
       'tree'  : 'Trees'
     },
     sub: {
-      'tree': {
-                'treeBi': 'Binary Trees'
-              },
       'graph': {
-                 'graphDi': 'Directed Graphs'
-               },
+        'graphDi': 'Directed Graphs'
+      },
+      'hash': {
+        'hashDo': 'Double Hashing'
+      },
       'search': {
-                  'bfs': 'Breadth First Search',
-                  'dfs': 'Depth First Search'
-                }
+        'bfs': 'Breadth First Search',
+        'dfs': 'Depth First Search'
+      },
+      'tree': {
+        'treeBi': 'Binary Trees'
+      }
     }
   };
 
@@ -466,11 +469,11 @@
        mainCat: [ 'search', 'tree' ],
         subCat: [ 'bfs', 'treeBi' ],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=4505011482525696'
-                  }
-                ],
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=4505011482525696'
+           }
+         ],
        problem: 'Write a function that prints the rows of a binary tree, terminating each row with a carriage return.',
       solution: function() {
         /*
@@ -505,7 +508,7 @@
         ];
 
         // The BFS function
-        function printNodes(graph) {
+        function printNodes() {
           // The list of current nodes to be searched
           // The current node being searched
           // The max number of nodes for the current row
@@ -514,6 +517,7 @@
           // The number of children the current node contains
           // The current child
           var list, node, rowMax, rowCount, result, childCount, child;
+
           // Set list to array with node 0
           list = [0];
           // Set max of first row to 1
@@ -522,8 +526,10 @@
           rowCount = 0;
           // Set result to empty string
           result = '';
+
           // Loop through nodes
           while (list.length > 0) {
+
             // Set current node to first 
             node = list[0];
             // Remove current node from list
@@ -531,27 +537,30 @@
             // Increase the count by one
             ++rowCount;
             // Set result
-            result += node;
-            result += (rowMax === rowCount) ? '<br />' : ',';
+            result += node + ( (rowMax === rowCount) ? '<br />' : ',' );
+
             // If (level finished)
             // Then {double it}
             if (rowMax === rowCount) {
               rowMax = rowMax * 2;
               rowCount = 0;
             }
+
             // Save current node's child count
             childCount = graph[node].links.length;
+
             // Add current node's children to list
             for (child=0; child<childCount; child++) {
               list.push(graph[node].links[child]);
             }
           }
+
           // Return the resulting BST
           return result;
         }
         
         // Run and return the BST function
-        return printNodes(graph);
+        return printNodes();
       }
     },
     {
@@ -561,11 +570,11 @@
        mainCat: [ 'search', 'graph' ],
         subCat: [ 'dfs', 'graphDi' ],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=6031402409656320'
-                  }
-                ],
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=6031402409656320'
+           }
+         ],
        problem: 'Imagine a large city like Los Angeles. Suppose someone shows up at location A, then N minutes later at location B. Design a function that approximates the probability they passed a Starbucks.',
       solution: function() {
         /*
@@ -675,47 +684,51 @@
           // An index for traversing all the current node's children
           // The object containing all of the current child's info
           // The new total path weight after child's weight has been added
-          var childCount, c, child, newWeight;
+          // The new starbucks value
+          var childCount, c, child, newWeight, newStar;
+
           // If (weight is greater than max weight)
           // Then {end this path traversal}
           if (weight > maxWeight) {
             return;
           }
+
           // If (node is destination)
           if (node === end) {
             // Add path to return string
-            returnPaths += '{ path: [' + path + ',9], starbucks: ';
-            returnPaths += (starbucks) ? ' true' : 'false';
-            returnPaths += ' }<br />';
+            returnPaths += '{ ' +
+              'path: [' + path + ',' + end + '],' +
+              'starbucks: ' + ( (starbucks) ? ' true' : 'false' ) +
+            ' }<br />';
             // Add path to total counts
             ++allPaths;
-            if (starbucks) {
-              ++starPaths;
-            }
+            starPaths += (starbucks) ? 1 : 0;
             // End path traversal
             return;
           }
+
           // Add node to current path
           path.push(node);
           // Save the number of children
           //  for the current node
           childCount = graph[node].links.length;
+
           // Find each child's path
           for (c=0; c<childCount; c++) {
             // Set child object
             child = graph[node].links[c];
             // Set new weight total
             newWeight = weight + child.weight;
+            // Set new value for starbucks
+            newStar = ( (starbucks || child.starbucks) ?
+              true : false
+            );
             // Call algorithm
-            if (starbucks || child.starbucks) {
-              findPaths(child.node, newWeight, true);
-            }
-            else {
-              findPaths(child.node, newWeight, false);
-            }
+            findPaths(child.node, newWeight, newStar);
           }
+
           // Remove current node from path
-          path.pop()
+          path.pop();
         }
 
         // Calculate the number of paths
@@ -734,38 +747,250 @@
     },
     {
       // Question: 3
-      complete: false,
+      complete: true,
         source: 'go',
        mainCat: [ 'hash' ],
-        subCat: [],
+        subCat: [ 'hashDo' ],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=5724911848914944'
-                  }
-                ],
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=5724911848914944'
+           }
+         ],
        problem: 'Given a table of [Url =&gt; Content] pairs produce a new table of [Url =&gt; Duplicate Urls] pairs.<br /><br />Example Input:<br />a.com =&gt; &lt;html&gt;a&lt;/html&gt;<br />b.com =&gt; &lt;html&gt;b&lt;/html&gt;<br />c.com =&gt; &lt;html&gt;c&lt;/html&gt;<br />d.com =&gt; &lt;html&gt;a&lt;/html&gt;<br />e.com =&gt; &lt;html&gt;a&lt;/html&gt;<br /><br />Example Output:<br />a.com =&gt; [d.com, e.com]<br />b.com =&gt; []<br />c.com =&gt; []',
       solution: function() {
         /*
          ** Solution:
-         *  - [explanation]
+         *  - A modified FNV-1a hash algorithm is used to create a
+         *  hash table for each url's content. Then the hashes of
+         *  each url are compared to identify duplicates.
          *
          ** Need to Know Terms:
+         *  - Algorithms:
+         *    -- FNV Hash Algorithm: http://www.isthe.com/chongo/tech/comp/fnv/
+         *    -- Double Hashing: http://en.wikipedia.org/wiki/Double_hashing
          *  - Data Structures:
          *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
          */
         
-        // A list of urls, their content, and matching urls
-        // The starting node (location a)
-        // The final node (location b)
-        // The maximum weight of a path (max minutes of time)
-        // The current path being checked
-        // A string containg all the paths
-        var graph, start, end, maxWeight, path, returnPaths;
-        // The count of all the possible paths
-        // The count of all the possible paths with a Starbucks
-        // The probability of passing a Starbucks
-        var allPaths, starPaths, prob;
+        // Supplied urls and their content
+        var inputs;
+
+        // Setup variables
+        inputs = {
+          'a.com': '<html>a</html>',
+          'b.com': '<html>b</html>',
+          'c.com': '<html>c</html>',
+          'd.com': '<html>a</html>',
+          'e.com': '<html>a</html>'
+        };
+
+        // FNV-1a hash algorithm
+        // param: The string to be hashed
+        // param: The extra times to hash
+        function createHash(string, extras) {
+          // The resulting hash
+          // The string length
+          // Loop index
+          var hash, len, i;
+
+          // Set extras
+          extras = extras || 0;
+          // Set hash to 32 bit FNV offset_basis
+          hash = 2166136261;
+          // Save string length
+          len = string.length;
+
+          // Loop through each string character
+          for (i=0; i<len; i++) {
+            // XOR first
+            hash = hash ^ string.charAt(i);
+            // Multiply by 32 bit FNV_prime
+            hash = hash * 16777619;
+          }
+          
+          if (extras > 0) {
+            // Loop through each extra time
+            for (i=0; i<extras; i++) {
+              // XOR first
+              hash = hash ^ string.charAt(i);
+              // Multiply by 32 bit FNV_prime
+              hash = hash * 16777619;
+            }
+          }
+
+          // Return completed hash
+          return hash;
+        }
+
+        // Create a hash table for the url content
+        function createHashTable() {
+          // The hash table
+          // The current url
+          // The current url's content
+          // The current content's hash
+          // Indicator to check if collision has occurred
+          var hashes, url, content, hash, flag;
+
+          // Add hash to table
+          function addHash(newUrl, newContent, newHash) {
+
+            // If (hash does not exist in table)
+            if (typeof hashes[newHash] === 'undefined') {
+              // Add hash key to table
+              hashes[newHash] = {
+                collisions: 0,
+                content: newContent
+              };
+              // Replace inputs content with hash
+              inputs[newUrl] = newHash;
+            }
+            else {
+              // If (no collision)
+              // Then {replace inputs content with hash}
+              // Else {add collision, create new hash, and repeat process}
+              if (newContent === hashes[newHash].content) {
+                inputs[newUrl] = newHash;
+              }
+              else {
+                ++hashes[newHash].collisions;
+                newHash = createHash(newContent, hashes[newHash].collisions);
+                addHash(newUrl, newContent, newHash);
+              }
+            }
+          }
+
+          // Set hash table to empty object
+          hashes = {};
+
+          // Loop through supplied inputs
+          for (url in inputs) {
+            // Filter out default javascript properties
+            if ( inputs.hasOwnProperty(url) ) {
+              // Save the content
+              content = inputs[url];
+              // Hash url content
+              hash = createHash(content);
+              // Add to hash table
+              addHash(url, content, hash);
+            }
+          }
+
+          // Return the hash table
+          return hashes;
+        }
+
+        // Create list of urls
+        function createUrlList() {
+          // The list of urls
+          // The current url
+          var urls, url;
+
+          // Set url list to empty array
+          urls = [];
+
+          // Loop through supplied inputs
+          for (url in inputs) {
+            // Filter out default javascript properties
+            if ( inputs.hasOwnProperty(url) ) {
+              // Add url to list
+              urls.push(url);
+            }
+          }
+
+          // Return the list of urls
+          return urls;
+        }
+
+        // Create duplicated url content
+        function findDuplicates() {
+          // A hash table of the url content
+          // A list of the urls to check
+          // The current url
+          // The current hash
+          // The current length of the url list
+          // Loop index
+          // The next url
+          // Loop count
+          // The resulting duplicates
+          var hashes, urls, url, hash, len, i, next, c, duplicates;
+
+          // Set hashes, urls, and duplicates
+          hashes = createHashTable();
+          urls = createUrlList();
+          duplicates = {};
+
+          // Loop through url list
+          while (urls.length > 0) {
+
+            // Save and remove first url on list
+            url = urls.shift();
+            // Save hash of current url's content
+            hash = createHash(inputs[url]);
+            // Add url to list of duplicates
+            duplicates[url] = [];
+            // Save the current url list length
+            len = urls.length;
+            // Set index and count to 0
+            i = c = 0;
+
+            // Loop through url list
+            loop:
+            while (true) {
+
+              // If (count is equal to length)
+              // Then {end loop}
+              if (c === len) {
+                break loop;
+              }
+              // Save next url
+              next = urls[i];
+              
+              // If (urls content matches)
+              // Then {save to duplicates and remove from url list}
+              // Else {increase index}
+              if (inputs[url] === inputs[next]) {
+                duplicates[url].push(next);
+                urls.splice(i, 1);
+              }
+              else {
+                ++i;
+              }
+
+              // Add one to count
+              ++c;
+            }
+          }
+          
+          // Return the duplicates
+          return duplicates;
+        }
+
+        // Prepare results to be returned
+        function prepareResults() {
+          // The duplicates
+          // The results
+          // The current url
+          var duplicates, results, url;
+
+          // Set duplicates and results
+          duplicates = findDuplicates();
+          results = '';
+
+          // Loop through results
+          for (url in duplicates) {
+            // Filter out default javascript properties
+            if ( duplicates.hasOwnProperty(url) ) {
+              // Add url to results
+              results += url + ' => [' + duplicates[url].join(',') + ']<br />';
+            }
+          }
+
+          // Return results
+          return results;
+        }
+
+      return prepareResults();
       }
     },
     {
