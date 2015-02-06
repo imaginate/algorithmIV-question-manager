@@ -230,13 +230,13 @@
             ~~ value type (for all properties): number
             ~~ properties:
                > top: the top padding value
-                 >> default value: 50
+                 >> default value: 30
                > right: the right padding value
-                 >> default value: 60
+                 >> default value: 35
                > bottom: the bottom padding value
-                 >> default value: 50
+                 >> default value: 30
                > left: the left padding value
-                 >> default value: 100
+                 >> default value: 75
             ~~ options:
                > "value between 0 and 250": the pixel count for the
                                              pre list padding totals
