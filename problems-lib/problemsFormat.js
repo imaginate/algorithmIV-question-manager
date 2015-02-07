@@ -25,15 +25,15 @@
       }
    */
   var sources = {
-	  'customID': 'sourceName'
-	};
+    'customID': 'sourceName'
+  };
   
   /**
    * -----------------------------------------------
    * Categories
    * -----------------------------------------------
    * you can create your own set of categories, use
-	    mine, or start with mine and add more
+      mine, or start with mine and add more
    * object format:
       var categories = {
         main: {
@@ -56,15 +56,21 @@
       'tree'  : 'Trees'
     },
     sub: {
-      'tree': {
-        'treeBi': 'Binary Trees'
-      },
       'graph': {
-        'graphDi': 'Directed Graphs'
+        'digraph': 'Directed Graphs'
+      },
+      'hash': {
+        'dblHash': 'Double Hashing'
       },
       'search': {
-        'bfs': 'Breadth First Search',
-        'dfs': 'Depth First Search'
+        'back' : 'Backtracking',
+        'bfs'  : 'Breadth First Search',
+        'brute': 'Brute Force Search',
+        'dfs'  : 'Depth First Search'
+      },
+      'tree': {
+        'binTree': 'Binary Trees',
+        'trie'   : 'Tries'
       }
     }
   };
@@ -158,7 +164,7 @@
       solution: function() {
         /*
          ** Solution:
-				 *  - [A general introduction to how you solved the problem.]
+         *  - [A general introduction to how you solved the problem.]
          *
          ** Need to Know Terms:
          *  - [Important term in your solution]: [a link to a description of this term (no marketing links allowed)]
