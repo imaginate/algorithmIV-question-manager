@@ -75,6 +75,9 @@ body {
   outline:0;
   border:1px solid #33394d;
   cursor:pointer;
+  -webkit-transition:width 1s;
+  -moz-transition:width 1s;
+  -o-transition:width 1s;
   transition:width 1s;
 }
 
@@ -146,6 +149,9 @@ body {
   width:100%;
   height:50px;
   opacity:0.8;
+  -webkit-transition:opacity 1s;
+  -moz-transition:opacity 1s;
+  -o-transition:opacity 1s;
   transition:opacity 1s;
 }
 #aIV .prev .arrow { background:url(images/prev-small.png) no-repeat center center; }
@@ -160,6 +166,9 @@ body {
   width:100%;
   height:50px;
   background:#d8f0fa;
+  -webkit-transition:background 1s;
+  -moz-transition:background 1s;
+  -o-transition:background 1s;
   transition:background 1s;
 }
 
@@ -177,6 +186,9 @@ body {
   font-size:18px;
   font-weight:700;
   opacity:0;
+  -webkit-transition:opacity 1s;
+  -moz-transition:opacity 1s;
+  -o-transition:opacity 1s;
   transition:opacity 1s;
 }
 
@@ -331,6 +343,9 @@ body {
 }
 
 #aIV .solution {
+  -webkit-transition:padding 1s;
+  -moz-transition:padding 1s;
+  -o-transition:padding 1s;
   transition:padding 1s;
 }
 
@@ -484,6 +499,9 @@ body {
   margin:0;
   background:#fff;
   overflow-x:auto;
+  -webkit-transition:width 1s;
+  -moz-transition:width 1s;
+  -o-transition:width 1s;
   transition:width 1s;
 }
 #aIV .shade1 code { border:2px solid #b5e1f5; }
@@ -540,6 +558,9 @@ body {
   height:35px;
   border-right:solid 2px #d8f0fa;
   cursor:pointer;
+  -webkit-transition:right 1s;
+  -moz-transition:right 1s;
+  -o-transition:right 1s;
   transition:right 1s;
 }
 
@@ -558,6 +579,9 @@ body {
 #aIV .extBG {
   z-index:200;
   background:#d8f0fa;
+  -webkit-transition:background 1s;
+  -moz-transition:background 1s;
+  -o-transition:background 1s;
   transition:background 1s;
 }
 
@@ -570,6 +594,9 @@ body {
   z-index:205;
   background:url(images/ext-close-small.png) no-repeat center center;
   opacity:0;
+  -webkit-transition:opacity 1s;
+  -moz-transition:opacity 1s;
+  -o-transition:opacity 1s;
   transition:opacity 1s;
 }
 
@@ -577,6 +604,9 @@ body {
   z-index:210;
   background:url(images/ext-open-small.png) no-repeat center center;
   opacity:0.8;
+  -webkit-transition:opacity 1s;
+  -moz-transition:opacity 1s;
+  -o-transition:opacity 1s;
   transition:opacity 1s;
 }
 
@@ -590,6 +620,9 @@ body {
   height:20px;
   font-size:0;
   opacity:0;
+  -webkit-transition:opacity 1s;
+  -moz-transition:opacity 1s;
+  -o-transition:opacity 1s;
   transition:opacity 1s;
 }
 
