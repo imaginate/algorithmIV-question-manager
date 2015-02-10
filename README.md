@@ -1,9 +1,9 @@
-#Welcome to Algorithm IV!  ![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-icon.png)
+#Welcome to Algorithm IV - ![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-icon.png)!
 
 **A javascript app designed to manage practice questions and solutions for learning computer science focused algorithms and data structures, improving programming skillsets, and preparing for technical interviews.**
 
 ##Directions
-Refer to [Algorithm IV's online documentation](http://www.algorithmIV/docs/start) for directions on how to use this app.
+Refer to [Algorithm IV's online documentation](http://www.algorithmIV.com/docs/start) for directions on how to use this app.
 
 ##Live Example
 You can go to [Algorithm IV's website](http://www.algorithmiv.com/example) to view an example of this app in action.
