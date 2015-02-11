@@ -63,16 +63,9 @@
    * -----------------------------------------------
    * Public Variable (sources)
    * -----------------------------------------------
-   * an object containing all of the sources that
-      created each of the problems included on this
-      page
-   * every source id must be unique
-   * if object is empty the source functionality is
-      disabled
-   * object format:
-      var sources = {
-        'sourceID': 'Source Name'
-      }
+   * an object containing all of the problem sources
+   * details:
+     - see algorithmiv.com/docs/sources
    */
   var sources = {};
 
@@ -82,23 +75,8 @@
    * -----------------------------------------------
    * an object containing each main and sub question
      category
-   * every category id must be unique (a sub category
-      id cannot be the same as any main category id)
-   * if the main property is empty the category
-      functionality is fully disabled
-   * if the sub property is empty only the sub category
-      functionality is disabled
-   * object format:
-      var categories = {
-        main: {
-          'mainCategoryID': 'Category Name'
-        },
-        sub: {
-          'mainCategoryID': {
-            'subCategoryID': 'Category Name'
-          } 
-        }
-      }
+   * details:
+     - see algorithmiv.com/docs/categories
    */
   var categories = { main:{}, sub:{} };
 
