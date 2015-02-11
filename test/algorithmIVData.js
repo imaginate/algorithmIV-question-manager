@@ -118,67 +118,8 @@
    * ---------------------------------------------
    * an array of objects containing each question,
       its details, and your solution for it
-   * all below properties are required for every
-      object
-   * object format:
-    {
-      complete: false,
-        source: 'sourceID',
-       mainCat: [ 'mainCatID' ],
-        subCat: [ 'subCatID','subCatID' ],
-         links: [
-                  {
-                    name: 'Algorithm IV Website',
-                    href: 'http://www.algorithmiv.com'
-                  }
-                ],
-       problem: 'Can You Learn More',
-      solution: function() {
-        return 'No Problem';
-      }
-    }
-   * object properties:
-     - complete:
-       -- description:
-          ~ indicates whether solution is finished
-       -- value type: boolean
-       -- options:
-          ~ true: question is finished
-          ~ false: question is incomplete
-     - source:
-       -- description:
-          ~ the id for the question's source
-       -- value type: string
-     - mainCat:
-       -- description:
-          ~ the ids for every matching main category
-       -- value type: array of strings
-     - subCat:
-       -- description:
-          ~ the ids for every matching sub category
-       -- value type: array of strings
-     - links:
-       -- description:
-          ~ links to more details on question
-       -- value type: array of objects
-       -- object properties:
-          ~ name:
-            ~~ the displayed name of the link
-            ~~ value type: string
-          ~ href:
-            ~~ the http address for the link
-            ~~ value type: string
-     - problem:
-       -- description:
-          ~ the practice problem
-          ~ accepts html markup
-          ~ use html entities to show reserved html
-       -- value type: string
-     - solution:
-       -- description:
-          ~ the code for the solution of the problem
-          ~ must be wrapped in an anonymous function
-       -- value type: function
+   * details:
+     - see algorithmiv.com/docs/questions
    */
   var questions = [
     {
@@ -1029,7 +970,7 @@
       complete: true,
         source: 'bl',
        mainCat: [ 'search','graph' ],
-        subCat: [ 'back','dfs','digraph' ],
+        subCat: [ 'dfs','digraph' ],
          links: [
            {
              name: 'Further Discussion',
