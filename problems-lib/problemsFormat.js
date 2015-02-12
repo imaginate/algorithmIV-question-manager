@@ -19,10 +19,8 @@
    * Sources
    * -----------------------------------------------
    * add the sources of all of your questions here
-   * object format:
-      var sources = {
-        'sourceID': 'Source Name'
-      }
+   * details:
+     - see algorithmiv.com/docs/sources
    */
   var sources = {
     'customID': 'sourceName'
@@ -34,42 +32,52 @@
    * -----------------------------------------------
    * you can create your own set of categories, use
       mine, or start with mine and add more
-   * object format:
-      var categories = {
-        main: {
-          'mainCategoryID': 'Category Name'
-        },
-        sub: {
-          'mainCategoryID': {
-            'subCategoryID': 'Category Name'
-          } 
-        }
-      }
+   * details:
+     - see algorithmiv.com/docs/categories
    */
   var categories = {
     main: {
       'graph' : 'Graphs',
       'hash'  : 'Hash Tables',
-      'heap'  : 'Heaps',
       'search': 'Searching Algorithms',
       'sort'  : 'Sorting Algorithms',
       'tree'  : 'Trees'
     },
     sub: {
       'graph': {
-        'digraph': 'Directed Graphs'
+        'adjList': 'Adjacency Lists',
+        'adjMtrx': 'Adjacency Matrices',
+        'digraph': 'Directed Graphs',
+        'incList': 'Incidence Lists',
+        'incMtrx': 'Incidence Matrices',
+        'ungraph': 'Undirected Graphs'
       },
       'hash': {
-        'dblHash': 'Double Hashing'
+        'dblHash': 'Double Hashing',
+        'fnv'    : 'FNV Hashes'
       },
       'search': {
-        'back' : 'Backtracking',
-        'bfs'  : 'Breadth First Search',
-        'brute': 'Brute Force Search',
-        'dfs'  : 'Depth First Search'
+        'back'   : 'Backtracking',
+        'binSrch': 'Binary Search',
+        'bfs'    : 'Breadth First Search',
+        'brute'  : 'Brute Force Search',
+        'dfs'    : 'Depth First Search'
+      },
+      'sort': {
+        'bucket': 'Bucket Sort',
+        'heapS' : 'Heapsort',
+        'insert': 'Insertion Sort',
+        'merge' : 'Mergesort',
+        'quick' : 'Quicksort',
+        'radix' : 'Radix Sort',
+        'select': 'Select Sort'
       },
       'tree': {
         'binTree': 'Binary Trees',
+        'bst'    : 'Binary Search Trees',
+        'heap'   : 'Heaps',
+        'red'    : 'Red-Black Trees',
+        'splay'  : 'Splay Trees',
         'trie'   : 'Tries'
       }
     }
@@ -79,73 +87,18 @@
    * ---------------------------------------------
    * Questions
    * ---------------------------------------------
-   * add your problems here (please consider that
-      problems being added to the library will be
-      done with the intention of helping others
-      learn - as a result please try to make your
-      problems clear and add generous comments to
-      your solutions) (standard js formatting
-      practices will be expected - refer to aIV's
-      source for preferred js conventions)
-   * object format:
-    {
-      complete: false,
-        source: 'sourceID',
-       mainCat: [ 'mainCatID' ],
-        subCat: [ 'subCatID','subCatID' ],
-         links: [
-           {
-             name: 'Algorithm IV Website',
-             href: 'http://www.algorithmiv.com'
-           }
-         ],
-       problem: 'Can You Learn More',
-      solution: function() {
-        return 'No Problem';
-      }
-    }
-   * object properties:
-     - complete:
-       -- description:
-          ~ indicates whether solution is finished
-       -- value type: boolean
-       -- options:
-          ~ true: question is finished
-          ~ false: question is incomplete
-     - source:
-       -- description:
-          ~ the id for the question's source
-       -- value type: string
-     - mainCat:
-       -- description:
-          ~ the ids for every matching main category
-       -- value type: array of strings
-     - subCat:
-       -- description:
-          ~ the ids for every matching sub category
-       -- value type: array of strings
-     - links:
-       -- description:
-          ~ links to more details on question
-       -- value type: array of objects
-       -- object properties:
-          ~ name:
-            ~~ the displayed name of the link
-            ~~ value type: string
-          ~ href:
-            ~~ the http address for the link
-            ~~ value type: string
-     - problem:
-       -- description:
-          ~ the practice problem
-          ~ accepts html markup
-          ~ use html entities to show reserved html
-       -- value type: string
-     - solution:
-       -- description:
-          ~ the code for the solution of the problem
-          ~ must be wrapped in an anonymous function
-       -- value type: function
+   * add your problems here
+   * please consider that problems being added to
+      the library will be done with the intention
+      of helping others learn - as a result please
+      try to make your problems clear and add
+      generous comments to your solutions
+   * standard js formatting practices will be
+      expected - Google's style guide is a great
+      reference for awesome formatting:
+      - see google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml?showone=Code_formatting#Code_formatting
+   * details:
+     - see algorithmiv.com/docs/questions
    */
   var questions = [
     {
@@ -164,7 +117,9 @@
       solution: function() {
         /*
          ** Solution:
-         *  - [A general introduction to how you solved the problem.]
+         *  - Step 1: [An explanation of the actions you
+         *    made to solve the problem in this step.]
+         *  - Step 2: [...]
          *
          ** Need to Know Terms:
          *  - [Important term in your solution]: [a link to a description of this term (no marketing links allowed)]
