@@ -85,10 +85,12 @@
    */
   var categories = {
     main: {
+      'array' : 'Arrays',
       'graph' : 'Graphs',
-      'hash'  : 'Hash Tables',
-      'search': 'Searching Algorithms',
-      'sort'  : 'Sorting Algorithms',
+      'hash'  : 'Hashes',
+      'lists' : 'Linked Lists',
+      'search': 'Searching',
+      'sort'  : 'Sorting',
       'tree'  : 'Trees'
     },
     sub: {
@@ -102,7 +104,12 @@
       },
       'hash': {
         'dblHash': 'Double Hashing',
-        'fnv'    : 'FNV Hashes'
+        'fnv'    : 'FNV Hashes',
+        'hTable' : 'Hash Tables'
+      },
+      'lists': {
+        'sList': 'Singly-Linked Lists',
+        'dList': 'Doubly-Linked Lists'
       },
       'search': {
         'back'   : 'Backtracking',
@@ -145,7 +152,7 @@
       // Question: 1
       complete: true,
         source: 'fb',
-       mainCat: [ 'search', 'tree' ],
+       mainCat: [ 'search', 'tree', 'array' ],
         subCat: [ 'bfs', 'binTree' ],
          links: [
            {
@@ -157,7 +164,9 @@
       solution: function() {
         /*
          ** Solution:
-         *  - Step 1: A binary tree is created.
+         *  - Step 1: A binary tree is created. An array of
+         *    nodes storing their value and a reference to
+         *    their children is used to implement the tree.
          *  - Step 2: A Breadth First Search algorithm is used
          *    to traverse the tree and add the nodes in order
          *    by row to the result.
@@ -167,6 +176,7 @@
          *    -- Breadth First Search (BFS): http://en.wikipedia.org/wiki/Breadth-first_search
          *  - Data Structures:
          *    -- Binary Tree: http://en.wikipedia.org/wiki/Binary_tree
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
         // The binary tree
@@ -209,7 +219,7 @@
           var list, node, rowMax, rowCount, edges, e;
 
           // Set list to array with tree root
-          list = [tree[0]];
+          list = [ tree[0] ];
           // Set max of first row
           rowMax = 1;
           // Set current row count
@@ -251,8 +261,8 @@
       // Question: 2
       complete: true,
         source: 'am',
-       mainCat: [ 'search', 'graph' ],
-        subCat: [ 'back', 'dfs', 'digraph', 'adjList' ],
+       mainCat: [ 'search', 'graph', 'array' ],
+        subCat: [ 'back', 'dfs', 'digraph', 'incList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -264,11 +274,16 @@
         /*
          ** Solution:
          *  - Step 1: A time weighted digraph of locations
-         *    including a value for whether a Starbucks is
-         *    passed on an edge is created.
-         *  - Step 2: A recursive backtracking algorithm is
-         *    applied to traverse the digraph and find all
-         *    of the paths possible to the destination
+         *    and a boolean value for whether a Starbucks is
+         *    passed for each edge is created. An array of
+         *    vertex nodes (storing its value and a reference
+         *    to each of its edges) and edge nodes (storing
+         *    its weight, Starbuck's value, and a reference
+         *    to each of its connecting nodes) is used to
+         *    implement the digraph.
+         *  - Step 2: A recursive backtracking DFS algorithm
+         *    is applied to traverse the digraph and find
+         *    all of the paths possible to the destination
          *    within the provided maximum time frame and
          *    whether a Starbucks was passed on each path.
          *  - Step 3: The probability of passing a Starbucks
@@ -281,88 +296,170 @@
          *  - Data Structures:
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Weighted Graph: http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Weighted_graphs_and_networks
-         *    -- Adjacency List: http://en.wikipedia.org/wiki/Adjacency_list
+         *    -- Incidence List: http://www.algorithmist.com/index.php/Graph_data_structures#Incidence_List
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
-        // The time weighted digraph that includes a value
-        //   for Starbucks availability for each edge
-        // The starting node (starting location)
-        // The final node (final destination)
+        // The time weighted digraph
+        // The starting vertex (starting location)
+        // The final vertex (final destination)
         // The maximum weight of a path (minutes of time)
-        // All the information on the possible paths
-        var graph, start, end, max, paths;
+        // The final paths
+        // The probability of passing a Starbucks
+        // The visually prepared final results
+        var graph, start, end, max, paths, probability, results;
 
         // Set variables
-        graph = [];
+        graph = {
+          vertices: [],
+          edges: []
+        };
         start =  0;
         end   =  9;
         max   = 50;
         paths = {
-          allCount : 0,
-          starCount: 0,
-          starProb : 0,
-          list: []
+                all: [],
+          starbucks: []
         };
+        probability = 0;
+        results = [];
 
         // Creates the weighted digraph
         function createGraph() {
-          // Node index
-          var n;
+          // The vertex index
+          // The edge index
+          // The edge's parent vertex
+          // The edge's child vertex
+          // The edge's weight
+          // The edge's Starbuck's value
+          var v, e, parent, child, weight, starbucks;
+          // The parent index
+          // The child index
+          // A shortcut function to add edge
+          //   pointers to vertices
+          var p, c, addPointer;
+          
+          // Set shortcut function
+          // param: The vertex's index
+          // param: An array of the edge's indexes
+          addPointer = function(vertex, edges) {
+            // The number of edges
+            // The loop index
+            // The edge node
+            var len, i, node;
+            
+            // Save edges count
+            len = edges.length;
+            // Add each edge
+            for (i=0; i<len; i++) {
+              node = graph.edges[ edges[i] ];
+              graph.vertices[vertex].edges.push(node);
+            }
+          }
 
-          // Add empty nodes to graph
-          for (n=0; n<10; n++) {
-              graph.push({ val: n, edges: [] });
+          // Add vertices to graph
+          for (v=0; v<10; v++) {
+            graph.vertices.push({ val: v, edges: [] });
           }
 
           // Add edges to graph
-          graph[0].edges.push(
-            { node: graph[1], weight: 5, starbucks: false },
-            { node: graph[2], weight: 5, starbucks: false },
-            { node: graph[3], weight: 5, starbucks: false }
-          );
-          graph[1].edges.push(
-            { node: graph[3], weight: 5, starbucks: false },
-            { node: graph[4], weight: 5, starbucks: false }
-          );
-          graph[2].edges.push(
-            { node: graph[4], weight: 5, starbucks: false },
-            { node: graph[5], weight: 5, starbucks:  true }
-          );
-          graph[3].edges.push(
-            { node: graph[6], weight: 5, starbucks: false }
-          );
-          graph[4].edges.push(
-            { node: graph[6], weight: 5, starbucks: false }
-          );
-          graph[5].edges.push(
-            { node: graph[7], weight: 5, starbucks: false },
-            { node: graph[8], weight: 5, starbucks: false },
-            { node: graph[9], weight: 5, starbucks: false }
-          );
-          graph[6].edges.push(
-            { node: graph[7], weight: 5, starbucks: false },
-            { node: graph[9], weight: 5, starbucks: false }
-          );
-          graph[7].edges.push(
-            { node: graph[8], weight: 5, starbucks: false }
-          );
-          graph[8].edges.push(
-            { node: graph[9], weight: 5, starbucks: false }
-          );
+          for (e=0; e<16; e++) {
+
+            // Set weight and starbucks
+            weight = 5;
+            starbucks = (e === 5) ? true : false;
+            // Set parent and child
+            switch (true) {
+              case (e < 3):
+                p = 0;
+                c = (e === 0) ? 1 : ++c;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e < 5):
+                p = 1;
+                c = e;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e < 7):
+                p = 2;
+                c = e;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e === 7):
+                p = 3;
+                c = 6;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e === 8):
+                p = 4;
+                c = 6;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e < 12):
+                p = 5;
+                c = ++c;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e < 14):
+                p = 6;
+                c = (e === 12) ? 7 : 9;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e === 14):
+                p = 7;
+                c = 8;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+              case (e === 15):
+                p = 8;
+                c = 9;
+                parent = graph.vertices[p];
+                child  = graph.vertices[c];
+              break;
+            }
+            // Add edge
+            graph.edges.push({
+              parent: parent,
+              child : child,
+              weight: weight,
+              starbucks: starbucks
+            });
+          }
+
+          // Add edge pointers to vertices
+          addPointer(0, [ 0,1,2 ]);
+          addPointer(1, [ 3,4 ]);
+          addPointer(2, [ 5,6 ]);
+          addPointer(3, [ 7 ]);
+          addPointer(4, [ 8 ]);
+          addPointer(5, [ 9,10,11 ]);
+          addPointer(6, [ 12,13 ]);
+          addPointer(7, [ 14 ]);
+          addPointer(8, [ 15 ]);
         }
 
-        // Finds all of the paths possible within the max time
+        // Finds all of the paths possible
+        //   within the max time
         function findPaths() {
           // The path being currently reviewed
           // A function that is called recursively
           //   to find each path
           var path, buildPaths;
 
-          // Set the recursive search function
+          // Set the recursive DFS
           // param: The current node
           // param: The current cumulative weight
           // param: Whether a starbucks currently exists
           buildPaths = function(node, weight, starbucks) {
+            // The string for the current path
             // The count of the node's edges
             // The edges index
             // The current edge's node
@@ -377,18 +474,21 @@
             }
 
             // If (node is destination)
-            // Then {add path to paths and end traversal}
+            // Then {add path to results and end traversal}
             if (node.val === end) {
-              paths.allCount++;
-              paths.starCount += (starbucks) ? 1 : 0;
-              paths.list.push('{' +
-                '<span style="display:inline-block;width:250px;margin-left:10px">' +
-                  'path: [' + path.values + ',' + end + '],' +
-                '</span>' +
-                '<span style="display:inline-block;width:180px">' +
-                  'starbucks: ' + starbucks.toString() +
-                '</span>' +
-              '}');
+
+              // Save string of path
+              path.string = '[ ' +
+                path.values.join(',') + ',' + end +
+              ']';
+
+              // Add path to final list of paths
+              paths.all.push(path.string);
+              if (starbucks) {
+                paths.starbucks.push(path.string);
+              }
+
+              // End this path traversal
               return;
             }
 
@@ -407,7 +507,7 @@
               // Set new value for starbucks
               newStarbucks = (starbucks || edge.starbucks);
               // Continue search
-              buildPaths(edge.node, newWeight, newStarbucks);
+              buildPaths(edge.child, newWeight, newStarbucks);
             }
 
             // Remove current node from path
@@ -417,11 +517,12 @@
 
           // Set path to empty
           path = {
-             nodes: [],
-            values: []
+            nodes : [],
+            values: [],
+            string: ''
           };
           // Find the paths
-          buildPaths(graph[start], 0, false);
+          buildPaths(graph.vertices[start], 0, false);
         }
 
         // Calculates the probability of passing a Starbucks
@@ -429,18 +530,52 @@
           // Divide the number of paths with starbucks
           //   by the number of all paths and round up
           //   to the nearest whole percent
-          paths.starProb = (paths.starCount / paths.allCount) * 100;
-          paths.starProb = Math.ceil(paths.starProb);
+          probability = (paths.starbucks.length / paths.all.length) * 100;
+          probability = Math.ceil(probability);
         }
 
-        // Create digraph, find paths, and return details
+        // Prepares an output for visual appeal
+        function prepareResults() {
+          // Count of paths
+          // String of paths
+          // The loop index
+          var count, string, i;
+
+          // Set count and string
+          count = {
+                  all: paths.all.length,
+            starbucks: paths.starbucks.length
+          };
+          string = {
+                  all: '<span style="display:block;margin-left:30px">' +
+                         paths.all.join('<br />') +
+                       '</span>',
+            starbucks: '<span style="display:block;margin-left:30px">' +
+                         paths.starbucks.join('<br />') +
+                       '</span>'
+          };
+
+          // Save results
+          results.push('Count of All Paths: ' + count.all);
+          results.push('Count of All Paths with Starbucks: ' + count.starbucks);
+          results.push('Probability of Passing Starbucks: ' + probability + '%');
+          results.push('List of All Paths:' + string.all);
+          results.push('List of All Paths with Starbucks:' + string.starbucks)
+
+          // Add break tags to results
+          for (i=0; i<3; i++) {
+            results[i] += '<br />';
+          }
+        }
+
+        // Create digraph, find paths,
+        //   calculate probability, and
+        //   return the prepared results
         createGraph();
         findPaths();
         calcProbability();
-        return 'Count of All Paths: ' + paths.allCount + '<br />' +
-               'Count of Paths with Starbucks: ' + paths.starCount + '<br />' +
-               'Probability of Passing Starbucks: ' + paths.starProb + '%<br />' +
-               'List of All Paths:<br />' + paths.list.join(',<br />');
+        prepareResults();
+        return results.join('');
       }
     },
     {
@@ -448,7 +583,7 @@
       complete: true,
         source: 'go',
        mainCat: [ 'hash', 'search' ],
-        subCat: [ 'dblHash', 'fnv', 'brute' ],
+        subCat: [ 'hTable', 'dblHash', 'fnv', 'brute' ],
          links: [
            {
              name: 'Further Discussion',
@@ -457,13 +592,13 @@
          ],
        problem: 'Given a table of [Url =&gt; Content] pairs produce a new table of [Url =&gt; Duplicate Urls] pairs.<br /><br />' +
                 'Example Input:<br />' +
-                'a.com =&gt; &lt;html&gt;a&lt;/html&gt;<br />' +
-                'b.com =&gt; &lt;html&gt;b&lt;/html&gt;<br />' +
-                'c.com =&gt; &lt;html&gt;c&lt;/html&gt;<br />' +
-                'd.com =&gt; &lt;html&gt;a&lt;/html&gt;<br />' +
-                'e.com =&gt; &lt;html&gt;a&lt;/html&gt;<br /><br />' +
+                'a.com =&gt; &lt;html&gt;alpha&lt;/html&gt;<br />' +
+                'b.com =&gt; &lt;html&gt;beta&lt;/html&gt;<br />' +
+                'c.com =&gt; &lt;html&gt;gamma&lt;/html&gt;<br />' +
+                'd.com =&gt; &lt;html&gt;alpha&lt;/html&gt;<br />' +
+                'e.com =&gt; &lt;html&gt;alpha&lt;/html&gt;<br /><br />' +
                 'Example Output:<br />' +
-                'a.com =&gt; [d.com, e.com]<br />' +
+                'a.com =&gt; [ d.com, e.com ]<br />' +
                 'b.com =&gt; []<br />' +
                 'c.com =&gt; []',
       solution: function() {
@@ -480,11 +615,11 @@
          *    creation the original hash table is
          *    modified (i.e. the content is replaced
          *    with its hash).
-         *  - Step 3: A brute force algorithm is
-         *    applied to visit each url and identify
-         *    other urls with the duplicate content
-         *    until all urls have been marked as unique
-         *    or duplicated.
+         *  - Step 3: An optimized brute force algorithm
+         *    is applied to visit each url and identify
+         *    any urls with the duplicate content until
+         *    all urls have been marked as unique or
+         *    duplicated.
          *
          ** Need to Know Terms:
          *  - Algorithms:
@@ -510,11 +645,11 @@
         // Adds the original list of urls
         function setupInputs() {
           // Add urls to inputs
-          inputs['a.com'] = '<html>a</html>';
-          inputs['b.com'] = '<html>b</html>';
-          inputs['c.com'] = '<html>c</html>';
-          inputs['d.com'] = '<html>a</html>';
-          inputs['e.com'] = '<html>a</html>';
+          inputs['a.com'] = '<html>alpha</html>';
+          inputs['b.com'] = '<html>beta</html>';
+          inputs['c.com'] = '<html>gamma</html>';
+          inputs['d.com'] = '<html>alpha</html>';
+          inputs['e.com'] = '<html>alpha</html>';
         }
 
         // Hashes a string with the FNV-1a hash algorithm
@@ -673,7 +808,7 @@
           // Add each url to the results array
           for (url in duplicates) {
             if ( duplicates.hasOwnProperty(url) ) {
-              results.push(url + ' => [' + duplicates[url].join(',') + ']');
+              results.push(url + ' => [ ' + duplicates[url].join(',') + ' ]');
             }
           }
         }
@@ -692,8 +827,8 @@
       // Question: 4
       complete: true,
         source: 'go',
-       mainCat: [ 'search', 'tree', 'graph' ],
-        subCat: [ 'brute', 'back', 'dfs', 'trie', 'digraph', 'adjList' ],
+       mainCat: [ 'search', 'tree', 'graph', 'array' ],
+        subCat: [ 'brute', 'back', 'dfs', 'trie', 'digraph', 'adjList', 'hTable' ],
          links: [
            {
              name: 'Further Discussion',
@@ -702,15 +837,23 @@
          ],
        problem: 'You are given a string of four lower case characters and a dictionary of english words. Choose a data structure to represent the dictionary and write an algorithm that returns all the words from the dictionary that can be formed by the characters of the string.<br />' +
                 'Example:<br />' +
-                'string = \'ogeg\'<br />' +
-                'words = [ \'go\',\'egg\',\'ego\', ... ]',
+                'string = \'dane\'<br />' +
+                'words = [ \'d\',\'da\',\'dan\' ]',
       solution: function() {
         /*
          ** Solution:
          *  - Step 1: A json dictionary of English words is
          *    downloaded for use via ajax.
          *  - Step 2: A brute force algorithm is used to
-         *    create a trie of the words from the dictionary.
+         *    create a trie of only the words from the
+         *    dictionary that have a max of 4 characters
+         *    and begin with a letter from the given string.
+         *    A hash table with the key set to the current
+         *    substring and the value set to a node
+         *    containing a boolean value for whether the
+         *    substring is a word, the string value of the
+         *    substring, and an array of references to its
+         *    child nodes.
          *  - Step 3: An arborescence is constructed for all
          *    of the characters in the supplied string.
          *  - Step 4: A backtracking algorithm is used to
@@ -727,6 +870,8 @@
          *    -- Arborescence: http://en.wikipedia.org/wiki/Arborescence_(graph_theory)
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Adjacency List: http://en.wikipedia.org/wiki/Adjacency_list
+         *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          *
          ** Copyright Notice:
          *  - The list of English words used to create the test data
@@ -738,67 +883,87 @@
          */
 
         // A list of English words for this test
+        // An array of all the string's unique letters
         // A trie of words with a max length of 4
         //   characters and starting with each of
         //   the string's characters
         // The input string
         // The arborescence of the string's characters
         // The resulting possible words from the string
-        var words, wordTrie, string, graph, results;
+        var words, letters, wordTrie, string, graph, results;
 
         // Setup variables
         words    = {};
+        letters  = {
+          all   : [],
+          unique: []
+        }
         wordTrie = {};
         string   = 'dane';
         graph    = {};
         results  = [];
 
-        // Create the trie of words
-        function createWordTrie() {
-          // The supplied string
+        // Removes string's duplicate letters
+        function setLetters() {
+          // A copy of the letters array
           // The current letter
           // The index of the last duplicate letter
-          var theString, letter, lastDupl;
+          var copy, letter, lastDupl;
 
-          // Save a copy of the string as an array
-          theString = string.split('');
-          theString.sort();
+          // Set and sort letters array copy
+          letters.all = string.split('');
+          copy = letters.all.slice(0);
+          copy.sort();
 
-          // Loop through characters
-          while (theString.length > 0) {
+          // Remove duplicates
+          while (copy.length > 0) {
 
-            // Save letter and remove letter from string
-            letter = theString.shift();
+            // Save letter and remove letter from copy
+            letter = copy.shift();
             // Save index of last duplicate
-            lastDupl = theString.lastIndexOf(letter);
-            // If (letter duplicates exist in string)
+            lastDupl = copy.lastIndexOf(letter);
+            // If (duplicates exist)
             // Then {remove each one}
             if (lastDupl !== -1) {
-              theString.splice(0, lastDupl);
+              copy.splice(0, lastDupl);
             }
-            // Add a branch to the trie
-            addTrieBranch(letter);
+            // Add letter to unique list
+            letters.unique.push(letter);
+          }
+        }
+
+        // Create the trie of words
+        function createWordTrie() {
+          // The count of unique letters
+          // The letter index
+          var len, i;
+
+          // Save the letters count
+          len = letters.unique.length;
+          // Add a branch to the trie for each letter
+          for (i=0; i<len; i++) {
+            addTrieBranch(letters.unique[i]);
           }
         }
 
         // Adds a branch to the root of trie
-        // param: the letter branch to create
+        // param: the starting value of the branch
         function addTrieBranch(letter) {
           // The word loop index
           // The count of words
           // The current word
           // The current word length
-          // An array of the word's characters
-          // The character loop index
-          var i, wordsLen, word, wordLen, characters, c;
+          // The substring loop index
           // The last character index
-          // The current string of characters
-          // The current character
-          var last, current, character;
+          var i, wordsLen, word, wordLen, c, last;
+          // The previous word substring
+          // The new word substring
+          var parent, child;
           
           // Add branch to trie
           wordTrie[letter] = {
             isWord: false,
+             value: letter,
               kids: []
           };
           // Save words length
@@ -825,36 +990,28 @@
 
                 // Save last index
                 last = wordLen - 1;
-                // Create array of characters
-                characters = word.split('');
-                // Save current string of characters
-                current = letter;            
-
-                // Loop through remaining characters
+                // Save child start
+                child = letter;
+                // Loop through the word's characters
                 for (c=1; c<=last; c++) {
 
-                  // Save current character
-                  character = characters[c];
-                  // If (character not in parent's list of kids)
-                  // Then {add character}
-                  if (wordTrie[current].kids.indexOf(character) === -1) {
-                    wordTrie[current].kids.push(character);
-                  }
-                  // Update current string
-                  current += character;
-                  // If (current string does not exist)
+                  // Save current string
+                  parent = child;
+                  child  = string.substring(0, c);
+
+                  // If (child does not exist)
                   // Then {add to trie}
                   // Else {update isWord}
-                  if (typeof wordTrie[current] === 'undefined') {
-                    wordTrie[current] = {
+                  if (typeof wordTrie[child] === 'undefined') {
+                    wordTrie[child] = {
                       isWord: (c === last),
+                       value: child,
                         kids: []
                     };
+                    wordTrie[parent].kids.push(wordTrie[child]);
                   }
                   else {
-                    wordTrie[current].isWord = ( (wordTrie[current].isWord) ?
-                      true : (c === last)
-                    );
+                    wordTrie[child].isWord = wordTrie[child].isWord || (c === last);
                   }
                 }
               }
@@ -864,38 +1021,46 @@
 
         // Create arborescence for the supplied string
         function createGraph() {
-          // The supplied string as an array
-          // The first loop index
-          // The current list
-          // The second loop index
-          // The remaining characters
-          var theString, i, list, x, remain;
+          // A function to add the letter nodes
+          var addKids;
 
-          // Set the variables
-          theString = string.split('');
+          // Adds each letter's child nodes recursively
+          // param: parent node
+          // param: the remaining list
+          addKids = function(node, list) {
+            // The count of the remaining letters
+            // The loop index
+            // The new substring
+            // The child node
+            // The newList copy
+            var len, i, word, child, copy;
 
-          // Loop through characters
-          for (i=0; i<4; i++) {
+            // Set count
+            len = list.length;
+            // For each remaining letter
+            for (i=0; i<len; i++) {
 
-            // Add character to graph
-            graph[theString[i]] = {};
-            // Save current list
-            list = theString.slice(0);
-            list.splice(i, 1);
-            
-            // Loop through remaining characters
-            for (x=0; x<3; x++) {
+              // Save new value and child
+              word  = node.val + list[i];
+              child = { val: word, kids: [] };
+              // Add child to parent
+              node.kids.push(child);
+              // If (remaining letters)
+              if (len > 1) {
 
-              // Add character to children
-              graph[theString[i]][list[x]] = {};
-              // Save remaining characters
-              remain = list.slice(0);
-              remain.splice(x, 1);
-              // Add remaining children to graph
-              graph[theString[i]][list[x]][remain[0]] = remain[1];
-              graph[theString[i]][list[x]][remain[1]] = remain[0];
+                // Save modified list
+                copy = list.slice(0);
+                copy.splice(i, 1);
+                // Call recursive function
+                addKids(child, copy);
+              }
             }
           }
+
+          // Setup graph base
+          graph = { val: '', kids: [] };
+          // Add branches
+          addKids(graph, letters.all);
         }
 
         // Finds all of the possible words resulting from the string
@@ -905,54 +1070,32 @@
 
           // Recursively backtrack to find words
           // param: The current node
-          // param: The current word to be checked
-          backtrack = function(node, word) {
-            // The child node
-            // The new word
-            var child, newWord;
+          backtrack = function(node) {
+            // The count of children
+            // The loop index
+            // The current child
+            var len, i, child;
 
-            // If (word is undefined)
-            // Then {set to empty string}
-            word = word || '';
+            // Set count
+            len = node.kids.length;
+            // Loop through children
+            for (i=0; i<len; i++) {
 
-            // Loop through string
-            for (child in node) {
-              // Filter out default javascript properties
-              if ( node.hasOwnProperty(child) ) {
+              // Set child node
+              child = node.kids[i];
 
-                // Add character to create new word
-                newWord = word + child;
+              // If (partial word exists)
+              // Then {continue search}
+              if (!!wordTrie[child.val]) {
 
-                // If (partial word exists)
-                // Then {continue search}
-                if (typeof wordTrie[newWord] === 'object') {
-
-                  // If (partial word is complete)
-                  // Then {add word to results}
-                  if (wordTrie[newWord].isWord) {
-                    results.push(newWord);
-                  }
-
-                  // If (child has children)
-                  // Then {repeat backtrack}
-                  // Else {modify and check word}
-                  if (typeof node[child] === 'object') {
-                    backtrack(node[child], newWord);
-                  }
-                  else {
-                    // Verify error has not occurred
-                    if (typeof node[child] === 'string') {
-
-                      // Add child to word and check again
-                      newWord += node[child];
-                      if (typeof wordTrie[newWord] === 'object') {
-                        if (wordTrie[newWord].isWord) {
-                          results.push(newWord);
-                        }
-                      }
-                    }
-                  }
+                // If (partial word is complete)
+                // Then {add word to results}
+                if (wordTrie[child.val].isWord) {
+                    results.push(child.val);
                 }
+
+                // Continue DFS
+                backtrack(child);
               }
             }
           }
@@ -983,6 +1126,7 @@
         //   characters, find the possible words, and
         //   return the results
         makeAjaxCall();
+        setLetters();
         createWordTrie();
         createGraph();
         findWords();
@@ -995,7 +1139,6 @@
         source: 'bl',
        mainCat: [ 'search', 'graph' ],
         subCat: [ 'dfs', 'digraph', 'adjList' ],
-
          links: [
            {
              name: 'Further Discussion',
@@ -1015,7 +1158,8 @@
          *    are not duplicated (i.e. the possible
          *    arborescence roots).
          *  - Step 2: The two possible root nodes are
-         *    checked to identify the correct root node.
+         *    checked, and the node that is not the
+         *    root is removed from the array.
          *  - Step 3: One pass of a DFS algorithm is
          *    executed to print the path of the nodes.
          *
@@ -1096,7 +1240,7 @@
 
             // If (node not in graph)
             // Then {remove it from roots}
-            if (typeof graph[roots[i]] === 'undefined') {
+            if (typeof graph[ roots[i] ] === 'undefined') {
               roots.splice(i, 1);
             }
           }
@@ -1109,7 +1253,7 @@
           var next, node;
 
           // Set next to root node
-          next = [roots[0]];
+          next = [ roots[0] ];
 
           // Run DFS
           while (next.length > 0) {

@@ -37,10 +37,12 @@
    */
   var categories = {
     main: {
+      'array' : 'Arrays',
       'graph' : 'Graphs',
-      'hash'  : 'Hash Tables',
-      'search': 'Searching Algorithms',
-      'sort'  : 'Sorting Algorithms',
+      'hash'  : 'Hashes',
+      'lists' : 'Linked Lists',
+      'search': 'Searching',
+      'sort'  : 'Sorting',
       'tree'  : 'Trees'
     },
     sub: {
@@ -54,7 +56,12 @@
       },
       'hash': {
         'dblHash': 'Double Hashing',
-        'fnv'    : 'FNV Hashes'
+        'fnv'    : 'FNV Hashes',
+        'hTable' : 'Hash Tables'
+      },
+      'lists': {
+        'sList': 'Singly-Linked Lists',
+        'dList': 'Doubly-Linked Lists'
       },
       'search': {
         'back'   : 'Backtracking',
