@@ -89,8 +89,8 @@
       'graph' : 'Graphs',
       'hash'  : 'Hashes',
       'lists' : 'Linked Lists',
-      'search': 'Searching',
-      'sort'  : 'Sorting',
+      'search': 'Searching Algorithms',
+      'sort'  : 'Sorting Algorithms',
       'tree'  : 'Trees'
     },
     sub: {
@@ -104,7 +104,7 @@
       },
       'hash': {
         'dblHash': 'Double Hashing',
-        'fnv'    : 'FNV Hashes',
+        'fnv'    : 'FNV Hash Algorithms',
         'hTable' : 'Hash Tables'
       },
       'lists': {
@@ -116,7 +116,8 @@
         'binSrch': 'Binary Search',
         'bfs'    : 'Breadth First Search',
         'brute'  : 'Brute Force Search',
-        'dfs'    : 'Depth First Search'
+        'dfs'    : 'Depth First Search',
+        'dynam'  : 'Dynamic Programming'
       },
       'sort': {
         'bucket': 'Bucket Sort',
@@ -262,7 +263,7 @@
       complete: true,
         source: 'am',
        mainCat: [ 'search', 'graph', 'array' ],
-        subCat: [ 'back', 'dfs', 'digraph', 'incList' ],
+        subCat: [ 'back', 'dynam', 'dfs', 'digraph', 'incList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -281,17 +282,19 @@
          *    its weight, Starbuck's value, and a reference
          *    to each of its connecting nodes) is used to
          *    implement the digraph.
-         *  - Step 2: A recursive backtracking DFS algorithm
-         *    is applied to traverse the digraph and find
-         *    all of the paths possible to the destination
-         *    within the provided maximum time frame and
-         *    whether a Starbucks was passed on each path.
+         *  - Step 2: A recursive dynamic backtracking DFS
+         *    algorithm is applied to traverse the digraph
+         *    and find all of the paths possible to the
+         *    destination within the provided maximum time
+         *    frame and whether a Starbucks was passed on
+         *    each path.
          *  - Step 3: The probability of passing a Starbucks
          *    is calculated.
          *
          ** Need to Know Terms:
          *  - Algorithms:
          *    -- Backtracking: http://en.wikipedia.org/wiki/Backtracking
+         *    -- Dynamic Programming: http://en.wikipedia.org/wiki/Dynamic_programming
          *    -- Depth First Search (DFS): http://en.wikipedia.org/wiki/Depth-first_search
          *  - Data Structures:
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
@@ -307,7 +310,7 @@
         // The final paths
         // The probability of passing a Starbucks
         // The visually prepared final results
-        var graph, start, end, max, paths, probability, results;
+        var graph, start, end, max, paths, prob, results;
 
         // Set variables
         graph = {
@@ -318,11 +321,21 @@
         end   =  9;
         max   = 50;
         paths = {
-                all: [],
-          starbucks: []
+          list: [],
+          starbucks: 0
         };
-        probability = 0;
-        results = [];
+        prob  = 0;
+        results = {
+          count: {
+            all: '',
+            starbucks: ''
+          },
+          prob: '',
+          paths: {
+            all: '',
+            starbucks: ''
+          }
+        };
 
         // Creates the weighted digraph
         function createGraph() {
@@ -480,13 +493,15 @@
               // Save string of path
               path.string = '[ ' +
                 path.values.join(',') + ',' + end +
-              ']';
+              ' ]';
 
               // Add path to final list of paths
-              paths.all.push(path.string);
-              if (starbucks) {
-                paths.starbucks.push(path.string);
-              }
+              paths.list.push({
+                val: path.string,
+                starbucks: starbucks
+              });
+              // Adjust count of Starbucks paths
+              paths.starbucks += (starbucks) ? 1 : 0;
 
               // End this path traversal
               return;
@@ -530,42 +545,56 @@
           // Divide the number of paths with starbucks
           //   by the number of all paths and round up
           //   to the nearest whole percent
-          probability = (paths.starbucks.length / paths.all.length) * 100;
-          probability = Math.ceil(probability);
+          prob = (paths.starbucks / paths.list.length) * 100;
+          prob = Math.ceil(prob);
         }
 
         // Prepares an output for visual appeal
         function prepareResults() {
-          // Count of paths
-          // String of paths
+          // The count of paths
+          // The first Starbucks path flag
           // The loop index
-          var count, string, i;
+          var len, flag, i;
 
-          // Set count and string
-          count = {
-                  all: paths.all.length,
-            starbucks: paths.starbucks.length
-          };
-          string = {
-                  all: '<span style="display:block;margin-left:30px">' +
-                         paths.all.join('<br />') +
-                       '</span>',
-            starbucks: '<span style="display:block;margin-left:30px">' +
-                         paths.starbucks.join('<br />') +
-                       '</span>'
-          };
+          // Save count of paths
+          len = paths.list.length;
+          
+          // Set count results
+          results.count.all = 'Count of All Paths: ' + len + '<br />';
+          results.count.starbucks  = 'Count of All Paths with Starbucks: ';
+          results.count.starbucks += paths.starbucks + '<br />';
 
-          // Save results
-          results.push('Count of All Paths: ' + count.all);
-          results.push('Count of All Paths with Starbucks: ' + count.starbucks);
-          results.push('Probability of Passing Starbucks: ' + probability + '%');
-          results.push('List of All Paths:' + string.all);
-          results.push('List of All Paths with Starbucks:' + string.starbucks)
+          // Set probability result
+          results.prob = 'Probability of Passing Starbucks: ' + prob + '%<br />';
 
-          // Add break tags to results
-          for (i=0; i<3; i++) {
-            results[i] += '<br />';
+          // Set path result headers
+          results.paths.all = 'List of All Paths:';
+          results.paths.starbucks = 'List of All Paths with Starbucks:';
+          // Set path result containers
+          results.paths.all += '<span style="display:block;margin-left:30px">';
+          results.paths.starbucks += '<span style="display:block;margin-left:30px">';
+          // Set first Starbucks flag
+          flag = true;
+          // Set path results
+          for (i=0; i<len; i++) {
+            results.paths.all += (i > 0) ? '<br />' : '';
+            results.paths.all += paths.list[i].val;
+            if (paths.list[i].starbucks) {
+              // If (first path with Starbucks)
+              // Then {change flag}
+              // Else {add line break}
+              if (flag) {
+                flag = false;
+              }
+              else {
+                results.paths.starbucks += '<br />';
+              }
+              results.paths.starbucks += paths.list[i].val;
+            }
           }
+          // Close path result containers
+          results.paths.all += '</span>';
+          results.paths.starbucks += '</span>';
         }
 
         // Create digraph, find paths,
@@ -575,7 +604,8 @@
         findPaths();
         calcProbability();
         prepareResults();
-        return results.join('');
+        return results.count.all + results.count.starbucks +
+        results.prob + results.paths.all + results.paths.starbucks;
       }
     },
     {
@@ -625,7 +655,7 @@
          *  - Algorithms:
          *    -- FNV Hash Algorithm: http://www.isthe.com/chongo/tech/comp/fnv/
          *    -- Double Hashing: http://en.wikipedia.org/wiki/Double_hashing
-         *    -- Brute Force: http://en.wikipedia.org/wiki/Brute-force_search
+         *    -- Brute Force Search: http://en.wikipedia.org/wiki/Brute-force_search
          *  - Data Structures:
          *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
          */
@@ -827,7 +857,7 @@
       // Question: 4
       complete: true,
         source: 'go',
-       mainCat: [ 'search', 'tree', 'graph', 'array' ],
+       mainCat: [ 'search', 'tree', 'graph', 'hash', 'array' ],
         subCat: [ 'brute', 'back', 'dfs', 'trie', 'digraph', 'adjList', 'hTable' ],
          links: [
            {
@@ -853,7 +883,7 @@
          *    containing a boolean value for whether the
          *    substring is a word, the string value of the
          *    substring, and an array of references to its
-         *    child nodes.
+         *    child nodes is used to represent the trie.
          *  - Step 3: An arborescence is constructed for all
          *    of the characters in the supplied string.
          *  - Step 4: A backtracking algorithm is used to
@@ -862,7 +892,7 @@
          *
          ** Need to Know Terms:
          *  - Algorithms:
-         *    -- Brute Force: http://en.wikipedia.org/wiki/Brute-force_search
+         *    -- Brute Force Search: http://en.wikipedia.org/wiki/Brute-force_search
          *    -- Backtracking: http://en.wikipedia.org/wiki/Backtracking
          *    -- Depth First Search (DFS): http://en.wikipedia.org/wiki/Depth-first_search
          *  - Data Structures:
@@ -884,7 +914,7 @@
 
         // A list of English words for this test
         // An array of all the string's letters and an
-        //   indicator of whether duplicates exist
+        //   indicator of how many duplicates exist
         // A trie of words with a max length of 4
         //   characters and starting with each of
         //   the string's characters
@@ -1150,8 +1180,8 @@
       // Question: 5
       complete: true,
         source: 'bl',
-       mainCat: [ 'search', 'graph' ],
-        subCat: [ 'dfs', 'digraph', 'adjList' ],
+       mainCat: [ 'search', 'graph', 'hash', 'array' ],
+        subCat: [ 'dfs', 'brute', 'digraph', 'adjList', 'hTable' ],
          links: [
            {
              name: 'Further Discussion',
@@ -1165,24 +1195,34 @@
       solution: function() {
         /*
          ** Solution:
-         *  - Step 1: An arborescence of the node list
-         *    is created while simultaneously building
-         *    an array containing the two nodes that
-         *    are not duplicated (i.e. the possible
-         *    arborescence roots).
-         *  - Step 2: The two possible root nodes are
-         *    checked, and the node that is not the
-         *    root is removed from the array.
+         *  - Step 1: A brute force search algorithm is
+         *    used to create an arborescence of the nodes
+         *    in a vector while simultaneously building
+         *    an array containing the two node values
+         *    that are not duplicated (i.e. the
+         *    possible arborescence roots). A hash
+         *    table with a key set to the location
+         *    string and a value set to a node
+         *    containing the location string and edge
+         *    references is used to represent the
+         *    arborescence.
+         *  - Step 2: The two possible root node
+         *    values are checked, and the node value
+         *    that is not the root is removed from the
+         *    array.
          *  - Step 3: One pass of a DFS algorithm is
-         *    executed to print the path of the nodes.
+         *    used to print the path of the nodes.
          *
          ** Need to Know Terms:
          *  - Algorithms:
+         *    -- Brute Force Search: http://en.wikipedia.org/wiki/Brute-force_search
          *    -- Depth First Search (DFS): http://en.wikipedia.org/wiki/Depth-first_search
          *  - Data Structures:
          *    -- Arborescence: http://en.wikipedia.org/wiki/Arborescence_(graph_theory)
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Adjacency List: http://en.wikipedia.org/wiki/Adjacency_list
+         *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
         // Original node list
@@ -1195,65 +1235,85 @@
         vector = [ 'JFK','LXA','SNA','RKJ','LXA','SNA' ];
         graph  = {};
         roots  = [];
-        result = '';
+        result = [];
 
         // Adds unique node keys to the roots list
         //   and removes duplicates
-        // param: node to check
-        function addRoot(node) {
+        // param: node value to check
+        function addRoot(nodeVal) {
           // Index of node in roots array
           var i;
 
           // Save node index
-          i = roots.indexOf(node);
+          i = roots.indexOf(nodeVal);
 
-          // If (node is not in roots)
+          // If (node value is not in roots)
           // Then {add to roots}
           // Else {remove from roots}
           if (i === -1) {
-            roots.push(node);
+            roots.push(nodeVal);
           }
           else {
             roots.splice(i, 1);
           }
+
+          return (i === -1);
         }
 
         // Creates an arborescence of the nodes
         function createGraph() {
           // The vector length
           // The loop index
-          // The current node
-          // The current edge
-          var len, i, node, edge;
+          // The current node value
+          // Indicates whether to add new node
+          // The vertex node
+          // The edge node
+          var len, i, nodeVal, check, vertex, edge;
 
           // Save vector length
           len = vector.length;
 
-          // Loop through the vector
-          for (i=0; i<len; i+=2) {
+          // Add nodes
+          for (i=0; i<len; i++) {
 
-            // Save node and edge
-            node = vector[i];
-            edge = vector[i + 1];
-            // Add nodes to roots
-            addRoot(node);
-            addRoot(edge);
-            // Add node to arborescence
-            graph[node] = edge;
+            // Set and check node value
+            nodeVal = vector[i];
+            check   = addRoot(nodeVal);
+            // If (node value does not exist)
+            // Then {add node}
+            if (check) {
+              graph[nodeVal] = {
+                value: nodeVal,
+                edges: []
+              }
+            }
+          }
+
+          // Add edges
+          for (i=0; i<len; i++) {
+
+            // Set vertex and edge
+            vertex = graph[ vector[i] ];
+            edge   = graph[ vector[++i] ];
+            // Add edge to vertex
+            vertex.edges.push(edge);
           }
         }
 
         // Finds the root node
         function findRoot() {
-          // Loop index
-          var i;
+          // The loop index
+          // The current node
+          var i, node;
 
           // Loop through roots
-          for (i=0; i<2; ++i) {
+          for (i=0; i<2; i++) {
 
-            // If (node not in graph)
+            // Save node reference
+            node = graph[ roots[i] ];
+            // If (node does not have an edge)
             // Then {remove it from roots}
-            if (typeof graph[ roots[i] ] === 'undefined') {
+            if (node.edges.length === 0) {
               roots.splice(i, 1);
             }
           }
@@ -1261,26 +1321,26 @@
 
         // Finds the resulting path
         function findPath() {
-          // The next node
           // The current node
-          var next, node;
+          // The count of edges
+          var node, edges;
 
-          // Set next to root node
-          next = [ roots[0] ];
+          // Set node to root node
+          node = graph[ roots[0] ];
 
           // Run DFS
-          while (next.length > 0) {
+          while (!!node) {
 
-            // Save current node
-            node = next.pop();
-            // Add current node to final path
-            result += node;
-            // If (next node exists)
-            // Then {add arrow to path and set next node}
-            if (typeof graph[node] !== 'undefined') {
-              result += ' -&gt; ';
-              next.push(graph[node]);
-            }
+            // Add current node value to results
+            result.push(node.value);
+            // Save count of edges
+            edges = node.edges.length;
+            // If (node has edge)
+            // Then {set next node to edge}
+            // Else {end loop}
+            node = ( (edges > 0) ?
+              node.edges[0] : !node
+            );
           }
         }
 
@@ -1290,7 +1350,7 @@
         createGraph();
         findRoot();
         findPath();
-        return result;
+        return result.join(' -&gt; ');
       }
     },
     {

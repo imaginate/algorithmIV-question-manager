@@ -41,8 +41,8 @@
       'graph' : 'Graphs',
       'hash'  : 'Hashes',
       'lists' : 'Linked Lists',
-      'search': 'Searching',
-      'sort'  : 'Sorting',
+      'search': 'Searching Algorithms',
+      'sort'  : 'Sorting Algorithms',
       'tree'  : 'Trees'
     },
     sub: {
@@ -56,7 +56,7 @@
       },
       'hash': {
         'dblHash': 'Double Hashing',
-        'fnv'    : 'FNV Hashes',
+        'fnv'    : 'FNV Hash Algorithms',
         'hTable' : 'Hash Tables'
       },
       'lists': {
@@ -68,7 +68,8 @@
         'binSrch': 'Binary Search',
         'bfs'    : 'Breadth First Search',
         'brute'  : 'Brute Force Search',
-        'dfs'    : 'Depth First Search'
+        'dfs'    : 'Depth First Search',
+        'dynam'  : 'Dynamic Programming'
       },
       'sort': {
         'bucket': 'Bucket Sort',
