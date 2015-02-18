@@ -40,7 +40,7 @@
       'array' : 'Arrays',
       'graph' : 'Graphs',
       'hash'  : 'Hashes',
-      'lists' : 'Linked Lists',
+      'list'  : 'Linked Lists',
       'search': 'Searching Algorithms',
       'sort'  : 'Sorting Algorithms',
       'tree'  : 'Trees'
@@ -59,7 +59,7 @@
         'fnv'    : 'FNV Hash Algorithms',
         'hTable' : 'Hash Tables'
       },
-      'lists': {
+      'list': {
         'sList': 'Singly-Linked Lists',
         'dList': 'Doubly-Linked Lists'
       },
@@ -81,9 +81,11 @@
         'select': 'Select Sort'
       },
       'tree': {
+        'binHeap': 'Binary Heaps',
         'binTree': 'Binary Trees',
         'bst'    : 'Binary Search Trees',
-        'heap'   : 'Heaps',
+        'bnmHeap': 'Binomial Heaps',
+        'fibHeap': 'Fibonacci Heaps',
         'red'    : 'Red-Black Trees',
         'splay'  : 'Splay Trees',
         'trie'   : 'Tries'
