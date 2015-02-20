@@ -665,10 +665,10 @@ body {
 #aIV code .misc       { color:#000000 } /* Black */
 #aIV code .definingKeyword { color:#683804 } /* Brown */
 #aIV code .reservedKeyword { color:#0909db } /* Blue */
-#aIV code .nativeKeyword   { color:#37b2d6 } /* Light Blue */
-#aIV code .valueKeyword    { color:#c50889 } /* Pink */
-#aIV code .clientKeyword   { color:#c50889 } /* Pink */
-#aIV code .jqueryKeyword   { color:#c50889 } /* Pink */
+#aIV code .nativeKeyword   { color:#37b2d6 } /* Light Blue-Green */
+#aIV code .valueKeyword    { color:#db0d9a } /* Pink */
+#aIV code .clientKeyword   { color:#7d0bde } /* Purple */
+#aIV code .jqueryKeyword   { color:#7d0bde } /* Purple */
 
 #aIV code span { font-weight:600 }
 #aIV code .comment { font-weight:500 }
