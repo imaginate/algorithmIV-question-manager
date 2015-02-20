@@ -6079,7 +6079,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add comment span
-        newLine[i] = '<span class="comment">/';
+        newLine[i] = '<span class="cmt">/';
         // Move index to end of comment
         i = skipComment(++i);
         // If (comment not closed by line end)
@@ -6119,8 +6119,8 @@
         );
         // Add comment span to line start
         newLine[i] = ( (line[i] === '*') ?
-          ' <span class="comment">*' :
-          '<span class="comment">' + line[i]
+          ' <span class="cmt">*' :
+          '<span class="cmt">' + line[i]
         );
         // If (start is a comment end)
         // Then {update line and return next index}
@@ -6171,7 +6171,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add comment span
-        newLine[i] = '<span class="comment">/';
+        newLine[i] = '<span class="cmt">/';
         // Moves index to line end
         i = len - 1;
         // Add closing span
@@ -6201,7 +6201,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add string span
-        newLine[i] = '<span class="string">' + line[i];
+        newLine[i] = '<span class="str">' + line[i];
         // Move index to end of string
         i = skipString(i);
         // Add close span
@@ -6233,7 +6233,7 @@
         // Declare method variables
         var u;
         // Add regex span
-        newLine[i] = '<span class="regex">/';
+        newLine[i] = '<span class="rgx">/';
         // Move index to the closing forward slash
         i = skipString(i);
         // Start empty array to contain
@@ -6289,7 +6289,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add space span
-        newLine[i] = '<span class="space"> ';
+        newLine[i] = '<span class="spc"> ';
         // Move index to end of space sequence
         i = skipSpace(i);
         // Add close span
@@ -6319,7 +6319,7 @@
         );
         // Add bracket spans
         newLine[i] = '' +
-        '<span class="bracket">' +
+        '<span class="brc">' +
           line[i] +
         '</span>';
         // Return index
@@ -6354,7 +6354,7 @@
         );
         // Add operator spans
         newLine[i] = '' +
-        '<span class="operator">' +
+        '<span class="opr">' +
           sanitized +
         '</span>';
         // Return index
@@ -6381,7 +6381,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add comma spans
-        newLine[i] = '<span class="comma">,</span>';
+        newLine[i] = '<span class="cmm">,</span>';
         // Return index
         return i;
       }
@@ -6406,7 +6406,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add semicolon spans
-        newLine[i] = '<span class="semicolon">;</span>';
+        newLine[i] = '<span class="smc">;</span>';
         // Return index
         return i;
       }
@@ -6431,7 +6431,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add colon spans
-        newLine[i] = '<span class="colon">:</span>';
+        newLine[i] = '<span class="cln">:</span>';
         // Return index
         return i;
       }
@@ -6456,7 +6456,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add period spans
-        newLine[i] = '<span class="period">.</span>';
+        newLine[i] = '<span class="per">.</span>';
         // Return index
         return i;
       }
@@ -6482,7 +6482,7 @@
           'Note: Incorrect argument operand.'
         );
         // Add number span
-        newLine[i] = '<span class="number">' + line[i];
+        newLine[i] = '<span class="num">' + line[i];
         // Move index to end of number
         i = skipNumber(i);
         // Add close span
@@ -6532,7 +6532,7 @@
           }
         }
         // Set class name and add span
-        keyClass = keyClass || 'identifier';
+        keyClass = keyClass || 'idt';
         newLine[i] = '<span class="' + keyClass + '">' + line[i];
         // Add close span
         newLine[identifier.index] += '</span>';
@@ -6561,7 +6561,7 @@
         );
         // Add misc spans
         newLine[i] = '' +
-        '<span class="misc">' +
+        '<span class="msc">' +
           line[i] +
         '</span>';
         // Return index
