@@ -1,5 +1,5 @@
 ##Algorithm IV Web Worker Structure (v1.0.0)
-####An outline of all the variables, methods, and classes contained within the [Algorithm IV Web Worker](https://github.com/imaginate/SalgorithmIV/blob/master/src/algorithmIVData.js#L470-2208).
+####An outline of all the variables, methods, and classes contained within the [Algorithm IV Web Worker](https://github.com/imaginate/SalgorithmIV/blob/master/src/algorithmIVData.js#L123-136).
 
 
 ##Web Worker Overview
@@ -43,7 +43,7 @@ Public Methods     | Private Variables  | Private Methods
 init               | newLine            | _init
                    | line               | setLine
                    | len                | sanitizeCharacter
-                   |                    | skipComment
+                   | router             | skipComment
                    |                    | skipString
                    |                    | skipSpace
                    |                    | skipNumber

@@ -20,8 +20,8 @@ init               | DEBUG              | getID              | [InitializeModule
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
-                   | setRoot
                    | setScrollbar
+                   | setPrettyCode
                    | appendMain
                    | appendNav
                    | appendError
@@ -151,7 +151,7 @@ Public Methods     | Private Variables  | Private Methods
 init               | newLine            | _init
                    | line               | setLine
                    | len                | sanitizeCharacter
-                   |                    | skipComment
+                   | router             | skipComment
                    |                    | skipString
                    |                    | skipSpace
                    |                    | skipNumber

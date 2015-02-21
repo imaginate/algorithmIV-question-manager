@@ -1,4 +1,4 @@
-/* Algorithm IV (v1.0.0) (learn@algorithmiv.com)
+/* Algorithm IV (v1.0.1) (learn@algorithmiv.com)
  * Section: CSS Style Guide
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
@@ -649,30 +649,53 @@ body {
  * New Section:
  * ------------------------------- *
  * Syntax Highlighting
+ * ------------------------------- *
+ * ------------------------------- *
+ * ------------------------------- *
+ * Class Guidelines:
+ * ------------------------------- *
+ * cmt = Comments
+ * rgx = Regular Expressions
+ * str = Strings
+ * brc = Brackets
+ * opr = Operators
+ * cmm = Commas
+ * smc = Semicolons
+ * cln = Colons
+ * per = Periods
+ * num = Numbers
+ * idt = Identifiers (that are not keywords)
+ * msc = Miscellaneous
+ * defKey = Defining Keywords (i.e. class, var, ...)
+ * resKey = Reserved Keywords
+ * natKey = Native Keywords
+ * valKey = Value Keywords (i.e. null, true, ...)
+ * cliKey = Client Keywords
+ * jquKey = jQuery Keywords
  * ------------------------------- */
 
-#aIV code .comment    { color:#999999 } /* Grey */
-#aIV code .regex      { color:#107b04 } /* Green */
-#aIV code .string     { color:#107b04 } /* Green */
-#aIV code .bracket    { color:#0909db } /* Blue */
-#aIV code .operator   { color:#f70a0a } /* Light Red */
-#aIV code .comma      { color:#0909db } /* Blue */
-#aIV code .semicolon  { color:#0909db } /* Blue */
-#aIV code .colon      { color:#ac9a07 } /* Dark Yellow */
-#aIV code .period     { color:#0909db } /* Blue */
-#aIV code .number     { color:#bc1a1a } /* Dark Red */
-#aIV code .identifier { color:#000000 } /* Black */
-#aIV code .misc       { color:#000000 } /* Black */
-#aIV code .definingKeyword { color:#683804 } /* Brown */
-#aIV code .reservedKeyword { color:#0909db } /* Blue */
-#aIV code .nativeKeyword   { color:#37b2d6 } /* Light Blue */
-#aIV code .valueKeyword    { color:#c50889 } /* Pink */
-#aIV code .clientKeyword   { color:#c50889 } /* Pink */
-#aIV code .jqueryKeyword   { color:#c50889 } /* Pink */
+#aIV code .cmt { color:#999999 } /* Grey */
+#aIV code .rgx { color:#107b04 } /* Green */
+#aIV code .str { color:#107b04 } /* Green */
+#aIV code .brc { color:#0909db } /* Deep Blue */
+#aIV code .opr { color:#f70a0a } /* Light Red */
+#aIV code .cmm { color:#0909db } /* Deep Blue */
+#aIV code .smc { color:#0909db } /* Deep Blue */
+#aIV code .cln { color:#ac9a07 } /* Dark Yellow */
+#aIV code .per { color:#0909db } /* Deep Blue */
+#aIV code .num { color:#bc1a1a } /* Dark Red */
+#aIV code .idt { color:#000000 } /* Black */
+#aIV code .msc { color:#000000 } /* Black */
+#aIV code .defKey { color:#683804 } /* Brown */
+#aIV code .resKey { color:#0909db } /* Deep Blue */
+#aIV code .natKey { color:#37b2d6 } /* Light Blue-Green */
+#aIV code .valKey { color:#db0d9a } /* Pink */
+#aIV code .cliKey { color:#7d0bde } /* Purple */
+#aIV code .jquKey { color:#7d0bde } /* Purple */
 
 #aIV code span { font-weight:600 }
-#aIV code .comment { font-weight:500 }
-#aIV code .semicolon { font-weight:500 }
+#aIV code .cmt { font-weight:500 }
+#aIV code .smc { font-weight:500 }
 
 /* ------------------------------- *
  * New Section:
