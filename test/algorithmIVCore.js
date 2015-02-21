@@ -558,8 +558,6 @@
       else {
         // Wait till dom loads to insert elements
         document.addEventListener('DOMContentLoaded', function() {
-          // Set root element
-          setRoot();
           // Append main elements
           appendMain();
           // Display error
@@ -568,31 +566,6 @@
           DEBUG.InitializeModule.group && console.groupEnd();
         });
       }
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (setRoot)
-     * ---------------------------------------------
-     * inserts the main div and sets the root node
-     * @type {function()}
-     * @private
-     */
-    function setRoot() {
-      // Debugger
-      DEBUG.InitializeModule.call && console.log(
-        'CALL: InitializeModule.setRoot()'
-      );
-      // Declare method variables
-      var main;
-      // Create element
-      main = document.createElement('div');
-      // Set element id
-      main.id = 'aIV'
-      // Insert main div
-      document.body.appendChild(main);
-      // Set root node
-      roots.root = main;
     }
 
     /**
@@ -635,13 +608,14 @@
         'CALL: InitializeModule.appendMain()'
       );
       // Declare method variables
-      var message, h1, sel, main, nav, qs,
-          error, h2, p, loader;
+      var message, root, h1, sel, main,
+          nav, qs, error, h2, p, loader;
       // Set error message
       message = '' +
       'The web worker failed. Please wait ' +
       'while the app is being loaded manually.';
       // Create tags
+      root   = document.createElement('div');
       h1     = document.createElement('h1');
       sel    = document.createElement('nav');
       main   = document.createElement('div');
@@ -652,6 +626,7 @@
       p      = document.createElement('p');
       loader = document.createElement('img');
       // Add ids
+      root.id = 'aIV';
       sel.id  = 'aIV-selections';
       main.id = 'aIV-main';
       nav.id  = 'aIV-nav';
@@ -668,9 +643,10 @@
       p.textContent  = message;
       loader.src     = 'images/loading.gif';
       // Append elements
-      roots.root.appendChild(h1);
-      roots.root.appendChild(sel);
-      roots.root.appendChild(main);
+      document.body.appendChild(root);
+      root.appendChild(h1);
+      root.appendChild(sel);
+      root.appendChild(main);
       main.appendChild(nav);
       main.appendChild(qs);
       qs.appendChild(error);
@@ -678,6 +654,7 @@
       error.appendChild(p);
       qs.appendChild(loader);
       // Save root element references
+      roots.root = root;
       roots.sel  = sel;
       roots.main = main;
       roots.nav  = nav;
@@ -818,8 +795,6 @@
       document.addEventListener('DOMContentLoaded', function() {
         // Save the browser scrollbar width
         setScrollbar();
-        // Set root element
-        setRoot();
         // Append main html elements
         appendMain();
         // Append nav elements
@@ -1467,7 +1442,7 @@
         'FAIL: SetConfiguration.setPrettyCode() ' +
         'Note: Incorrect argument operand.'
       );
-
+      
     }
 
     /**

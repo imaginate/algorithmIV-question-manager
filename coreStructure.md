@@ -20,8 +20,8 @@ init               | DEBUG              | getID              | [InitializeModule
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
-                   | setRoot
                    | setScrollbar
+                   | 
                    | appendMain
                    | appendNav
                    | appendError
