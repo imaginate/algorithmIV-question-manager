@@ -1,6 +1,6 @@
 /** @preserve blank line for sed script to insert copyright after minify */
 
-/* Algorithm IV (v1.0.0) (learn@algorithmiv.com)
+/* Algorithm IV (v1.0.1) (learn@algorithmiv.com)
  * Section: Core Module
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
@@ -8,7 +8,7 @@
 
 /**
  * ------------------------------------------------------------------
- * Algorithm IV Core Module (v1.0.0)
+ * Algorithm IV Core Module (v1.0.1)
  * ------------------------------------------------------------------
  * manages a list of practice questions and detailed solutions
     for learning computer science focused algorithms and data
