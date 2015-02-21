@@ -228,13 +228,9 @@
            output: boolean
        },
        prettyCode: {
-         prePadding: {
-              top: number,
-            right: number,
-           bottom: number,
-             left: number
-         },
-         lineHeight: number
+          lineHeight: number,
+         linePadding: number,
+         listPadding: number
        },
               id: boolean,
           worker: boolean,
@@ -268,13 +264,9 @@
         output: true
     },
     prettyCode: {
-      prePadding: {
-           top: 30,
-         right: 35,
-        bottom: 30,
-          left: 75
-      },
-      lineHeight: 26
+       lineHeight: 26,
+      linePadding: 0,
+      listPadding: 0
     },
            id: true,
        worker: true,
@@ -1475,53 +1467,7 @@
         'FAIL: SetConfiguration.setPrettyCode() ' +
         'Note: Incorrect argument operand.'
       );
-      // Declare method variables
-      var paddingLimit, heightLimit, padding, height;
-      // Set limits
-      paddingLimit = { max: 250, min:  0 };
-      heightLimit  = { max:  50, min: 10 };
-      // Prepare user inputs for padding
-      padding = {};
-      padding.top = ( (typeof prettyCode.prePadding.top === 'number') ?
-        prettyCode.prePadding.top : (typeof prettyCode.prePadding.top === 'string') ?
-          Number( prettyCode.prePadding.top.replace(/[^0-9\.\-]/g, '') ) : -1
-      );
-      padding.right = ( (typeof prettyCode.prePadding.right === 'number') ?
-        prettyCode.prePadding.right : (typeof prettyCode.prePadding.right === 'string') ?
-          Number( prettyCode.prePadding.right.replace(/[^0-9\.\-]/g, '') ) : -1
-      );
-      padding.bottom = ( (typeof prettyCode.prePadding.bottom === 'number') ?
-        prettyCode.prePadding.bottom : (typeof prettyCode.prePadding.bottom === 'string') ?
-          Number( prettyCode.prePadding.bottom.replace(/[^0-9\.\-]/g, '') ) : -1
-      );
-      padding.left = ( (typeof prettyCode.prePadding.left === 'number') ?
-        prettyCode.prePadding.left : (typeof prettyCode.prePadding.left === 'string') ?
-          Number( prettyCode.prePadding.left.replace(/[^0-9\.\-]/g, '') ) : -1
-      );
-      // Prepare user input for line height
-      height = ( (typeof prettyCode.lineHeight === 'number') ?
-        prettyCode.lineHeight : (typeof prettyCode.lineHeight === 'string') ?
-          Number( prettyCode.lineHeight.replace(/[^0-9\.\-]/g, '') ) : -1
-      );
-      // If (padding within boundaries)
-      // Then {update padding configuration}
-      if (padding.top >= paddingLimit.min && padding.top <= paddingLimit.max) {
-        configuration.prettyCode.prePadding.top = padding.top;
-      }
-      if (padding.right >= paddingLimit.min && padding.right <= paddingLimit.max) {
-        configuration.prettyCode.prePadding.right = padding.right;
-      }
-      if (padding.bottom >= paddingLimit.min && padding.bottom <= paddingLimit.max) {
-        configuration.prettyCode.prePadding.bottom = padding.bottom;
-      }
-      if (padding.left >= paddingLimit.min && padding.left <= paddingLimit.max) {
-        configuration.prettyCode.prePadding.left = padding.left;
-      }
-      // If (height within boundaries)
-      // Then {update height configuration}
-      if (height >= heightLimit.min && height <= heightLimit.max) {
-        configuration.prettyCode.lineHeight = height;
-      }
+
     }
 
     /**
@@ -3077,41 +3023,41 @@
       // Clear formatted
       formatted = {
         id: {
-          flag: false,
+          flag   : false,
           content: ''
         },
         source: {
-          flag: false,
+          flag   : false,
           content: ''
         },
         complete: {
-          flag: false,
+          flag   : false,
           content: ''
         },
         category: {
-         flag: false,
+          flag: false,
           main: {
             flag: false,
-            h3: '',
-            p: ''
+            h3  : '',
+            p   : ''
           },
           sub: {
             flag: false,
-            h3: '',
-            p: ''
+            h3  : '',
+            p   : ''
           }
         },
         solution: {
-          error: false,
-          code: '',
+          error : false,
+          code  : '',
           height: 0
         },
         output: {
-          flag: false,
+          flag   : false,
           content: ''
         },
         links: {
-          flag: false,
+          flag   : false,
           content: []
         }
       };
@@ -3323,7 +3269,7 @@
         code = PrettifyCode.init(solution);
         // Calculate the pre element's div container height
         height = code.lineCount * configuration.prettyCode.lineHeight +
-        configuration.prettyCode.prePadding.top + configuration.prettyCode.prePadding.bottom;
+        configuration.prettyCode.linePadding + configuration.prettyCode.listPadding;
       }
       // Save format
       formatted.solution.error  = error;
@@ -3441,7 +3387,7 @@
       full = code.scrollWidth;
       diff = code.scrollWidth - code.clientWidth;
       // If (difference exists)
-      // Then {add 10 for padding}
+      // Then {add 20 for padding}
       full = (diff > 0) ? (full + 20) : full;
       diff = (diff > 0) ? (diff + 20) : 0;
       // Update question's stored width values
