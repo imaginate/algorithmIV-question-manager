@@ -6071,10 +6071,8 @@
           'Note: Incorrect argument operand.'
         );
         // Add comment span to line start
-        newLine[i] = ( (line[i] === '*') ?
-          ' <span class="cmt">*' :
-          '<span class="cmt">' + line[i]
-        );
+        newLine[i]  = (line[i] === '*') ? ' ' : '';
+        newLine[i] += '<span class="cmt">' + line[i];
         // If (start is a comment end)
         // Then {update line and return next index}
         if (line[0] === '*' && line[1] === '/') {
