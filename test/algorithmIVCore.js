@@ -1103,6 +1103,7 @@
         if ( newCategories.hasOwnProperty(id) ) {
           // Save current category name
           catName = newCategories[id];
+          catName = catName.toLowerCase();
           // Debugger
           DEBUG.SetConfiguration.state && console.log(
             'STATE: SetConfiguration.orderCategories() ' +
@@ -1122,7 +1123,8 @@
             loop:
             for (x=0; x<sLen; x++) {
               // Save current category name
-              current = newCategories[sortedList[x]];
+              current = newCategories[ sortedList[x] ];
+              current = current.toLowerCase();
               // Debugger
               DEBUG.SetConfiguration.state && console.log(
                 'STATE: SetConfiguration.orderCategories() ' +
@@ -1226,6 +1228,7 @@
         if ( newSources.hasOwnProperty(id) ) {
           // Save current source name
           name = newSources[id];
+          name = name.toLowerCase();
           // Add source to configOptions
           configOptions.searchDefaults.source.push(id);
           // Save the length of the sorted list
@@ -1242,7 +1245,8 @@
             loop:
             for (x=0; x<sLen; x++) {
               // Save current source name
-              current = newSources[sortedList[x]]; 
+              current = newSources[ sortedList[x] ]; 
+              current = current.toLowerCase();
               // If (name is before current name)
               // Then {insert source here and end loop}
               if (name < current) {
