@@ -21,7 +21,7 @@ Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
                    | setScrollbar
-                   | 
+                   | setPrettyCode
                    | appendMain
                    | appendNav
                    | appendError

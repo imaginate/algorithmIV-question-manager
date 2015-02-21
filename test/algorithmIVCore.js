@@ -228,9 +228,8 @@
            output: boolean
        },
        prettyCode: {
-          lineHeight: number,
-         linePadding: number,
-         listPadding: number
+         olHeight: number,
+         liHeight: number
        },
               id: boolean,
           worker: boolean,
@@ -264,9 +263,8 @@
         output: true
     },
     prettyCode: {
-       lineHeight: 26,
-      linePadding: 0,
-      listPadding: 0
+      olHeight: 0,
+      liHeight: 0
     },
            id: true,
        worker: true,
@@ -596,6 +594,51 @@
 
     /**
      * ---------------------------------------------
+     * Private Method (setPrettyCode)
+     * ---------------------------------------------
+     * set the height and padding options for syntax
+     *  highlighting
+     * @type {function()}
+     * @private
+     */
+    function setPrettyCode() {
+      // Debugger
+      DEBUG.InitializeModule.call && console.log(
+        'CALL: InitializeModule.setPrettyCode()'
+      );
+      // Declare method variables
+      var pre, code, ol, li, liHeight, olHeight;
+      // Create temporary elements
+      pre  = document.createElement('pre');
+      code = document.createElement('code');
+      ol   = document.createElement('ol');
+      li   = document.createElement('li');
+      // Hide from user view
+      pre.style.opacity = '0';
+      // Add dummy content
+      li.textContent = 'test';
+      // Append elements
+      roots.root.appendChild(pre);
+      pre.appendChild(code);
+      code.appendChild(ol);
+      ol.appendChild(li);
+      // Save line and list values
+      liHeight = li.offsetHeight;
+      olHeight = ol.offsetHeight - liHeight;
+      // Debugger
+      DEBUG.InitializeModule.state && console.log(
+        'STATE: InitializeModule.setPrettyCode() ' +
+        'Note: liHeight= %d, olHeight= %d', liHeight, olHeight
+      );
+      // Save the heights
+      configuration.prettyCode.olHeight = olHeight;
+      configuration.prettyCode.liHeight = liHeight;
+      // Remove elements
+      roots.root.removeChild(pre);
+    }
+
+    /**
+     * ---------------------------------------------
      * Private Method (appendMain)
      * ---------------------------------------------
      * inserts the main html elements of this module
@@ -797,6 +840,8 @@
         setScrollbar();
         // Append main html elements
         appendMain();
+        // Save padding and height info for prettifier
+        setPrettyCode();
         // Append nav elements
         appendNav();
         // Append search options
@@ -3243,8 +3288,8 @@
       if (!error) {
         code = PrettifyCode.init(solution);
         // Calculate the pre element's div container height
-        height = code.lineCount * configuration.prettyCode.lineHeight +
-        configuration.prettyCode.linePadding + configuration.prettyCode.listPadding;
+        height  = code.lineCount * configuration.prettyCode.liHeight;
+        height += configuration.prettyCode.olHeight;
       }
       // Save format
       formatted.solution.error  = error;
