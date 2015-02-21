@@ -151,7 +151,7 @@ Public Methods     | Private Variables  | Private Methods
 init               | newLine            | _init
                    | line               | setLine
                    | len                | sanitizeCharacter
-                   |                    | skipComment
+                   | router             | skipComment
                    |                    | skipString
                    |                    | skipSpace
                    |                    | skipNumber

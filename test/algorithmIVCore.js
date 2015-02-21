@@ -5619,6 +5619,85 @@
 
       /**
        * ---------------------------------------------
+       * Private Variable (router)
+       * ---------------------------------------------
+       * a hash map that stores the matching character
+       *  formatting methods
+       * @type {Object}
+       * @private
+       */
+      var router = {
+        "'": function(i) { return formatString(i);    },
+        '"': function(i) { return formatString(i);    },
+        ' ': function(i) { return formatSpace(i);     },
+        '{': function(i) { return formatBracket(i);   },
+        '[': function(i) { return formatBracket(i);   },
+        '(': function(i) { return formatBracket(i);   },
+        ')': function(i) { return formatBracket(i);   },
+        ']': function(i) { return formatBracket(i);   },
+        '}': function(i) { return formatBracket(i);   },
+        '*': function(i) { return formatOperator(i);  },
+        '%': function(i) { return formatOperator(i);  },
+        '+': function(i) { return formatOperator(i);  },
+        '-': function(i) { return formatOperator(i);  },
+        '<': function(i) { return formatOperator(i);  },
+        '>': function(i) { return formatOperator(i);  },
+        '&': function(i) { return formatOperator(i);  },
+        '^': function(i) { return formatOperator(i);  },
+        '|': function(i) { return formatOperator(i);  },
+        '=': function(i) { return formatOperator(i);  },
+        '!': function(i) { return formatOperator(i);  },
+        '~': function(i) { return formatOperator(i);  },
+        '?': function(i) { return formatOperator(i);  },
+        ',': function(i) { return formatComma(i);     },
+        ';': function(i) { return formatSemicolon(i); },
+        ':': function(i) { return formatColon(i);     },
+        '.': function(i) { return formatPeriod(i);    },
+        '0': function(i) { return formatNumber(i);    },
+        '1': function(i) { return formatNumber(i);    },
+        '2': function(i) { return formatNumber(i);    },
+        '3': function(i) { return formatNumber(i);    },
+        '4': function(i) { return formatNumber(i);    },
+        '5': function(i) { return formatNumber(i);    },
+        '6': function(i) { return formatNumber(i);    },
+        '7': function(i) { return formatNumber(i);    },
+        '8': function(i) { return formatNumber(i);    },
+        '9': function(i) { return formatNumber(i);    },
+        '/': function(i) {
+          var preceding;
+          switch (line[i + 1]) {
+            case '/': return formatLineComment(i); break;
+            case '*': return formatCommentOpen(i); break;
+            default :
+              // Save preceding character
+              // If (index is line start)
+              // Then {set preceding to force regex= true}
+              preceding = ( (i === 0) ?
+                '(' : (line[i - 1] === ' ') ?
+                  line[i - 2] : line[i - 1]
+              );
+              // If (regex statement)
+              // Then {set to regex statement}
+              // Else {set to division operator}
+              if (likelyRegex.indexOf(preceding) !== -1) {
+               return formatRegex(i);
+              }
+              return formatOperator(i);
+            /* ---------------------------------------------------------- *
+             * EXISTING BUG (Identifying a RegEx)
+             * ---------------------------------------------------------- *
+             * Issue 1: identifying the preceding binary operators 'in'
+             *          and 'instanceof'                                  *
+             * Issue 2: one line if statements (e.g. if (i) /foo/.exec()) *
+             * Issue 3: the use of the preceding unary operators '++'
+             *          and '--' (e.g. i++ / x)                           *
+             * ---------------------------------------------------------- */
+          }
+        }
+      };
+
+      /**
+       * ---------------------------------------------
        * Private Method (_init)
        * ---------------------------------------------
        * adds highlighting spans to a line of code
@@ -5680,117 +5759,13 @@
         // numbers, keywords, identifiers, and
         // miscellaneous
         for(; i<len; i++) {
-          switch (line[i]) {
-            case '/':
-              // Check if comment, regex, or division
-              switch (line[i + 1]) {
-                // Handle line comments
-                case '/':
-                  i = formatLineComment(i);
-                break;
-                // Handle comment opens
-                case '*':
-                  i = formatCommentOpen(i);
-                break;
-                default:
-                  // Save preceding character
-                  // If (index is line start)
-                  // Then {set preceding to force regex= true}
-                  preceding = ( (i === 0) ?
-                    '(' : (line[i - 1] === ' ') ?
-                      line[i - 2] : line[i - 1]
-                  );
-                  // If (regex statement)
-                  // Then {handle regex statement}
-                  // Else {handle division operator}
-                  // Note: Current bugs include identifying
-                  // the preceding binary operators 'in' and
-                  // 'instanceof' as well as a one line if
-                  // statement (e.g. if (i) /foo/.exec())
-                  // and the use of the preceding unary
-                  // operators '++' and '--' (e.g. i++ / x)
-                  if (likelyRegex.indexOf(preceding) !== -1) {
-                    i = formatRegex(i);
-                  }
-                  else {
-                    i = formatOperator(i);
-                  }
-              }
-            break;
-            // Handle strings
-            case '\'':
-            case '"':
-              i = formatString(i);
-            break;
-            // Handle spaces
-            case ' ':
-              i = formatSpace(i);
-            break;
-            // Handle brackets
-            case '{':
-            case '[':
-            case '(':
-            case ')':
-            case ']':
-            case '}':
-              i = formatBracket(i);
-            break;
-            // Handle operators
-            case '*':
-            case '%':
-            case '+':
-            case '-':
-            case '<':
-            case '>':
-            case '&':
-            case '^':
-            case '|':
-            case '=':
-            case '!':
-            case '~':
-            case '?':
-              i = formatOperator(i);
-            break;
-            // Handle commas
-            case ',':
-              i = formatComma(i);
-            break;
-            // Handle semicolons
-            case ';':
-              i = formatSemicolon(i);
-            break;
-            // Handle colons
-            case ':':
-              i = formatColon(i);
-            break;
-            // Handle periods
-            case '.':
-              i = formatPeriod(i);
-            break;
-            // Handle numbers
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-              i = formatNumber(i);
-            break;
-            default:
-              // If (character is an identifier start)
-              // Then {handle identifiers and keywords}
-              // Else {handle miscellaneous}
-              if ( identifierStart.test(line[i]) ) {
-                i = formatIdentifier(i);
-              }
-              else {
-                i = formatMisc(i);
-              }
-          }
+          // If (router property exists)
+          // Then {use router prop to format and update index}
+          // Else If (identifier)
+          i = ( (!!router[ line[i] ]) ?
+            router[ line[i] ](i) : identifierStart.test(line[i]) ?
+              formatIdentifier(i) : formatMisc(i)
+          );
         }
         return newLine.join('');
       }
