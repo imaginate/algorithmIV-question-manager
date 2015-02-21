@@ -1345,41 +1345,41 @@
         'Note: Incorrect argument operand.'
       );
       // Declare method variables
-      var options, flag, subCats, id;
+      var opts, flag, subCats, id;
       // Save configOptions
-      options = configOptions.searchDefaults;
+      opts = configOptions.searchDefaults;
       // Set configuration searchDefaults values
       if (typeof defaults.view === 'string') {
-        if (options.view.indexOf(defaults.view) !== -1) {
+        if (opts.view.indexOf(defaults.view) !== -1) {
           configuration.searchDefaults.view = defaults.view;
         }
       }
       if (typeof defaults.order === 'string') {
-        if (options.order.indexOf(defaults.order) !== -1) {
+        if (opts.order.indexOf(defaults.order) !== -1) {
           configuration.searchDefaults.order = defaults.order;
         }
       }
       if (typeof defaults.stage === 'string' &&
           configuration.searchSettings.stage) {
-        if (options.stage.indexOf(defaults.stage) !== -1) {
+        if (opts.stage.indexOf(defaults.stage) !== -1) {
           configuration.searchDefaults.stage = defaults.stage;
         }
       }
       if (typeof defaults.source === 'string' &&
           configuration.searchSettings.source) {
-        if (options.source.indexOf(defaults.source) !== -1) {
+        if (opts.source.indexOf(defaults.source) !== -1) {
           configuration.searchDefaults.source = defaults.source;
         }
       }
       if (typeof defaults.mainCat === 'string' &&
           configuration.searchSettings.category) {
-        if (options.mainCat.indexOf(defaults.mainCat) !== -1) {
+        if (opts.mainCat.indexOf(defaults.mainCat) !== -1) {
           configuration.searchDefaults.mainCat = defaults.mainCat;
         }
       }
       if (typeof defaults.subCat === 'string' &&
           configuration.searchSettings.subCat) {
-        if (options.subCat.indexOf(defaults.subCat) !== -1) {
+        if (opts.subCat.indexOf(defaults.subCat) !== -1) {
           // If (main and sub categories are not all)
           if (defaults.subCat !== 'all' &&
               configuration.searchDefaults.mainCat !== 'all') {
