@@ -6034,23 +6034,23 @@
         );
         // Declare method variables
         var iName;
-        // Start empty array to contain each
-        // character of the identifier name
-        iName = [];
+        // Start string for the identifier name
+        iName = '-';
+        // Find the name
         while (true) {
           // Add character to iName
-          iName.push(line[i]);
+          iName += line[i];
           // If (last index)
           // Then {return index and name}
           if (i === (len - 1)) {
-            return { index: i, name: iName.join('') };
+            return { index: i, name: iName };
           }
           // If (next index not identifier)
           // Then {return index and name}
           if ( !identifiers.test(line[i + 1]) ) {
             return {
               index: i,
-               name: iName.join(''),
+               name: iName,
               props: (line[i + 1] === '.')
             };
           }
@@ -6499,16 +6499,20 @@
           is a keyword, adds correct span tags, and
           moves the index to end of identifier
        * param: the current line array index (number)
-       * @type {function(number): number}
+       * param: the key for extra property keywords to
+       *         include in check (optional) (string)
+       * @type {function(number, undefined|string): number}
        * @private
        */
-      function formatIdentifier(i) {
+      function formatIdentifier(i, extras) {
         // Debuggers
         DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatIdentifier(%d)', i
+          'CALL: HighlightSyntax.formatIdentifier(%d, %s)', i, !!extras
         );
         DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
+          (typeof i === 'number' &&
+           (typeof extras === 'undefined' ||
+            typeof extras === 'string')),
           'FAIL: HighlightSyntax.formatIdentifier() ' +
           'Note: Incorrect argument operand.'
         );
@@ -6518,26 +6522,50 @@
         // { index: 0, name: '', props: false }
         identifier = skipIdentifier(i);
         // If (keyword exists)
-        // Then {get corresponding key span}
-        if (!!keywords.objects['-' + identifier.name]) {
+        // Then {get corresponding key span class}
+        if (!!keywords.objects[identifier.name]) {
           // Save keyword's category id and class name
-          catID = keywords.objects['-' + identifier.name].cat
+          catID = keywords.objects[identifier.name].cat;
           keyClass = keywords.categories[catID];
           // Special case for the function keyword
-          if (identifier.name === 'function' &&
+          if (identifier.name === '-function' &&
               (line[identifier.index + 1] === '(' ||
                (line[identifier.index + 1] === ' ' &&
                 line[identifier.index + 2] === '('))) {
             keyClass = keywords.categories['res'];
           }
         }
-        // Set class name and add span
+        // If (no keyword match and extra keyword list provided)
+        // Then {check extra list for a match}
+        if (!keyClass && !!extras) {
+          // If (keyword exists)
+          // Then {get corresponding key span class}
+          if (!!keywords.objects[extras].props[identifier.name]) {
+            catID = keywords.objects[extras].cat;
+            keyClass = keywords.categories[catID];
+          }
+        }
+        // Set class name and add spans
         keyClass = keyClass || 'idt';
         newLine[i] = '<span class="' + keyClass + '">' + line[i];
-        // Add close span
         newLine[identifier.index] += '</span>';
+        // Update index
+        i = identifier.index;
+        // If (keyword has property)
+        // Then {format it}
+        if (!!identifier.props) {
+          // Format the dot notation
+          formatPeriod(++i);
+          // Set extras for next property
+          extras = ( (!keywords.objects[identifier.name]) ?
+            undefined : (!keywords.objects[identifier.name].props) ?
+              undefined : identifier.name
+          );
+          // Format the property and update the index
+          i = formatIdentifier(++i, extras);
+        }
         // Return index
-        return identifier.index;
+        return i;
       }
 
       /**

@@ -694,8 +694,8 @@ body {
 #aIV code .jquKey { color:#7d0bde } /* Purple */
 
 #aIV code span { font-weight:600 }
-#aIV code .comment { font-weight:500 }
-#aIV code .semicolon { font-weight:500 }
+#aIV code .cmt { font-weight:500 }
+#aIV code .smc { font-weight:500 }
 
 /* ------------------------------- *
  * New Section:
