@@ -49,6 +49,7 @@
       'graph': {
         'adjList': 'Adjacency Lists',
         'adjMtrx': 'Adjacency Matrices',
+        'arb'    : 'Arborescences',
         'digraph': 'Directed Graphs',
         'incList': 'Incidence Lists',
         'incMtrx': 'Incidence Matrices',
@@ -75,10 +76,12 @@
         'bucket': 'Bucket Sort',
         'heapS' : 'Heapsort',
         'insert': 'Insertion Sort',
+        'intro' : 'Introsort',
         'merge' : 'Mergesort',
         'quick' : 'Quicksort',
         'radix' : 'Radix Sort',
-        'select': 'Select Sort'
+        'select': 'Select Sort',
+        'smooth': 'Smoothsort'
       },
       'tree': {
         'binHeap': 'Binary Heaps',
