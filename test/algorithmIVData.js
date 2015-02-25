@@ -1584,8 +1584,9 @@
 
             // Set the left child index and node
             left = ( (nodes < 3) ?
-              prt - 1 : (nodes < 5) ?
+              prt - 1 : ( (nodes < 5) ?
                 prt - 2 : start + Math.ceil(nodes / 2)
+              )
             );
             node.left = {
               val  : vals[left],
@@ -1631,8 +1632,9 @@
 
             // Set the right child index and node
             right = ( (nodes < 3) ?
-              prt + 1 : (nodes < 6) ?
+              prt + 1 : ( (nodes < 6) ?
                 prt + 2 : prt + Math.floor(nodes / 2)
+              )
             );
             node.right = {
               val  : vals[right],
@@ -1856,12 +1858,14 @@
               // If (node not null)
               // Then {check children}
               left = ( (!node) ?
-                null : (!node.left) ?
+                null : ( (!node.left) ?
                   null : node.left
+                )
               );
               right = ( (!node) ?
-                null : (!node.right) ?
+                null : ( (!node.right) ?
                   null : node.right
+                )
               );
               // Add children to next row
               row.next.push(left, right);
@@ -1911,8 +1915,9 @@
             // Set the count of tree items
             rows = results.tree.length;
             dashes = ( (rows < 2) ?
-              0 : (rows === 2) ?
+              0 : ( (rows === 2) ?
                 1 : 2
+              )
             );
             if (rows > 3) {
               over = rows - 3;
@@ -1943,8 +1948,9 @@
               //   the middle dash, and the gap of
               //   cells between children
               side = ( (r === 0) ?
-                Math.floor(columns / 2) : (dashes > 1) ?
+                Math.floor(columns / 2) : ( (dashes > 1) ?
                   dashes : 0
+                )
               );
               gap = (dashes * 2) + 1;
               lastD = (r === 0) ? 0 : dashes - 1;
@@ -2021,6 +2027,7 @@
               // Add a row of nodes to the string
               string += '<tr>' +
               ( (side > 0) ?
+
                 '<td colspan="' + side + '" style="width:' +
                 (side * width) + 'px">&nbsp;</td>' : ''
               );
@@ -2074,12 +2081,14 @@
               // Recalculate the mid gap and dashes
               mGap = dashes;
               dashes = ( (r === 0) ?
-                dashes : (dashes > 2) ?
+                dashes : ( (dashes > 2) ?
                   Math.floor(dashes / 2) : 1
+                )
               );
               mGap = ( (r === 0) ?
-                0 : (mGap > 2) ?
+                0 : ( (mGap > 2) ?
                   mGap : 1
+                )
               );
             }
             
