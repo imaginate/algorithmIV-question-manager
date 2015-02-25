@@ -160,13 +160,15 @@
              href: 'http://www.careercup.com/question?id=4505011482525696'
            }
          ],
-       problem: 'Write a function that prints the rows of a binary tree, terminating each row with a carriage return.',
+       problem: 'Given an array of values, create a balanced binary tree and print each row of the tree in order. Terminate each row with a carriage return.',
       solution: function() {
         /*
          ** Solution:
-         *  - Step 1: A binary tree is created. An array of
-         *    nodes storing their value and a reference to
-         *    their children is used to implement the tree.
+         *  - Step 1: A Breadth First Search algorithm is used
+         *    to create a balanced binary tree. A linked list
+         *    of nodes containing their value and references
+         *    to their left and right children is used to
+         *    represent the binary tree.
          *  - Step 2: A Breadth First Search algorithm is used
          *    to traverse the tree and add the nodes in order
          *    by row to the result.
@@ -179,78 +181,132 @@
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
+        // The given values
         // The binary tree
         // The node rows to be printed
-        var tree, result;
+        var vals, tree, result;
 
         // Set variables
-        tree = [];
+        vals = [ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O' ];
+        tree = {
+          val  : vals[0],
+          left : null,
+          right: null
+        };
         result = '';
 
         // Creates the binary tree
         function createTree() {
-          // Node index
-          // Edge index
-          var n, e;
+          // A function that adds children to a node
+          // The temporary holder for each row of nodes
+          // The index of the current value
+          // The current tree's depth
+          // The tree's max depth
+          // The current node
+          var addNodes, row, val, d, depth, node;
 
-          // Add empty nodes to tree
-          for (n=0; n<15; n++) {
-              tree.push({ val: n, edges: [] });
-          }
+          // Adds children to the provided node
+          // param: The node to add the children
+          addNodes = function(prtNode) {
 
-          // Set edge index
-          e = 1;
-          // Add edges to tree
-          for (n=0; n<7; n++) {
-            tree[n].edges.push(tree[e],tree[e+1]);
-            e += 2;
+            // Create the nodes and increase the value
+            prtNode.left = {
+              val  : vals[val],
+              left : null,
+              right: null
+            };
+            ++val;
+            prtNode.right = {
+              val  : vals[val],
+              left : null,
+              right: null
+            };
+            ++val;
+
+            // Add the nodes to temp holder
+            row.next.push(prtNode.left, prtNode.right);
+          };
+
+          // Set the temp holders, value, and max depth
+          row = {
+            now : [tree],
+            next: []
+          };
+          val = 1;
+          depth = 4;
+
+          // Add the nodes to tree
+          for (d=1; d<depth; d++) {
+            // Add nodes
+            row.now.forEach(function(node) {
+              addNodes(node);
+            });
+            // Reset temp arrays
+            row.now = row.next.slice(0);
+            row.next = [];
           }
         }
 
         // Saves a string of the binary tree's nodes
         //   in order with a line break for each row
         function printNodes() {
-          // The list of current nodes to be searched
+          // The current and next row of nodes
           // The current node being searched
-          // The max nodes possible in the current row
-          // The count of nodes in the current row
-          // The count of the node's edges
-          // The edges index
-          var list, node, rowMax, rowCount, edges, e;
+          // The left child
+          // The right child
+          var row, node, left, right;
 
-          // Set list to array with tree root
-          list = [ tree[0] ];
-          // Set max of first row
-          rowMax = 1;
-          // Set current row count
-          rowCount = 0;
+          // Set final result
+          result = tree.val;
+
+          // Set temp holder for each row
+          row = {
+              now   : [tree],
+              next  : [],
+              isRow : true,
+              string: ''
+            };
 
           // Loop through nodes
-          while (list.length > 0) {
+          loop:
+          while (true) {
 
-            // Set node and remove first item
-            node = list.shift();
-            // Increase the count by one
-            ++rowCount;
-            // Set result
-            result += node.val + ( (rowMax === rowCount) ? '<br />' : ',' );
+            // Set and remove node
+            node = row.now.shift();
 
-            // If (row finished)
-            // Then {double max and reset count}
-            if (rowMax === rowCount) {
-              rowMax = rowMax * 2;
-              rowCount = 0;
+            // If (child exists)
+            // Then {add child to next row and update row flag}
+            if (!!node.left) {
+              row.next.push(node.left);
+              row.isRow = true;
+              row.string += (row.next.length > 1) ? ',' : '';
+              row.string += node.left.val;
+            }
+            if (!!node.right) {
+              row.next.push(node.right);
+              row.isRow = true;
+              row.string += (row.next.length > 1) ? ',' : '';
+              row.string += node.right.val;
             }
 
-            // Save node's edge count
-            edges = node.edges.length;
-            // Add node's edges to list
-            for (e=0; e<edges; e++) {
-              list.push(node.edges[e]);
+            // If (current row finished)
+            // Then {update result and check and reset rows}
+            // Else {end search}
+            if (row.now.length === 0) {
+              if (row.isRow) {
+                result += '<br />' + row.string;
+                row.now = row.next.slice(0);
+                row.next = [];
+                row.isRow = false;
+                row.string = '';
+              }
+              else {
+                break loop;
+              }
             }
           }
         }
-        
+
         // Create tree and print nodes
         createTree();
         printNodes();
