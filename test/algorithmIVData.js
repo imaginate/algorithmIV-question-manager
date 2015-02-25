@@ -163,13 +163,15 @@
              href: 'http://www.careercup.com/question?id=4505011482525696'
            }
          ],
-       problem: 'Write a function that prints the rows of a binary tree, terminating each row with a carriage return.',
+       problem: 'Given an array of values, create a balanced binary tree and print each row of the tree in order. Terminate each row with a carriage return.',
       solution: function() {
         /*
          ** Solution:
-         *  - Step 1: A binary tree is created. An array of
-         *    nodes storing their value and a reference to
-         *    their children is used to implement the tree.
+         *  - Step 1: A Breadth First Search algorithm is used
+         *    to create a balanced binary tree. A linked list
+         *    of nodes containing their value and references
+         *    to their left and right children is used to
+         *    represent the binary tree.
          *  - Step 2: A Breadth First Search algorithm is used
          *    to traverse the tree and add the nodes in order
          *    by row to the result.
@@ -182,78 +184,132 @@
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
+        // The given values
         // The binary tree
         // The node rows to be printed
-        var tree, result;
+        var vals, tree, result;
 
         // Set variables
-        tree = [];
+        vals = [ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O' ];
+        tree = {
+          val  : vals[0],
+          left : null,
+          right: null
+        };
         result = '';
 
         // Creates the binary tree
         function createTree() {
-          // Node index
-          // Edge index
-          var n, e;
+          // A function that adds children to a node
+          // The temporary holder for each row of nodes
+          // The index of the current value
+          // The current tree's depth
+          // The tree's max depth
+          // The current node
+          var addNodes, row, val, d, depth, node;
 
-          // Add empty nodes to tree
-          for (n=0; n<15; n++) {
-              tree.push({ val: n, edges: [] });
-          }
+          // Adds children to the provided node
+          // param: The node to add the children
+          addNodes = function(prtNode) {
 
-          // Set edge index
-          e = 1;
-          // Add edges to tree
-          for (n=0; n<7; n++) {
-            tree[n].edges.push(tree[e],tree[e+1]);
-            e += 2;
+            // Create the nodes and increase the value
+            prtNode.left = {
+              val  : vals[val],
+              left : null,
+              right: null
+            };
+            ++val;
+            prtNode.right = {
+              val  : vals[val],
+              left : null,
+              right: null
+            };
+            ++val;
+
+            // Add the nodes to temp holder
+            row.next.push(prtNode.left, prtNode.right);
+          };
+
+          // Set the temp holders, value, and max depth
+          row = {
+            now : [tree],
+            next: []
+          };
+          val = 1;
+          depth = 4;
+
+          // Add the nodes to tree
+          for (d=1; d<depth; d++) {
+            // Add nodes
+            row.now.forEach(function(node) {
+              addNodes(node);
+            });
+            // Reset temp arrays
+            row.now = row.next.slice(0);
+            row.next = [];
           }
         }
 
         // Saves a string of the binary tree's nodes
         //   in order with a line break for each row
         function printNodes() {
-          // The list of current nodes to be searched
+          // The current and next row of nodes
           // The current node being searched
-          // The max nodes possible in the current row
-          // The count of nodes in the current row
-          // The count of the node's edges
-          // The edges index
-          var list, node, rowMax, rowCount, edges, e;
+          // The left child
+          // The right child
+          var row, node, left, right;
 
-          // Set list to array with tree root
-          list = [ tree[0] ];
-          // Set max of first row
-          rowMax = 1;
-          // Set current row count
-          rowCount = 0;
+          // Set final result
+          result = tree.val;
+
+          // Set temp holder for each row
+          row = {
+              now   : [tree],
+              next  : [],
+              isRow : true,
+              string: ''
+            };
 
           // Loop through nodes
-          while (list.length > 0) {
+          loop:
+          while (true) {
 
-            // Set node and remove first item
-            node = list.shift();
-            // Increase the count by one
-            ++rowCount;
-            // Set result
-            result += node.val + ( (rowMax === rowCount) ? '<br />' : ',' );
+            // Set and remove node
+            node = row.now.shift();
 
-            // If (row finished)
-            // Then {double max and reset count}
-            if (rowMax === rowCount) {
-              rowMax = rowMax * 2;
-              rowCount = 0;
+            // If (child exists)
+            // Then {add child to next row and update row flag}
+            if (!!node.left) {
+              row.next.push(node.left);
+              row.isRow = true;
+              row.string += (row.next.length > 1) ? ',' : '';
+              row.string += node.left.val;
+            }
+            if (!!node.right) {
+              row.next.push(node.right);
+              row.isRow = true;
+              row.string += (row.next.length > 1) ? ',' : '';
+              row.string += node.right.val;
             }
 
-            // Save node's edge count
-            edges = node.edges.length;
-            // Add node's edges to list
-            for (e=0; e<edges; e++) {
-              list.push(node.edges[e]);
+            // If (current row finished)
+            // Then {update result and check and reset rows}
+            // Else {end search}
+            if (row.now.length === 0) {
+              if (row.isRow) {
+                result += '<br />' + row.string;
+                row.now = row.next.slice(0);
+                row.next = [];
+                row.isRow = false;
+                row.string = '';
+              }
+              else {
+                break loop;
+              }
             }
           }
         }
-        
+
         // Create tree and print nodes
         createTree();
         printNodes();
@@ -347,7 +403,7 @@
           // The edge's child vertex
           // The edge's weight
           // The edge's Starbuck's value
-          var v, e, parent, child, weight, starbucks;
+          var v, e, pNode, child, weight, starbucks;
           // The parent index
           // The child index
           // A shortcut function to add edge
@@ -388,61 +444,61 @@
               case (e < 3):
                 p = 0;
                 c = (e === 0) ? 1 : ++c;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e < 5):
                 p = 1;
                 c = e;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e < 7):
                 p = 2;
                 c = e;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e === 7):
                 p = 3;
                 c = 6;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e === 8):
                 p = 4;
                 c = 6;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e < 12):
                 p = 5;
                 c = ++c;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e < 14):
                 p = 6;
                 c = (e === 12) ? 7 : 9;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e === 14):
                 p = 7;
                 c = 8;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
               case (e === 15):
                 p = 8;
                 c = 9;
-                parent = graph.vertices[p];
-                child  = graph.vertices[c];
+                pNode = graph.vertices[p];
+                child = graph.vertices[c];
               break;
             }
             // Add edge
             graph.edges.push({
-              parent: parent,
+              pNode: pNode,
               child : child,
               weight: weight,
               starbucks: starbucks
@@ -735,8 +791,7 @@
           // The current url
           // The current url's content
           // The current content's hash
-          // Indicator to check if collision has occurred
-          var addHash, url, content, hash, flag;
+          var addHash, url, content, hash;
 
           // Set addHash function
           addHash = function(theUrl, theContent, theHash) {
@@ -764,7 +819,7 @@
                 addHash(theUrl, theContent, theHash);
               }
             }
-          }
+          };
 
           // Loop through supplied inputs
           for (url in inputs) {
@@ -860,7 +915,7 @@
       complete: true,
         source: 'go',
        mainCat: [ 'search', 'tree', 'graph', 'hash', 'array' ],
-        subCat: [ 'brute', 'back', 'dfs', 'trie', 'digraph', 'adjList', 'hTable' ],
+        subCat: [ 'brute', 'back', 'dfs', 'trie', 'arb', 'digraph', 'adjList', 'hTable' ],
          links: [
            {
              name: 'Further Discussion',
@@ -876,8 +931,8 @@
          ** Solution:
          *  - Step 1: A json dictionary of English words is
          *    downloaded for use via ajax.
-         *  - Step 2: A brute force algorithm is used to
-         *    create a trie of only the words from the
+         *  - Step 2: A brute force search algorithm is used
+         *    to create a trie of only the words from the
          *    dictionary that have a max of 4 characters
          *    and begin with a letter from the given string.
          *    A hash table with the key set to the current
@@ -1013,7 +1068,7 @@
           var i, wordsLen, word, wordLen, c, last;
           // The previous word substring
           // The new word substring
-          var parent, child;
+          var pNode, child;
           
           // Add branch to trie
           wordTrie[letter] = {
@@ -1051,7 +1106,7 @@
                 for (c=1; c<=last; c++) {
 
                   // Save current string
-                  parent = child;
+                  pNode = child;
                   child += word.charAt(c);
 
                   // If (child does not exist)
@@ -1063,7 +1118,7 @@
                        value: child,
                         kids: []
                     };
-                    wordTrie[parent].kids.push(wordTrie[child]);
+                    wordTrie[pNode].kids.push(wordTrie[child]);
                   }
                   else {
                     wordTrie[child].isWord = wordTrie[child].isWord || (c === last);
@@ -1357,57 +1412,98 @@
     },
     {
       // Question: 6
-      complete: false,
+      complete: true,
         source: 'go',
-       mainCat: [ 'sort', 'tree', 'list', 'array' ],
-        subCat: [ 'heapS', 'brute', 'binHeap', 'bst', 'dlist' ],
+       mainCat: [ 'sort', 'tree', 'search', 'list', 'array' ],
+        subCat: [ 'heapS', 'binHeap', 'bst', 'back', 'bfs', 'brute', 'dList' ],
          links: [
            {
-             name: 'Further Discussion',
+             name: 'More on Converting a Binary Search Tree into a Doubly-Linked List',
              href: 'http://www.careercup.com/question?id=4863668900593664'
            }
          ],
-       problem: '<span style="display:block;margin:0 0 15px">Write a method that will convert a binary search tree into a doubly-linked list that is sorted in ascending or descending order and returns the first node in the list. Do the conversion in place<span style="margin:0 12px">&ndash;</span>i.e. the memory complexity of your algorithm should be <em style="margin:0 2px">&Omicron;</em>(1).</span>' +
-                '<span style="display:block;margin:0 0 10px">Provided Node class:</span>' +
-                '<span style="word-spacing:6px">public class Node &lbrace;</span><br />'  +
-                '<span style="margin-left:25px;word-spacing:6px">public Node left, right;</span><br />' +
-                '<span style="margin-left:25px;word-spacing:6px">public String val;</span><br />'       +
-                '&rbrace;<br />' +
+       problem: 'Given an array of random numbers, create a binary search tree with the median as the root. Then convert the binary search tree into a doubly-linked list that is sorted in ascending or descending order and return the first node in the list. Do the sort and conversion in place<span style="margin:0 12px">&ndash;</span>i.e. the memory complexity of your algorithms should be <em style="margin:0 2px">&Omicron;</em>(1).' +
                 '<span style="display:block;margin:15px 0 10px">Example diagram of conversion:</span>'  +
                 '<style>' +
-                  '.aIV-exQ3-table {padding:0;margin:0;text-align:center;border:0}' +
-                  '.aIV-exQ3-table td {padding:0;margin:0;text-align:center}'       +
+                  '.aIV-exQ3-table {padding:0;margin:0;text-align:center;border-collapse:collapse;border:0}' +
+                  '.aIV-exQ3-table tr {padding:0;margin:0;text-align:center;border:0}' +
+                  '.aIV-exQ3-table td {padding:0;margin:0;text-align:center;verticle-align:middle;border:0}' +
+                  '.aIV-exQ3-table span.lineContainer {position:relative;display:block;width:100%;height:100%;overflow:hidden}' +
+                  '.aIV-exQ3-table span.lineFiller {opacity:0}' +
+                  '.aIV-exQ3-table span.topLine {position:absolute;top:2px;left:0;display:block;width:100%;height:1px;background:#192037}' +
+                  '.aIV-exQ3-table span.leftLine, .aIV-exQ3-table span.rightLine {position:absolute;top:50%;left:-50%;display:block;width:200%;height:1px;background:#192037}' +
+                  '.aIV-exQ3-table span.leftLine {-ms-transform:rotate(-45deg);-moz-transform:rotate(-45deg);webkit-transform:rotate(-45deg);transform:rotate(-45deg)}' +
+                  '.aIV-exQ3-table span.rightLine {-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);webkit-transform:rotate(45deg);transform:rotate(45deg)}' +
                 '</style>' +
                 '<table class="aIV-exQ3-table">' +
                   '<tr>' +
+                    '<td><u>Unsorted Array</u></td>' +
+                    '<td></td>' +
                     '<td><u>Binary Search Tree</u></td>' +
                     '<td></td>' +
                     '<td><u>Doubly-Linked List</u></td>' +
                   '</tr>' +
                   '<tr>'  +
-                    '<td>G</td>' +
-                    '<td></td>'  +
-                    '<td></td>'  +
-                  '</tr>' +
-                  '<tr>'  +
-                    '<td>&sol;&nbsp;&nbsp;&nbsp;&bsol;</td>' +
-                    '<td style="padding:0 20px">to</td>'     +
-                    '<td>A&nbsp;&nbsp;&rArr;&nbsp;&nbsp;G&nbsp;&nbsp;&rArr;&nbsp;&nbsp;T</td>' +
-                  '</tr>' +
-                  '<tr>'  +
-                    '<td>A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</td>' +
-                    '<td></td>' +
-                    '<td></td>' +
+                    '<td>[&nbsp;&nbsp;7,3,9&nbsp;&nbsp;]</td>' +
+                    '<td style="padding:0 20px">&rArr;<br />&rArr;</td>'     +
+                    '<td>' +
+                      '<table class="aIV-exQ3-table" style="margin:5px auto 0;">' +
+                        '<tr>'  +
+                          '<td></td>'  +
+                          '<td></td>'  +
+                          '<td>7</td>' +
+                          '<td></td>'  +
+                          '<td></td>'  +
+                        '</tr>' +
+                        '<tr>'  +
+                          '<td></td>' +
+                          '<td>&sol;</td>'  +
+                          '<td></td>' +
+                          '<td>&bsol;</td>' +
+                          '<td></td>' +
+                        '</tr>' +
+                        '<tr>'  +
+                          '<td>3</td>' +
+                          '<td></td>'  +
+                          '<td></td>'  +
+                          '<td></td>'  +
+                          '<td>9</td>' +
+                        '</tr>' +
+                      '</table>' +
+                    '</td>' +
+                    '<td style="padding:0 20px">&rArr;<br />&rArr;</td>'     +
+                    '<td>3&nbsp;&nbsp;&lrarr;&nbsp;&nbsp;7&nbsp;&nbsp;&lrarr;&nbsp;&nbsp;9</td>' +
                   '</tr>' +
                 '</table>',
       solution: function() {
         /*
          ** Solution:
-         *  - [explanation]
+         *  - Step 1: A string of the supplied unsorted
+         *    array of values is created for the results.
+         *  - Step 2: The array of unsorted values is
+         *    sorted to reflect the binary heap property.
+         *  - Step 3: The array representing the binary
+         *    heap is sorted in ascending order (heapsort).
+         *  - Step 4: A balanced binary search tree is
+         *    created from the heap. A linked list of
+         *    nodes containing their value and references
+         *    to their left and right children is used to
+         *    represent the binary search tree.
+         *  - Step 5: A breadth first search algorithm is
+         *    used to create a string of the binary search
+         *    tree for the results.
+         *  - Step 6: A backtracking algorithm is used to
+         *    convert the binary search tree into to a
+         *    doubly-linked list.
+         *  - Step 7: A brute force search algorithm is
+         *    used to create a string of the values in
+         *    the doubly-linked list for the results.
          *
          ** Need to Know Terms:
          *  - Algorithms:
          *    -- Heapsort: http://en.wikipedia.org/wiki/Heapsort
+         *    -- Breadth First Search (BFS): http://en.wikipedia.org/wiki/Breadth-first_search
+         *    -- Backtracking: http://en.wikipedia.org/wiki/Backtracking
          *    -- Brute Force Search: http://en.wikipedia.org/wiki/Brute-force_search
          *  - Data Structures:
          *    -- Binary Heap: http://en.wikipedia.org/wiki/Binary_heap
@@ -1416,57 +1512,709 @@
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
-        // A provided array of node values
-        // A binary heap of the nodes
+        // The provided array of random numbers
         // The binary search tree
         // The starting node for the doubly-linked list
-        // The first node in the doubly-linked list
-        var list, heap, tree, start, first;
+        // The final results
+        var vals, tree, list, results;
 
         // Set variables
-        list  = [ 88,97,56,41,27,16,95,54,28 ];
-        heap  = [];
-        tree  = [];
-        start = {
-          prev: null,
-          val : null,
-          next: null
+        vals = [ 88,97,56,41,27,16,95,54,28 ];
+        tree = {
+          val  : null,
+          left : null,
+          right: null
         };
-        first = null;
+        list = {
+          val  : null,
+          left : null,
+          right: null
+        };
+        results = {
+          vals: null,
+          tree: null,
+          list: null,
+          show: ''
+        };
 
-        // Creates the binary heap
-        function createHeap() {
+        // Sorts the array of random numbers
+        function sortValues() {
+          // A function to convert the unsorted
+          //   array into a heap
+          // A function to construct the heap
+          // A function to sort the heap
+          var createHeap, heapify, sortHeap;
+
+          // Creates a binary heap of the values
+          createHeap = function() {
+            // The number of provided values
+            // The last value's index
+            // The current value
+            var len, last, val;
+
+            // Save count of values
+            len = vals.length;
+            // Save last index
+            last = len - 1;
+            // Save first parent index
+            val = (len - 2) / 2;
+            val = Math.floor(val);
+
+            // Build heap
+            for (; val>=0; val--) {
+              heapify(val, last);
+            }
+          }
+
+          // Ensures the nodes are in heap order
+          // param: The index of the starting node
+          // param: The index of the ending node
+          heapify = function(start, end) {
+            // The parent index
+            // The left child index
+            // The right child index
+            // The index of the biggest value
+            var prt, left, right, max;
+
+            // Set the first parent and child
+            prt  = start;
+            left = (prt * 2) + 1;
+
+            // Check each parent node
+            while (left <= end) {
+
+              // Set max
+              max = (vals[left] > vals[prt]) ? left : prt;
+
+              // Set right child
+              right = left + 1;
+              // If (right child exists)
+              // Then {check max value}
+              if (right <= end) {
+                max = (vals[right] > vals[max]) ? right : max;
+              }
+
+              // If (parent is max)
+              // Then {end heapify}
+              if (prt === max) {
+                return;
+              }
+
+              // Swap parent and child values
+              vals[max] = ( vals[prt] + (vals[prt] = vals[max]) ) - vals[max];
+
+              // Set new parent and child indexes
+              prt  = max;
+              left = (prt * 2) + 1;
+            }
+          }
+
+          // Sorts the heap
+          sortHeap = function() {
+            // The last index of the heap size
+            var i;
+
+            // Set index to the heap's last
+            i = vals.length - 1;
+            // Sort heap
+            while (i > 0) {
+            
+              // Move the max (root) value to the end of the heap
+              vals[i] = ( vals[0] + (vals[0] = vals[i]) ) - vals[i];
+
+              // Reduce the heap size by 1
+              --i;
+
+              // Repair the heap missing its root
+              heapify(0, i);
+            }
+          }
+          
+          // Run heapsort on array of values
+          createHeap();
+          sortHeap();
         }
 
         // Creates the binary search tree
         function createTree() {
-          // Node index
-          // Edge index
-          var n, e;
+          // A recursive function to set left children
+          // A recursive function to set right children
+          // The median heap index
+          // The last index of the heap
+          var setLeft, setRight, median, last;
 
-          // Add empty nodes to tree
-          for (n=0; n<15; n++) {
-              tree.push({ val: n, edges: [] });
-          }
+          // Sets the left children
+          // param: the parent node
+          // param: the parent index
+          // param: the starting index
+          setLeft = function(node, prt, start) {
+            // The nodes in the provided range (start to parent)
+            // The index of the left child
+            // The ending index for a right child
+            var nodes, left, end;
 
-          // Set edge index
-          e = 1;
-          // Add edges to tree
-          for (n=0; n<7; n++) {
-            tree[n].edges.push(tree[e],tree[e+1]);
-            e += 2;
-          }
+            // Find the count of nodes
+            nodes = prt - start;
+
+            // If (no nodes)
+            // Then {end traversal}
+            if (nodes < 1) {
+              return;
+            }
+
+            // Set the left child index and node
+            left = ( (nodes < 3) ?
+              prt - 1 : ( (nodes < 5) ?
+                prt - 2 : start + Math.ceil(nodes / 2)
+              )
+            );
+            node.left = {
+              val  : vals[left],
+              left : null,
+              right: null
+            };
+
+            // If (no next child)
+            // Then {end traversal}
+            if (nodes === 1) {
+              return;
+            }
+
+            // Set the next left child
+            setLeft(node.left, left, start);
+
+            // If (right child exists)
+            // Then {set the right child}
+            if (nodes > 2) {
+              end = prt - 1;
+              setRight(node.left, left, end);
+            }
+          };
+
+          // Sets the right children
+          // param: the parent node
+          // param: the parent index
+          // param: the ending index
+          setRight = function(node, prt, end) {
+            // The nodes in the provided range (parent to end)
+            // The index of the right child
+            // The starting index for a left child
+            var nodes, right, start;
+
+            // Find the count of nodes
+            nodes = end - prt;
+
+            // If (no nodes)
+            // Then {end traversal}
+            if (nodes < 1) {
+              return;
+            }
+
+            // Set the right child index and node
+            right = ( (nodes < 3) ?
+              prt + 1 : ( (nodes < 6) ?
+                prt + 2 : prt + Math.floor(nodes / 2)
+              )
+            );
+            node.right = {
+              val  : vals[right],
+              left : null,
+              right: null
+            };
+
+            // If (no next child)
+            // Then {end traversal}
+            if (nodes === 1) {
+              return;
+            }
+
+            // Set the next right child
+            setRight(node.right, right, end);
+
+            // If (left child exists)
+            // Then {set the left child}
+            if (nodes > 2) {
+              start = prt + 1;
+              setLeft(node.right, right, start);
+            }
+          };
+
+          // Find and set root to median value
+          median = vals.length / 2;
+          median = Math.floor(median);
+          tree.val = vals[median];
+
+          // Set root's left and right children
+          setLeft(tree, median, 0);
+          last = vals.length - 1;
+          setRight(tree, median, last);
         }
         
         // Creates the doubly-linked list
         function createList() {
+          // A function that moves the  BST's left root
+          //   branch to the doubly-linked list
+          // A function that moves the  BST's right root
+          //   branch to the doubly-linked list
+          var moveLeft, moveRight;
+
+          // Moves the left root branch of the BST to the
+          //   doubly-linked list
+          moveLeft = function() {
+            // The node with the minimum value
+            //   remaining in the left branch
+            // The min node's parent
+            // The last node in the linked list
+            var minNode, prtNode, listNode;
+
+            // Set the last node in the linked
+            //   list to the beginning
+            listNode = list;
+
+            // Find, remove, and replace the min node
+            while (!!tree.left) {
+
+              // Set the parent node to the tree root
+              prtNode = tree;
+
+              // Find the min node's parent and save both
+              while (!!prtNode.left.left) {
+                prtNode = prtNode.left;
+              }
+              minNode = prtNode.left;
+
+              // Remove min node from tree and repair the BST
+              prtNode.left = (!minNode.right) ? null : minNode.right;
+              minNode.right = null;
+
+              // Add min node to linked list
+              listNode.right = minNode;
+              minNode.left = listNode;
+              listNode = minNode;
+            }
+
+            // Add root to linked list
+            listNode.right = tree;
+            tree.left = listNode;
+          };
+          
+          // Moves the right root branch of the BST to the
+          //   doubly-linked list
+          moveRight = function() {
+            // The node with the maximum value
+            //   remaining in the right branch
+            // The max node's parent
+            // The last node in the linked list
+            var maxNode, prtNode, listNode;
+
+            // Set the last node in the linked
+            //   list to the end
+            listNode = list;
+
+            // Find, remove, and replace the max node
+            while (!!tree.right) {
+
+              // Set the parent node to the tree root
+              prtNode = tree;
+
+              // Find the max node's parent and save both
+              while (!!prtNode.right.right) {
+                prtNode = prtNode.right;
+              }
+              maxNode = prtNode.right;
+
+              // Remove max node from tree and repair the BST
+              prtNode.right = (!maxNode.left) ? null : maxNode.left;
+              maxNode.left = null;
+
+              // Add max node to linked list
+              listNode.left = maxNode;
+              maxNode.right = listNode;
+              listNode = maxNode;
+            }
+
+            // Add root to linked list
+            listNode.left = tree;
+            tree.right = listNode;
+          };
+
+          // Make the doubly-linked list
+          moveLeft();
+          moveRight();
         }
         
-        // Sets the first node in the list
-        function setFirst() {
+        // Prepares the results for display
+        function setResults() {
+          // Set final results
+          results.show = '' +
+          '<span style="display:block;overflow-x:auto">' +
+          '<table class="aIV-exQ3-table">' +
+            '<tr>' +
+              '<td>' +
+                '<u>Unsorted Array</u>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:15px 0 0;">' +
+                results.vals +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:15px 0 20px;">' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td>' +
+                '<u>Binary Search Tree</u>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:15px 0 0;">' +
+                results.tree +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:15px 0 20px;">' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+                '<span style="margin:0 15px;">&dArr;</span>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td>' +
+                '<u>Doubly-Linked List</u>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:15px 0;">' +
+                results.list +
+              '</td>' +
+            '</tr>' +
+          '</table>' +
+          '</span>';
         }
 
-        //return 'First node: ' + first.val;
+        // Prepares the final string for the unsorted
+        //   array to add to the results
+        setResults.vals = function() {
+          results.vals = '[&nbsp;&nbsp;' + vals.join(',') + '&nbsp;&nbsp;]';
+        };
+
+        // Prepares the final string for the binary
+        //   search tree to add to the results
+        setResults.tree = function() {
+          // A function that creates a matrix of the
+          //   rows of nodes
+          // A function that creates the final string
+          var createMatrix, createString;
+
+          // Creates the matrix of nodes for the BST
+          createMatrix = function() {
+            // The temporary container for the nodes waiting
+            //   to be searched
+            // The current node being searched
+            // The left child
+            // The right child
+            var row, node, left, right;
+
+            // Set tree results and row properties
+            results.tree = [ [tree] ];
+            row = {
+              now  : [tree],
+              next : [],
+              isRow: true
+            };
+
+            // Loop through BST
+            loop:
+            while (true) {
+
+              // Set and remove node
+              node = row.now.shift();
+
+              // If (node not null)
+              // Then {check children}
+              left = ( (!node) ?
+                null : ( (!node.left) ?
+                  null : node.left
+                )
+              );
+              right = ( (!node) ?
+                null : ( (!node.right) ?
+                  null : node.right
+                )
+              );
+              // Add children to next row
+              row.next.push(left, right);
+              // If (child exists)
+              // Then {remove next row flag}
+              row.isRow = row.isRow || (!!left || !!right);
+
+              // If (current row finished)
+              // Then {check and set next}
+              if (row.now.length === 0) {
+                if (row.isRow) {
+                  row.now = row.next.slice(0);
+                  row.next = [];
+                  results.tree.push( row.now.slice(0) );
+                  row.isRow = false;
+                }
+                else {
+                  break loop;
+                }
+              }
+            }
+          }
+
+          // Creates the final string for the BST
+          createString = function() {
+            // The final string
+            // The number of BST rows
+            // The number of BST columns
+            // The number of dashes from the root
+            // The number of rows more than 3
+            // The loop index for rows over three
+            // The loop index for the rows
+            // The current row
+            var string, rows, columns, dashes, over, o, r, row;
+            // The number of cells from the edge
+            //   to the first node
+            // The number of cells between children
+            // The number of cells between each branch
+            // The index of the last dash
+            // The loop index for dashes
+            // The number of nodes in the row
+            // The last node in row
+            // The loop index for the nodes
+            // The width of each cell
+            var side, gap, mGap, lastD, d, nodes, last, n, width;
+
+            // Set the count of tree items
+            rows = results.tree.length;
+            dashes = ( (rows < 2) ?
+              0 : ( (rows === 2) ?
+                1 : 2
+              )
+            );
+            if (rows > 3) {
+              over = rows - 3;
+              for (o=0; o<over; o++) {
+                dashes = (dashes * 2) + 1;
+              }
+            }
+            columns = (rows < 2) ? 1 : (dashes * 4) + 3;
+            // Set the last row
+            last = rows - 1;
+            // Set each cells width
+            width = 30;
+            // Set the final string
+            string = '<table class="aIV-exQ3-table" style="width:' +
+            (width * columns) + 'px;margin:0 auto;">';
+
+            // Add table cells for the BST
+            for (r=0; r<rows; r++) {
+
+              // Set row, count of nodes in row, and
+              //   the index of the last node
+              row = results.tree[r];
+              nodes = row.length;
+              last = nodes - 1;
+
+              // Set the number of empty cells to be
+              //   added to the side, the index of
+              //   the middle dash, and the gap of
+              //   cells between children
+              side = ( (r === 0) ?
+                Math.floor(columns / 2) : ( (dashes > 1) ?
+                  dashes : 0
+                )
+              );
+              gap = (dashes * 2) + 1;
+              lastD = (r === 0) ? 0 : dashes - 1;
+
+              // If (not the root row)
+              // Then {add a row of dashes to the string}
+              if (r > 0) {
+
+                // Open the row
+                string += '<tr>' + '<td colspan="' + (side + 1) + '" ' +
+                'style="width:' + ( (side + 1) * width) + 'px">&nbsp;</td>';
+
+                // Loop through row nodes
+                for (n=0; n<nodes; n++) {
+
+                  // Add dashes for left child
+                  if (!!row[n]) {
+                    for (d=0; d<dashes; d++) {
+                      string += '' +
+                      '<td style="width:' + width + 'px">' +
+                        '<span class="lineContainer">' +
+                          '<span class="lineFiller">&sol;</span>' +
+                          ( (d === 0) ?
+                            '<span class="leftLine"></span>' :
+                            '<span class="topLine"></span>'
+                          ) +
+                        '</span>' +
+                      '</td>';
+                    }
+                  }
+                  else {
+                    string += '<td colspan="' + dashes + '" ' +
+                    'style="width:' + (dashes * width) + 'px">&nbsp;</td>';
+                  }
+
+                  // Add blank cell for parent
+                  string += '<td style="width:' + width + 'px">&nbsp;</td>';
+
+                  // Move to the right child
+                  ++n;
+                  // Add dashes for right child
+                  if (!!row[n]) {
+                    for (d=0; d<dashes; d++) {
+                      string += '' +
+                      '<td style="width:' + width + 'px">' +
+                        '<span class="lineContainer">' +
+                          '<span class="lineFiller">&bsol;</span>' +
+                          ( (d === lastD) ?
+                            '<span class="rightLine"></span>' :
+                            '<span class="topLine"></span>'
+                          ) +
+                        '</span>' +
+                      '</td>';
+                    }
+                  }
+                  else {
+                    string += '<td colspan="' + dashes + '" ' +
+                    'style="width:' + (dashes * width) + 'px">&nbsp;</td>';
+                  }
+
+                  // If (not the last node in row)
+                  // Then {add blank space for children and parent's parent}
+                  if (n !== last) {
+                    string += '<td colspan="' + (mGap + 2) + '" ' +
+                    'style="width:' + ((mGap + 2) * width) + 'px">&nbsp;</td>';
+                  }
+                }
+
+                // Close the row
+                string += '<td colspan="' + (side + 1) + '" style="width:' +
+                ( (side + 1) * width) + 'px">&nbsp;</td>' + '</tr>';
+              }
+
+              // Add a row of nodes to the string
+              string += '<tr>' +
+              ( (side > 0) ?
+                '<td colspan="' + side + '" style="width:' +
+                (side * width) + 'px">&nbsp;</td>' : ''
+              );
+
+              // If (root)
+              // Then {add root node}
+              // Else {loop through row nodes}
+              if (r === 0) {
+                string += '' +
+                '<td style="width:' + width + 'px">' +
+                  row[0].val +
+                '</td>';
+              }
+              else {
+                for (n=0; n<nodes; n++) {
+
+                  // Add left child
+                  string += '' +
+                  '<td style="width:' + width + 'px">' +
+                    ( (!!row[n]) ? row[n].val : '&nbsp;' ) +
+                  '</td>';
+
+                  // Add gap cell
+                  string += '<td colspan="' + gap + '" style="width:' +
+                  (gap * width) + 'px">&nbsp;</td>';
+
+                  // Move to the right child
+                  ++n;
+                  // Add right child
+                  string += '' +
+                  '<td style="width:' + width + 'px">' +
+                    ( (!!row[n]) ? row[n].val : '&nbsp;' ) +
+                  '</td>';
+
+                  // If (not the last node in row)
+                  // Then {add blank space for the parent's parent}
+                  if (n !== last) {
+                    string += '<td colspan="' + mGap + '" style="width:' +
+                    (mGap * width) + 'px">&nbsp;</td>';
+                  }
+                }
+              }
+
+              // Close the row
+              string += '' +
+              ( (side > 0) ?
+                '<td colspan="' + side + '" style="width:' +
+                (side * width) + 'px">&nbsp;</td>' : ''
+              ) + '</tr>';
+              
+              // Recalculate the mid gap and dashes
+              mGap = dashes;
+              dashes = ( (r === 0) ?
+                dashes : ( (dashes > 2) ?
+                  Math.floor(dashes / 2) : 1
+                )
+              );
+              mGap = ( (r === 0) ?
+                0 : ( (mGap > 2) ?
+                  mGap : 1
+                )
+              );
+            }
+            
+            // Save results string
+            results.tree = string + '</table>';
+          }
+
+          // Make the string
+          createMatrix();
+          createString();
+        };
+
+        // Prepares the final string for the
+        //   doubly-linked list to add to
+        //   the results
+        setResults.list = function() {
+          // The current node
+          var node;
+
+          // Set list results to empty
+          results.list = '';
+          // Set node to list start
+          node = list.right;
+
+          // Add each node value and arrows
+          loop:
+          while (true) {
+            results.list += node.val;
+            if (node.right.val === null) {
+              break loop;
+            }
+            results.list += '&nbsp;&nbsp;&lrarr;&nbsp;&nbsp;';
+            node = node.right;
+          }
+        };
+
+        // Sort the values, create the BST,
+        //   convert the BST to a list,
+        //   and share the results
+        setResults.vals();
+        sortValues();
+        createTree();
+        setResults.tree();
+        createList();
+        setResults.list();
+        setResults();
+        return results.show;
       }
     },
     {
