@@ -152,8 +152,8 @@
       // Question: 1
       complete: true,
         source: 'fb',
-       mainCat: [ 'search', 'tree', 'array' ],
-        subCat: [ 'bfs', 'binTree' ],
+       mainCat: [ 'search', 'tree', 'list', 'array' ],
+        subCat: [ 'bfs', 'binTree', 'sList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -178,6 +178,8 @@
          *    -- Breadth First Search (BFS): http://en.wikipedia.org/wiki/Breadth-first_search
          *  - Data Structures:
          *    -- Binary Tree: http://en.wikipedia.org/wiki/Binary_tree
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
@@ -263,7 +265,6 @@
           row = {
               now   : [tree],
               next  : [],
-              isRow : true,
               string: ''
             };
 
@@ -275,29 +276,26 @@
             node = row.now.shift();
 
             // If (child exists)
-            // Then {add child to next row and update row flag}
+            // Then {add child to next row and result}
             if (!!node.left) {
               row.next.push(node.left);
-              row.isRow = true;
               row.string += (row.next.length > 1) ? ',' : '';
               row.string += node.left.val;
             }
             if (!!node.right) {
               row.next.push(node.right);
-              row.isRow = true;
               row.string += (row.next.length > 1) ? ',' : '';
               row.string += node.right.val;
             }
 
             // If (current row finished)
-            // Then {update result and check and reset rows}
+            // Then {check, update, and reset rows}
             // Else {end search}
             if (row.now.length === 0) {
-              if (row.isRow) {
+              if (row.next.length > 0) {
                 result += '<br />' + row.string;
                 row.now = row.next.slice(0);
                 row.next = [];
-                row.isRow = false;
                 row.string = '';
               }
               else {
@@ -317,8 +315,8 @@
       // Question: 2
       complete: true,
         source: 'am',
-       mainCat: [ 'search', 'graph', 'array' ],
-        subCat: [ 'back', 'dynam', 'dfs', 'digraph', 'incList' ],
+       mainCat: [ 'search', 'graph', 'list', 'array' ],
+        subCat: [ 'back', 'dynam', 'dfs', 'digraph', 'incList', 'sList', 'dList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -355,6 +353,9 @@
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Weighted Graph: http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Weighted_graphs_and_networks
          *    -- Incidence List: http://www.algorithmist.com/index.php/Graph_data_structures#Incidence_List
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
+         *    -- Doubly-Linked List: http://en.wikipedia.org/wiki/Doubly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
@@ -369,26 +370,26 @@
 
         // Set variables
         graph = {
-          vertices: [],
+          verti: [],
           edges: []
         };
         start =  0;
         end   =  9;
         max   = 50;
         paths = {
-          list: [],
-          starbucks: 0
+          list  : [],
+          starbk: 0
         };
         prob  = 0;
         results = {
           count: {
-            all: '',
-            starbucks: ''
+            all   : '',
+            starbk: ''
           },
-          prob: '',
+          prob : '',
           paths: {
-            all: '',
-            starbucks: ''
+            all   : '',
+            starbk: ''
           }
         };
 
@@ -400,16 +401,16 @@
           // The edge's child vertex
           // The edge's weight
           // The edge's Starbuck's value
-          var v, e, pNode, child, weight, starbucks;
+          var v, e, prt, child, weight, starbk;
           // The parent index
           // The child index
-          // A shortcut function to add edge
+          // A function that adds edge
           //   pointers to vertices
           var p, c, addPointer;
           
-          // Set shortcut function
+          // Adds a vertex's edge references
           // param: The vertex's index
-          // param: An array of the edge's indexes
+          // param: An array of edge indexes
           addPointer = function(vertex, edges) {
             // The number of edges
             // The loop index
@@ -421,13 +422,13 @@
             // Add each edge
             for (i=0; i<len; i++) {
               node = graph.edges[ edges[i] ];
-              graph.vertices[vertex].edges.push(node);
+              graph.verti[vertex].edges.push(node);
             }
           }
 
           // Add vertices to graph
           for (v=0; v<10; v++) {
-            graph.vertices.push({ val: v, edges: [] });
+            graph.verti.push({ val: v, edges: [] });
           }
 
           // Add edges to graph
@@ -435,70 +436,70 @@
 
             // Set weight and starbucks
             weight = 5;
-            starbucks = (e === 5) ? true : false;
+            starbk = (e === 5);
             // Set parent and child
             switch (true) {
               case (e < 3):
                 p = 0;
                 c = (e === 0) ? 1 : ++c;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e < 5):
                 p = 1;
                 c = e;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e < 7):
                 p = 2;
                 c = e;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e === 7):
                 p = 3;
                 c = 6;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e === 8):
                 p = 4;
                 c = 6;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e < 12):
                 p = 5;
                 c = ++c;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e < 14):
                 p = 6;
                 c = (e === 12) ? 7 : 9;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e === 14):
                 p = 7;
                 c = 8;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
               case (e === 15):
                 p = 8;
                 c = 9;
-                pNode = graph.vertices[p];
-                child = graph.vertices[c];
+                prt = graph.verti[p];
+                child = graph.verti[c];
               break;
             }
             // Add edge
             graph.edges.push({
-              pNode: pNode,
+              prt   : prt,
               child : child,
               weight: weight,
-              starbucks: starbucks
+              starbk: starbk
             });
           }
 
@@ -526,14 +527,14 @@
           // param: The current node
           // param: The current cumulative weight
           // param: Whether a starbucks currently exists
-          buildPaths = function(node, weight, starbucks) {
+          buildPaths = function(node, weight, starbk) {
             // The string for the current path
             // The count of the node's edges
             // The edges index
             // The current edge's node
             // The new total path weight
             // The new starbucks value
-            var edges, e, edge, newWeight, newStarbucks;
+            var edges, e, edge, newWeight, newStarbk;
 
             // If (weight is greater than max weight)
             // Then {end this path traversal}
@@ -552,11 +553,11 @@
 
               // Add path to final list of paths
               paths.list.push({
-                val: path.string,
-                starbucks: starbucks
+                val   : path.string,
+                starbk: starbk
               });
               // Adjust count of Starbucks paths
-              paths.starbucks += (starbucks) ? 1 : 0;
+              paths.starbk += (starbk) ? 1 : 0;
 
               // End this path traversal
               return;
@@ -575,9 +576,9 @@
               // Set new weight total
               newWeight = weight + edge.weight;
               // Set new value for starbucks
-              newStarbucks = (starbucks || edge.starbucks);
+              newStarbk = (starbk || edge.starbk);
               // Continue search
-              buildPaths(edge.child, newWeight, newStarbucks);
+              buildPaths(edge.child, newWeight, newStarbk);
             }
 
             // Remove current node from path
@@ -592,7 +593,7 @@
             string: ''
           };
           // Find the paths
-          buildPaths(graph.vertices[start], 0, false);
+          buildPaths(graph.verti[start], 0, false);
         }
 
         // Calculates the probability of passing a Starbucks
@@ -600,7 +601,7 @@
           // Divide the number of paths with starbucks
           //   by the number of all paths and round up
           //   to the nearest whole percent
-          prob = (paths.starbucks / paths.list.length) * 100;
+          prob = (paths.starbk / paths.list.length) * 100;
           prob = Math.ceil(prob);
         }
 
@@ -616,25 +617,25 @@
           
           // Set count results
           results.count.all = 'Count of All Paths: ' + len + '<br />';
-          results.count.starbucks  = 'Count of All Paths with Starbucks: ';
-          results.count.starbucks += paths.starbucks + '<br />';
+          results.count.starbk = 'Count of All Paths with Starbucks: ';
+          results.count.starbk += paths.starbk + '<br />';
 
           // Set probability result
           results.prob = 'Probability of Passing Starbucks: ' + prob + '%<br />';
 
           // Set path result headers
           results.paths.all = 'List of All Paths:';
-          results.paths.starbucks = 'List of All Paths with Starbucks:';
+          results.paths.starbk = 'List of All Paths with Starbucks:';
           // Set path result containers
           results.paths.all += '<span style="display:block;margin-left:30px">';
-          results.paths.starbucks += '<span style="display:block;margin-left:30px">';
+          results.paths.starbk += '<span style="display:block;margin-left:30px">';
           // Set first Starbucks flag
           flag = true;
           // Set path results
           for (i=0; i<len; i++) {
             results.paths.all += (i > 0) ? '<br />' : '';
             results.paths.all += paths.list[i].val;
-            if (paths.list[i].starbucks) {
+            if (paths.list[i].starbk) {
               // If (first path with Starbucks)
               // Then {change flag}
               // Else {add line break}
@@ -642,14 +643,14 @@
                 flag = false;
               }
               else {
-                results.paths.starbucks += '<br />';
+                results.paths.starbk += '<br />';
               }
-              results.paths.starbucks += paths.list[i].val;
+              results.paths.starbk += paths.list[i].val;
             }
           }
           // Close path result containers
           results.paths.all += '</span>';
-          results.paths.starbucks += '</span>';
+          results.paths.starbk += '</span>';
         }
 
         // Create digraph, find paths,
@@ -659,8 +660,8 @@
         findPaths();
         calcProbability();
         prepareResults();
-        return results.count.all + results.count.starbucks +
-        results.prob + results.paths.all + results.paths.starbucks;
+        return results.count.all + results.count.starbk +
+        results.prob + results.paths.all + results.paths.starbk;
       }
     },
     {
@@ -722,9 +723,20 @@
         var inputs, hashes, duplicates, results;
 
         // Set variables
-        inputs = {};
-        hashes = {};
-        duplicates = {};
+        inputs = {
+          // 'url': 'content'
+          /// CONVERTED TO
+          // 'url': 'hashOfContent'
+        };
+        hashes = {
+          // 'hashOfContent': {
+          //   collisions: number,
+          //   content   : 'content'
+          // }
+        };
+        duplicates = {
+          // 'url': [ 'duplicateUrl', ...]
+        };
         results = [];
 
         // Adds the original list of urls
@@ -911,8 +923,8 @@
       // Question: 4
       complete: true,
         source: 'go',
-       mainCat: [ 'search', 'tree', 'graph', 'hash', 'array' ],
-        subCat: [ 'brute', 'back', 'dfs', 'trie', 'arb', 'digraph', 'adjList', 'hTable' ],
+       mainCat: [ 'search', 'tree', 'graph', 'hash', 'list', 'array' ],
+        subCat: [ 'brute', 'back', 'dfs', 'trie', 'arb', 'digraph', 'adjList', 'hTable', 'sList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -955,6 +967,8 @@
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Adjacency List: http://en.wikipedia.org/wiki/Adjacency_list
          *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          *
          ** Copyright Notice:
@@ -966,7 +980,7 @@
          *  - Copyright Details: http://cfajohnson.com/wordfinder/UKACD17.shtml 
          */
 
-        // A list of English words for this test
+        // A hash map of letter to English words
         // An array of all the string's letters and an
         //   indicator of how many duplicates exist
         // A trie of words with a max length of 4
@@ -978,14 +992,25 @@
         var words, letters, wordTrie, string, graph, results;
 
         // Setup variables
-        words    = {};
+        words    = {
+          // 'letter': [ 'word', ...]
+        };
         letters  = {
           list: [],
           dupl: 0
         }
-        wordTrie = {};
+        wordTrie = {
+          // 'current word part': {
+          //   isWord: true||false,
+          //   value : 'current word part',
+          //   kids  : [ reference to child in hash map, ...]
+          // }
+        };
         string   = 'ogeg';
-        graph    = {};
+        graph    = {
+          val : '',
+          kids: []
+        };
         results  = [];
 
         // Download the json dictionary
@@ -1170,8 +1195,6 @@
             }
           }
 
-          // Setup graph base
-          graph = { val: '', kids: [] };
           // Add branches
           addKids(graph, letters.list, !letters.dupl);
         }
@@ -1234,8 +1257,8 @@
       // Question: 5
       complete: true,
         source: 'bl',
-       mainCat: [ 'search', 'graph', 'hash', 'array' ],
-        subCat: [ 'dfs', 'brute', 'digraph', 'adjList', 'hTable' ],
+       mainCat: [ 'search', 'graph', 'hash', 'list', 'array' ],
+        subCat: [ 'dfs', 'brute', 'digraph', 'adjList', 'hTable', 'sList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -1251,19 +1274,14 @@
          ** Solution:
          *  - Step 1: A brute force search algorithm is
          *    used to create an arborescence of the nodes
-         *    in a vector while simultaneously building
+         *    in the vector while simultaneously building
          *    an array containing the two node values
          *    that are not duplicated (i.e. the
-         *    possible arborescence roots). A hash
-         *    table with a key set to the location
-         *    string and a value set to a node
-         *    containing the location string and edge
-         *    references is used to represent the
-         *    arborescence.
-         *  - Step 2: The two possible root node
-         *    values are checked, and the node value
-         *    that is not the root is removed from the
-         *    array.
+         *    possible arborescence roots). A hash table
+         *    of nodes forming a singly-linked list is
+         *    used to represent the arborescence.
+         *  - Step 2: The two possible root node values
+         *    are checked, and the root node is saved.
          *  - Step 3: One pass of a DFS algorithm is
          *    used to print the path of the nodes.
          *
@@ -1276,6 +1294,8 @@
          *    -- Directed Graph (Digraph): http://en.wikipedia.org/wiki/Directed_graph
          *    -- Adjacency List: http://en.wikipedia.org/wiki/Adjacency_list
          *    -- Hash Table: http://en.wikipedia.org/wiki/Hash_table
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
@@ -1283,12 +1303,15 @@
         // Arborescence of nodes
         // Possible root nodes
         // Final node path
-        var vector, graph, roots, result;
+        var vector, graph, root, result;
 
         // Set variables
         vector = [ 'JFK','LXA','SNA','RKJ','LXA','SNA' ];
-        graph  = {};
-        roots  = [];
+        graph  = {
+          // val : 'location name',
+          // edge: node reference
+        };
+        root   = [];
         result = [];
 
         // Adds unique node keys to the roots list
@@ -1299,16 +1322,16 @@
           var i;
 
           // Save node index
-          i = roots.indexOf(nodeVal);
+          i = root.indexOf(nodeVal);
 
           // If (node value is not in roots)
           // Then {add to roots}
           // Else {remove from roots}
           if (i === -1) {
-            roots.push(nodeVal);
+            root.push(nodeVal);
           }
           else {
-            roots.splice(i, 1);
+            root.splice(i, 1);
           }
 
           return (i === -1);
@@ -1322,7 +1345,7 @@
           // Indicates whether to add new node
           // The vertex node
           // The edge node
-          var len, i, nodeVal, check, vertex, edge;
+          var len, i, val, check, vertex, edge;
 
           // Save vector length
           len = vector.length;
@@ -1331,14 +1354,14 @@
           for (i=0; i<len; i++) {
 
             // Set and check node value
-            nodeVal = vector[i];
-            check   = addRoot(nodeVal);
+            val = vector[i];
+            check = addRoot(val);
             // If (node value does not exist)
             // Then {add node}
             if (check) {
-              graph[nodeVal] = {
-                value: nodeVal,
-                edges: []
+              graph[val] = {
+                val : val,
+                edge: null
               }
             }
           }
@@ -1350,7 +1373,7 @@
             vertex = graph[ vector[i] ];
             edge   = graph[ vector[++i] ];
             // Add edge to vertex
-            vertex.edges.push(edge);
+            vertex.edge = edge;
           }
         }
 
@@ -1364,11 +1387,12 @@
           for (i=0; i<2; i++) {
 
             // Save node reference
-            node = graph[ roots[i] ];
-            // If (node does not have an edge)
-            // Then {remove it from roots}
-            if (node.edges.length === 0) {
-              roots.splice(i, 1);
+            node = graph[ root[i] ];
+            // If (node has edge)
+            // Then {set root to it}
+            if (!!node.edge) {
+              root = node;
+              return;
             }
           }
         }
@@ -1376,24 +1400,21 @@
         // Finds the resulting path
         function findPath() {
           // The current node
-          // The count of edges
-          var node, edges;
+          var node;
 
           // Set node to root node
-          node = graph[ roots[0] ];
+          node = root;
 
           // Run DFS
           while (!!node) {
 
             // Add current node value to results
             result.push(node.value);
-            // Save count of edges
-            edges = node.edges.length;
             // If (node has edge)
             // Then {set next node to edge}
             // Else {end loop}
-            node = ( (edges > 0) ?
-              node.edges[0] : !node
+            node = ( (!!node.edge) ?
+              node.edge : !node
             );
           }
         }
@@ -1412,7 +1433,7 @@
       complete: true,
         source: 'go',
        mainCat: [ 'sort', 'tree', 'search', 'list', 'array' ],
-        subCat: [ 'heapS', 'binHeap', 'bst', 'back', 'bfs', 'brute', 'dList' ],
+        subCat: [ 'heapS', 'binHeap', 'bst', 'back', 'bfs', 'brute', 'sList', 'dList' ],
          links: [
            {
              name: 'More on Converting a Binary Search Tree into a Doubly-Linked List',
@@ -1422,17 +1443,17 @@
        problem: 'Given an array of random numbers, create a binary search tree with the median as the root. Then convert the binary search tree into a doubly-linked list that is sorted in ascending or descending order and return the first node in the list. Do the sort and conversion in place<span style="margin:0 12px">&ndash;</span>i.e. the memory complexity of your algorithms should be <em style="margin:0 2px">&Omicron;</em>(1).' +
                 '<span style="display:block;margin:15px 0 10px">Example diagram of conversion:</span>'  +
                 '<style>' +
-                  '.aIV-exQ3-table {padding:0;margin:0;text-align:center;border-collapse:collapse;border:0}' +
-                  '.aIV-exQ3-table tr {padding:0;margin:0;text-align:center;border:0}' +
-                  '.aIV-exQ3-table td {padding:0;margin:0;text-align:center;verticle-align:middle;border:0}' +
-                  '.aIV-exQ3-table span.lineContainer {position:relative;display:block;width:100%;height:100%;overflow:hidden}' +
-                  '.aIV-exQ3-table span.lineFiller {opacity:0}' +
-                  '.aIV-exQ3-table span.topLine {position:absolute;top:2px;left:0;display:block;width:100%;height:1px;background:#192037}' +
-                  '.aIV-exQ3-table span.leftLine, .aIV-exQ3-table span.rightLine {position:absolute;top:50%;left:-50%;display:block;width:200%;height:1px;background:#192037}' +
-                  '.aIV-exQ3-table span.leftLine {-ms-transform:rotate(-45deg);-moz-transform:rotate(-45deg);webkit-transform:rotate(-45deg);transform:rotate(-45deg)}' +
-                  '.aIV-exQ3-table span.rightLine {-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);webkit-transform:rotate(45deg);transform:rotate(45deg)}' +
+                  '.aIV-exQ6-table {padding:0;margin:0;text-align:center;border-collapse:collapse;border:0}' +
+                  '.aIV-exQ6-table tr {padding:0;margin:0;text-align:center;border:0}' +
+                  '.aIV-exQ6-table td {padding:0;margin:0;text-align:center;verticle-align:middle;border:0}' +
+                  '.aIV-exQ6-table span.lineContainer {position:relative;display:block;width:100%;height:100%;overflow:hidden}' +
+                  '.aIV-exQ6-table span.lineFiller {opacity:0}' +
+                  '.aIV-exQ6-table span.topLine {position:absolute;top:2px;left:0;display:block;width:100%;height:1px;background:#192037}' +
+                  '.aIV-exQ6-table span.leftLine, .aIV-exQ6-table span.rightLine {position:absolute;top:50%;left:-50%;display:block;width:200%;height:1px;background:#192037}' +
+                  '.aIV-exQ6-table span.leftLine {-ms-transform:rotate(-45deg);-moz-transform:rotate(-45deg);webkit-transform:rotate(-45deg);transform:rotate(-45deg)}' +
+                  '.aIV-exQ6-table span.rightLine {-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);webkit-transform:rotate(45deg);transform:rotate(45deg)}' +
                 '</style>' +
-                '<table class="aIV-exQ3-table">' +
+                '<table class="aIV-exQ6-table">' +
                   '<tr>' +
                     '<td><u>Unsorted Array</u></td>' +
                     '<td></td>' +
@@ -1444,7 +1465,7 @@
                     '<td>[&nbsp;&nbsp;7,3,9&nbsp;&nbsp;]</td>' +
                     '<td style="padding:0 20px">&rArr;<br />&rArr;</td>'     +
                     '<td>' +
-                      '<table class="aIV-exQ3-table" style="margin:5px auto 0;">' +
+                      '<table class="aIV-exQ6-table" style="margin:5px auto 0;">' +
                         '<tr>'  +
                           '<td></td>'  +
                           '<td></td>'  +
@@ -1505,7 +1526,9 @@
          *  - Data Structures:
          *    -- Binary Heap: http://en.wikipedia.org/wiki/Binary_heap
          *    -- Binary Search Tree: http://en.wikipedia.org/wiki/Binary_search_tree
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
          *    -- Doubly-Linked List: http://en.wikipedia.org/wiki/Doubly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
@@ -1845,7 +1868,7 @@
           // Set final results
           results.show = '' +
           '<span style="display:block;overflow-x:auto">' +
-          '<table class="aIV-exQ3-table">' +
+          '<table class="aIV-exQ6-table">' +
             '<tr>' +
               '<td>' +
                 '<u>Unsorted Array</u>' +
@@ -2008,7 +2031,7 @@
             // Set each cells width
             width = 30;
             // Set the final string
-            string = '<table class="aIV-exQ3-table" style="width:' +
+            string = '<table class="aIV-exQ6-table" style="width:' +
             (width * columns) + 'px;margin:0 auto;">';
 
             // Add table cells for the BST
@@ -2218,8 +2241,8 @@
       // Question: 7
       complete: true,
         source: 'fb',
-       mainCat: [ 'search', 'tree', 'array' ],
-        subCat: [ 'bfs', 'binTree' ],
+       mainCat: [ 'search', 'tree', 'list', 'array' ],
+        subCat: [ 'bfs', 'binTree', 'sList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -2342,6 +2365,8 @@
          *    -- Breadth First Search (BFS): http://en.wikipedia.org/wiki/Breadth-first_search
          *  - Data Structures:
          *    -- Binary Tree: http://en.wikipedia.org/wiki/Binary_tree
+         *    -- Singly-Linked Lists: http://en.wikipedia.org/wiki/Linked_list#Singly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
          *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
 
@@ -2427,7 +2452,6 @@
           row = {
               now   : [tree],
               next  : [],
-              isRow : true,
               string: ''
             };
 
@@ -2439,27 +2463,24 @@
             node = row.now.shift();
 
             // If (child exists)
-            // Then {add child to next row and update row flag}
+            // Then {add child to next row and result}
             if (!!node.left) {
               row.next.push(node.left);
-              row.isRow = true;
               row.string += node.left.val;
             }
             if (!!node.right) {
               row.next.push(node.right);
-              row.isRow = true;
               row.string += node.right.val;
             }
 
             // If (current row finished)
-            // Then {update result and check and reset rows}
+            // Then {check, update, and reset rows}
             // Else {end search}
             if (row.now.length === 0) {
-              if (row.isRow) {
+              if (row.next.length > 0) {
                 result += '<br />' + row.string;
                 row.now = row.next.slice(0);
                 row.next = [];
-                row.isRow = false;
                 row.string = '';
               }
               else {
@@ -2477,28 +2498,200 @@
     },
     {
       // Question: 8
-      complete: false,
+      complete: true,
         source: 'go',
-       mainCat: [],
-        subCat: [],
+       mainCat: [ 'search', 'tree', 'list', 'array' ],
+        subCat: [ 'dfs', 'dList' ],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=6295449935806464'
-                  }
-                ],
-       problem: 'Represent the following in a data structure:<br />&lt;html&gt;&lt;body&gt;&lt;div&gt;&lt;span&gt;TEXT1&lt;/span&gt;&lt;br/&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;<br /><br />Do I do the same using a stack or create a tree for the same?',
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=6295449935806464'
+           }
+         ],
+       problem: 'Represent the following in a data structure:' +
+                '<ol style="padding:0;margin:0;list-style-type:none">' +
+                  '<li>&lt;html&gt;</li>' +
+                  '<li style="padding-left:20px">&lt;body&gt;</li>' +
+                  '<li style="padding-left:40px">&lt;div&gt;</li>' +
+                  '<li style="padding-left:60px">&lt;span&gt;Lorem Ipsum&lt;/span&gt;</li>' +
+                  '<li style="padding-left:60px">&lt;br /&gt;</li>' +
+                  '<li style="padding-left:40px">&lt;/div&gt;</li>' +
+                  '<li style="padding-left:20px">&lt;/body&gt;</li>' +
+                  '<li>&lt;/html&gt;</li>' +
+                '</ol>',
       solution: function() {
         /*
          ** Solution:
-         *  - [explanation]
+         *  - Step 1: A doubly-linked list of nodes
+         *    containing their tag name, content, and
+         *    an array of child node references (in
+         *    order by appearance) is created to represent
+         *    a plane tree of the DOM elements where the
+         *    html tag is the root node.
+         *  - Step 2: A depth first search algorithm is
+         *    used to add each element to a final result
+         *    string.
          *
          ** Need to Know Terms:
          *  - Algorithms:
-         *    -- [term]: [link]
+         *    -- Depth First Search (DFS): http://en.wikipedia.org/wiki/Depth-first_search
          *  - Data Structures:
-         *    -- [term]: [link]
+         *    -- Plane Trees: http://en.wikipedia.org/wiki/Tree_(graph_theory)#Plane_tree
+         *    -- Doubly-Linked List: http://en.wikipedia.org/wiki/Doubly_linked_list
+         *    -- Linked Lists: http://en.wikipedia.org/wiki/Linked_list
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
+
+        // The data structure for the DOM nodes
+        // The final string output of the nodes
+        var html, result;
+
+        // Set data structures
+        html = {
+          tag    : 'html',
+          _parent: null,
+          content: '',
+          kids   : []
+        };
+        result = '';
+
+        // Adds the elements to the html page
+        function addElements() {
+          // A function that adds an element
+          // The current element
+          // The span element
+          var addElement, elem, span;
+
+          // Adds an element to the page
+          // param: The new tag name (string)
+          // param: The parent node
+          addElement = function(tag, prt) {
+            // The new element
+            var newElem;
+
+            // Create the new element
+            newElem = {
+              tag    : tag,
+              _parent: prt,
+              content: '',
+              kids   : []
+            };
+
+            // Append it to the parent
+            prt.kids.push(newElem);
+            
+            return newElem;
+          };
+
+          // Add nodes to the html tree
+          elem = addElement('body', html);
+          elem = addElement('div', elem);
+          span = addElement('span', elem);
+          addElement('br', elem);
+
+          // Add content to nodes
+          span.content = 'Lorem Ipsum';
+        }
+
+        // Creates a string output of the DOM nodes
+        function prepareResult() {
+          // A function that adds an element and
+          //   its children to the result
+          // A function that returns the string
+          //   value for an element
+          // A function that returns the padding
+          //   value for a line
+          // The padding amount for each indent
+          var addElement, getString, getPadding, padding;
+
+          // Adds an element and its children
+          //   to the result
+          // param: The element node
+          // param: The current depth
+          addElement = function(elem, depth) {
+            // The number of children
+            // The child node
+            var kids, kid;
+
+            // Set the count of children
+            kids = elem.kids.length;
+
+            // Add the element to the result
+            result += '' +
+            '<li style="' + getPadding(depth) + '">' +
+              getString(elem.tag) +
+              ( (kids === 0) ?
+                elem.content +
+                getString(elem.tag, true) :
+                ''
+              ) +
+            '</li>';
+
+            // If (no children)
+            // Then {end addition}
+            if (kids === 0) {
+              return;
+            }
+
+            // Increase the depth
+            ++depth;
+
+            // Add the element's content and
+            //   children to the result
+            result += ( (elem.content !== '') ?
+              '<li style="' + getPadding(depth) + '">' +
+                elem.content +
+              '</li>' :
+              ''
+            );
+            elem.kids.forEach(function(kid) {
+              addElement(kid, depth);
+            });
+
+            // Decrease the depth
+            --depth;
+
+            // Add the element closing tag
+            result += '' +
+            '<li style="' + getPadding(depth) + '">' +
+              getString(elem.tag, true) +
+            '</li>';
+
+            return;
+          };
+
+          // Returns a string value for the element
+          // param: The element's tag name
+          // param: Indicates if element is closing (optional)
+          getString = function(tag, end) {
+            return ( (tag === 'br') ?
+              ( (!end) ? '&lt;br /&gt;' : '' ) :
+              '&lt;' + ( (!!end) ? '/' : '' ) +
+              tag + '&gt;'
+            );
+          };
+
+          // Returns the padding value for a line
+          // param: The current depth
+          getPadding = function(depth) {
+            return 'padding-left:' +
+            (padding * depth) + 'px';
+          };
+
+          // Set the padding px amount for each indent
+          padding = 20;
+
+          // Set the result
+          result = '<ol style="padding:0;margin:0;list-style-type:none">';
+          addElement(html, 1);
+          result += '</ol>';
+        }
+
+        // Create the DOM data structure
+        //   and print the elements
+        addElements();
+        prepareResult();
+        return result;
       }
     },
     {
