@@ -754,54 +754,28 @@
 
         // Hashes a string with the FNV-1a hash algorithm
         // param: The string to be hashed
-        // param: The hashed collision
-        // param: The extra rotations to resolve a collision
+        // param: A previous hash that collided (optional)
+        // param: Extra iterations to resolve a collision (optional)
         function createHash(string, hash, extras) {
-          // A function that XORs each octet and multiplies
-          //   by the prime
           // The FNV offset basis for the hash
-          // The string length
+          // The loop length (extras or string length)
           // The loop index
-          var fnv, offset, len, i;
-
-          // Handles the XOR of each octet and prime
-          //   multiplication
-          // param: The unicode for a character
-          fnv = function(unicode) {
-            hash ^= unicode;
-            hash *= (hash << 1) + (hash << 4) +
-            (hash << 7) + (hash << 8) + (hash << 24);
-          };
+          var offset, len, i;
 
           // Set offset to the 32 bit FNV offset_value
           offset = 0x811c9dc5;
+          hash = hash || offset;
 
-          // If (no hash supplied)
-          // Then {create new hash}
-          // Else {resolve collision}
-          if (!hash) {
-
-            // Offset the hash
-            hash = offset;
-
-            // Save string length
-            len = string.length;
-            // Loop through each string character
-            for (i=0; i<len; i++) {
-              // Run fnv action
-              fnv( string.charCodeAt(i) );
-            }
-          }
-          else {
-
-            // Loop through each extra time
-            for (i=0; i<extras; i++) {
-              // Run fnv action
-              fnv( string.charCodeAt(i) );
-            }
+          // Set loop length
+          len = (!extras) ? string.length : extras;
+          // Complete fnv hashing (xor and prime multiplication)
+          for (i=0; i<len; i++) {
+            hash ^= string.charCodeAt(i);
+            hash += (hash << 1) + (hash << 4) +
+            (hash << 7) + (hash << 8) + (hash << 24);
           }
 
-          // Zero-fill right shift hash
+          // Zero-fill shift hash
           hash = hash >>> 0;
 
           return hash;
