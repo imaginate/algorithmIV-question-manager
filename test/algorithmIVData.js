@@ -757,20 +757,29 @@
         // param: The hashed collision
         // param: The extra rotations to resolve a collision
         function createHash(string, hash, extras) {
+          // A function that XORs each octet and multiplies
+          //   by the prime
           // The FNV offset basis for the hash
-          // The FNV prime number to use for multiplication
           // The string length
           // The loop index
-          var offset, prime, len, i;
+          var fnv, offset, len, i;
 
-          // Set offset and prime to the 32 bit FNV values
-          offset = 2166136261;
-          prime  = 16777619;
+          // Handles the XOR of each octet and prime
+          //   multiplication
+          // param: The unicode for a character
+          fnv = function(unicode) {
+            hash ^= unicode;
+            hash *= (hash << 1) + (hash << 4) +
+            (hash << 7) + (hash << 8) + (hash << 24);
+          };
+
+          // Set offset to the 32 bit FNV offset_value
+          offset = 0x811c9dc5;
 
           // If (no hash supplied)
           // Then {create new hash}
           // Else {resolve collision}
-          if (typeof hash === 'undefined') {
+          if (!hash) {
 
             // Offset the hash
             hash = offset;
@@ -779,20 +788,21 @@
             len = string.length;
             // Loop through each string character
             for (i=0; i<len; i++) {
-              // XOR and multiply by prime
-              hash = hash ^ string.charAt(i);
-              hash = hash * prime;
+              // Run fnv action
+              fnv( string.charCodeAt(i) );
             }
           }
           else {
 
             // Loop through each extra time
             for (i=0; i<extras; i++) {
-              // XOR and multiply by prime
-              hash = hash ^ string.charAt(i);
-              hash = hash * prime;
+              // Run fnv action
+              fnv( string.charCodeAt(i) );
             }
           }
+
+          // Zero-fill right shift hash
+          hash = hash >>> 0;
 
           return hash;
         }
@@ -2704,14 +2714,18 @@
        mainCat: [],
         subCat: [],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=5082499984130048'
-                  }
-                ],
-       problem: 'Design a data structure that can do the following operations in O(1) time:<br />Insert, Delete, Search, Max (returns the maximum number)<br /><br />I know delete, search and insert can be done O(1) time in a hashmap with a proper hash function, but not sure Max is even possible in O(1) with the presence of delete operation?',
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=5082499984130048'
+           }
+         ],
+       problem: 'Design a data structure that can do the following operations in <em style="margin:0 2px">&Omicron;</em>(1) time:<br />' +
+                'Insert, Delete, Search, Return Max',
       solution: function() {
         /*
+         ** Overview:
+         *  -  
+         *
          ** Solution:
          *  - [explanation]
          *
@@ -2727,15 +2741,18 @@
       // Question: 10
       complete: false,
         source: 'am',
-       mainCat: [],
+       mainCat: [ 'array' ],
         subCat: [],
          links: [
-                  {
-                    name: 'Discussion on careercup',
-                    href: 'http://www.careercup.com/question?id=6260358392053760'
-                  }
-                ],
-       problem: 'You are given two integer arrays A and B.<br /><br />1&lt;=i&lt;=len(A) so i is iterator of array A<br />1&lt;=j&lt;=len(B) so j is iterator of array B<br /><br />Find all the pairs (i,j) such that : i &lt; j and A[i]&gt;B[j].',
+           {
+             name: 'Further Discussion',
+             href: 'http://www.careercup.com/question?id=6260358392053760'
+           }
+         ],
+       problem: 'You are given two integer arrays, A and B. Consider the following:<br />' +
+                '1 &lt;= x &lt;= len(A) &nbsp;&nbsp;so x is iterator of array A<br />' +
+                '1 &lt;= z &lt;= len(B) &nbsp;&nbsp;so z is iterator of array B<br /><br />' +
+                'Find all the pairs (x,z) such that : x &lt; z &nbsp;&nbsp;and&nbsp;&nbsp; A[x] &gt; B[z]',
       solution: function() { 
         /*
          ** Solution:
@@ -2746,6 +2763,7 @@
          *    -- [term]: [link]
          *  - Data Structures:
          *    -- [term]: [link]
+         *    -- Arrays: http://en.wikipedia.org/wiki/Array_data_structure
          */
       }
     }
