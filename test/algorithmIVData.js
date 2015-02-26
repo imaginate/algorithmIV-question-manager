@@ -1245,7 +1245,7 @@
       complete: true,
         source: 'bl',
        mainCat: [ 'search', 'graph', 'hash', 'list', 'array' ],
-        subCat: [ 'dfs', 'brute', 'digraph', 'adjList', 'hTable', 'sList' ],
+        subCat: [ 'dfs', 'brute', 'arb', 'digraph', 'adjList', 'hTable', 'sList' ],
          links: [
            {
              name: 'Further Discussion',
@@ -1396,7 +1396,7 @@
           while (!!node) {
 
             // Add current node value to results
-            result.push(node.value);
+            result.push(node.val);
             // If (node has edge)
             // Then {set next node to edge}
             // Else {end loop}
