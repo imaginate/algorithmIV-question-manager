@@ -1,4 +1,4 @@
-/* Algorithm IV (v1.0.1) (learn@algorithmiv.com)
+/* Algorithm IV (v1.0.2) (learn@algorithmiv.com)
  * Section: User Data, App Initialization, & Web Worker
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
@@ -6,7 +6,7 @@
 
 /**
  * ------------------------------------------------------------------
- * Algorithm IV User Data (v1.0.1)
+ * Algorithm IV User Data (v1.0.2)
  * ------------------------------------------------------------------
  * manages a list of practice questions and detailed solutions
     for learning computer science focused algorithms and data
@@ -96,7 +96,7 @@
 
 /**
  * ---------------------------------------------
- * Initialize Algorithm IV (v1.0.1)
+ * Initialize Algorithm IV (v1.0.2)
  * ---------------------------------------------
  * triggers module init with user settings
  * @type {function(Object, Object, Object, Object)}
@@ -122,7 +122,7 @@
 
 /**
  * ------------------------------------------------------------------
- * Algorithm IV Web Worker (v1.0.1)
+ * Algorithm IV Web Worker (v1.0.2)
  * ------------------------------------------------------------------
  * handles converting your list of questions into a string of html
  * annotation:
@@ -709,17 +709,43 @@
 
     /**
      * ---------------------------------------------
-     * Private Variable (likelyRegex)
+     * Private Variable (htmlEntity)
      * ---------------------------------------------
-     * characters that if preceding a '/' are likely
-        a regular expression
+     * the characters to replace with a html entity
      * @const
-     * @type {Array.<string>}
+     * @type {Object}
      * @private
      */
-    var likelyRegex = ['(','[','{',';','*','/','%',
-                       '+','-','<','>','&','^','|',
-                       '=', '!'];
+    var htmlEntity = {
+      '<': '&lt;',
+      '>': '&gt;'
+    };
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (preRegex)
+     * ---------------------------------------------
+     * characters that if preceding a '/' could be a
+        regular expression
+     * the characters 'n', 'e', and 'f' are evaluated
+        for the following possible keywords 'return',
+        'case', 'typeof', 'instanceof', and 'in'
+     * @const
+     * @type {Object}
+     * @private
+     */
+    var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (regexFlags)
+     * ---------------------------------------------
+     * the flags for js regular expressions
+     * @const
+     * @type {Object}
+     * @private
+     */
+    var regexFlags = /[gimy]/;
 
     /**
      * ---------------------------------------------
@@ -1282,6 +1308,7 @@
      * @private
      */
     function prepareLine(l) {
+      // Declare method variables
       var i, len, last, line;
       // Convert line to array
       l = l.split('');
@@ -1355,12 +1382,9 @@
       for (i=0; i<lines.length; i++) {
         // Prepare line for formatting
         line = prepareLine(lines[i]);
-        // Set line padding
+        // Set line padding and highlight syntax
         if (!line.empty) {
           line.padding = setPadding(line.first, line.last);
-        }
-        // Highlight syntax
-        if (!line.empty) {
           line.code = HighlightSyntax.init(line.code);
         }
         lines[i] = '<li style="padding-left:' +
@@ -1449,13 +1473,23 @@
 
       /**
        * ---------------------------------------------
-       * Private Variable (len)
+       * Private Variable (lLen)
        * ---------------------------------------------
        * the length of the line of code
        * @type {number}
        * @private
        */
-      var len;
+      var lLen;
+
+      /**
+       * ---------------------------------------------
+       * Private Variable (lLast)
+       * ---------------------------------------------
+       * the last index of the line of code
+       * @type {number}
+       * @private
+       */
+      var lLast;
 
       /**
        * ---------------------------------------------
@@ -1504,35 +1538,28 @@
         '8': function(i) { return formatNumber(i);    },
         '9': function(i) { return formatNumber(i);    },
         '/': function(i) {
-          var preceding;
-          switch (line[i + 1]) {
-            case '/': return formatLineComment(i); break;
-            case '*': return formatCommentOpen(i); break;
-            default :
-              // Save preceding character
-              // If (index is line start)
-              // Then {set preceding to force regex= true}
-              preceding = ( (i === 0) ?
-                '(' : (line[i - 1] === ' ') ?
-                  line[i - 2] : line[i - 1]
-              );
-              // If (regex statement)
-              // Then {set to regex statement}
-              // Else {set to division operator}
-              if (likelyRegex.indexOf(preceding) !== -1) {
-               return formatRegex(i);
-              }
-              return formatOperator(i);
-            /* ---------------------------------------------------------- *
-             * EXISTING BUG (Identifying a RegEx)
-             * ---------------------------------------------------------- *
-             * Issue 1: identifying the preceding binary operators 'in'
-             *          and 'instanceof'                                  *
-             * Issue 2: one line if statements (e.g. if (i) /foo/.exec()) *
-             * Issue 3: the use of the preceding unary operators '++'
-             *          and '--' (e.g. i++ / x)                           *
-             * ---------------------------------------------------------- */
+          // Declare function variables
+          var preceding, end;
+          // If (line comment)
+          if (line[i + 1] === '/') {
+            return formatLineComment(i);
           }
+          // If (comment opening)
+          if (line[i + 1] === '*') {
+            return formatCommentOpen(i);
+          }
+          // Save preceding character
+          preceding = ( (line[i - 1] === ' ') ?
+            line[i - 2] : line[i - 1]
+          );
+          // If (regex statement)
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end > 0) {
+              return formatRegex(i, end);
+            }
+          }
+          return formatOperator(i);
         }
       };
 
@@ -1547,11 +1574,12 @@
       function _init(l) {
         // Convert line from string to array
         line = l.split('');
-        // Save line array length
-        len  = line.length;
+        // Save line array length and last index
+        lLen = line.length;
+        lLast = (lLen > 0) ? lLen - 1 : 0;
         // Save copy of line array
         // for final output
-        newLine = line.slice();
+        newLine = line.slice(0);
         // Return formatted line
         return formatLine();
       }
@@ -1565,6 +1593,7 @@
        * @private
        */
       function formatLine() {
+        // Declare method variables
         var i, preceding;
         // Set index to start
         i = 0;
@@ -1574,7 +1603,7 @@
           i = formatCommentClose(i);
           // If (whole line is comment)
           // Then {return newLine}
-          if (i === len) {
+          if (i === lLen) {
             return newLine.join('');
           }
         }
@@ -1583,7 +1612,7 @@
         // commas, semicolons, colons, periods,
         // numbers, keywords, identifiers, and
         // miscellaneous
-        for(; i<len; i++) {
+        for(; i<lLen; i++) {
           // If (router property exists)
           // Then {use router prop to format and update index}
           // Else If (identifier)
@@ -1597,6 +1626,51 @@
 
       /**
        * ---------------------------------------------
+       * Private Method (isRegex)
+       * ---------------------------------------------
+       * if given index is a regex it returns the end
+       *  index of the regex otherwise it returns 0
+       * param: the current line array index (number)
+       * @type {function(number): number}
+       * @private
+       */
+      function isRegex(i) {
+        // Declare method variables
+        var end, regexBody;
+        // Set end to start
+        end = i;
+        // Find regex end index
+        while (true) {
+          ++end;
+          // If (line terminates)
+          // Then {return fail}
+          if (end >= lLen) {
+            return 0;
+          }
+          // Sanitize the character
+          sanitizeCharacter(end);
+          // If (escaped character)
+          // Then {skip ahead}
+          if (line[end] === '\\') {
+            ++end;
+            continue;
+          }
+          // If (end of regex body)
+          // Then {end loop}
+          if (line[end] === '/') {
+            break;
+          }
+        }
+        // Save body of potential regex
+        regexBody = line.slice(++i, end).join('');
+        // If (not regex)
+        // Then {set end to fail}
+        end = ( !RegExp(regexBody) ) ? 0 : end;
+        return end;
+      }
+
+      /**
+       * ---------------------------------------------
        * Private Method (sanitizeCharacter)
        * ---------------------------------------------
        * inserts html entities when needed
@@ -1605,15 +1679,15 @@
        * @private
        */
       function sanitizeCharacter(i) {
-        // Replace character with html entity
-        switch (line[i]) {
-          case '>':
-            newLine[i] = '&gt;';
-          break;
-          case '<':
-            newLine[i] = '&lt;';
-          break;
-        }
+        // Declare method variables
+        var c;
+        // Save character
+        c = line[i];
+        // If (html entity property exists)
+        // Then {replace the character in the new line with it}
+        if (!!htmlEntity[c]) {
+          newLine[i] = htmlEntity[c];
+        };
       }
 
       /**
@@ -1631,23 +1705,18 @@
           ++i;
           // If (line terminates)
           // Then {return index}
-          if (i >= len) {
+          if (i >= lLen) {
             return i;
           }
-          // Check character
-          switch (line[i]) {
-            // Possible comment end
-            case '*':
-              // If (comment ends)
-              // Then {return index}
-              if (line[i + 1] === '/') {
-                return ++i;
-              }
-            break;
-            // Sanitization needed
-            case '>':
-            case '<':
-              sanitizeCharacter(i);
+          // Sanitize the character
+          sanitizeCharacter(i);
+          // If (comment ends)
+          // Then {return index}
+          if (i !== lLast) {
+            if (line[i] === '*' &&
+                line[i + 1] === '/') {
+              return ++i;
+            }
           }
         }
       }
@@ -1663,31 +1732,29 @@
        */
       function skipString(i) {
         // Declare method variables
-        var b;
-        // Save bracket type
-        b = line[i];
+        var s;
+        // Save string type
+        s = line[i];
         // Find string end
         while (true) {
           ++i;
           // If (line terminates)
           // Then {return last index}
-          if (i === len) {
-            return --i;
+          if (i >= lLen) {
+            return lLast;
           }
-          // Check character
-          switch (line[i]) {
-            // Possible string end
-            case b:
-              // If (string ends)
-              // Then {return index}
-              if (line[i - 1] !== '\\') {
-                return i;
-              }
-            break;
-            // Sanitization needed
-            case '>':
-            case '<':
-              sanitizeCharacter(i);
+          // Sanitize the character
+          sanitizeCharacter(i);
+          // If (escaped character)
+          // Then {skip ahead}
+          if (line[i] === '\\') {
+            ++i;
+            continue;
+          }
+          // If (end of string)
+          // Then {return the index}
+          if (line[i] === s) {
+            return i;
           }
         }
       }
@@ -1702,6 +1769,7 @@
        * @private
        */
       function skipSpace(i) {
+        // Loop through line starting at index
         while (true) {
           // If (next index not space)
           // Then {return index}
@@ -1722,6 +1790,7 @@
        * @private
        */
       function skipNumber(i) {
+        // Declare method variables
         var start, numbers;
         // Save first two spots in number sequence
         start = line[i] + line[i + 1];
@@ -1732,7 +1801,7 @@
         while (true) {
           // If (last index)
           // Then {return index}
-          if (i === (len - 1)) {
+          if (i === lLast) {
             return i;
           }
           // If (next index not number)
@@ -1764,7 +1833,7 @@
           iName += line[i];
           // If (last index)
           // Then {return index and name}
-          if (i === (len - 1)) {
+          if (i === lLast) {
             return { index: i, name: iName };
           }
           // If (next index not identifier)
@@ -1793,14 +1862,16 @@
       function formatCommentOpen(i) {
         // Add comment span
         newLine[i] = '<span class="cmt">/';
+        // Increase index
+        ++i;
         // Move index to end of comment
-        i = skipComment(++i);
+        i = (i < lLast) ? skipComment(i) : ++i;
         // If (comment not closed by line end)
-        if (i === len) {
+        if (i >= lLen) {
           // Set commentOpen to true
           commentOpen = true;
           // Move index to last value
-          --i;
+          i = lLast;
         }
         // Add closing span
         newLine[i] += '</span>';
@@ -1837,7 +1908,7 @@
         // Move index to comment end
         i = skipComment(i);
         // If (index exists)
-        if (i < len) {
+        if (i < lLen) {
           // Set commentOpen to false
           commentOpen = false;
           // Add closing span
@@ -1847,7 +1918,7 @@
         }
         else {
           // Add closing span to line end
-          newLine[i - 1] += '</span>';
+          newLine[lLast] += '</span>';
         }
         // Return next index
         return i;
@@ -1866,7 +1937,7 @@
         // Add comment span
         newLine[i] = '<span class="cmt">/';
         // Moves index to line end
-        i = len - 1;
+        i = lLast;
         // Add closing span
         newLine[i] += '</span>';
         // Return index
@@ -1901,41 +1972,34 @@
        * adds regex spans and moves the index to the
           end of regex
        * param: the current line array index (number)
+       * param: the last index of regex (number)
        * @type {function(number): number}
        * @private
        */
-      function formatRegex(i) {
-        var u;
+      function formatRegex(i, end) {
+        // Declare method variables
+        var usedFlags, c;
         // Add regex span
         newLine[i] = '<span class="rgx">/';
         // Move index to the closing forward slash
-        i = skipString(i);
-        // Start empty array to contain
-        // each used regex flags
-        u = [];
+        i = end;
+        // Start empty string to contain
+        //  each used regex flags
+        usedFlags = '';
         // Check for regex flags after
-        // closing forward slash
-        looper:
+        //  closing forward slash
+        loop:
         while (true) {
-          // All regex flags have been used
-          if (u.length === 3) {
-            break looper;
+          c = line[i + 1];
+          if (regexFlags.test(c) &&
+              usedFlags.indexOf(c) === -1) {
+            usedFlags += c;
+            ++i;
+            if (usedFlags.length === 4) {
+              break loop;
+            }
           }
-          switch (line[i + 1]) {
-            case 'g':
-            case 'i':
-            case 'm':
-              // Verify flag has not been repeated
-              if (u.indexOf(line[i + 1]) !== -1) {
-                break looper;
-              }
-              // Add flag to used flags array
-              u.push(line[i + 1]);
-              ++i;
-            break;
-            default:
-              break looper;
-          } 
+          break loop;
         }
         // Add closing span
         newLine[i] += '</span>';
@@ -1974,7 +2038,10 @@
        */
       function formatBracket(i) {
         // Add bracket spans
-        newLine[i] = '<span class="brc">'+ line[i] +'</span>';
+        newLine[i] = '' +
+        '<span class="brc">' +
+          line[i] +
+        '</span>';
         // Return index
         return i;
       }
@@ -1989,17 +2056,12 @@
        * @private
        */
       function formatOperator(i) {
-        // Declare method variables
-        var sanitized;
-        // Sanitize the operator
-        sanitized = ( (line[i] === '<') ?
-          '&lt;' : (line[i] === '>') ?
-            '&gt;' : line[i]
-        );
+        // Sanitize the character
+        sanitizeCharacter(i);
         // Add operator spans
         newLine[i] = '' +
         '<span class="opr">' +
-          sanitized +
+          newLine[i] +
         '</span>';
         // Return index
         return i;
@@ -2167,7 +2229,10 @@
        */
       function formatMisc(i) {
         // Add misc spans
-        newLine[i] = '<span class="msc">' + line[i] + '</span>';
+        newLine[i] = '' +
+        '<span class="msc">' +
+          line[i] +
+        '</span>';
         // Return index
         return i;
       }

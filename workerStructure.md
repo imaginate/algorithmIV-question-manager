@@ -29,9 +29,11 @@ Public Methods     | Private Variables  | Private Methods    | Private Classes
 :----------------- | :----------------- | :----------------- | :-----------------
 init               | linePadding        | init               | [HighlightSyntax](#highlightsyntax-class)
                    | paddingLevel       | setPadding         |
-                   | likelyRegex        | prepareLine        |
-                   | plainNumbers       | formatLines        |
-                   | hexNumbers         | prepareArray       |
+                   | htmlEntity         | prepareLine        |
+                   | preRegex           | formatLines        |
+                   | regexFlags         | prepareArray       |
+                   | plainNumbers       |                    |
+                   | hexNumbers         |                    |
                    | identifierStart    |                    |
                    | identifiers        |                    |
                    | keywords           |                    |
@@ -41,8 +43,9 @@ init               | linePadding        | init               | [HighlightSyntax]
 Public Methods     | Private Variables  | Private Methods
 :----------------- | :----------------- | :-----------------
 init               | newLine            | _init
-                   | line               | setLine
-                   | len                | sanitizeCharacter
+                   | line               | formatLine
+                   | lLen               | isRegex
+                   | lLast              | sanitizeCharacter
                    | router             | skipComment
                    |                    | skipString
                    |                    | skipSpace
