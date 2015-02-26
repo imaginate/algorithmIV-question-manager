@@ -153,8 +153,8 @@ Public Methods     | Private Variables  | Private Methods
 init               | newLine            | _init
                    | line               | formatLine
                    | lLen               | isRegex
-                   | router             | sanitizeCharacter
-                   |                    | skipComment
+                   | lLast              | sanitizeCharacter
+                   | router             | skipComment
                    |                    | skipString
                    |                    | skipSpace
                    |                    | skipNumber

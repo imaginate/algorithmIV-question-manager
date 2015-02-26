@@ -3010,7 +3010,7 @@
         // OPEN: FormatQuestions.init() Group
         DEBUG.FormatQuestions.group && console.groupCollapsed(
           'GROUP: FormatQuestions.init() ' +
-          'on question index= %d', i
+          'on question index= %d, questionID= %d', i, (i + 1)
         );
         clearFormat();
         formatID(i);
@@ -5515,13 +5515,10 @@
       for (i=0; i<lines.length; i++) {
         // Prepare line for formatting
         line = prepareLine(lines[i]);
-        // Set line padding
+        // Set line padding and highlight syntax
         if (!line.empty) {
           line.padding = setPadding(line.first, line.last);
-        }
-        // Highlight syntax
-        if (!line.empty) {
-          line.code = HighlightSyntax.init(line.code);
+          line.code = HighlightSyntax.init(line.code, i);
         }
         lines[i] = '<li style="padding-left:' +
         line.padding +'px">'+ line.code +'</li>';
@@ -5597,10 +5594,11 @@
          * initializes HighlightSyntax
          * param: a line of code (string)
          */
-        init: function (l) {
+        init: function (l, i) {
           // OPEN: HighlightSyntax Group
           DEBUG.HighlightSyntax.group && console.groupCollapsed(
-            'GROUP: HighlightSyntax'
+            'GROUP: HighlightSyntax ' +
+            'Note: lineNumber= %d', (i + 1)
           );
           // Declare method variables
           var result;
@@ -5642,6 +5640,16 @@
        * @private
        */
       var lLen;
+
+      /**
+       * ---------------------------------------------
+       * Private Variable (lLast)
+       * ---------------------------------------------
+       * the last index of the line of code
+       * @type {number}
+       * @private
+       */
+      var lLast;
 
       /**
        * ---------------------------------------------
@@ -5707,11 +5715,6 @@
           // If (regex statement)
           if (i === 0 || preRegex.test(preceding)) {
             end = isRegex(i);
-            // Debugger
-            DEBUG.HighlightSyntax.state && console.log(
-              'STATE: HighlightSyntax.router./() ' +
-              'Note: isRegex(%d)= %d', i, end
-            );
             if (end > 0) {
               return formatRegex(i, end);
             }
@@ -5741,16 +5744,17 @@
         );
         // Convert line from string to array
         line = l.split('');
-        // Save line array length
+        // Save line array length and last index
         lLen = line.length;
+        lLast = (lLen > 0) ? lLen - 1 : 0;
         // Debugger
         DEBUG.HighlightSyntax.state && console.log(
           'STATE: HighlightSyntax.init() ' +
-          'Note: lLen= %d', lLen
+          'Note: lLen= %d, lLast= %d', lLen, lLast
         );
         // Save copy of line array
         // for final output
-        newLine = line.slice();
+        newLine = line.slice(0);
         // Return formatted line
         return formatLine();
       }
@@ -5914,9 +5918,11 @@
           sanitizeCharacter(i);
           // If (comment ends)
           // Then {return index}
-          if (line[i] === '*' &&
-              line[i + 1] === '/') {
-            return ++i;
+          if (i !== lLast) {
+            if (line[i] === '*' &&
+                line[i + 1] === '/') {
+              return ++i;
+            }
           }
         }
       }
@@ -5950,7 +5956,7 @@
           // If (line terminates)
           // Then {return last index}
           if (i >= lLen) {
-            return lLen - 1;
+            return lLast;
           }
           // Sanitize the character
           sanitizeCharacter(i);
@@ -6028,7 +6034,7 @@
         while (true) {
           // If (last index)
           // Then {return index}
-          if (i === (lLen - 1)) {
+          if (i === lLast) {
             return i;
           }
           // If (next index not number)
@@ -6069,7 +6075,7 @@
           iName += line[i];
           // If (last index)
           // Then {return index and name}
-          if (i === (lLen - 1)) {
+          if (i === lLast) {
             return { index: i, name: iName };
           }
           // If (next index not identifier)
@@ -6110,13 +6116,13 @@
         // Increase index
         ++i;
         // Move index to end of comment
-        i = (i < lLen) ? skipComment(i) : i;
+        i = (i < lLast) ? skipComment(i) : ++i;
         // If (comment not closed by line end)
         if (i >= lLen) {
           // Set commentOpen to true
           commentOpen = true;
           // Move index to last value
-          i = lLen - i;
+          i = lLast;
         }
         // Add closing span
         newLine[i] += '</span>';
@@ -6172,7 +6178,7 @@
         }
         else {
           // Add closing span to line end
-          newLine[lLen - 1] += '</span>';
+          newLine[lLast] += '</span>';
         }
         // Return next index
         return i;
@@ -6200,7 +6206,7 @@
         // Add comment span
         newLine[i] = '<span class="cmt">/';
         // Moves index to line end
-        i = lLen - 1;
+        i = lLast;
         // Add closing span
         newLine[i] += '</span>';
         // Return index
@@ -6273,7 +6279,8 @@
         loop:
         while (true) {
           c = line[i + 1];
-          if (regexFlags.test(c) && !usedFlags.test(c)) {
+          if (regexFlags.test(c) &&
+              usedFlags.indexOf(c) === -1) {
             usedFlags += c;
             ++i;
             if (usedFlags.length === 4) {
