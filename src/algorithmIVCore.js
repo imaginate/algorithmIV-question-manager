@@ -4804,17 +4804,43 @@
 
     /**
      * ---------------------------------------------
-     * Private Variable (likelyRegex)
+     * Private Variable (htmlEntity)
      * ---------------------------------------------
-     * characters that if preceding a '/' are likely
-        a regular expression
+     * the characters to replace with a html entity
      * @const
-     * @type {Array.<string>}
+     * @type {Object}
      * @private
      */
-    var likelyRegex = ['(','[','{',';','*','/','%',
-                       '+','-','<','>','&','^','|',
-                       '=', '!'];
+    var htmlEntity = {
+      '<': '&lt;',
+      '>': '&gt;'
+    };
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (preRegex)
+     * ---------------------------------------------
+     * characters that if preceding a '/' could be a
+        regular expression
+     * the characters 'n', 'e', and 'f' are evaluated
+        for the following possible keywords 'return',
+        'case', 'typeof', 'instanceof', and 'in'
+     * @const
+     * @type {Object}
+     * @private
+     */
+    var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (regexFlags)
+     * ---------------------------------------------
+     * the flags for js regular expressions
+     * @const
+     * @type {Object}
+     * @private
+     */
+    var regexFlags = /[gimy]/;
 
     /**
      * ---------------------------------------------
@@ -4822,7 +4848,7 @@
      * ---------------------------------------------
      * list of valid plain number characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
@@ -4833,7 +4859,7 @@
      * ---------------------------------------------
      * list of valid hex number characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
@@ -4844,7 +4870,7 @@
      * ---------------------------------------------
      * list of valid starting identifier characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
@@ -4855,7 +4881,7 @@
      * ---------------------------------------------
      * list of valid identifier characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
@@ -5664,35 +5690,28 @@
         '8': function(i) { return formatNumber(i);    },
         '9': function(i) { return formatNumber(i);    },
         '/': function(i) {
-          var preceding;
-          switch (line[i + 1]) {
-            case '/': return formatLineComment(i); break;
-            case '*': return formatCommentOpen(i); break;
-            default :
-              // Save preceding character
-              // If (index is line start)
-              // Then {set preceding to force regex= true}
-              preceding = ( (i === 0) ?
-                '(' : (line[i - 1] === ' ') ?
-                  line[i - 2] : line[i - 1]
-              );
-              // If (regex statement)
-              // Then {set to regex statement}
-              // Else {set to division operator}
-              if (likelyRegex.indexOf(preceding) !== -1) {
-               return formatRegex(i);
-              }
-              return formatOperator(i);
-            /* ---------------------------------------------------------- *
-             * EXISTING BUG (Identifying a RegEx)
-             * ---------------------------------------------------------- *
-             * Issue 1: identifying the preceding binary operators 'in'
-             *          and 'instanceof'                                  *
-             * Issue 2: one line if statements (e.g. if (i) /foo/.exec()) *
-             * Issue 3: the use of the preceding unary operators '++'
-             *          and '--' (e.g. i++ / x)                           *
-             * ---------------------------------------------------------- */
+          // Declare function variables
+          var preceding, end;
+          // If (line comment)
+          if (line[i + 1] === '/') {
+            return formatLineComment(i);
           }
+          // If (comment opening)
+          if (line[i + 1] === '*') {
+            return formatCommentOpen(i);
+          }
+          // Save preceding character
+          preceding = ( (line[i - 1] === ' ') ?
+            line[i - 2] : line[i - 1]
+          );
+          // If (regex statement)
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end > 0) {
+              return formatRegex(i, end);
+            }
+          }
+          return formatOperator(i);
         }
       };
 
@@ -5772,6 +5791,60 @@
 
       /**
        * ---------------------------------------------
+       * Private Method (isRegex)
+       * ---------------------------------------------
+       * if given index is a regex it returns the end
+       *  index of the regex otherwise it returns 0
+       * param: the current line array index (number)
+       * @type {function(number): number}
+       * @private
+       */
+      function isRegex(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.isRegex(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.isRegex() ' +
+          'Note: Incorrect argument operand.'
+        );
+        // Declare method variables
+        var end, regexBody;
+        // Set end to start
+        end = i;
+        // Find regex end index
+        while (true) {
+          ++end;
+          // Sanitize the character
+          sanitizeCharacter(end);
+          // If (line terminates)
+          // Then {return fail}
+          if (end >= len) {
+            return 0;
+          }
+          // If (escaped character)
+          // Then {skip ahead}
+          if (line[end] === '\\') {
+            ++end;
+            continue;
+          }
+          // If (end of regex body)
+          // Then {end loop}
+          if (line[end] === '/') {
+            break;
+          }
+        }
+        // Save body of potential regex
+        regexBody = line.slice(++i, end).join('');
+        // If (not regex)
+        // Then {set end to fail}
+        end = ( !RegExp(regexBody) ) ? 0 : end;
+        return end;
+      }
+
+      /**
+       * ---------------------------------------------
        * Private Method (sanitizeCharacter)
        * ---------------------------------------------
        * inserts html entities when needed
@@ -5789,15 +5862,15 @@
           'FAIL: HighlightSyntax.sanitizeCharacter() ' +
           'Note: Incorrect argument operand.'
         );
-        // Replace character with html entity
-        switch (line[i]) {
-          case '>':
-            newLine[i] = '&gt;';
-          break;
-          case '<':
-            newLine[i] = '&lt;';
-          break;
-        }
+        // Declare method variables
+        var c;
+        // Save character
+        c = line[i];
+        // If (html entity property exists)
+        // Then {replace the character in the new line with it}
+        if (!!htmlEntity[c]) {
+          newLine[i] = htmlEntity[c];
+        };
       }
 
       /**
@@ -5822,25 +5895,18 @@
         // Loop through line starting at index
         while (true) {
           ++i;
+          // Sanitize the character
+          sanitizeCharacter(i);
           // If (line terminates)
           // Then {return index}
           if (i >= len) {
             return i;
           }
-          // Check character
-          switch (line[i]) {
-            // Possible comment end
-            case '*':
-              // If (comment ends)
-              // Then {return index}
-              if (line[i + 1] === '/') {
-                return ++i;
-              }
-            break;
-            // Sanitization needed
-            case '>':
-            case '<':
-              sanitizeCharacter(i);
+          // If (comment ends)
+          // Then {return index}
+          if (line[i] === '*' &&
+              line[i + 1] === '/') {
+            return ++i;
           }
         }
       }
@@ -5865,31 +5931,29 @@
           'Note: Incorrect argument operand.'
         );
         // Declare method variables
-        var b;
-        // Save bracket type
-        b = line[i];
+        var s;
+        // Save string type
+        s = line[i];
         // Find string end
         while (true) {
           ++i;
+          // Sanitize the character
+          sanitizeCharacter(i);
           // If (line terminates)
           // Then {return last index}
-          if (i === len) {
-            return --i;
+          if (i >= len) {
+            return len - 1;
           }
-          // Check character
-          switch (line[i]) {
-            // Possible string end
-            case b:
-              // If (string ends)
-              // Then {return index}
-              if (line[i - 1] !== '\\') {
-                return i;
-              }
-            break;
-            // Sanitization needed
-            case '>':
-            case '<':
-              sanitizeCharacter(i);
+          // If (escaped character)
+          // Then {skip ahead}
+          if (line[i] === '\\') {
+            ++i;
+            continue;
+          }
+          // If (end of string)
+          // Then {return the index}
+          if (line[i] === s) {
+            return i;
           }
         }
       }
@@ -6036,11 +6100,11 @@
         // Move index to end of comment
         i = skipComment(++i);
         // If (comment not closed by line end)
-        if (i === len) {
+        if (i >= len) {
           // Set commentOpen to true
           commentOpen = true;
           // Move index to last value
-          --i;
+          i = len - i;
         }
         // Add closing span
         newLine[i] += '</span>';
@@ -6096,7 +6160,7 @@
         }
         else {
           // Add closing span to line end
-          newLine[i - 1] += '</span>';
+          newLine[len - 1] += '</span>';
         }
         // Return next index
         return i;
@@ -6168,51 +6232,43 @@
        * adds regex spans and moves the index to the
           end of regex
        * param: the current line array index (number)
+       * param: the last index of regex (number)
        * @type {function(number): number}
        * @private
        */
-      function formatRegex(i) {
+      function formatRegex(i, end) {
         // Debuggers
         DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatRegex(%d)', i
+          'CALL: HighlightSyntax.formatRegex(%d, %d)', i, end
         );
         DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
+          (typeof i   === 'number' &&
+           typeof end === 'number'),
           'FAIL: HighlightSyntax.formatRegex() ' +
           'Note: Incorrect argument operand.'
         );
         // Declare method variables
-        var u;
+        var usedFlags, c;
         // Add regex span
         newLine[i] = '<span class="rgx">/';
         // Move index to the closing forward slash
-        i = skipString(i);
-        // Start empty array to contain
-        // each used regex flags
-        u = [];
+        i = end;
+        // Start empty string to contain
+        //  each used regex flags
+        usedFlags = '';
         // Check for regex flags after
-        // closing forward slash
-        looper:
+        //  closing forward slash
+        loop:
         while (true) {
-          // All regex flags have been used
-          if (u.length === 3) {
-            break looper;
+          c = line[i + 1];
+          if (regexFlags.test(c) && !usedFlags.test(c)) {
+            usedFlags += c;
+            ++i;
+            if (usedFlags.length === 4) {
+              break loop;
+            }
           }
-          switch (line[i + 1]) {
-            case 'g':
-            case 'i':
-            case 'm':
-              // Verify flag has not been repeated
-              if (u.indexOf(line[i + 1]) !== -1) {
-                break looper;
-              }
-              // Add flag to used flags array
-              u.push(line[i + 1]);
-              ++i;
-            break;
-            default:
-              break looper;
-          } 
+          break loop;
         }
         // Add closing span
         newLine[i] += '</span>';
@@ -6296,17 +6352,12 @@
           'FAIL: HighlightSyntax.formatOperator() ' +
           'Note: Incorrect argument operand.'
         );
-        // Declare method variables
-        var sanitized;
-        // Sanitize the operator
-        sanitized = ( (line[i] === '<') ?
-          '&lt;' : (line[i] === '>') ?
-            '&gt;' : line[i]
-        );
+        // Sanitize the character
+        sanitizeCharacter(i);
         // Add operator spans
         newLine[i] = '' +
         '<span class="opr">' +
-          sanitized +
+          newLine[i] +
         '</span>';
         // Return index
         return i;

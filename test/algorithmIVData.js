@@ -53,7 +53,7 @@
         output: true
     },
         id: true,
-    worker: true
+    worker: false
   };
 
   /**
@@ -189,7 +189,7 @@
         // The given values
         // The binary tree
         // The node rows to be printed
-        var vals, tree, result;
+        var vals, tree, result, ii=0;
 
         // Set variables
         vals = [ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O' ];
@@ -198,6 +198,7 @@
           left : null,
           right: null
         };
+        result = ii++ / 2;
         result = '';
 
         // Creates the binary tree
