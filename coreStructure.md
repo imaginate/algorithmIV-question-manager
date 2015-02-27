@@ -6,15 +6,14 @@
 Public API         | Public Variables   | Public Methods     | Public Classes
 :----------------- | :----------------- | :----------------- | :-----------------
 init               | DEBUG              | getID              | [InitializeModule](#initializemodule-class)
-                   | qLen               | getTag             | [SetConfiguration](#setconfiguration-class)
-                   | roots              | getClass           | [WebWorker](#webworker-class)
-                   | flags              |                    | [AddEvents](#addevents-class)
-                   | configuration      |                    | [DisplaySearchBar](#displaysearchbar-class)
-                   | configOptions      |                    | [FormatQuestions](#formatquestions-class)
-                   | searchValues       |                    | [AppendQuestions](#appendquestions-class)
-                   | sources            |                    | [DisplayQuestions](#displayquestions-class)
-                   | categories         |                    | [PrettifyCode](#prettifycode-class)
-                   | questions          |                    |
+                   | roots              | getTag             | [SetConfiguration](#setconfiguration-class)
+                   | flags              | getClass           | [WebWorker](#webworker-class)
+                   | config             |                    | [AddEvents](#addevents-class)
+                   | appVals            |                    | [DisplaySearchBar](#displaysearchbar-class)
+                   |                    |                    | [FormatQuestions](#formatquestions-class)
+                   |                    |                    | [AppendQuestions](#appendquestions-class)
+                   |                    |                    | [DisplayQuestions](#displayquestions-class)
+                   |                    |                    | [PrettifyCode](#prettifycode-class)
 
 ##InitializeModule Class
 Public Methods     | Private Methods
@@ -31,9 +30,8 @@ init               | init
 Public Methods     | Private Methods
 :----------------- | :-----------------
 init               | init
-                   | checkConfig
                    | setCategories
-                   | orderCategories
+                   | addSortedCategories
                    | formatCategories
                    | setSources
                    | setQuestions

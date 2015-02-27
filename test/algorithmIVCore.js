@@ -68,83 +68,73 @@
    * @type {boolean}
    * @private
    */
-  var DEBUG = {   //sedFlagStart
+  var DEBUG = { //sedFlagStart
     InitializeModule: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     SetConfiguration: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     WebWorker: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     AddEvents: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     DisplaySearchBar: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     FormatQuestions: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     AppendQuestions: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     DisplayQuestions: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     PrettifyCode: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
     HighlightSyntax: {
-       call: true,
-       fail: true,
+      call : true,
+      fail : true,
       group: true,
       state: true
     },
-     call: true,
-     fail: true,
+    call : true,
+    fail : true,
     group: true,
     state: true
-  };              //sedFlagEnd
+  }; //sedFlagEnd
   //sedFlagNew
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (qLen)
-   * -----------------------------------------------
-   * the length of the questions array
-   * @type {number}
-   * @private
-   */
-  var qLen;
 
   /**
    * ----------------------------------------------- 
@@ -153,25 +143,25 @@
    * the root elements for this module
    * properties:
      - root: #aIV
-     - sel: #aIV-selections
+     - sel : #aIV-selections
      - main: #aIV-main
-     - nav: #aIV-nav
-     - qs: #aIV-questions
+     - nav : #aIV-nav
+     - qs  : #aIV-questions
    * @type {{
        root: Object,
-        sel: Object,
+       sel : Object,
        main: Object,
-        nav: Object,
-         qs: Object
+       nav : Object,
+       qs  : Object
      }}
    * @private
    */
   var roots = {
     root: {},
-     sel: {},
+    sel : {},
     main: {},
-     nav: {},
-      qs: {}
+    nav : {},
+    qs  : {}
   };
 
   /**
@@ -183,203 +173,218 @@
    * properties:
      - workerPass: web worker completed formatting
      - workerFail: web worker produced error
-     - initDone: app finished initializing
+     - initDone  : app finished initializing
    * @type {{
        workerPass: boolean,
        workerFail: boolean,
-         initDone: boolean
+       initDone  : boolean
      }}
    * @private
    */
   var flags = {
     workerPass: false,
     workerFail: false,
-      initDone: false
+    initDone  : false
   };
 
   /**
    * -----------------------------------------------
-   * Public Variable (configuration)
+   * Public Variable (config)
    * -----------------------------------------------
    * an object containing the display configuration
       settings for the module
    * @type {{
        searchSettings: {
-            stage: boolean,
-           source: boolean,
+         stage   : boolean,
+         source  : boolean,
          category: boolean,
-           subCat: boolean
+         subCat  : boolean
        },
        searchDefaults: {
-            view: string,
-           order: string,
-           stage: string,
-          source: string,
+         view   : string,
+         order  : string,
+         stage  : string,
+         source : string,
          mainCat: string,
-          subCat: string,
+         subCat : string,
          startID: number
        },
        questionFormat: {
-               id: boolean,
+         id      : boolean,
          complete: boolean,
-           source: boolean,
+         source  : boolean,
          category: boolean,
-            links: boolean,
-           output: boolean
+         links   : boolean,
+         output  : boolean
        },
        prettyCode: {
          olHeight: number,
          liHeight: number
        },
-              id: boolean,
-          worker: boolean,
-         content: Array.<Object>,
-       scrollbar: number
+       linkID: boolean,
+       worker: boolean,
+       scrBar: number
      }}
    * @private
    */
-  var configuration = {
+  var config = {
     searchSettings: {
-         stage: true,
-        source: true,
+      stage   : true,
+      source  : true,
       category: true,
-        subCat: true
+      subCat  : true
     },
     searchDefaults: {
-         view: 'one',
-        order: 'asc',
-        stage: 'all',
-       source: 'all',
+      view   : 'one',
+      order  : 'asc',
+      stage  : 'all',
+      source : 'all',
       mainCat: 'all',
-       subCat: 'all',
-      startID:  0
+      subCat : 'all',
+      startID: 0
     },
     questionFormat: {
-            id: true,
+      id      : true,
       complete: true,
-        source: true,
+      source  : true,
       category: true,
-         links: true,
-        output: true
+      links   : true,
+      output  : true
     },
     prettyCode: {
       olHeight: 0,
       liHeight: 0
     },
-           id: true,
-       worker: true,
-      content: [],
-    scrollbar: 0
+    linkID: true,
+    worker: true,
+    scrBar: 0
   };
 
   /**
    * -----------------------------------------------
-   * Public Variable (configOptions)
+   * Public Variable (appValues)
    * -----------------------------------------------
-   * an object containing the options for the string
-      properties of configuration
+   * an object containing values of importance to
+      this app
+   * properties:
+     - searchVals: contains all the possible search
+        ids, names, order of appearance, and each
+        main category's option element nodes
+     - parsedQs: contains each parsed question's
+        values
    * @type {{
-       searchDefaults: {
-            view: Array.<string>,
-           order: Array.<string>,
-           stage: Array.<string>,
-          source: Array.<string>,
-         mainCat: Array.<string>,
-          subCat: Array.<string>
-       }
+       searchVals: {
+         view   : Object,
+         order  : Object,
+         stage  : Object,
+         source : Object,
+         mainCat: Object,
+         subCat : Object
+       },
+       sources   : Object,
+       categories: Object,
+       questions : Array.<{
+         complete : boolean,
+         category : Array.<string>,
+         source   : string,
+         links    : Array.<{
+           name: string,
+           href: string
+         }>,
+         problem  : string,
+         solution : function(),
+         codeWidth: number|undefined,
+         formatted: {
+           id: {
+             flag   : boolean,
+             content: string
+           },
+           source: {
+             flag   : boolean,
+             content: string
+           },
+           complete: {
+             flag   : boolean,
+             content: string
+           },
+           category: {
+             flag: boolean,
+             main: {
+               flag: boolean,
+               h3  : string,
+               p   : string
+             },
+             sub: {
+               flag: boolean,
+               h3  : string,
+               p   : string
+             }
+           },
+           solution: {
+             sError: boolean,
+             code  : string,
+             height: number
+           },
+           output: {
+             flag   : boolean,
+             content: string
+           },
+           links: {
+             flag   : boolean,
+             content: Array.<{
+               href: string,
+               name: string
+             }>
+           }
+         }
+       }>
      }}
    * @private
    */
-  var configOptions = {
-    searchDefaults: {
-         view: ['one','all'],
-        order: ['asc','desc'],
-        stage: ['all','com','inc'],
-       source: ['all'],
-      mainCat: ['all'],
-       subCat: ['all']
-    }  
-  };
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (searchValues)
-   * -----------------------------------------------
-   * an object containing the current search values
-   * @type {{
-          view: string,
-         order: string,
-         stage: string,
-        source: string,
-       mainCat: string,
-        subCat: string
-     }}
-   * @private
-   */
-  var searchValues = {};
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (sources)
-   * -----------------------------------------------
-   * an array of objects containing the question
-      sources
-   * @type {{
-        list: Object,
-         len: number,
-         ids: Array.<string>
-     }}
-   * @private
-   */
-  var sources = { list:{}, len: 0, ids:[] };
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (categories)
-   * -----------------------------------------------
-   * an array of objects containing the question
-      categories
-   * @type {{
-       main: Object,
-        sub: Object,
-        opt: Object,
-        len: {
-          main: number,
-           sub: Object
-        },
-        ids: {
-          main: Array.<string>,
-           sub: Array.<string>
+  var appVals = {
+    searchVals: {
+      view: {
+        '-one': 'View One',
+        '-all': 'View All',
+        order : [ 'one','all' ],
+        active: 'one'
+      },
+      order: {
+        '-asc' : 'ASC',
+        '-desc': 'DESC',
+        order  : [ 'asc','desc' ],
+        active : 'asc'
+      },
+      stage: {
+        '-all': 'All Stages',
+        '-com': 'Completed',
+        '-inc': 'Incomplete',
+        order : [ 'all','com','inc' ],
+        active: 'all'
+      },
+      source: {
+        '-all': 'All Sources',
+        order : [ 'all' ],
+        active: 'all'
+      },
+      mainCat: {
+        '-all': 'All Main Categories',
+        order : [ 'all' ],
+        active: 'all'
+      },
+      subCat: {
+        '-all': 'All Sub Categories',
+        order : { start: [ 'all' ] },
+        active: 'all',
+        opts  : {
+          '-all': null
         }
-     }}
-   * @private
-   */
-  var categories = {
-    main:{},
-     sub:{},
-     opt:{},
-     len:{ main: 0, sub:{} },
-     ids:{ main:[], sub:{} }
+      }
+    },
+    sources   : { len: 0 },
+    categories: { len: 0, subLen: 0 },
+    questions : []
   };
-
-  /**
-   * ---------------------------------------------
-   * Public Variable (questions)
-   * ---------------------------------------------
-   * an array of objects containing each question,
-      its details, and your solution for it
-   * @type {Array.<{
-       complete: boolean,
-       category: Array.<string>,
-         source: string,
-          links: Array.<{ name: string, href: string }>,
-        problem: string,
-       solution: function(),
-      codeWidth: number|undefined
-     }>}
-   * @private
-   */
-  var questions = [];
 
   /**
    * ---------------------------------------------
@@ -495,16 +500,16 @@
        * param: sources
        * param: questions
        */
-      init: function(config, category, source, question) {
+      init: function(newConfig, categories, sources, questions) {
         // OPEN: InitializeModule Group
         DEBUG.InitializeModule.group && console.groupCollapsed(
           'GROUP: InitializeModule ' +
-          'Note: configuration= %O, categories= %O, ' +
-          'sources= %O, questions= %O', config, category,
-          source, question
+          'Note: newConfiguration= %O, categories= %O, ' +
+          'sources= %O, questions= %O', newConfig, categories,
+          sources, questions
         );
         // Run init
-        init(config, category, source, question);
+        init(newConfig, categories, sources, questions);
       }
     };
 
@@ -513,45 +518,31 @@
      * Private Method (init)
      * ---------------------------------------------
      * initialize Algorithm IV
-     * param: configuration
-     * param: categories
-     * param: sources
-     * param: questions
+     * param: configuration (object literal)
+     * param: categories (object literal)
+     * param: sources (object literal)
+     * param: questions (array of object literals)
      * @type {function(Object, Object, Object, Object)}
      * @private
      */
-    function init(config, category, source, question) {
+    function init(newConfig, categories, sources, questions) {
       // Debuggers
       DEBUG.InitializeModule.call && console.log(
         'CALL: InitializeModule.init()'
       );
       DEBUG.InitializeModule.fail && console.assert(
-        (typeof config   === 'object' &&
-         typeof source   === 'object' &&
-         typeof category === 'object' &&
-         Array.isArray(question) &&
-         typeof config.searchSettings === 'object' &&
-         typeof config.searchDefaults === 'object' &&
-         typeof config.questionFormat === 'object' &&
-         typeof config.prettyCode     === 'object' &&
-         typeof category.main === 'object' &&
-         typeof category.sub  === 'object'),
+        (typeof newConfig  === 'object' &&
+         typeof sources    === 'object' &&
+         typeof categories === 'object' &&
+         Array.isArray(questions)),
         'FAIL: InitializeModule.init() ' +
         'Note: Incorrect argument operand.'
       );
       // If (module values set)
       // Then {load the module}
       // Else {display error message}
-      if ( SetConfiguration.init(config, category, source, question) ) {
-        // If (web worker turned on)
-        // Then {load with web worker}
-        // Else {load without worker}
-        if (configuration.worker) {
-          loadModule(true);
-        }
-        else {
-          loadModule(false);
-        }
+      if ( SetConfiguration.init(newConfig, categories, sources, questions) ) {
+        loadModule(configuration.worker);
       }
       else {
         // Wait till dom loads to insert elements
@@ -911,7 +902,7 @@
        * param: sources
        * param: questions
        */
-      init: function(config, category, source, question) {
+      init: function(newConfig, categories, sources, questions) {
         // OPEN: SetConfiguration Group
         DEBUG.SetConfiguration.group && console.groupCollapsed(
           'GROUP: SetConfiguration'
@@ -919,7 +910,7 @@
         // Declare method variables
         var success;
         // Run class and save result
-        success = init(config, category, source, question);
+        success = init(newConfig, categories, sources, questions);
         // CLOSE: SetConfiguration Group
         DEBUG.SetConfiguration.group && console.groupEnd();
         // Return result of setting
@@ -932,101 +923,48 @@
      * Private Method (init)
      * ---------------------------------------------
      * initialize SetConfiguration
-     * param: configuration (object)
-     * param: categories (objects)
-     * param: sources (objects)
-     * param: questions (array of objects)
+     * param: configuration (object literal)
+     * param: categories (object literal)
+     * param: sources (object literal)
+     * param: questions (array of object literals)
      * @type {function(Object, Object, Object, Object): boolean}
      * @private
      */
-    function init(config, category, source, question) {
+    function init(newConfig, categories, sources, questions) {
       // Debugger
       DEBUG.SetConfiguration.call && console.log(
         'CALL: SetConfiguration.init()'
       );
       DEBUG.SetConfiguration.fail && console.assert(
-        (typeof config   === 'object' &&
-         typeof source   === 'object' &&
-         typeof category === 'object' &&
-         Array.isArray(question) &&
-         typeof config.searchSettings === 'object' &&
-         typeof config.searchDefaults === 'object' &&
-         typeof config.questionFormat === 'object' &&
-         typeof config.prettyCode     === 'object' &&
-         typeof category.main === 'object' &&
-         typeof category.sub  === 'object'),
+        (typeof newConfig  === 'object' &&
+         typeof sources    === 'object' &&
+         typeof categories === 'object' &&
+         Array.isArray(questions)),
         'FAIL: SetConfiguration.init() ' +
         'Note: Incorrect argument operand.'
       );
       // If (incorrect argument entered)
       // Then {end script and return failure}
-      if ( !checkConfig(config, category, source, question) ) {
+      if (typeof newConfig  !== 'object' ||
+          typeof sources    !== 'object' ||
+          typeof categories !== 'object' ||
+          !Array.isArray(questions)) {
         return false;
       }
       // Set configuration
-      // note: category, source, and questions must be called first
-      //        to set configOptions and qLen
+      // note: categories, sources, and questions must be called first
       // note: searchSettings must be called before searchDefaults
-      setCategories(category);
-      setSources(source);
-      setQuestions(question);
-      setSearchSettings(config.searchSettings);
-      setSearchDefaults(config.searchDefaults);
-      setQuestionFormat(config.questionFormat);
-      setPrettyCode(config.prettyCode);
-      setIDAction(config.id);
-      setWebWorker(config.worker);
+      setCategories(categories);
+      setSources(sources);
+      setQuestions(questions);
+      setSearchSettings(newConfig.searchSettings);
+      setSearchDefaults(newConfig.searchDefaults);
+      setQuestionFormat(newConfig.questionFormat);
+      setPrettyCode(newConfig.prettyCode);
+      setIDAction(newConfig.linkID);
+      setWebWorker(newConfig.worker);
       // Set the current searchValues to searchDefaults
       setSearchValues();
-      // Return success
-      return true;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (checkConfig)
-     * ---------------------------------------------
-     * check the user input values
-     * param: configuration (object)
-     * param: categories (object)
-     * param: sources (object)
-     * param: questions (array of objects)
-     * @type {function(Object, Object, Object, Object): boolean}
-     * @private
-     */
-    function checkConfig(config, category, source, question) {
-      // Debugger
-      DEBUG.SetConfiguration.call && console.log(
-        'CALL: SetConfiguration.checkConfig()'
-      );
-      DEBUG.SetConfiguration.fail && console.assert(
-        (typeof config   === 'object' &&
-         typeof source   === 'object' &&
-         typeof category === 'object' &&
-         Array.isArray(question) &&
-         typeof config.searchSettings === 'object' &&
-         typeof config.searchDefaults === 'object' &&
-         typeof config.questionFormat === 'object' &&
-         typeof config.prettyCode     === 'object' &&
-         typeof category.main === 'object' &&
-         typeof category.sub  === 'object'),
-        'FAIL: SetConfiguration.checkConfig() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // If (incorrect argument entered)
-      // Then {end script and return failure}
-      if (typeof config   !== 'object' ||
-          typeof source   !== 'object' ||
-          typeof category !== 'object' ||
-          !Array.isArray(question) ||
-          typeof config.searchSettings !== 'object' ||
-          typeof config.searchDefaults !== 'object' ||
-          typeof config.questionFormat !== 'object' ||
-          typeof config.prettyCode     !== 'object' ||
-          typeof category.main !== 'object' ||
-          typeof category.sub  !== 'object') {
-        return false;
-      }
       // Return success
       return true;
     }
@@ -1036,97 +974,109 @@
      * Private Method (setCategories)
      * ---------------------------------------------
      * set categories to user input
-     * param: categories (object)
+     * param: categories (object literal)
      * @type {function({
          main: Object,
-          sub: Object
+         sub : Object
        })}
      * @private
      */
-    function setCategories(newCategories) {
+    function setCategories(categories) {
       // Debugger
       DEBUG.SetConfiguration.call && console.log(
         'CALL: SetConfiguration.setCategories()'
       );
       DEBUG.SetConfiguration.fail && console.assert(
-        typeof newCategories === 'object',
+        typeof categories === 'object',
         'FAIL: SetConfiguration.setCategories() ' +
         'Note: Incorrect argument operand.'
       );
       // Declare method variables
-      var mainIds, i, cLen, id, sub, subIds, sLen;
-      // Set main categories
-      categories.main = newCategories.main;
-      // Order main categories
-      mainIds = orderCategories(newCategories.main);
-      // Set ordered list of main category ids
-      categories.ids.main = mainIds;
+      var ids, cLen, i, id;
+      // Add and sort main categories
+      addSortedCategories(categories.main);
+      // Save reference to list of main cat ids
+      ids = appVals.categories.ids;
       // Save the count of main categories
-      categories.len.main = cLen = mainIds.length;
+      cLen = appVals.categories.len;
       // If (a main category exists)
-      // Then {update configOptions and set sub category values}
+      // Then {set sub category values}
       if (cLen > 0) {
         for (i=0; i<cLen; i++) {
           // Save the current main category id
-          id = mainIds[i];
-          // Add category to configOptions
-          configOptions.searchDefaults.mainCat.push(id);
-          // Save sub category
-          categories.sub[id] = sub = newCategories.sub[id] || {};
-          // Verify sub category is object
-          sub = (typeof sub === 'object') ? sub : {};
-          // Save ordered list of sub category ids
-          categories.ids.sub[id] = subIds = orderCategories(sub);
-          // Save count of sub categories
-          categories.len.sub[id] = sLen = subIds.length;
-          // If (sub categories exist)
-          // Then {format sub categories}
-          categories.opt[id] = (sLen > 0) ? formatCategories(sub) : '';
+          id = ids[i];
+          // If (sub category exists for main)
+          // Then {add and sort the sub categories}
+          if (!!categories.sub[id]) {
+            addSortedCategories(categories.sub[id], id);
+          }
         }
       }
     }
 
     /**
      * ---------------------------------------------
-     * Private Method (orderCategories)
+     * Private Method (addSortedCategories)
      * ---------------------------------------------
-     * return ordered array of categories
-     * param: categories (object)
-     * @type {function(Object): Array.<string>}
+     * sorts and saves the given categories
+     * param: the categories (object literal)
+     * param: the main category parent (string) (optional)
+     * @type {function(Object, string|undefined)}
      * @private
      */
-    function orderCategories(newCategories) {
+    function addSortedCategories(categories, mainCat) {
       // Debugger
       DEBUG.SetConfiguration.call && console.log(
-        'CALL: SetConfiguration.orderCategories()'
+        'CALL: SetConfiguration.addSortedCategories()'
       );
       DEBUG.SetConfiguration.fail && console.assert(
-        typeof newCategories === 'object',
-        'FAIL: SetConfiguration.orderCategories() ' +
+        (typeof categories === 'object' &&
+         (typeof mainCat === 'string' ||
+          typeof mainCat === 'undefined')),
+        'FAIL: SetConfiguration.addSortedCategories() ' +
         'Note: Incorrect argument operand.'
       );
       // Declare method variables
-      var sortedList, id, catName, sLen, last, x, current;
+      var sVals, cVals, sortedList, catID,
+          catName, sLen, last, x, current;
+      // The app values
+      sVals = appVals.searchVals;
+      sVals = (!mainCat) ? sVals.mainCat : sVals.subCat;
+      cVals = appVals.categories;
       // Set the sortedList categories to empty
       sortedList = [];
       // Loop through categories
-      for (id in newCategories) {
+      for (catID in categories) {
         // If (property is not native)
-        if ( newCategories.hasOwnProperty(id) ) {
+        if ( categories.hasOwnProperty(catID) ) {
           // Save current category name
-          catName = newCategories[id];
-          catName = catName.toLowerCase();
+          catName = categories[catID];
           // Debugger
           DEBUG.SetConfiguration.state && console.log(
             'STATE: SetConfiguration.orderCategories() ' +
-            'Note: id= %s, catName= %s', id, catName
+            'Note: catID= %s, catName= %s', catID, catName
           );
+          // Add category to hashmaps
+          // If (main category)
+          if (!mainCat) {
+            sVals['-' + catID] = catName;
+            cVals['-' + catID] = { name: catName };
+          }
+          else {
+            sVals['-' + catID] = catName;
+            cVals['-' + catID] = {
+              name: catName,
+              prt : cVals['-' + mainCat]
+            };
+          }
+          // Set category name to lower case for sorting
+          catName = catName.toLowerCase();
           // Save the length of the sorted list
           sLen = sortedList.length;
           // If (index is 0)
           // Then {add category to sorted list}
           if (sLen === 0) {
-            sortedList.push(id);
+            sortedList.push(catID);
           }
           else {
             // Save last index of sorted list
@@ -1135,7 +1085,7 @@
             loop:
             for (x=0; x<sLen; x++) {
               // Save current category name
-              current = newCategories[ sortedList[x] ];
+              current = categories[ sortedList[x] ];
               current = current.toLowerCase();
               // Debugger
               DEBUG.SetConfiguration.state && console.log(
@@ -1145,13 +1095,13 @@
               // If (name is before current name)
               // Then {insert category here and end loop}
               if (catName < current) {
-                sortedList.splice(x, 0, id);
+                sortedList.splice(x, 0, catID);
                 break loop;
               }
               // If (last name in list)
               // Then {add category to list end}
               if (x === last) {
-                sortedList.push(id);
+                sortedList.push(catID);
               }
             }
           }
@@ -1162,51 +1112,63 @@
         'STATE: SetConfiguration.orderCategories() ' +
         'Note: sortedList= %O', sortedList
       );
-      // Return sorted list of category objects
-      return sortedList;
+      // Save the sorted main categories
+      // If (main categories)
+      if (!mainCat) {
+        cVals.len = sortedList.length;
+        cVals.ids = sortedList.slice(0);
+        sVals.order = sVals.order.concat(sortedList);
+      }
+      else {
+        cVals.subLen += sortedList.length;
+        cVals['-' + mainCat].subs = sortedList.slice(0);
+        sVals.order['-' + mainCat] = sVals.order.start.concat(sortedList);
+        formatCategories(mainCat);
+      }
     }
 
     /**
      * ---------------------------------------------
      * Private Method (formatCategories)
      * ---------------------------------------------
-     * return a string of the option elements for
-        the supplied sub categories
-     * param: sub categories (object)
-     * @type {function(Object): string}
+     * saves the sub category option elements for
+        the given main category
+     * param: the main category (string)
+     * @type {function(string)}
      * @private
      */
-    function formatCategories(newCategories) {
+    function formatCategories(mainCat) {
       // Debuggers
       DEBUG.SetConfiguration.call && console.log(
         'CALL: SetConfiguration.formatCategories()'
       );
       DEBUG.SetConfiguration.fail && console.assert(
-        typeof newCategories === 'object',
+        typeof mainCat === 'string',
         'FAIL: SetConfiguration.formatCategories() ' +
         'Note: Incorrect argument operand.'
       );
       // Declare method variables
-      var id, catName, result;
-      // Set result to empty
-      result = '';
+      var vals, opts, ids, len, i, id, opt;
+      // The app values
+      vals = appVals.searchVals.subCat;
+      // Set list of option elements to empty
+      opts = [];
+      // Save list of sub category ids
+      ids = vals.order['-' + mainCat];
+      len = ids.length;
       // Loop through categories
-      for (id in newCategories) {
-        // If (property is not native)
-        if ( newCategories.hasOwnProperty(id) ) {
-          // Save category object
-          catName = newCategories[id];
-          // Add category to configOptions
-          configOptions.searchDefaults.subCat.push(id);
-          // Format the category
-          result += '' +
-          '<option value="' + id + '">' +
-            catName +
-          '</option>';
-        }
+      for (i=0; i<len; i++) {
+        // Save sub category id
+        id = ids[i];
+        // Create and set new element
+        opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = vals['-' + id];
+        // Add element to list
+        opts.push(opt);
       }
-      // Return the string
-      return result;
+      // Save elements
+      vals.opts['-' + mainCat] = opts.slice(0);
     }
 
     /**
