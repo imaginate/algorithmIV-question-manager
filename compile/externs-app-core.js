@@ -1,0 +1,4 @@
+
+window.aIV = {
+  app: function() {}
+};

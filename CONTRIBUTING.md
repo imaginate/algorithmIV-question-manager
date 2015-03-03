@@ -18,80 +18,54 @@ I will do my best to timely review all practice problems, patches, and emails. T
 -------------------------------------------------------------------------------------------
 
 ###Debugging Conventions
-I follow a standard of implementing regular [console methods](https://developer.chrome.com/devtools/docs/console-api) that are categorized into specific groups. The debug categories for this app are:
+Algorithm IV was built with the standard of implementing regular [console calls](https://developer.chrome.com/devtools/docs/console-api) using a custom class, Debug. Every other class within the module contains an instance of Debug located at Class.debug. The following methods can be called via the property:
 ```javascript
-// global var
-var DEBUG = {
-  // every class in the module gets 
-  // its own set of debug commands
-  TheClass: {
+/**
+ * -----------------------------------------------------
+ * Debug.prototype.start
+ * -----------------------------------------------------
+ * it is called at the start of every method
+ * logs: 'START: Class.method(arg, arg)'
+ */
+Class.debug.start('methodName', arg, arg, ...);
 
-    // the CALL category:
-    //   used at the start of every method
-    //   console methods: log
-    call: true,
+/**
+ * -----------------------------------------------------
+ * Debug.prototype.args
+ * -----------------------------------------------------
+ * it is called at the start of every method with arguments
+ * it verifies that the arguments are the correct operand 
+ * if assert fails, logs: 'ARGS: Class.method() | ' +
+ *                        'Error: Incorrect argument operand.'
+ */
+Class.debug.args('methodName', arg, 'object', arg, 'number', ...);
 
-    // the FAIL category:
-    //   used to catch errors and share error messages
-    //   console methods: assert, log
-    fail: true,
+/**
+ * -----------------------------------------------------
+ * Debug.prototype.fail
+ * -----------------------------------------------------
+ * it is used to catch script failures
+ * it verifies that the provided value is true 
+ * if assert fails, logs: 'FAIL: Class.method() | ' +
+ *                        'Error: customErrorMessage'
+ */
+Class.debug.fail('methodName', !!testValue, 'customErrorMessage');
 
-    // the GROUP category:
-    //   used to group console commands 
-    //   console methods: group, groupCollapsed, groupEnd
-    group: true,
+/**
+ * -----------------------------------------------------
+ * Debug.prototype.group
+ * -----------------------------------------------------
+ * it is used to group console logs
+ * logs: 'GROUP: Class.method() | var= varValue, var= varValue'
+ */
+Class.debug.group('methodName', !!openNewGroup, 'varName', var, 'varName', var, ...);
 
-    // the STATE category:
-    //   used to share the current state of an object
-    //   console methods: assert, log
-    state: true
-  }
-};
-```
-The format of log calls for this app are:
-```javascript
-DEBUG.TheClass.theDebugCategory && console.log(
-  'CATEGORY: TheClass.theMethod() ' +
-  'Note: theVarName= %s', theVar
-);
-
-DEBUG.TheClass.theDebugCategory && console.assert(
-  typeof theVar === 'string',
-  'CATEGORY: TheClass.theMethod() ' +
-  'Note: The error message.'
-);
-```
-Examples:
-```javascript
-// example method
-function theMethod(var, element) {
-
-  // use DEBUG.group to start a new console group
-  // that will contain all of the class logs
-  DEBUG.TheClass.group && console.groupCollapsed(
-    'GROUP: TheClass ' +
-    'Note: var= %s', var
-  );
-
-  // start method with a DEBUG.call
-  DEBUG.TheClass.call && console.log(
-    'CALL: TheClass.theMethod()'
-  );
-
-  // then use a DEBUG.fail to
-  // catch invalid arguments
-  DEBUG.TheClass.fail && console.assert(
-    (typeof var     === 'string' &&
-     typeof element === 'object'),
-    'FAIL: TheClass.theMethod() ' +
-    'Note: Incorrect argument operand.'
-  );
-
-  // use DEBUG.state to save a reference
-  // of element's current state
-  DEBUG.TheClass.state && console.log(
-    'STATE: TheClass.theMethod() ' +
-    'Note: element= %O', element
-  );
-}
+/**
+ * -----------------------------------------------------
+ * Debug.prototype.state
+ * -----------------------------------------------------
+ * it is used to log the state of variables and properties
+ * logs: 'STATE: Class.method() | var= varValue, var= varValue'
+ */
+Class.debug.state('methodName', 'varName', var, 'varName', var, ...);
 ```

@@ -1,0 +1,26 @@
+Command Line Prompts for Minification |
+---------------------------------------
+| algorithmIV-app-core.js |
+v                         v
+
+## Remove the copyright ##
+sed "3,10 d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
+
+## Minify the script ##
+java -jar compile\compiler.jar --js compile\algorithmIV-app-core.temp.js --define DEBUG=false --externs compile\externs-app-core.js --js_output_file compile\algorithmIV-app-core.min.temp.js
+
+## Insert copyright and overwrite src min file ##
+sed -e "2 r compile\copyright.txt" -e "2 d" -e "1 d" <compile\algorithmIV-app-core.min.temp.js>src\algorithmIV-app-core.min.js
+
+---------------------------------------
+| algorithmIV-app-data.js |
+v                         v
+
+## Remove the part to be unchanged ##
+sed -e "1,/sedFlagWorkerStart/ d" -e "/sedFlagWorkerEnd/,/sedFlagEnd/ d" <src\algorithmIV-app-data.js>compile\algorithmIV-app-data.temp.js
+
+## Minify the script ##
+java -jar compiler.jar --js algorithmIV\algorithmIV-app-data.temp.js --externs algorithmIV\externs-app-data.js --js_output_file algorithmIV\algorithmIV-app-data.min.temp.js
+
+## Insert minified script back into original and overwrite src min file ##
+sed -e "/sedFlagWorkerStart/,/sedFlagWorkerEnd/ d" -e "/sedFlagMinifyInsert/ r compile\algorithmIV-app-data.min.temp.js" -e "/sedFlagMinifyInsert/ d" -e "/sedFlagEnd/ d" <src\algorithmIV-app-data.js>src\algorithmIV-app-data.min.js

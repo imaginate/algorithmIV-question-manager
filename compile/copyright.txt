@@ -1,0 +1,5 @@
+/* Algorithm IV (v1.1.0) (learn@algorithmiv.com)
+ * Section: Core Module for App
+ * Author: Adam Smith (adamsmith@youlum.com)
+ * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * The MIT License (algorithmiv.com/docs/license) */
