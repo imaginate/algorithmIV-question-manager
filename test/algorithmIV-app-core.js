@@ -169,6 +169,9 @@
     this._state = true;
 
     /**
+     * ---------------------------------------------------
+     * Protected Method (Debug._getSubstitute)
+     * ---------------------------------------------------
      * @param {*} val - A value to be evaluated
      * @return {string} The correct substitution string
      * @protected
@@ -198,6 +201,51 @@
       }
 
       return str;
+    };
+
+    /**
+     * ---------------------------------------------------
+     * Protected Method (Debug._checkType)
+     * ---------------------------------------------------
+     * @param {*} val - A value to be evaluated
+     * @param {string} type - The type to evaluate the value
+     *   against: 'string', 'number', 'boolean', 'object',
+     *   'undefined', 'array' (separator= '|') (optionalArg= '=')
+     * @return {boolean} The evaluation result
+     * @protected
+     */
+    this._checkType = function(val, type) {
+
+      var types, pass;
+
+      type = type.toLowerCase();
+
+      /**
+       * @type {Array<string>}
+       * @private
+       */
+      types = ( /\|/.test(type) ) ? type.split('|') : [type];
+
+      /**
+       * @type {boolean}
+       * @private
+       */
+      pass = false;
+
+      types.forEach(function(type) {
+        if ( /\=/.test(type) ) {
+          pass = pass || (val === null);
+          type = type.substring(0, (type.length - 1));
+        }
+        if (type === 'array') {
+          pass = pass || Array.isArray(val);
+        }
+        else {
+          pass = pass || (typeof val === type)
+        }
+      });
+
+      return pass;
     };
   };
 
@@ -281,12 +329,12 @@
     pass = true;
     args.forEach(function(/** ? */ val, /** number */ i) {
       if (i % 2) {
-        pass = pass && (typeof varVal === val);
+        pass = pass && this._checkType(varVal, val);
       }
       else {
         varVal = val;
       }
-    });
+    }, this);
 
     /**
      * set the console message
@@ -299,7 +347,7 @@
     console.assert.call(console, pass, message);
   };
 
-    /**
+  /**
    * -----------------------------------------------------
    * Public Method (Debug.prototype.fail)
    * -----------------------------------------------------
@@ -408,7 +456,7 @@
 
     var args, message, methodName;
 
-    if (!this._start) {
+    if (!this._state) {
       return;
     }
 
@@ -6920,6 +6968,7 @@
     // END CLASS: PrettifyCode
     return _return;
   }());
-  
-// END MODULE
-}(window, document));
+
+  return core;
+
+})(window, document));
