@@ -66,7 +66,7 @@
 
 
 /* -----------------------------------------------------------------------------
- * | NEW SECTION: Core Module API                                           |
+ * | NEW SECTION: Core Module External API                                  |
  * v ---------------------------------------------------------------------- v */
 
   /**
@@ -110,398 +110,84 @@
 
 
 /* -----------------------------------------------------------------------------
- * | NEW SECTION: Debugging Defined                                         |
+ * | NEW SECTION: Module's Public Variables                                 |
  * v ---------------------------------------------------------------------- v */
 
   /**
-   * -----------------------------------------------------
-   * Public Variable (DEBUG)
-   * -----------------------------------------------------
-   * allows compiler to remove the debug code
-   * @define {boolean}
+   * ----------------------------------------------- 
+   * Public Variable (app)
+   * -----------------------------------------------
+   * the instance of this app
+   * @type {App}
    */
-  var DEBUG = true;
-
-  /**
-   * -----------------------------------------------------
-   * Public Class (Debug)
-   * -----------------------------------------------------
-   * contains the debugging methods for this module
-   * @param {string=} classTitle - The name of the class
-   * @constructor
-   */
-  var Debug = function(classTitle) {
-
-    /**
-     * @type {string}
-     * @private
-     */
-    this._classTitle = (!!classTitle) ? classTitle + '.' : '';
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._start = true;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._args = true;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._fail = true;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._group = true;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._state = true;
-
-    /**
-     * ---------------------------------------------------
-     * Protected Method (Debug._getSubstitute)
-     * ---------------------------------------------------
-     * @param {*} val - A value to be evaluated
-     * @return {string} The correct substitution string
-     * @protected
-     */
-    this._getSubstitute = function(val) {
-
-      var str, css;
-
-      switch (typeof val) {
-        case 'object':
-          str = '%O';
-        break;
-        case 'number':
-          str = '%i';
-        break;
-        case 'string':
-          /**
-           * @type {boolean}
-           * @private
-           */
-          css = /(^\<style\>)([\s\S])(\<\/style\>$)/.test(val);
-          str = (css) ? '%c' : '%s';
-        break;
-        default:
-          str = '%s';
-        break;
-      }
-
-      return str;
-    };
-
-    /**
-     * ---------------------------------------------------
-     * Protected Method (Debug._checkType)
-     * ---------------------------------------------------
-     * @param {*} val - A value to be evaluated
-     * @param {string} type - The type to evaluate the value
-     *   against: 'string', 'number', 'boolean', 'object',
-     *   'undefined', 'array' (separator= '|') (optionalArg= '=')
-     * @return {boolean} The evaluation result
-     * @protected
-     */
-    this._checkType = function(val, type) {
-
-      var types, pass;
-
-      type = type.toLowerCase();
-
-      /**
-       * @type {Array<string>}
-       * @private
-       */
-      types = ( /\|/.test(type) ) ? type.split('|') : [type];
-
-      /**
-       * @type {boolean}
-       * @private
-       */
-      pass = false;
-
-      types.forEach(function(type) {
-        if ( /\=/.test(type) ) {
-          pass = pass || (val === null);
-          type = type.substring(0, (type.length - 1));
-        }
-        if (type === 'array') {
-          pass = pass || Array.isArray(val);
-        }
-        else {
-          pass = pass || (typeof val === type)
-        }
-      });
-
-      return pass;
-    };
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (Debug.prototype.start)
-   * -----------------------------------------------------
-   * use this method to start every other method
-   * @param {...*} arguments - The name of the method and each
-   *   argument passed to it in order of appearance e.g.
-   *     start('methodName', var, var) { ...
-   */
-  Debug.prototype.start = function() {
-
-    var args, message, methodName;
-
-    if (!this._start) {
-      return;
-    }
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    args = Array.prototype.slice.call(arguments);
-
-    /**
-     * @type {string}
-     * @private
-     */
-    methodName = args.shift();
-
-    /**
-     * set the console message
-     * @type {string}
-     * @private
-     */
-    message = 'START: ' + this._classTitle + methodName + '(';
-    args.forEach(function(/** ? */ val, /** number */ i) {
-      message += ( (i) ? ', ' : '' ) + this._getSubstitute(val);
-    }, this);
-    message += ')';
-    args.unshift(message);
-
-    console.log.apply(console, args);
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (Debug.prototype.args)
-   * -----------------------------------------------------
-   * use this method to catch an improper method argument
-   * @param {...*} arguments - The name of the method and each
-   *   of its arguments followed by their data type e.g.
-   *     args('methodName', var, 'object', var, 'number') { ...
-   */
-  Debug.prototype.args = function() {
-
-    var args, methodName, pass, varVal, message;
-
-    if (!this._args) {
-      return;
-    }
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    args = Array.prototype.slice.call(arguments);
-
-    /**
-     * @type {string}
-     * @private
-     */
-    methodName = args.shift();
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    pass = true;
-    args.forEach(function(/** ? */ val, /** number */ i) {
-      if (i % 2) {
-        pass = pass && this._checkType(varVal, val);
-      }
-      else {
-        varVal = val;
-      }
-    }, this);
-
-    /**
-     * set the console message
-     * @type {string}
-     * @private
-     */
-    message = 'ARGS: ' + this._classTitle + methodName + '() | ' +
-              'Error: Incorrect argument operand.';
-
-    console.assert.call(console, pass, message);
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (Debug.prototype.fail)
-   * -----------------------------------------------------
-   * use this method to catch failures throughout
-   * @param {string} methodName - The name of the method
-   * @param {boolean} pass - The tests (fails if false)
-   * @param {string} errorMsg - The description of the error
-   */
-  Debug.prototype.fail = function(methodName, pass, errorMsg) {
-
-    var message;
-
-    if (!this._fail) {
-      return;
-    }
-
-    /**
-     * set the console message
-     * @type {string}
-     * @private
-     */
-    message = 'FAIL: ' + this._classTitle + methodName + '() | ' +
-              'Error: ' + errorMsg;
-
-    console.assert.call(console, pass, message);
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (Debug.prototype.group)
-   * -----------------------------------------------------
-   * use this method to group console messages
-   * @param {string} methodName - The name of the method
-   * @param {boolean} openGroup - Start or end a group
-   * @param {...*} variables - The variable name (string)
-   *   and value of all the vars to be logged e.g.
-   *     group('methodName', true, 'varName', var, 'varName', var) { ...
-   */
-  Debug.prototype.group = function() {
-
-    var args, message, methodName, openGroup, finalArgs;
-
-    if (!this._group) {
-      return;
-    }
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    args = Array.prototype.slice.call(arguments);
-
-    /**
-     * @type {string}
-     * @private
-     */
-    methodName = args.shift();
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    openGroup = args.shift();
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    finalArgs = [];
-
-    /**
-     * set the console message and final args
-     * @type {string}
-     * @private
-     */
-    message = 'GROUP: ' + this._classTitle + methodName + '() | ';
-    args.forEach(function(/** ? */ val, /** number */ i) {
-      if (i % 2) {
-        message += ( (i > 1) ? ', ' : '' ) + this._getSubstitute(val);
-        finalArgs.push(val);
-      }
-      else {
-        message += val + '= ';
-      }
-    }, this);
-    finalArgs.unshift(message);
-
-    if (openGroup) {
-      console.groupCollapsed.apply(console, finalArgs);
-    }
-    else {
-      console.groupEnd.apply(console, finalArgs);
-    }
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (Debug.prototype.state)
-   * -----------------------------------------------------
-   * use this method to view the state of a variable or property
-   * @param {...*} arguments - The name of the method and each
-   *   variable name and value whose state should be logged e.g.
-   *     state('methodName', 'varName', var, 'varName', var) { ...
-   */
-  Debug.prototype.state = function() {
-
-    var args, message, methodName;
-
-    if (!this._state) {
-      return;
-    }
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    args = Array.prototype.slice.call(arguments);
-
-    /**
-     * @type {string}
-     * @private
-     */
-    methodName = args.shift();
-
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    finalArgs = [];
-
-    /**
-     * set the console message and final args
-     * @type {string}
-     * @private
-     */
-    message = 'STATE: ' + this._classTitle + methodName + '() | ';
-    args.forEach(function(/** ? */ val, /** number */ i) {
-      if (i % 2) {
-        message += ( (i > 1) ? ', ' : '' ) + this._getSubstitute(val);
-        finalArgs.push(val);
-      }
-      else {
-        message += val + '= ';
-      }
-    }, this);
-    finalArgs.unshift(message);
-
-    console.log.apply(console, args);
-  };
+  var app;
 
 
 /* -----------------------------------------------------------------------------
- * | NEW SECTION: 
+ * | NEW SECTION: Module's Public Methods                                   |
  * v ---------------------------------------------------------------------- v */
+
+  /**
+   * ---------------------------------------------
+   * Public Method (getID)
+   * ---------------------------------------------
+   * getElementById shortcut
+   * @param {string} title - The name of the id of the element to select
+   * @return {HTMLElement} A reference to element with the given id
+   */
+  function getID(title) {
+
+    DEBUG && _debug.start('getID', title);
+    DEBUG && _debug.args('getID', title, 'string');
+
+    return document.getElementById(title);
+  }
+
+  /**
+   * ---------------------------------------------
+   * Public Method (getTag)
+   * ---------------------------------------------
+   * getElementsByTagName shortcut
+   * @param {string} title - The name of the tags to select
+   * @param {HTMLElement=} root - The root element to use
+   * @return {Array<HTMLElement>} References to the elements with the tag
+   */
+  function getTag(title, root) {
+
+    DEBUG && _debug.start('getTag', title, root);
+    DEBUG && _debug.args('getTag', title, 'string', root, 'object=');
+
+    root = root || roots.root;
+
+    return root.getElementsByTagName(title);
+  }
+
+  /**
+   * ---------------------------------------------
+   * Public Method (getClass)
+   * ---------------------------------------------
+   * getElementsByClassName shortcut
+   * @param {string} title - The name of the class to select
+   * @param {HTMLElement=} root - The root element to use
+   * @return {Array<HTMLElement>} References to the elements with the class
+   */
+  function getClass(title, root) {
+
+    DEBUG && _debug.start('getClass', title, root);
+    DEBUG && _debug.args('getClass', title, 'string', root, 'object=');
+
+    root = root || roots.root;
+
+    return root.getElementsByClassName(title);
+  }
+
+
+/* -----------------------------------------------------------------------------
+ * | NEW SECTION: Module's Public Classes                                   |
+ * v ---------------------------------------------------------------------- v */
+
+// classes HERE
+
 
   /**
    * ----------------------------------------------- 
@@ -777,85 +463,6 @@
     categories: { len: 0, subLen: 0 },
     questions : []
   };
-
-  /**
-   * ---------------------------------------------
-   * Public Method (getID)
-   * ---------------------------------------------
-   * getElementById shortcut
-   * param: the id to be selected (string)
-   * @type {function(string): Object}
-   * @private
-   */
-  function getID(name) {
-    // Debuggers
-    DEBUG.call && console.log(
-      'CALL: public.getID(%s)', name
-    );
-    DEBUG.fail && console.assert(
-      typeof name === 'string',
-      'FAIL: public.getID() ' +
-      'Note: Incorrect argument operand.'
-    );
-    // Return the node
-    return document.getElementById(name);
-  }
-
-  /**
-   * ---------------------------------------------
-   * Public Method (getTag)
-   * ---------------------------------------------
-   * getElementsByTagName shortcut
-   * param: the tag to be selected (string)
-   * param: the root element to use (optional) (object)
-   * @type {function(string, Object|undefined): Object}
-   * @private
-   */
-  function getTag(name, root) {
-    // Debuggers
-    DEBUG.call && console.log(
-      'CALL: public.getTag(%s, %O)', name, root
-    );
-    DEBUG.fail && console.assert(
-      (typeof name === 'string' &&
-       (typeof root === 'object' ||
-        typeof root === 'undefined')),
-      'FAIL: public.getTag() ' +
-      'Note: Incorrect argument operand.'
-    );
-    // Set root
-    root = root || roots.root;
-    // Return the node
-    return root.getElementsByTagName(name);
-  }
-
-  /**
-   * ---------------------------------------------
-   * Public Method (getClass)
-   * ---------------------------------------------
-   * getElementsByClassName shortcut
-   * param: the class to be selected (string)
-   * param: the root element to use (optional) (object)
-   * @type {function(string, Object|undefined): Object}
-   * @private
-   */
-  function getClass(name, root) {
-    // Debuggers
-    DEBUG.call && console.log(
-      'CALL: public.getClass(%s, %O)', name, root
-    );
-    DEBUG.fail && console.assert(
-      (typeof name === 'string' &&
-       (typeof root === 'object' ||
-        typeof root === 'undefined')),
-      'FAIL: public.getClass() ' +
-      'Note: Incorrect argument operand.'
-    );
-    // Set root
-    root = root || roots.root;
-    // Return the node
-    return root.getElementsByClassName(name);
-  }
 
   /**
    * ---------------------------------------------
@@ -6968,6 +6575,411 @@
     // END CLASS: PrettifyCode
     return _return;
   }());
+
+
+/* -----------------------------------------------------------------------------
+ * | NEW SECTION: Debugging Defined                                         |
+ * v ---------------------------------------------------------------------- v */
+
+  /**
+   * -----------------------------------------------------
+   * Public Variable (DEBUG)
+   * -----------------------------------------------------
+   * allows compiler to remove the debug code
+   * @define {boolean}
+   */
+  var DEBUG = true;
+
+  /**
+   * ----------------------------------------------- 
+   * Private Variable (_debug)
+   * -----------------------------------------------
+   * the none class-wrapped instance of Debug (for public methods)
+   * @type {Debug}
+   */
+  var _debug = new Debug();
+
+  /**
+   * -----------------------------------------------------
+   * Public Class (Debug)
+   * -----------------------------------------------------
+   * contains the debugging methods for this module
+   * @param {string=} classTitle - The name of the class
+   * @constructor
+   */
+  var Debug = function(classTitle) {
+
+    /**
+     * @type {string}
+     * @private
+     */
+    this._classTitle = (!!classTitle) ? classTitle + '.' : '';
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._start = true;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._args = true;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._fail = true;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._group = true;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._state = true;
+
+    /**
+     * ---------------------------------------------------
+     * Protected Method (Debug._getSubstitute)
+     * ---------------------------------------------------
+     * @param {*} val - A value to be evaluated
+     * @return {string} The correct substitution string
+     * @protected
+     */
+    this._getSubstitute = function(val) {
+
+      var str, css;
+
+      switch (typeof val) {
+        case 'object':
+          str = '%O';
+        break;
+        case 'number':
+          str = '%i';
+        break;
+        case 'string':
+          /**
+           * @type {boolean}
+           * @private
+           */
+          css = /(^\<style\>)([\s\S])(\<\/style\>$)/.test(val);
+          str = (css) ? '%c' : '%s';
+        break;
+        default:
+          str = '%s';
+        break;
+      }
+
+      return str;
+    };
+
+    /**
+     * ---------------------------------------------------
+     * Protected Method (Debug._checkType)
+     * ---------------------------------------------------
+     * @param {*} val - A value to be evaluated
+     * @param {string} type - The type to evaluate the value
+     *   against: 'string', 'number', 'boolean', 'object',
+     *   'undefined', 'array' (separator= '|') (optionalArg= '=')
+     * @return {boolean} The evaluation result
+     * @protected
+     */
+    this._checkType = function(val, type) {
+
+      var types, pass;
+
+      type = type.toLowerCase();
+
+      /**
+       * @type {Array<string>}
+       * @private
+       */
+      types = ( /\|/.test(type) ) ? type.split('|') : [type];
+
+      /**
+       * @type {boolean}
+       * @private
+       */
+      pass = false;
+
+      types.forEach(function(type) {
+        if ( /\=/.test(type) ) {
+          pass = pass || (val === null);
+          type = type.substring(0, (type.length - 1));
+        }
+        if (type === 'array') {
+          pass = pass || Array.isArray(val);
+        }
+        else {
+          pass = pass || (typeof val === type)
+        }
+      });
+
+      return pass;
+    };
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.start)
+   * -----------------------------------------------------
+   * use this method to start every other method
+   * @param {...*} arguments - The name of the method and each
+   *   argument passed to it in order of appearance e.g.
+   *     start('methodName', var, var) { ...
+   */
+  Debug.prototype.start = function() {
+
+    var args, message, methodName;
+
+    if (!this._start) {
+      return;
+    }
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    args = Array.prototype.slice.call(arguments);
+
+    /**
+     * @type {string}
+     * @private
+     */
+    methodName = args.shift();
+
+    /**
+     * set the console message
+     * @type {string}
+     * @private
+     */
+    message = 'START: ' + this._classTitle + methodName + '(';
+    args.forEach(function(/** ? */ val, /** number */ i) {
+      message += ( (i) ? ', ' : '' ) + this._getSubstitute(val);
+    }, this);
+    message += ')';
+    args.unshift(message);
+
+    console.log.apply(console, args);
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.args)
+   * -----------------------------------------------------
+   * use this method to catch an improper method argument
+   * @param {...*} arguments - The name of the method and each
+   *   of its arguments followed by their data type e.g.
+   *     args('methodName', var, 'object', var, 'number') { ...
+   */
+  Debug.prototype.args = function() {
+
+    var args, methodName, pass, varVal, message;
+
+    if (!this._args) {
+      return;
+    }
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    args = Array.prototype.slice.call(arguments);
+
+    /**
+     * @type {string}
+     * @private
+     */
+    methodName = args.shift();
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    pass = true;
+    args.forEach(function(/** ? */ val, /** number */ i) {
+      if (i % 2) {
+        pass = pass && this._checkType(varVal, val);
+      }
+      else {
+        varVal = val;
+      }
+    }, this);
+
+    /**
+     * set the console message
+     * @type {string}
+     * @private
+     */
+    message = 'ARGS: ' + this._classTitle + methodName + '() | ' +
+              'Error: Incorrect argument operand.';
+
+    console.assert.call(console, pass, message);
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.fail)
+   * -----------------------------------------------------
+   * use this method to catch failures throughout
+   * @param {string} methodName - The name of the method
+   * @param {boolean} pass - The tests (fails if false)
+   * @param {string} errorMsg - The description of the error
+   */
+  Debug.prototype.fail = function(methodName, pass, errorMsg) {
+
+    var message;
+
+    if (!this._fail) {
+      return;
+    }
+
+    /**
+     * set the console message
+     * @type {string}
+     * @private
+     */
+    message = 'FAIL: ' + this._classTitle + methodName + '() | ' +
+              'Error: ' + errorMsg;
+
+    console.assert.call(console, pass, message);
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.group)
+   * -----------------------------------------------------
+   * use this method to group console messages
+   * @param {string} methodName - The name of the method
+   * @param {boolean} openGroup - Start or end a group
+   * @param {...*} variables - The variable name (string)
+   *   and value of all the vars to be logged e.g.
+   *     group('methodName', true, 'varName', var, 'varName', var) { ...
+   */
+  Debug.prototype.group = function() {
+
+    var args, message, methodName, openGroup, finalArgs;
+
+    if (!this._group) {
+      return;
+    }
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    args = Array.prototype.slice.call(arguments);
+
+    /**
+     * @type {string}
+     * @private
+     */
+    methodName = args.shift();
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    openGroup = args.shift();
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    finalArgs = [];
+
+    /**
+     * set the console message and final args
+     * @type {string}
+     * @private
+     */
+    message = 'GROUP: ' + this._classTitle + methodName + '() | ';
+    args.forEach(function(/** ? */ val, /** number */ i) {
+      if (i % 2) {
+        message += ( (i > 1) ? ', ' : '' ) + this._getSubstitute(val);
+        finalArgs.push(val);
+      }
+      else {
+        message += val + '= ';
+      }
+    }, this);
+
+    finalArgs.unshift(message);
+
+    if (openGroup) {
+      console.groupCollapsed.apply(console, finalArgs);
+    }
+    else {
+      console.groupEnd.apply(console, finalArgs);
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.state)
+   * -----------------------------------------------------
+   * use this method to view the state of a variable or property
+   * @param {...*} arguments - The name of the method and each
+   *   variable name and value whose state should be logged e.g.
+   *     state('methodName', 'varName', var, 'varName', var) { ...
+   */
+  Debug.prototype.state = function() {
+
+    var args, message, methodName;
+
+    if (!this._state) {
+      return;
+    }
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    args = Array.prototype.slice.call(arguments);
+
+    /**
+     * @type {string}
+     * @private
+     */
+    methodName = args.shift();
+
+    /**
+     * @type {Array<*>}
+     * @private
+     */
+    finalArgs = [];
+
+    /**
+     * set the console message and final args
+     * @type {string}
+     * @private
+     */
+    message = 'STATE: ' + this._classTitle + methodName + '() | ';
+    args.forEach(function(/** ? */ val, /** number */ i) {
+      if (i % 2) {
+        message += ( (i > 1) ? ', ' : '' ) + this._getSubstitute(val);
+        finalArgs.push(val);
+      }
+      else {
+        message += val + '= ';
+      }
+    }, this);
+    finalArgs.unshift(message);
+
+    console.log.apply(console, args);
+  };
+
+
+/* -----------------------------------------------------------------------------
+ * | NEW SECTION: End of module                                         |
+ * v ---------------------------------------------------------------------- v */
 
   return core;
 
