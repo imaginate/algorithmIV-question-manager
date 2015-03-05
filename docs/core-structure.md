@@ -3,27 +3,24 @@
 
 
 ##Module Overview
-Public API  | Variables    | Methods     | Public Classes
-:---------- | :----------- | :---------- | :-----------------
-init        | core         | getID       | 
-            | _initialized | getTag      | [App](#app-class)
-            | app          | getClass    | [Config](#config-class)
-            | DEBUG        |             | [Sources](#sources-class)
-            | _debug       |             | [Categories](#categories-class)
-            |              |             | [Questions](#questions-class)
-            |              |             | [WebWorker](#webworker-class)
-            |              |             | [AddEvents](#addevents-class)
-            |              |             | [DisplaySearchBar](#displaysearchbar-class)
-            |              |             | [FormatQuestions](#formatquestions-class)
-            |              |             | [AppendQuestions](#appendquestions-class)
-            |              |             | [DisplayQuestions](#displayquestions-class)
-            |              |             | [PrettifyCode](#prettifycode-class)
-[Debug](#debug-class)
+External API | Variables    | Methods     | Public Classes
+:----------- | :----------- | :---------- | :-----------------
+init         | _core        | getID       | [App](#app)
+             | _initialized | getTag      | 
+             | app          | getClass    | [Config](#config-class)
+             | DEBUG        |             | [Sources](#sources-class)
+             | _debug       |             | [Categories](#categories-class)
+             |              |             | [Questions](#questions-class)
+             |              |             | [WebWorker](#webworker-class)
+             |              |             | [AddEvents](#addevents-class)
+             |              |             | [DisplaySearchBar](#displaysearchbar-class)
+             |              |             | [FormatQuestions](#formatquestions-class)
+             |              |             | [AppendQuestions](#appendquestions-class)
+             |              |             | [DisplayQuestions](#displayquestions-class)
+             |              |             | [PrettifyCode](#prettifycode-class)
+             |              |             | [Debug](#debug-class)
 
-##appVals Variable
-
-
-##App Class
+##<a name="app"></a>Public Class: App
 Init Arguments     | Private Methods
 :----------------- | :-----------------
 config             | init

@@ -3,14 +3,17 @@ Command Line Prompts for Minification |
 | algorithmIV-app-core.js |
 v                         v
 
+## Place all of the sections into one file ##
+sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
+
 ## Remove the copyright ##
-sed "3,10 d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
+sed "3,21 d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
 
 ## Minify the script ##
 java -jar compile\compiler.jar --js compile\algorithmIV-app-core.temp.js --define DEBUG=false --externs compile\externs-app-core.js --js_output_file compile\algorithmIV-app-core.min.temp.js
 
 ## Insert copyright and overwrite src min file ##
-sed -e "2 r compile\copyright.txt" -e "2 d" -e "1 d" <compile\algorithmIV-app-core.min.temp.js>src\algorithmIV-app-core.min.js
+sed -e "2 r compile\app-core-copyright.txt" -e "1,2 d" <compile\algorithmIV-app-core.min.temp.js>src\algorithmIV-app-core.min.js
 
 ---------------------------------------
 | algorithmIV-app-data.js |
