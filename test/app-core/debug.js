@@ -185,7 +185,7 @@
    * @param {...*} val - Each argument passed to the method in order of appearance.
    * @example start('methodName', var, var) { ...
    */
-  Debug.prototype.start = function() {
+  Debug.prototype.start = function(methodName) {
 
     /**
      * @type {Array<*>}
@@ -196,20 +196,13 @@
      * @type {string}
      * @private
      */
-    var methodName;
-    /**
-     * @type {string}
-     * @private
-     */
     var message;
 
     if (!this._start) {
       return;
     }
 
-    args = Array.prototype.slice.call(arguments);
-
-    methodName = args.shift();
+    args = Array.prototype.slice.call(arguments, 1);
 
     message = 'START: ' + this._classTitle + methodName + '(';
     args.forEach(function(/** ? */ val, /** number */ i) {
@@ -232,18 +225,13 @@
    * @param {...string} type -  Each passed argument's data type.
    * @example args('methodName', var, 'object', var, 'number') { ...
    */
-  Debug.prototype.args = function() {
+  Debug.prototype.args = function(methodName) {
 
     /**
      * @type {Array<*>}
      * @private
      */
     var args;
-    /**
-     * @type {string}
-     * @private
-     */
-    var methodName;
     /**
      * @type {boolean}
      * @private
@@ -264,9 +252,7 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments);
-
-    methodName = args.shift();
+    args = Array.prototype.slice.call(arguments, 1);
 
     pass = true;
 
@@ -318,28 +304,18 @@
    * -----------------------------------------------------
    * @desc Use to group console messages.
    * @param {string} methodName - The name of the method.
-   * @param {boolean} openGroup - Start or end a group.
+   * @param {boolean=} openGroup - Start or end a group.
    * @param {...string=} varName - The name of the passed variables to log.
    * @param {...*} val - The value of the passed variables to log.
    * @example group('methodName', true, 'varName', var, 'varName', var) { ...
    */
-  Debug.prototype.group = function() {
+  Debug.prototype.group = function(methodName, openGroup) {
 
     /**
      * @type {Array<*>}
      * @private
      */
     var args;
-    /**
-     * @type {string}
-     * @private
-     */
-    var methodName;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var openGroup;
     /**
      * @type {Array<*>}
      * @private
@@ -355,25 +331,27 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments);
-
-    methodName = args.shift();
-
-    openGroup = args.shift();
+    openGroup = openGroup || true;
 
     finalArgs = [];
 
-    message = 'GROUP: ' + this._classTitle + methodName + '() | ';
+    message = 'GROUP: ' + this._classTitle + methodName + '()';
 
-    args.forEach(function(/** ? */ val, /** number */ i) {
-      if (i % 2) {
-        message += ( (i > 1) ? ', ' : '' ) + Debug.getSubstitute(val);
-        finalArgs.push(val);
-      }
-      else {
-        message += val + '= ';
-      }
-    });
+    if (arguments.length > 2) {
+
+      message += ' | ';
+
+      args = Array.prototype.slice.call(arguments, 2);
+      args.forEach(function(/** ? */ val, /** number */ i) {
+        if (i % 2) {
+          message += ( (i > 1) ? ', ' : '' ) + Debug.getSubstitute(val);
+          finalArgs.push(val);
+        }
+        else {
+          message += val + '= ';
+        }
+      });
+    }
 
     finalArgs.unshift(message);
 
@@ -395,18 +373,13 @@
    * @param {...*} val - The name of the passed variables to log.
    * @example state('methodName', 'varName', var, 'varName', var) { ...
    */
-  Debug.prototype.state = function() {
+  Debug.prototype.state = function(methodName) {
 
     /**
      * @type {Array<*>}
      * @private
      */
     var args;
-    /**
-     * @type {string}
-     * @private
-     */
-    var methodName;
     /**
      * @type {Array<*>}
      * @private
@@ -422,9 +395,7 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments);
-
-    methodName = args.shift();
+    args = Array.prototype.slice.call(arguments, 1);
 
     finalArgs = [];
 
