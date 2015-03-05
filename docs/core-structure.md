@@ -6,11 +6,11 @@
 External API | Variables    | Methods     | Public Classes
 :----------- | :----------- | :---------- | :-----------------
 init         | _core        | getID       | [App](#app)
-             | _initialized | getTag      | 
-             | app          | getClass    | [Config](#config-class)
-             | DEBUG        |             | [Sources](#sources-class)
-             | _debug       |             | [Categories](#categories-class)
-             |              |             | [Questions](#questions-class)
+             | _initialized | getTag      | [Sources](#sources)
+             | app          | getClass    | [Categories](#categories)
+             | DEBUG        |             | [Config](#config)
+             | _debug       |             | [Questions](#questions)
+             |              |             | 
              |              |             | [WebWorker](#webworker-class)
              |              |             | [AddEvents](#addevents-class)
              |              |             | [DisplaySearchBar](#displaysearchbar-class)
