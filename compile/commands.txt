@@ -1,19 +1,27 @@
-Command Line Prompts for Minification |
----------------------------------------
+Commands for CLI to Compile and Minify Modules                 |
+-------------------------------------------------------------- |
+Requirements:                                                  |
+GNU Sed (http://www.gnu.org/software/sed/)                     |
+Java (http://www.oracle.com/technetwork/java/javase/overview/) |
+----------------------------------------------------------------
 | algorithmIV-app-core.js |
 v                         v
 
 ## Place all of the sections into one file ##
-sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
+sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/categories.js/ r src\app-core\categories.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
 
 ## Remove the copyright ##
-sed "3,21 d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
+sed -e "3,21 d" -e "/debugStart/,/debugEnd/ d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
 
 ## Minify the script ##
 java -jar compile\compiler.jar --js compile\algorithmIV-app-core.temp.js --define DEBUG=false --externs compile\externs-app-core.js --js_output_file compile\algorithmIV-app-core.min.temp.js
 
 ## Insert copyright and overwrite src min file ##
 sed -e "2 r compile\app-core-copyright.txt" -e "1,2 d" <compile\algorithmIV-app-core.min.temp.js>src\algorithmIV-app-core.min.js
+
+## Remove the temp files ##
+del /f /s /q /a "compile\algorithmIV-app-core.min.temp.js"
+del /f /s /q /a "compile\algorithmIV-app-core.temp.js"
 
 ---------------------------------------
 | algorithmIV-app-data.js |
