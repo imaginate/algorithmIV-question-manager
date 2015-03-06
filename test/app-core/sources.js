@@ -3,7 +3,7 @@
    * Public Class (Sources)
    * -----------------------------------------------------
    * @desc The available sources for each question.
-   * @param {?Object} sources - The user's sources.
+   * @param {?hashMap} sources - The user's sources.
    * @constructor
    */
   var Sources = function(sources) {
@@ -22,16 +22,18 @@
      */
     this._debug = (DEBUG) ? new Debug('Sources') : null;
 
-    DEBUG && this._debug.group('init', true, 'sources', sources);
-    DEBUG && this._debug.start('init', sources);
-    DEBUG && this._debug.args('init', sources, 'object');
+    if (DEBUG) {
+      this._debug.group('init', 'coll', 'sources', sources);
+      this._debug.start('init', sources);
+      this._debug.args('init', sources, 'object');
+    }
 
     /**
      * ----------------------------------------------- 
      * Public Property (Sources.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the source ids in alphabetical order.
-     * @type {Array<string>}
+     * @type {strings}
      */
     this.ids = (!!sources) ? Object.keys(sources) : [];
 
@@ -48,34 +50,37 @@
      * ----------------------------------------------- 
      * Public Property (Sources.hMap)
      * -----------------------------------------------
-     * @desc Saves a hash map of the sources using the source ids as
-     *   keys and object literals containing their names and question ids
-     *   as the values.
+     * @desc Saves a hash map of the sources. The source ids are used as
+     *   the hash map's keys and object literals containing their names,
+     *   question ids, and url names as the values.
      * @type {Object<string, {
      *   name: string,
-     *   ids : Array<number>,
-     *   url : string
+     *   url : string,
+     *   ids : nums
      * }>}
      * @dict
      */
     this.hMap = {};
 
-    // Sort the ids
-    this.ids = (!!this.len) ? App.sortKeys(this.ids, sources) : this.ids;
+    if (!!this.len) {
 
-    // Build the hash map
-    this.ids.forEach(function(/** string */ id) {
-      cleanURL = sources[id].toLowerCase();
-      cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
-      cleanURL = cleanURL.replace(/\s/g, '-');
-      this.hMap = {
-        name: sources[id],
-        ids : [],
-        url : cleanURL
-      };
-    }, this);
+      // Sort the ids
+      this.ids = App.sortKeys(this.ids, sources);
 
-    DEBUG && this._debug.group('init', false);
+      // Build the hash map
+      this.ids.forEach(function(/** string */ id) {
+        cleanURL = sources[id].toLowerCase();
+        cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
+        cleanURL = cleanURL.replace(/\s/g, '-');
+        this.hMap = {
+          name: sources[id],
+          url : cleanURL,
+          ids : []
+        };
+      }, this);
+    }
+
+    DEBUG && this._debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.

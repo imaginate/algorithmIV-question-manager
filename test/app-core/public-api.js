@@ -13,10 +13,10 @@
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes this app
-   * @param {?Object} config - The user's settings
-   * @param {?Object} sources - The user's settings
-   * @param {?Object} categories - The user's settings
-   * @param {?Object} questions - The user's settings
+   * @param {?Object} config - The user's config settings.
+   * @param {?hashMap} sources - The user's sources.
+   * @param {?Object} categories - The user's categories.
+   * @param {?Object} questions - The user's questions.
    * @global
    */
   aIV.app = function(config, sources, categories, questions) {
