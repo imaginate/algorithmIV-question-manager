@@ -1,82 +1,123 @@
   /**
    * -----------------------------------------------------
-   * Public Class (Sources)
+   * Public Class (Categories)
    * -----------------------------------------------------
-   * @desc The available sources for each question.
-   * @param {?Object} sources - The user's sources.
+   * @desc The available categories for each question.
+   * @param {?Object} categories - The user's categories.
    * @constructor
    */
-  var Sources = function(sources) {
+  var Categories = function(categories) {
 
     /**
      * @type {string}
      * @private
      */
     var cleanURL;
+    /**
+     * @type {strings}
+     * @private
+     */
+    var subIds;
 
     /**
      * ---------------------------------------------------
-     * Private Property (Sources._debug)
+     * Private Property (Categories._debug)
      * ---------------------------------------------------
      * @type {?Debug}
      */
-    this._debug = (DEBUG) ? new Debug('Sources') : null;
+    this._debug = (DEBUG) ? new Debug('Categories') : null;
 
-    DEBUG && this._debug.group('init', true, 'sources', sources);
-    DEBUG && this._debug.start('init', sources);
-    DEBUG && this._debug.args('init', sources, 'object');
+    if (DEBUG) {
+      this._debug.group('init', 'coll', 'categories', categories);
+      this._debug.start('init', categories);
+      this._debug.args('init', categories, 'object');
+    }
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Sources.ids)
+     * Public Property (Categories.ids)
      * -----------------------------------------------
-     * @desc Saves an array of all the source ids in alphabetical order.
-     * @type {Array<string>}
+     * @desc Saves an array of all the main category ids in alphabetical order.
+     * @type {strings}
      */
-    this.ids = (!!sources) ? Object.keys(sources) : [];
+    this.ids = ( (!!categories && !!categories.main) ?
+      Object.keys(categories.main) : []
+    );
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Sources.len)
+     * Public Property (Categories.len)
      * -----------------------------------------------
-     * @desc Saves the count of sources.
+     * @desc Saves the count of main categories.
      * @type {number}
      */
     this.len = this.ids.length;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Sources.hMap)
+     * Public Property (Categories.hMap)
      * -----------------------------------------------
-     * @desc Saves a hash map of the sources using the source ids as
-     *   keys and object literals containing their names and question ids
-     *   as the values.
+     * @desc Saves a hash map of all the categories. The category ids are
+     *   used as the hash map's keys and object literals containing their
+     *   names, question ids, url name, and a list of the ids of their sub
+     *   categories (in alphabetical order if they exist) as the values.
      * @type {Object<string, {
      *   name: string,
-     *   ids : Array<number>,
-     *   url : string
+     *   url : string,
+     *   ids : nums,
+     *   subs: ?strings
      * }>}
      * @dict
      */
     this.hMap = {};
 
-    // Sort the ids
-    this.ids = (!!this.len) ? App.sortKeys(this.ids, sources) : this.ids;
+    if (!!this.len) {
 
-    // Build the hash map
-    this.ids.forEach(function(/** string */ id) {
-      cleanURL = sources[id].toLowerCase();
-      cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
-      cleanURL = cleanURL.replace(/\s/g, '-');
-      this.hMap = {
-        name: sources[id],
-        ids : [],
-        url : cleanURL
-      };
-    }, this);
+      // Sort the main category ids
+      this.ids = App.sortKeys(this.ids, categories.main);
 
-    DEBUG && this._debug.group('init', false);
+      // Build the hash map
+      this.ids.forEach(function(/** string */ id) {
+
+        // Sanitize the main category name for the url
+        cleanURL = categories.main[id].toLowerCase();
+        cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
+        cleanURL = cleanURL.replace(/\s/g, '-');
+
+        // Save and sort the sub category ids if they exist
+        subIds = null;
+        if (!!categories.sub[id]) {
+          subIds = Object.keys(categories.sub[id]);
+          subIds = App.sortKeys(subIds, categories.sub[id])
+        }
+
+        // Add main category to the hash map
+        this.hMap = {
+          name: categories.main[id],
+          url : cleanURL,
+          ids : [],
+          subs: subIds
+        };
+
+        // Add the sub categories to the hash map
+        if (subIds) {
+          subIds.forEach(function(/** string */ subId) {
+            cleanURL = categories.sub[id][subId].toLowerCase();
+            cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
+            cleanURL = cleanURL.replace(/\s/g, '-');
+            this.hMap = {
+              name: categories.sub[id][subId],
+              url : cleanURL,
+              ids : [],
+              subs: null
+            };
+          }, this);
+        }       // CLOSE: if(subIds)
+      }, this); // CLOSE: main category forEach()
+    }           // CLOSE: if(!!this.len)
+
+    DEBUG && this._debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
-  Sources.prototype.constructor = Sources;
+  Categories.prototype.constructor = Categories;
