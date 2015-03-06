@@ -20,7 +20,20 @@
  * </ol>
  */
 
-(function(/** Window */ window, /** _core */ core) {
+/**
+ * -----------------------------------------------------------------------------
+ * Pre-Defined JSDoc Types
+ * -----------------------------------------------------------------------------
+ * @typedef {Array<*>} vals
+ * @typedef {Array<number>} nums
+ * @typedef {Array<string>} strings
+ * @typedef {Array<Object>} objects
+ * @typedef {Object<string, string>} hashMap
+ * @typedef {Object<string, hashMap>} nestedHashMap
+ * @typedef {{ init: function(?Object, ?hashMap, ?Object, ?Object) }} appCore
+ */
+
+(function(/** Window */ window, /** appCore */ core) {
   "use strict";
 
 
@@ -67,6 +80,18 @@
  * | The Categories Class                                                      |
  * v ------------------------------------------------------------------------- v
                                                               categories.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Config Class                                                          |
+ * v ------------------------------------------------------------------------- v
+                                                                  config.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Search Bar Class                                                      |
+ * v ------------------------------------------------------------------------- v
+                                                              search-bar.js */
 
 
 // debugStart
