@@ -22,7 +22,7 @@
    * -----------------------------------------------------
    * @desc Contains the debugging methods for this module.
    * @param {string=} classTitle - The name of the class.
-   * @param {Array<string>=} turnOffDebugs - The name of the debug
+   * @param {strings=} turnOffDebugs - The name of the debug
    *   categories to disable for the instance.
    * @constructor
    */
@@ -169,14 +169,15 @@
    * @param {string} type - The type to evaluate the value against.
    *   The optional types are 'string', 'number', 'boolean', 'object',
    *   'undefined', and 'array'. Use '|' as the separator for multiple
-   *   types e.g. 'string|number'. Use '=' to indicate null as a
-   *   possibility e.g. 'array=' or 'string|number='.
+   *   types (e.g. 'string|number'). Use '=' to indicate the value is
+   *   optional (e.g. 'array=' or 'string|number='). Use '!' to
+   *   indicate that null is not a possibility (e.g. '!string').
    * @return {boolean} The evaluation result.
    */
   Debug.checkType = function(val, type) {
 
     /**
-     * @type {Array<string>}
+     * @type {strings}
      * @private
      */
     var types;
@@ -186,23 +187,35 @@
      */
     var pass;
 
-    type = type.toLowerCase();
+    type = type.toLowerCase().replace(/[^a-zA-Z\|\=\!]/g, '');
 
-    types = ( /\|/.test(type) ) ? type.split('|') : [type];
+    types = ( /\|/.test(type) ) ? type.split('|') : [ type ];
 
-    pass = false;
+    pass = types.some(function(/** string */ type) {
 
-    types.forEach(function(type) {
-      if ( /\=/.test(type) ) {
-        pass = pass || (val === null);
-        type = type.substring(0, (type.length - 1));
-      }
-      if (type === 'array') {
-        pass = pass || Array.isArray(val);
+      if (val === undefined) {
+        if (/\=/.test(type) || type === 'undefined') {
+          return true;
+        }
       }
       else {
-        pass = pass || (typeof val === type);
+
+        if (val === null && /\!/.test(type) === false) {
+          return true;
+        }
+        type = type.replace(/\!|\=/g, '');
+
+        if (type === 'array' && Array.isArray(val)) {
+          return true;
+        }
+
+        if (/(string)|(number)|(boolean)|(object)/.test(type) &&
+            typeof val === type) {
+          return true;
+        }
       }
+
+      return false;
     });
 
     return pass;
@@ -216,14 +229,18 @@
    * Public Method (Debug.prototype.start)
    * -----------------------------------------------------
    * @desc Use to start every method.
-   * @param {string} methodName - The name of the method.
+   * @param {(string|vals)} methodName - The name of the method. An array with
+   *   all the parameters can be supplied here.
    * @param {...*} val - Each argument passed to the method in order of appearance.
-   * @example _debug.start('methodName', var, var, ...) {
+   * @example
+   *   _debug.start('methodName', var, var, ...) {
+   *   // or
+   *   _debug.start(['methodName', var, var, ...]) {
    */
   Debug.prototype.start = function(methodName) {
 
     /**
-     * @type {Array<*>}
+     * @type {vals}
      * @private
      */
     var args;
@@ -237,10 +254,16 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments, 1);
+    if ( Array.isArray(methodName) ) {
+      args = methodName.slice(1);
+      methodName = methodName[0];
+    }
+    else {
+      args = Array.prototype.slice.call(arguments, 1);
+    }
 
     message = 'START: ' + this._classTitle + methodName + '(';
-    args.forEach(function(/** ? */ val, /** number */ i) {
+    args.forEach(function(/** * */ val, /** number */ i) {
       message += ( (i) ? ', ' : '' ) + Debug.getSubstitute(val);
     });
     message += ')';
@@ -248,6 +271,8 @@
     args.unshift(message);
 
     console.log.apply(console, args);
+
+    return true;
   };
 
   /**
@@ -255,16 +280,20 @@
    * Public Method (Debug.prototype.args)
    * -----------------------------------------------------
    * @desc Use to catch an improper method argument.
-   * @param {string} methodName - The name of the method.
+   * @param {(string|vals)} methodName - The name of the method. An
+   *   array with all the parameters can be supplied here.
    * @param {...*} val - Each argument passed to the method.
    * @param {...string} type -  Each passed argument's data type. See
    *   [Debug.checkType()]{@link Debug#checkType} for the input options.
-   * @example _debug.args('methodName', var, 'object', var, 'number', ...) {
+   * @example
+   *   _debug.args('methodName', var, 'object', var, 'number', ...) {
+   *   // or
+   *   _debug.args(['methodName', var, 'object', var, 'number', ...]) {
    */
   Debug.prototype.args = function(methodName) {
 
     /**
-     * @type {Array<*>}
+     * @type {vals}
      * @private
      */
     var args;
@@ -273,11 +302,6 @@
      * @private
      */
     var pass;
-    /**
-     * @type {?}
-     * @private
-     */
-    var varVal;
     /**
      * @type {string}
      * @private
@@ -288,23 +312,28 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments, 1);
+    if ( Array.isArray(methodName) ) {
+      args = methodName.slice(1);
+      methodName = methodName[0];
+    }
+    else {
+      args = Array.prototype.slice.call(arguments, 1);
+    }
 
-    pass = true;
-
-    args.forEach(function(/** ? */ val, /** number */ i) {
+    pass = args.every(function(/** * */ val, /** number */ i) {
       if (i % 2) {
-        pass = pass && Debug.checkType(varVal, val);
+        return Debug.checkType(args[i - 1], val);
       }
-      else {
-        varVal = val;
-      }
-    }, this);
+      return true;
+    });
 
-    message = 'ARGS: ' + this._classTitle + methodName + '() | ' +
-              'Error: Incorrect argument operand.';
+    if (!pass) {
+      message = 'ARGS: ' + this._classTitle + methodName + '() | ';
+      message += 'Error: Incorrect argument operand.';
+      console.log(message);
+    }
 
-    console.assert.call(console, pass, message);
+    return true;
   };
 
   /**
@@ -328,10 +357,13 @@
       return;
     }
 
-    message = 'FAIL: ' + this._classTitle + methodName + '() | ' +
-              'Error: ' + errorMsg;
+    if (!pass) {
+      message = 'FAIL: ' + this._classTitle + methodName + '() | ';
+      message += 'Error: ' + errorMsg;
+      console.log(message);
+    }
 
-    console.assert.call(console, pass, message);
+    return true;
   };
 
   /**
@@ -339,24 +371,25 @@
    * Public Method (Debug.prototype.group)
    * -----------------------------------------------------
    * @desc Use to group console messages.
-   * @param {string} methodName - The name of the method.
-   * @param {boolean=} openGroup - Start or end a group.
+   * @param {(string|vals)} methodName - The name of the method. An
+   *   array with all the parameters can be supplied here.
+   * @param {string=} openGroup - The type of console method to use. The
+   *   options are: 'open'= console.group() | 'coll'= console.groupCollapsed()
+   *   | 'end'= console.groupEnd()
    * @param {...string=} varName - The name of the passed variables to log.
    * @param {...*} val - The value of the passed variables to log.
-   * @example _debug.group('methodName', true, 'varName', var, 'varName', var, ...) {
+   * @example
+   *   _debug.group('methodName', true, 'varName', var, 'varName', var, ...) {
+   *   // or
+   *   _debug.group(['methodName', true, 'varName', var, 'varName', var, ...]) {
    */
   Debug.prototype.group = function(methodName, openGroup) {
 
     /**
-     * @type {Array<*>}
+     * @type {?vals}
      * @private
      */
     var args;
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    var finalArgs;
     /**
      * @type {string}
      * @private
@@ -367,36 +400,54 @@
       return;
     }
 
-    openGroup = openGroup || true;
-
-    finalArgs = [];
+    if ( Array.isArray(methodName) ) {
+      openGroup = (!!methodName[1]) ? methodName[1] : 'coll';
+      args = (!!methodName[2]) ? methodName.slice(2) : null;
+      methodName = methodName[0];
+    }
+    else {
+      openGroup = openGroup || 'coll';
+      args = ( (arguments.length > 2) ?
+        Array.prototype.slice.call(arguments, 2) : null
+      );
+    }
 
     message = 'GROUP: ' + this._classTitle + methodName + '()';
 
-    if (arguments.length > 2) {
+    if (args) {
 
       message += ' | ';
 
-      args = Array.prototype.slice.call(arguments, 2);
-      args.forEach(function(/** ? */ val, /** number */ i) {
+      args = args.slice(0).filter(function(/** * */ val, /** number */ i) {
+
         if (i % 2) {
           message += ( (i > 1) ? ', ' : '' ) + Debug.getSubstitute(val);
-          finalArgs.push(val);
+          return true;
         }
-        else {
-          message += val + '= ';
-        }
+
+        message += val + '= ';
+        return false;
       });
-    }
 
-    finalArgs.unshift(message);
-
-    if (openGroup) {
-      console.groupCollapsed.apply(console, finalArgs);
+      args.unshift(message);
     }
     else {
-      console.groupEnd.apply(console, finalArgs);
+      args = [ message ];
     }
+
+    switch (openGroup) {
+      case 'open':
+        console.group.apply(console, args);
+      break;
+      case 'coll':
+        console.groupCollapsed.apply(console, args);
+      break;
+      case 'end':
+        console.groupEnd.apply(console, args);
+      break;
+    }
+
+    return true;
   };
 
   /**
@@ -404,23 +455,22 @@
    * Public Method (Debug.prototype.state)
    * -----------------------------------------------------
    * @desc Use to view the state of a variable or property.
-   * @param {string} methodName - The name of the method.
+   * @param {(string|vals)} methodName - The name of the method. An
+   *   array with all the parameters can be supplied here.
    * @param {...string} varName - The name of the passed variables to log.
    * @param {...*} val - The name of the passed variables to log.
-   * @example _debug.state('methodName', 'varName', var, 'varName', var, ...) {
+   * @example
+   *   _debug.state('methodName', 'varName', var, 'varName', var, ...) {
+   *   // or
+   *   _debug.state(['methodName', 'varName', var, 'varName', var, ...]) {
    */
   Debug.prototype.state = function(methodName) {
 
     /**
-     * @type {Array<*>}
+     * @type {vals}
      * @private
      */
     var args;
-    /**
-     * @type {Array<*>}
-     * @private
-     */
-    var finalArgs;
     /**
      * @type {string}
      * @private
@@ -431,25 +481,32 @@
       return;
     }
 
-    args = Array.prototype.slice.call(arguments, 1);
-
-    finalArgs = [];
+    if ( Array.isArray(methodName) ) {
+      args = methodName.slice(1);
+      methodName = methodName[0];
+    }
+    else {
+      args = Array.prototype.slice.call(arguments, 1);
+    }
 
     message = 'STATE: ' + this._classTitle + methodName + '() | ';
 
-    args.forEach(function(/** ? */ val, /** number */ i) {
+    args = args.slice(0).filter(function(/** * */ val, /** number */ i) {
+
       if (i % 2) {
         message += ( (i > 1) ? ', ' : '' ) + Debug.getSubstitute(val);
-        finalArgs.push(val);
+        return true;
       }
-      else {
-        message += val + '= ';
-      }
+
+      message += val + '= ';
+      return false;
     });
 
-    finalArgs.unshift(message);
+    args.unshift(message);
 
-    console.log.apply(console, finalArgs);
+    console.log.apply(console, args);
+
+    return true;
   };
 
   /**
@@ -457,7 +514,8 @@
    * Public Method (Debug.prototype.misc)
    * -----------------------------------------------------
    * @desc Use to make a custom console log.
-   * @param {string} methodName - The name of the method.
+   * @param {(string|vals)} methodName - The name of the method. An
+   *   array with all the parameters can be supplied here.
    * @param {string} customMsg - The custom log message. Use string
    *   substitution to add variable values to your message (use '%i' instead
    *   of '%d' for numbers). The helper method, [Debug.getSubstitute()]{@link Debug#getSubstitute},
@@ -469,7 +527,7 @@
   Debug.prototype.misc = function(methodName, customMsg) {
 
     /**
-     * @type {Array<*>}
+     * @type {?vals}
      * @private
      */
     var args;
@@ -483,15 +541,24 @@
       return;
     }
 
-    message = 'MISC: ' + this._classTitle + methodName + '() | ' + customMsg;
+    if ( Array.isArray(methodName) ) {
+      customMsg = methodName[1];
+      args = (!!methodName[2]) ? methodName.slice(2) : [];
+      methodName = methodName[0];
+    }
+    else {
+      args = ( (arguments.length > 2) ?
+        Array.prototype.slice.call(arguments, 2) : []
+      );
+    }
 
-    args = ( (arguments.length > 2) ?
-      Array.prototype.slice.call(arguments, 2) : []
-    );
+    message = 'MISC: ' + this._classTitle + methodName + '() | ' + customMsg;
 
     args.unshift(message);
 
     console.log.apply(console, args);
+
+    return true;
   };
 
   /**
@@ -505,7 +572,7 @@
   Debug.prototype.turnOn = function() {
 
     /**
-     * @type {Array<string>}
+     * @type {strings}
      * @private
      */
     var args;
@@ -546,6 +613,8 @@
         break;
       }
     }, this);
+
+    return true;
   };
 
   /**
@@ -559,7 +628,7 @@
   Debug.prototype.turnOff = function() {
 
     /**
-     * @type {Array<string>}
+     * @type {strings}
      * @private
      */
     var args;
@@ -600,6 +669,8 @@
         break;
       }
     }, this);
+
+    return true;
   };
 
 // debugEnd
