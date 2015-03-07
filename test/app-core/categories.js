@@ -64,10 +64,9 @@
      * @type {Object<string, {
      *   name: string,
      *   url : string,
-     *   ids : nums,
+     *   ques: nums,
      *   subs: ?strings
      * }>}
-     * @dict
      */
     this.hMap = {};
 
@@ -95,7 +94,7 @@
         this.hMap = {
           name: categories.main[id],
           url : cleanURL,
-          ids : [],
+          ques: [],
           subs: subIds
         };
 
@@ -108,7 +107,7 @@
             this.hMap = {
               name: categories.sub[id][subId],
               url : cleanURL,
-              ids : [],
+              ques: [],
               subs: null
             };
           }, this);

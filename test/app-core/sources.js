@@ -56,7 +56,7 @@
      * @type {Object<string, {
      *   name: string,
      *   url : string,
-     *   ids : nums
+     *   ques: nums
      * }>}
      * @dict
      */
@@ -75,7 +75,7 @@
         this.hMap = {
           name: sources[id],
           url : cleanURL,
-          ids : []
+          ques: []
         };
       }, this);
     }
