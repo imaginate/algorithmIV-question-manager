@@ -4,17 +4,16 @@
  * -----------------------------------------------------------------------------
  * Algorithm IV App - Core Module (v1.1.0)
  * -----------------------------------------------------------------------------
- * @summary The core module for implementing the question management app.
+ * @file The core module for implementing the question management app.
  * @module core
  * @version 1.1.0
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
  * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  **
- * @description Some details for the core module used to run the Algorithm IV
- * question management app follow:
+ * @desc More details about Algorithm IV app's core module:
  * <ol>
- *   <li>annotation: [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}</li>
+ *   <li>annotations: [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}</li>
  *   <li>outline: [See all the props, methods, and classes]{@link https://github.com/imaginate/algorithmIV/blob/master/docs/core-structure.md}</li>
  *   <li>contributing: [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}</li>
  * </ol>
