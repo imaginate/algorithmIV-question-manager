@@ -101,7 +101,7 @@
      * @struct
      */
     this.prettify = {
-      _: null
+      //key: null
     };
 
     /**
@@ -189,8 +189,91 @@
       this.worker = config.worker;
     }
 
+    if (!!window.Worker) {
+      this.worker = false;
+    }
+
     DEBUG && this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
   Config.prototype.constructor = Config;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Config.prototype.setSearchDefaults)
+   * -----------------------------------------------------
+   * @desc Sets the search defaults to the user's settings.
+   * @param {?Object} defaults - The user's search defaults.
+   * @param {?SearchBar} searchBar - The search bar hash map.
+   * @param {number} quesLen - The number of user's questions.
+   */
+  Config.prototype.setSearchDefaults = function(defaults, searchBar, quesLen) {
+
+    var args;
+    if (DEBUG) {
+      this.debug.start('setSearchDefaults', defaults, searchBar);
+      args = [ 'setSearchDefaults' ];
+      args.push(defaults, '?object', searchBar, '?object');
+      this.debug.args(args);
+    }
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var pass;
+
+    if (typeof defaults.view === 'string' &&
+        searchBar.ids.view.indexOf(defaults.view) !== -1) {
+      this.searchBar.defaults.view = defaults.view;
+    }
+
+    if (typeof defaults.order === 'string' &&
+        searchBar.ids.order.indexOf(defaults.order) !== -1) {
+      this.searchBar.defaults.order = defaults.order;
+    }
+
+    if (typeof defaults.stage === 'string' &&
+        searchBar.ids.stage.indexOf(defaults.stage) !== -1) {
+      this.searchBar.defaults.stage = defaults.stage;
+    }
+
+    if (typeof defaults.source === 'string' && this.searchBar.source &&
+        searchBar.ids.source.indexOf(defaults.source) !== -1) {
+      this.searchBar.defaults.source = defaults.source;
+    }
+
+    if (typeof defaults.mainCat === 'string' && this.searchBar.category &&
+        searchBar.ids.mainCat.indexOf(defaults.mainCat) !== -1) {
+      this.searchBar.defaults.mainCat = defaults.mainCat;
+    }
+
+    if (typeof defaults.subCat === 'string' && this.searchBar.subCat &&
+        defaults.subCat !== 'all') {
+
+      if (this.searchBar.defaults.mainCat === 'all') {
+        pass = searchBar.ids.mainCat.some(function(/** string */ id) {
+          return !!searchBar.ids.subCat[id] &&
+                 searchBar.ids.subCat[id].some(function(/** string */ id) {
+            return id === defaults.subCat;
+          });
+        });
+      }
+      else {
+        pass = !!searchBar.ids.subCat[this.searchBar.defaults.mainCat] &&
+               searchBar.ids.subCat[this.searchBar.defaults.mainCat].
+               some(function(/** string */ id) {
+          return id === defaults.subCat;
+        });
+      }
+      if (!!pass) {
+        this.searchBar.defaults.subCat = defaults.subCat;
+      }
+    }
+
+    if (typeof defaults.startID === 'number' && defaults.startID > 0 &&
+        defaults.startID <= quesLen) {
+      this.searchBar.defaults.startID = defaults.startID;
+    }
+  };
