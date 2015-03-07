@@ -16,16 +16,16 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (Sources._debug)
+     * Private Property (Sources.debug)
      * ---------------------------------------------------
      * @type {?Debug}
      */
-    this._debug = (DEBUG) ? new Debug('Sources') : null;
+    this.debug = (DEBUG) ? new Debug('Sources') : null;
 
     if (DEBUG) {
-      this._debug.group('init', 'coll', 'sources', sources);
-      this._debug.start('init', sources);
-      this._debug.args('init', sources, 'object');
+      this.debug.group('init', 'coll', 'sources', sources);
+      this.debug.start('init', sources);
+      this.debug.args('init', sources, 'object');
     }
 
     /**
@@ -80,7 +80,7 @@
       }, this);
     }
 
-    DEBUG && this._debug.group('init', 'end');
+    DEBUG && this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.

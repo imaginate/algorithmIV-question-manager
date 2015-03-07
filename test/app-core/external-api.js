@@ -36,32 +36,18 @@
       args = [ 'init' ];
       args.push(config, 'object', sources, 'object');
       args.push(categories, 'object', questions, 'object');
-      _debug.args(args);
+      debug.args(args);
       msg = 'A second attempt to init this app occurred.';
-      _debug.fail('init', !_initialized, msg);
+      debug.fail('init', !_initialized, msg);
     }
 
-    /**
-     * @type {objects}
-     * @private
-     */
-    var vals;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var pass;
-
-    vals = [ config, sources, categories, questions ];
-    pass = (App.checkType(vals, 'object') && !_initialized);
-
-    if (pass) {
+    if (!_initialized) {
 
       if (DEBUG) {
         args = [ 'init','open' ];
         args.push('config', config, 'sources', sources);
         args.push('categories', categories, 'questions', questions);
-        _debug.group(args);
+        debug.group(args);
       }
 
       _initialized = true;

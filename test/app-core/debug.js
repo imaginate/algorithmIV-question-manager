@@ -9,12 +9,12 @@
 
   /**
    * ----------------------------------------------- 
-   * Private Variable (_debug)
+   * Public Variable (debug)
    * -----------------------------------------------
    * @desc The Debug instance for the module's public methods.
    * @type {Debug}
    */
-  var _debug = (DEBUG) ? new Debug() : null;
+  var debug = (DEBUG) ? new Debug() : null;
 
   /**
    * -----------------------------------------------------
@@ -22,106 +22,87 @@
    * -----------------------------------------------------
    * @desc Contains the debugging methods for this module.
    * @param {string=} classTitle - The name of the class.
-   * @param {strings=} turnOffDebugs - The name of the debug
-   *   categories to disable for the instance.
+   * @param {strings=} turnOffTypes - The instance's debug categories to disable.
    * @constructor
    */
-  var Debug = function(classTitle, turnOffDebugs) {
+  var Debug = function(classTitle, turnOffTypes) {
+
+    classTitle = classTitle || 'module';
+    classTitle += '.';
+    turnOffTypes = turnOffTypes || [];
+
+    /**
+     * -----------------------------------------------------
+     * Private Variable (types)
+     * -----------------------------------------------------
+     * @desc Allows disabling of specific debug methods per class instance.
+     *   <ol>
+     *     <li>start: Logs the start of every method.</li>
+     *     <li>args: Evaluations that assert method's arguments and
+     *         log error messages when they are incorrect.</li>
+     *     <li>fail: Applies custom evaluations and logs errors when
+     *         they occur.</li>
+     *     <li>group: Groups console logs and shares any supplied
+     *         properties.</li>
+     *     <li>state: Logs the state of the supplied properties.</li>
+     *     <li>misc: Logs a custom message and properties.</li>
+     *   </ol>
+     * @type {{
+     *   start: boolean,
+     *   args : boolean,
+     *   fail : boolean,
+     *   group: boolean,
+     *   state: boolean,
+     *   misc : boolean
+     * }}
+     * @private
+     */
+    var types = {
+      start: (turnOffTypes.indexOf('start') === -1) ? true : false,
+      args : (turnOffTypes.indexOf('args')  === -1) ? true : false,
+      fail : (turnOffTypes.indexOf('fail')  === -1) ? true : false,
+      group: (turnOffTypes.indexOf('group') === -1) ? true : false,
+      state: (turnOffTypes.indexOf('state') === -1) ? true : false,
+      misc : (turnOffTypes.indexOf('misc')  === -1) ? true : false
+    };
 
     /**
      * ---------------------------------------------------
-     * Private Property (Debug._classTitle)
+     * Public Property (Debug.classTitle)
      * ---------------------------------------------------
      * @desc The class name for the instance.
      * @type {string}
-     * @default ''
-     * @private
      */
-    this._classTitle = (!!classTitle) ? classTitle + '.' : '';
+    this.classTitle = classTitle;
 
     /**
      * ---------------------------------------------------
-     * Private Property (Debug._start)
+     * Public Method (Debug.getType)
      * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
+     * @desc Retrieve this instance's value for the supplied type.
+     * @param {string} type - The type to get.
+     * @return {boolean}
      */
-    this._start = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('start') >= 0) ?
-      false : true
-    );
+    this.getType = function(type) {
+
+      if (!!types[type] && typeof types[type] === 'boolean') {
+        return true;
+      }
+
+      return false;
+    };
 
     /**
      * ---------------------------------------------------
-     * Private Property (Debug._args)
+     * Public Method (Debug.setType)
      * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
+     * @desc Set this instance's value for the supplied type.
+     * @param {string} type - The type to set.
+     * @param {boolean} val - The value to set the type to.
      */
-    this._args = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('args') >= 0) ?
-      false : true
-    );
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Debug._fail)
-     * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
-     */
-    this._fail = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('fail') >= 0) ?
-      false : true
-    );
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Debug._group)
-     * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
-     */
-    this._group = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('group') >= 0) ?
-      false : true
-    );
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Debug._state)
-     * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
-     */
-    this._state = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('state') >= 0) ?
-      false : true
-    );
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Debug._misc)
-     * ---------------------------------------------------
-     * @desc Indicates whether to show this category's console logs.
-     * @type {boolean}
-     * @default true
-     * @private
-     */
-    this._misc = ( (!!turnOffDebugs &&
-                     turnOffDebugs.indexOf('misc') >= 0) ?
-      false : true
-    );
+    this.setType = function(type, val) {
+      types[type] = val;
+    };
   };
 
   /**
@@ -233,9 +214,9 @@
    *   all the parameters can be supplied here.
    * @param {...*} val - Each argument passed to the method in order of appearance.
    * @example
-   *   _debug.start('methodName', var, var, ...) {
+   *   debug.start('methodName', var, var, ...) {
    *   // or
-   *   _debug.start(['methodName', var, var, ...]) {
+   *   debug.start(['methodName', var, var, ...]) {
    */
   Debug.prototype.start = function(methodName) {
 
@@ -250,7 +231,7 @@
      */
     var message;
 
-    if (!this._start) {
+    if ( !this.getType('start') ) {
       return;
     }
 
@@ -286,9 +267,9 @@
    * @param {...string} type -  Each passed argument's data type. See
    *   [Debug.checkType()]{@link Debug#checkType} for the input options.
    * @example
-   *   _debug.args('methodName', var, 'object', var, 'number', ...) {
+   *   debug.args('methodName', var, 'object', var, 'number', ...) {
    *   // or
-   *   _debug.args(['methodName', var, 'object', var, 'number', ...]) {
+   *   debug.args(['methodName', var, 'object', var, 'number', ...]) {
    */
   Debug.prototype.args = function(methodName) {
 
@@ -308,7 +289,7 @@
      */
     var message;
 
-    if (!this._args) {
+    if ( !this.getType('args') ) {
       return;
     }
 
@@ -353,7 +334,7 @@
      */
     var message;
 
-    if (!this._fail) {
+    if ( !this.getType('fail') ) {
       return;
     }
 
@@ -379,9 +360,9 @@
    * @param {...string=} varName - The name of the passed variables to log.
    * @param {...*} val - The value of the passed variables to log.
    * @example
-   *   _debug.group('methodName', true, 'varName', var, 'varName', var, ...) {
+   *   debug.group('methodName', true, 'varName', var, 'varName', var, ...) {
    *   // or
-   *   _debug.group(['methodName', true, 'varName', var, 'varName', var, ...]) {
+   *   debug.group(['methodName', true, 'varName', var, 'varName', var, ...]) {
    */
   Debug.prototype.group = function(methodName, openGroup) {
 
@@ -460,9 +441,9 @@
    * @param {...string} varName - The name of the passed variables to log.
    * @param {...*} val - The name of the passed variables to log.
    * @example
-   *   _debug.state('methodName', 'varName', var, 'varName', var, ...) {
+   *   debug.state('methodName', 'varName', var, 'varName', var, ...) {
    *   // or
-   *   _debug.state(['methodName', 'varName', var, 'varName', var, ...]) {
+   *   debug.state(['methodName', 'varName', var, 'varName', var, ...]) {
    */
   Debug.prototype.state = function(methodName) {
 
@@ -477,7 +458,7 @@
      */
     var message;
 
-    if (!this._state) {
+    if ( !this.getType('state') ) {
       return;
     }
 
@@ -522,7 +503,7 @@
    *   can be used to get the correct substitution string for the variable. For
    *   more details on string substitution see {@link https://developer.chrome.com/devtools/docs/console-api#consolelogobject-object}.
    * @param {...*} val - The value of any variables to add to the log.
-   * @example _debug.misc('methodName', 'customMsg', var, var, ...) {
+   * @example debug.misc('methodName', 'customMsg', var, var, ...) {
    */
   Debug.prototype.misc = function(methodName, customMsg) {
 
@@ -537,7 +518,7 @@
      */
     var message;
 
-    if (!this._misc) {
+    if ( !this.getType('misc') ) {
       return;
     }
 
@@ -567,7 +548,7 @@
    * -----------------------------------------------------
    * @desc Use to show a category of logs that was hidden.
    * @param {...string} logCat - The log category to show.
-   * @example _debug.turnOn('logCat', 'logCat', ...) {
+   * @example debug.turnOn('logCat', 'logCat', ...) {
    */
   Debug.prototype.turnOn = function() {
 
@@ -576,42 +557,11 @@
      * @private
      */
     var args;
-    /**
-     * @type {string}
-     * @private
-     */
-    var msg;
 
     args = Array.prototype.slice.call(arguments);
 
     args.forEach(function(/** string */ val) {
-      switch (val) {
-        case 'start':
-          this._start = true;
-        break;
-        case 'args':
-          this._args = true;
-        break;
-        case 'fail':
-          this._fail = true;
-        break;
-        case 'group':
-          this._group = true;
-        break;
-        case 'state':
-          this._state = true;
-        break;
-        case 'misc':
-          this._misc = true;
-        break;
-        default:
-          msg = '' +
-          'Error: The entered log category, \'' + Debug.getSubstitute(val) +
-          '\', is incorrect. The available category options are \'start\', ' +
-          '\'args\', \'fail\', \'group\', \'state\', and \'misc\'.';
-          this.misc('_debug.turnOn', msg, val);
-        break;
-      }
+      this.setType(val, true);
     }, this);
 
     return true;
@@ -623,7 +573,7 @@
    * -----------------------------------------------------
    * @desc Use to hide a category of logs from the console.
    * @param {...string} logCat - The log category to hide.
-   * @example _debug.turnOff('logCat', 'logCat', ...) {
+   * @example debug.turnOff('logCat', 'logCat', ...) {
    */
   Debug.prototype.turnOff = function() {
 
@@ -632,42 +582,11 @@
      * @private
      */
     var args;
-    /**
-     * @type {string}
-     * @private
-     */
-    var msg;
 
     args = Array.prototype.slice.call(arguments);
 
     args.forEach(function(/** string */ val) {
-      switch (val) {
-        case 'start':
-          this._start = false;
-        break;
-        case 'args':
-          this._args = false;
-        break;
-        case 'fail':
-          this._fail = false;
-        break;
-        case 'group':
-          this._group = false;
-        break;
-        case 'state':
-          this._state = false;
-        break;
-        case 'misc':
-          this._misc = false;
-        break;
-        default:
-          msg = '' +
-          'Error: The entered log category, \'' + Debug.getSubstitute(val) +
-          '\', is incorrect. The available category options are \'start\', ' +
-          '\'args\', \'fail\', \'group\', \'state\', and \'misc\'.';
-          this.misc('_debug.turnOff', msg, val);
-        break;
-      }
+      this.setType(val, false);
     }, this);
 
     return true;

@@ -9,8 +9,8 @@
   function getID(title) {
 
     if (DEBUG) {
-      _debug.start('getID', title);
-      _debug.args('getID', title, 'string');
+      debug.start('getID', title);
+      debug.args('getID', title, 'string');
     }
 
     return document.getElementById(title);
@@ -28,8 +28,8 @@
   function getTag(title, root) {
 
     if (DEBUG) {
-      _debug.start('getTag', title, root);
-      _debug.args('getTag', title, 'string', root, 'object=');
+      debug.start('getTag', title, root);
+      debug.args('getTag', title, 'string', root, 'object=');
     }
 
     root = root || roots.root;
@@ -49,8 +49,8 @@
   function getClass(title, root) {
 
     if (DEBUG) {
-      _debug.start('getClass', title, root);
-      _debug.args('getClass', title, 'string', root, 'object=');
+      debug.start('getClass', title, root);
+      debug.args('getClass', title, 'string', root, 'object=');
     }
 
     root = root || roots.root;

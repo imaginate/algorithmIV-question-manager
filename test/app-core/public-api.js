@@ -19,6 +19,4 @@
    * @param {?Object} questions - The user's questions.
    * @global
    */
-  aIV.app = function(config, sources, categories, questions) {
-    core.init(config, sources, categories, questions);
-  };
+  aIV.app = core.init(config, sources, categories, questions);

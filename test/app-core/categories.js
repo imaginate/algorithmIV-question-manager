@@ -21,16 +21,16 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (Categories._debug)
+     * Private Property (Categories.debug)
      * ---------------------------------------------------
      * @type {?Debug}
      */
-    this._debug = (DEBUG) ? new Debug('Categories') : null;
+    this.debug = (DEBUG) ? new Debug('Categories') : null;
 
     if (DEBUG) {
-      this._debug.group('init', 'coll', 'categories', categories);
-      this._debug.start('init', categories);
-      this._debug.args('init', categories, 'object');
+      this.debug.group('init', 'coll', 'categories', categories);
+      this.debug.start('init', categories);
+      this.debug.args('init', categories, 'object');
     }
 
     /**
@@ -116,7 +116,7 @@
       }, this); // CLOSE: main category forEach()
     }           // CLOSE: if(!!this.len)
 
-    DEBUG && this._debug.group('init', 'end');
+    DEBUG && this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.

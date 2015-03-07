@@ -9,7 +9,7 @@ init         | _core        | getID       | [App](#app)
              | _initialized | getTag      | [Sources](#sources)
              | app          | getClass    | [Categories](#categories)
              | DEBUG        |             | [Config](#config)
-             | _debug       |             | [Questions](#questions)
+             | debug        |             | [Questions](#questions)
              |              |             | 
              |              |             | [WebWorker](#webworker-class)
              |              |             | [AddEvents](#addevents-class)

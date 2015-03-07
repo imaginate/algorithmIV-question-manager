@@ -16,16 +16,16 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (Config._debug)
+     * Private Property (Config.debug)
      * ---------------------------------------------------
      * @type {?Debug}
      */
-    this._debug = (DEBUG) ? new Debug('Config') : null;
+    this.debug = (DEBUG) ? new Debug('Config') : null;
 
     if (DEBUG) {
-      this._debug.group('init', 'coll', 'config', config);
-      this._debug.start('init', config);
-      this._debug.args('init', config, 'object');
+      this.debug.group('init', 'coll', 'config', config);
+      this.debug.start('init', config);
+      this.debug.args('init', config, 'object');
     }
 
     /**
@@ -48,6 +48,7 @@
      *     startID: number
      *   }
      * }}
+     * @struct
      */
     this.searchBar = {
       stage   : true,
@@ -78,6 +79,7 @@
      *   links   : boolean,
      *   output  : boolean
      * }}
+     * @struct
      */
     this.questions = {
       id      : true,
@@ -94,13 +96,12 @@
      * -----------------------------------------------
      * @desc The prettifier's settings.
      * @type {{
-     *   olHeight: number,
-     *   liHeight: number
+     *   _: ?
      * }}
+     * @struct
      */
     this.prettify = {
-      olHeight: 0,
-      liHeight: 0
+      _: null
     };
 
     /**
@@ -121,15 +122,6 @@
      * @type {boolean}
      */
     this.worker = true;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Config.scrollbar)
-     * -----------------------------------------------
-     * @desc The width/height of the browser's scrollbar.
-     * @type {number}
-     */
-    this.scrollbar = 0;
 
     // Add the user's search settings
     if (config && !!config.searchSettings) {
@@ -197,7 +189,7 @@
       this.worker = config.worker;
     }
 
-    DEBUG && this._debug.group('init', 'end');
+    DEBUG && this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
