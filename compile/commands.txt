@@ -8,7 +8,7 @@ Java (http://www.oracle.com/technetwork/java/javase/overview/) |
 v                         v
 
 ## Place all of the sections into one file ##
-sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/categories.js/ r src\app-core\categories.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
+sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/categories.js/ r src\app-core\categories.js" -e "/config.js/ r src\app-core\config.js" -e "/search-bar.js/ r src\app-core\search-bar.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
 
 ## Remove the copyright ##
 sed -e "3,21 d" -e "/debugStart/,/debugEnd/ d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
