@@ -75,7 +75,7 @@ algorithmIV-app-core.js |    |
 -------------------------    v
 
 ## Unix Commands
-sed "3,20 d" <src/algorithmIV-app-core.js>compile/algorithmIV-app-core.js
+sed "3,21 d" <src/algorithmIV-app-core.js>compile/algorithmIV-app-core.js
 cd compile
 java -jar compiler.jar \
   --js algorithmIV-app-core.js \

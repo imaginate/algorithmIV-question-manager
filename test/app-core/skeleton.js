@@ -13,7 +13,8 @@
  **
  * @desc More details about Algorithm IV app's core module:
  * <ol>
- *   <li>annotations: [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}</li>
+ *   <li>annotations: [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       and [See JSDoc3]{@link http://usejsdoc.org/index.html}</li>
  *   <li>outline: [See all the props, methods, and classes]{@link https://github.com/imaginate/algorithmIV/blob/master/docs/core-structure.md}</li>
  *   <li>contributing: [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}</li>
  * </ol>

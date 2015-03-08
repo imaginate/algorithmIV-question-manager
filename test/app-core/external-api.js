@@ -51,6 +51,45 @@
       }
 
       _initialized = true;
+
       app = new App(config, sources, categories, questions);
+
+      document.addEventListener('DOMContentLoaded', function() {
+
+        // --> appendMain(); app.();
+
+        if (app.flags.initArgs) {
+
+          // --> setScrollbar();
+          // --> setPrettyCode();
+          // --> appendNav();
+          // --> DisplaySearchBar.init();
+          // --> AddEvents.init();
+
+          if (!app.config.worker) {
+            // --> FormatQuestions.init();
+            // --> AppendQuestions.init();
+            // --> DisplayQuestions.assembleQuestions();
+          }
+          else {
+
+            app.flags.initDone = true;
+
+            if (app.flags.workerFail) {
+              getClass('loadError')[0].style.display = 'block';
+            }
+
+            if (app.flags.workerPass || app.flags.workerFail) {
+              // --> DisplayQuestions.assembleQuestions();
+            }
+          }
+        }
+        else {
+          // Show error message
+          // --> appendError();
+        }
+
+        DEBUG && debug.group('init', 'end');
+      });
     }
   };

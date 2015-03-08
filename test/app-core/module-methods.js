@@ -140,7 +140,7 @@
    * ---------------------------------------------------
    * Public Method (sortKeys)
    * ---------------------------------------------------
-   * @desc A helper method that sorts the keys from an object.
+   * @desc A helper method that sorts the keys of an object.
    * @param {strings} ids - The unsorted keys.
    * @param {hashMap} hMap - The object acting as a hash map.
    * @return {strings} The sorted keys.
