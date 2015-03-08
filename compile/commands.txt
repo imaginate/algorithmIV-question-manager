@@ -1,29 +1,104 @@
-Commands for CLI to Compile and Minify Modules                 |
+COMPILE AND MINIFY COMMANDS                                    |
 -------------------------------------------------------------- |
 Requirements:                                                  |
 GNU Sed (http://www.gnu.org/software/sed/)                     |
 Java (http://www.oracle.com/technetwork/java/javase/overview/) |
 ----------------------------------------------------------------
-| algorithmIV-app-core.js |
-v                         v
+COMPILE TEST            |
+----------------------- |    | -e "/FILENAME.js/ r FILENAME.js" ^
+File:                   |    | -e "/FILENAME.js/ r FILENAME.js" \
+algorithmIV-app-core.js |    |
+-------------------------    v
 
-## Place all of the sections into one file ##
-sed -e "/FILENAME.js/ r src\app-core\FILENAME.js" -e "/public-api.js/ r src\app-core\public-api.js" -e "/external-api.js/ r src\app-core\external-api.js" -e "/module-vars.js/ r src\app-core\module-vars.js" -e "/module-methods.js/ r src\app-core\module-methods.js" -e "/app.js/ r src\app-core\app.js" -e "/sources.js/ r src\app-core\sources.js" -e "/categories.js/ r src\app-core\categories.js" -e "/config.js/ r src\app-core\config.js" -e "/search-bar.js/ r src\app-core\search-bar.js" -e "/debug.js/ r src\app-core\debug.js" <src\app-core\skeleton.js>src\algorithmIV-app-core-test.js
+## Unix Commands
+cd test/app-core
+sed \
+  -e "/public-api.js/ r public-api.js" \
+  -e "/external-api.js/ r external-api.js" \
+  -e "/module-vars.js/ r module-vars.js" \
+  -e "/module-methods.js/ r module-methods.js" \
+  -e "/app.js/ r app.js" \
+  -e "/sources.js/ r sources.js" \
+  -e "/categories.js/ r categories.js" \
+  -e "/config.js/ r config.js" \
+  -e "/search-bar.js/ r search-bar.js" \
+  -e "/debug.js/ r debug.js" <skeleton.js>algorithmIV-app-core-temp.js
+cd ..
+cp -u app-core/algorithmIV-app-core-temp.js algorithmIV-app-core.js
+rm -f app-core/algorithmIV-app-core-temp.js
 
-## Remove the copyright ##
-sed -e "3,21 d" -e "/debugStart/,/debugEnd/ d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.temp.js
+## MS-DOS Commands
+cd test\app-core
+sed ^
+  -e "/public-api.js/ r public-api.js" ^
+  -e "/external-api.js/ r external-api.js" ^
+  -e "/module-vars.js/ r module-vars.js" ^
+  -e "/module-methods.js/ r module-methods.js" ^
+  -e "/app.js/ r app.js" ^
+  -e "/sources.js/ r sources.js" ^
+  -e "/categories.js/ r categories.js" ^
+  -e "/config.js/ r config.js" ^
+  -e "/search-bar.js/ r search-bar.js" ^
+  -e "/debug.js/ r debug.js" <skeleton.js>algorithmIV-app-core-temp.js
+cd ..
+copy /y app-core\algorithmIV-app-core-temp.js algorithmIV-app-core-test.js
+del /f app-core\algorithmIV-app-core-temp.js
+	
+----------------------------------------------------------------
+COMPILE SRC             |
+----------------------- |    |
+File:                   |    |
+algorithmIV-app-core.js |    |
+-------------------------    v
 
-## Minify the script ##
-java -jar compile\compiler.jar --js compile\algorithmIV-app-core.temp.js --define DEBUG=false --externs compile\externs-app-core.js --js_output_file compile\algorithmIV-app-core.min.temp.js
+## Unix Commands
+cd src/app-core
+sed \
+  ## Sed commands here
+cd ..
+cp -u app-core/algorithmIV-app-core-temp.js algorithmIV-app-core.js
+rm -f app-core/algorithmIV-app-core-temp.js
 
-## Insert copyright and overwrite src min file ##
-sed -e "2 r compile\app-core-copyright.txt" -e "1,2 d" <compile\algorithmIV-app-core.min.temp.js>src\algorithmIV-app-core.min.js
+## MS-DOS Commands
+cd src\app-core
+sed ^
+  ## Sed commands here
+cd ..
+copy /y app-core\algorithmIV-app-core-temp.js algorithmIV-app-core-test.js
+del /f app-core\algorithmIV-app-core-temp.js
 
-## Remove the temp files ##
-del /f /s /q /a "compile\algorithmIV-app-core.min.temp.js"
-del /f /s /q /a "compile\algorithmIV-app-core.temp.js"
+----------------------------------------------------------------
+COMPILE AND MINIFY SRC  |
+----------------------- |    |
+File:                   |    |
+algorithmIV-app-core.js |    |
+-------------------------    v
 
----------------------------------------
+## Unix Commands
+sed "3,20 d" <src/algorithmIV-app-core.js>compile/algorithmIV-app-core.js
+cd compile
+java -jar compiler.jar \
+  --js algorithmIV-app-core.js \
+  --externs externs-app-core.js \
+  --js_output_file algorithmIV-app-core.min.js
+rm -f algorithmIV-app-core.js
+cd ..
+sed -e "2 r compile/app-core-copyright.txt" -e "1,2 d" <compile/algorithmIV-app-core.min.js>src/algorithmIV-app-core.min.js
+rm -f compile/algorithmIV-app-core.min.js
+
+## MS-DOS Commands
+sed "3,20 d" <src\algorithmIV-app-core.js>compile\algorithmIV-app-core.js
+cd compile
+java -jar compiler.jar ^
+  --js algorithmIV-app-core.js ^
+  --externs externs-app-core.js ^
+  --js_output_file algorithmIV-app-core.min.js
+del /f algorithmIV-app-core.js
+cd ..
+sed -e "2 r compile\app-core-copyright.txt" -e "1,2 d" <compile\algorithmIV-app-core.min.js>src\algorithmIV-app-core.min.js
+del /f compile\algorithmIV-app-core.min.js
+
+----------------------------------------------------------------
 | algorithmIV-app-data.js |
 v                         v
 
