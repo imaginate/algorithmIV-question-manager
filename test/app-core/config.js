@@ -38,6 +38,10 @@
      *   source  : boolean,
      *   category: boolean,
      *   subCat  : boolean,
+     *   url     : {
+     *     id      : boolean,
+     *     category: boolean
+     *   },
      *   defaults: {
      *     view   : string,
      *     order  : string,
@@ -55,6 +59,10 @@
       source  : true,
       category: true,
       subCat  : true,
+      url     : {
+        id      : true,
+        category: true
+      },
       defaults: {
         view   : 'one',
         order  : 'asc',
@@ -106,6 +114,16 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (Config.showURL)
+     * -----------------------------------------------
+     * @desc Indicates if formatted urls should be created for question
+     *   ids and categories.
+     * @type {boolean}
+     */
+    this.showURL = false;
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (Config.linkID)
      * -----------------------------------------------
      * @desc Indicates if the question's id should be linked.
@@ -144,6 +162,17 @@
           typeof settings.subCat === 'boolean') {
         this.searchBar.subCat = settings.subCat;
       }
+
+      if (!!settings.url) {
+
+        if (typeof settings.url.id === 'boolean') {
+          this.searchBar.url.id = settings.url.id;
+        }
+
+        if (typeof settings.url.category === 'boolean') {
+          this.searchBar.url.category = settings.url.category;
+        }
+      }
     }
 
     // Add the user's question format settings
@@ -177,6 +206,10 @@
     }
 
     // Add the user's general settings
+    if (typeof config.showURL === 'boolean') {
+      this.showURL = config.showURL;
+    }
+
     if (typeof config.id === 'boolean') {
       this.linkID = config.id;
     }
