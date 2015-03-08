@@ -9,12 +9,6 @@
   var Sources = function(sources) {
 
     /**
-     * @type {string}
-     * @private
-     */
-    var cleanURL;
-
-    /**
      * ---------------------------------------------------
      * Private Property (Sources.debug)
      * ---------------------------------------------------
@@ -48,19 +42,15 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Sources.hMap)
+     * Public Property (Sources.data)
      * -----------------------------------------------
      * @desc Saves a hash map of the sources. The source ids are used as
      *   the hash map's keys and object literals containing their names,
      *   question ids, and url names as the values.
-     * @type {Object<string, {
-     *   name: string,
-     *   url : string,
-     *   ques: nums
-     * }>}
-     * @dict
+     * @type {Object<string, Source>}
      */
-    this.hMap = {};
+    this.data = {};
+
 
     if (!!this.len) {
 
@@ -69,16 +59,10 @@
 
       // Build the hash map
       this.ids.forEach(function(/** string */ id) {
-        cleanURL = sources[id].toLowerCase();
-        cleanURL = cleanURL.replace(/[^0-9a-z\-\s]/g, '');
-        cleanURL = cleanURL.replace(/\s/g, '-');
-        this.hMap = {
-          name: sources[id],
-          url : cleanURL,
-          ques: []
-        };
+        this.data = new Source(sources[id]);
       }, this);
     }
+
 
     DEBUG && this.debug.group('init', 'end');
   };
