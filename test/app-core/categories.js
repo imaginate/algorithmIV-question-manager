@@ -19,7 +19,7 @@
      */
     var subIds;
 
-    /**
+    /** x
      * ---------------------------------------------------
      * Private Property (Categories.debug)
      * ---------------------------------------------------
@@ -73,7 +73,7 @@
     if (!!this.len) {
 
       // Sort the main category ids
-      this.ids = App.sortKeys(this.ids, categories.main);
+      this.ids = App.sortKeys.call(this, this.ids, categories.main);
 
       // Build the hash map
       this.ids.forEach(function(/** string */ id) {
@@ -87,7 +87,7 @@
         subIds = null;
         if (!!categories.sub[id]) {
           subIds = Object.keys(categories.sub[id]);
-          subIds = App.sortKeys(subIds, categories.sub[id])
+          subIds = App.sortKeys.call(this, subIds, categories.sub[id])
         }
 
         // Add main category to the hash map

@@ -8,7 +8,7 @@
    */
   var SearchBar = function(sources, categories) {
 
-    /**
+    /** x
      * ---------------------------------------------------
      * Private Property (SearchBar.debug)
      * ---------------------------------------------------

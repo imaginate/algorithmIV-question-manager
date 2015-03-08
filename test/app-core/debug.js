@@ -1,23 +1,5 @@
   /**
    * -----------------------------------------------------
-   * Public Variable (DEBUG)
-   * -----------------------------------------------------
-   * @desc Allows compiler to remove the debug code.
-   * @define {boolean}
-   */
-  var DEBUG = true;
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the module's public methods.
-   * @type {Debug}
-   */
-  var debug = (DEBUG) ? new Debug() : null;
-
-  /**
-   * -----------------------------------------------------
    * Public Class (Debug)
    * -----------------------------------------------------
    * @desc Contains the debugging methods for this module.
@@ -591,5 +573,3 @@
 
     return true;
   };
-
-// debugEnd
