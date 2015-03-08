@@ -200,7 +200,7 @@
     // Update the config and search bar
     if (pass) {
       this.config.setSearchDefaults(config.searchDefaults, this.searchBar,
-                                    this.questions.length);
+                                    this.questions.len);
       this.searchBar.updateVals(this.config.searchBar.defaults);
     }
   };

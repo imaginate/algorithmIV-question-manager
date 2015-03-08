@@ -28,6 +28,7 @@
  * @typedef {Array<number>} nums
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
+ * @typedef {Array<Question>} questions
  * @typedef {Object<string, string>} hashMap
  * @typedef {Object<string, hashMap>} nestedHashMap
  * @typedef {{ init: function(?Object, ?hashMap, ?Object, ?Object) }} appCore
@@ -89,9 +90,21 @@
 
 
 /* -----------------------------------------------------------------------------
+ * | The Category Class                                                        |
+ * v ------------------------------------------------------------------------- v
+                                                                category.js */
+
+
+/* -----------------------------------------------------------------------------
  * | The Search Bar Class                                                      |
  * v ------------------------------------------------------------------------- v
                                                               search-bar.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Questions Class                                                       |
+ * v ------------------------------------------------------------------------- v
+                                                               questions.js */
 
 
 /* -----------------------------------------------------------------------------
