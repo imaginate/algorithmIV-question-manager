@@ -2,7 +2,7 @@
    * -----------------------------------------------------
    * Public Class (Source)
    * -----------------------------------------------------
-   * @desc The available source for each question.
+   * @desc An object containing the details of a source.
    * @param {string} name - The source name.
    * @constructor
    */

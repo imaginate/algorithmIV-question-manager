@@ -24,11 +24,13 @@
  * -----------------------------------------------------------------------------
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
+ * @typedef {HTMLElement} elem
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
+ * @typedef {Array<HTMLElement>} elems
  * @typedef {Object<string, string>} hashMap
  * @typedef {Object<string, hashMap>} nestedHashMap
  * @typedef {{ init: function(?Object, ?hashMap, ?Object, ?Object) }} appCore

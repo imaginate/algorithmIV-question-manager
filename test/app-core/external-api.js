@@ -55,7 +55,7 @@
       app = new App(config, sources, categories, questions);
 
       if (app.config.worker) {
-        // --> WebWorker.init();
+        // --> new WebWorker();
       }
 
       document.addEventListener('DOMContentLoaded', function() {

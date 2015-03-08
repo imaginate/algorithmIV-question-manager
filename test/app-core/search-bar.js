@@ -127,16 +127,40 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (SearchBar.elems)
+     * -----------------------------------------------
+     * @desc The select HTMLELements.
+     * @type {{
+     *   view   : elem,
+     *   order  : elem,
+     *   stage  : elem,
+     *   source : elem,
+     *   mainCat: elem,
+     *   subCat : elem
+     * }}
+     * @dict
+     */
+    this.elems = {
+      view   : null,
+      order  : null,
+      stage  : null,
+      source : null,
+      mainCat: null,
+      subCat : null,
+    };
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (SearchBar.opts)
      * -----------------------------------------------
      * @desc The option elements for the search bar.
      * @type {{
-     *   view   : Array<HTMLElement>,
-     *   order  : Array<HTMLElement>,
-     *   stage  : Array<HTMLElement>,
-     *   source : Array<HTMLElement>,
-     *   mainCat: Array<HTMLElement>,
-     *   subCat : Object<string, Array<HTMLElement>>
+     *   view   : elems,
+     *   order  : elems,
+     *   stage  : elems,
+     *   source : elems,
+     *   mainCat: elems,
+     *   subCat : Object<string, elems>
      * }}
      */
     this.opts = {
