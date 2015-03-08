@@ -758,5 +758,6 @@ body {
   top:-9999px;
   width:100px;
   height:100px;
+  opacity:0;
   overflow:scroll;
 }

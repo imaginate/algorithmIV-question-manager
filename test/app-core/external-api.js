@@ -60,11 +60,11 @@
 
       document.addEventListener('DOMContentLoaded', function() {
 
-        // --> appendMain(); app.();
+        app.appendMainElems();
 
         if (app.flags.initArgs) {
 
-          // --> setScrollbar();
+          app.setScrollbar();
           // --> setPrettyCode();
           // --> appendNav();
           // --> DisplaySearchBar.init();

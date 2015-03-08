@@ -207,31 +207,118 @@
   // Ensure constructor is set to this class.
   App.prototype.constructor = App;
 
+  /**
+   * ---------------------------------------------
+   * Public Method (App.prototype.appendMainElems)
+   * ---------------------------------------------
+   * @desc Creates and appends the main html elements for this app.
+   * @type {function()}
+   */
+  App.prototype.appendMainElems = function() {
+
+    DEBUG && this.debug.start('appendMainElems');
+
     /**
-     * ---------------------------------------------
-     * Private Method (setScrollbar)
-     * ---------------------------------------------
-     * saves the width of the browser's scrollbar
-     * @type {function()}
+     * @type {string}
      * @private
      */
-    function setScrollbar() {
-      // Debugger
-      DEBUG.LoadApp.call && console.log(
-        'CALL: LoadApp.setScrollbar()'
-      );
-      // Declare method variables
-      var div;
-      // Create temporary div
-      div = document.createElement('div');
-      div.className = 'aIV-scrollbar';
-      // Add div to body
-      document.body.appendChild(div);
-      // Save the scrollbar width
-      configuration.scrollbar = div.offsetWidth - div.clientWidth;
-      // Remove div 
-      document.body.removeChild(div);
-    }
+    var errorMsg;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var h1;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var error;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var h2;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var p;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var loader;
+
+    errorMsg = 'The web worker failed. Please wait ' +
+               'while the app is being loaded manually.';
+
+    this.elems.root = document.createElement('div');
+    h1 = document.createElement('h1');
+    this.elems.sel  = document.createElement('nav');
+    this.elems.main = document.createElement('div');
+    this.elems.nav  = document.createElement('nav');
+    this.elems.ques = document.createElement('section');
+    error  = document.createElement('div');
+    h2     = document.createElement('h2');
+    p      = document.createElement('p');
+    loader = document.createElement('img');
+
+    this.elems.root.id = 'aIV';
+    this.elems.sel.id  = 'aIV-selections';
+    this.elems.main.id = 'aIV-main';
+    this.elems.nav.id  = 'aIV-nav';
+    this.elems.ques.id = 'aIV-questions';
+
+    this.elems.sel.className  = 'selections';
+    this.elems.main.className = 'main';
+    this.elems.ques.className = 'questions';
+    error.className  = 'loadError';
+    loader.className = 'loader';
+
+    h1.textContent = 'Algorithm IV';
+    h2.textContent = 'Load Error';
+    p.textContent  = errorMsg;
+
+    loader.src = 'images/loading.gif';
+
+    this.elems.root.appendChild(h1);
+    this.elems.root.appendChild(this.elems.sel);
+    this.elems.root.appendChild(this.elems.main);
+    this.elems.main.appendChild(this.elems.nav);
+    this.elems.main.appendChild(this.elems.ques);
+    this.elems.ques.appendChild(error);
+    error.appendChild(h2);
+    error.appendChild(p);
+    this.elems.ques.appendChild(loader);
+
+    document.body.appendChild(this.elems.root);
+  };
+
+  /**
+   * ---------------------------------------------
+   * Public Method (App.prototype.setScrollbar)
+   * ---------------------------------------------
+   * @desc Saves the width of the browser's scrollbar.
+   * @type {function()}
+   */
+  App.prototype.setScrollbar = function() {
+
+    DEBUG && this.debug.start('setScrollbar');
+
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var div;
+
+    div = document.createElement('div');
+    div.className = 'aIV-scrollbar';
+    document.body.appendChild(div);
+
+    this.elems.scrl.height = div.offsetWidth - div.clientWidth;
+
+    document.body.removeChild(div);
+  };
 
     /**
      * ---------------------------------------------
@@ -276,73 +363,6 @@
       configuration.prettyCode.liHeight = liHeight;
       // Remove elements
       roots.root.removeChild(pre);
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (appendMain)
-     * ---------------------------------------------
-     * inserts the main html elements of this module
-     * @type {function()}
-     * @private
-     */
-    function appendMain() {
-      // Debugger
-      DEBUG.LoadApp.call && console.log(
-        'CALL: LoadApp.appendMain()'
-      );
-      // Declare method variables
-      var message, root, h1, sel, main,
-          nav, qs, error, h2, p, loader;
-      // Set error message
-      message = '' +
-      'The web worker failed. Please wait ' +
-      'while the app is being loaded manually.';
-      // Create tags
-      root   = document.createElement('div');
-      h1     = document.createElement('h1');
-      sel    = document.createElement('nav');
-      main   = document.createElement('div');
-      nav    = document.createElement('nav');
-      qs     = document.createElement('section');
-      error  = document.createElement('div');
-      h2     = document.createElement('h2');
-      p      = document.createElement('p');
-      loader = document.createElement('img');
-      // Add ids
-      root.id = 'aIV';
-      sel.id  = 'aIV-selections';
-      main.id = 'aIV-main';
-      nav.id  = 'aIV-nav';
-      qs.id   = 'aIV-questions';
-      // Add classes
-      sel.className    = 'selections';
-      main.className   = 'main';
-      qs.className     = 'questions';
-      error.className  = 'loadError';
-      loader.className = 'loader';
-      // Add content
-      h1.textContent = 'Algorithm IV';
-      h2.textContent = 'Load Error';
-      p.textContent  = message;
-      loader.src     = 'images/loading.gif';
-      // Append elements
-      document.body.appendChild(root);
-      root.appendChild(h1);
-      root.appendChild(sel);
-      root.appendChild(main);
-      main.appendChild(nav);
-      main.appendChild(qs);
-      qs.appendChild(error);
-      error.appendChild(h2);
-      error.appendChild(p);
-      qs.appendChild(loader);
-      // Save root element references
-      roots.root = root;
-      roots.sel  = sel;
-      roots.main = main;
-      roots.nav  = nav;
-      roots.qs   = qs;
     }
 
     /**
