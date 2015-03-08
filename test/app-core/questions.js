@@ -29,6 +29,15 @@
      * @desc The array of question objects.
      * @type {questions}
      */
+    this.list = null;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.data)
+     * -----------------------------------------------
+     * @desc The hash map of question objects (key= url).
+     * @type {?Object<string, question>}
+     */
     this.data = null;
 
     /**

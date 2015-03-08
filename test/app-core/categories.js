@@ -79,12 +79,12 @@
         }
 
         // Add main category to the hash map
-        this.data[id] = new Category(id, categories.main[id], subIds);
+        this.data[id] = new Category(categories.main[id], subIds);
 
         // Add the sub categories to the hash map
         if (!!subIds.length) {
           subIds.forEach(function(/** string */ subId) {
-            this.data[id] = new Category(subId, categories.sub[id][subId]);
+            this.data[id] = new Category(categories.sub[id][subId]);
           }, this);
         } 
       }, this);
