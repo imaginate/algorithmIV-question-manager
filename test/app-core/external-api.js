@@ -54,6 +54,10 @@
 
       app = new App(config, sources, categories, questions);
 
+      if (app.config.worker) {
+        // --> WebWorker.init();
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
 
         // --> appendMain(); app.();

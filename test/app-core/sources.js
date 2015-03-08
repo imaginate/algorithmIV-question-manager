@@ -65,7 +65,7 @@
     if (!!this.len) {
 
       // Sort the ids
-      this.ids = App.sortKeys.call(this, this.ids, sources);
+      this.ids = sortKeys(this.ids, sources);
 
       // Build the hash map
       this.ids.forEach(function(/** string */ id) {

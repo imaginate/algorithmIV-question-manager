@@ -24,7 +24,7 @@
 
     // Check the user inputs
     vals = [ config, sources, categories, questions ];
-    pass = App.checkType(vals, 'object');
+    pass = checkType(vals, 'object');
 
     /**
      * ---------------------------------------------------
@@ -196,18 +196,11 @@
      */
     this.questions = (pass) ? new Questions(questions) : null;
 
-    // Initialize the app
+    // Update the config and search bar
     if (pass) {
-
-      // Update the config and search bar
       this.config.setSearchDefaults(config.searchDefaults, this.searchBar,
                                     this.questions.length);
       this.searchBar.updateVals(this.config.searchBar.defaults);
-
-      if (this.config.worker) {
-        // --> WebWorker.init();
-      }
-
     }
   };
 
