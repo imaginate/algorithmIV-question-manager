@@ -64,9 +64,9 @@
 
         if (app.flags.initArgs) {
 
-          app.setScrollbar();
-          // --> setPrettyCode();
-          // --> appendNav();
+          app.appendNavElems();
+          app.setScrollbarHeight();
+          app.setCodeListHeight();
           // --> DisplaySearchBar.init();
           // --> AddEvents.init();
 
@@ -90,7 +90,7 @@
         }
         else {
           // Show error message
-          // --> appendError();
+          app.appendErrorElems();
         }
 
         DEBUG && debug.group('init', 'end');

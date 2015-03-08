@@ -86,6 +86,7 @@
      *   main: HTMLElement,
      *   nav : HTMLElement,
      *   ques: HTMLElement,
+     *   hold: HTMLElement,
      *   scrl: {
      *     height: number
      *   },
@@ -208,9 +209,9 @@
   App.prototype.constructor = App;
 
   /**
-   * ---------------------------------------------
+   * -----------------------------------------------
    * Public Method (App.prototype.appendMainElems)
-   * ---------------------------------------------
+   * -----------------------------------------------
    * @desc Creates and appends the main html elements for this app.
    * @type {function()}
    */
@@ -232,7 +233,7 @@
      * @type {HTMLElement}
      * @private
      */
-    var error;
+    var errorDiv;
     /**
      * @type {HTMLElement}
      * @private
@@ -243,11 +244,6 @@
      * @private
      */
     var p;
-    /**
-     * @type {HTMLElement}
-     * @private
-     */
-    var loader;
 
     errorMsg = 'The web worker failed. Please wait ' +
                'while the app is being loaded manually.';
@@ -258,10 +254,10 @@
     this.elems.main = document.createElement('div');
     this.elems.nav  = document.createElement('nav');
     this.elems.ques = document.createElement('section');
-    error  = document.createElement('div');
-    h2     = document.createElement('h2');
-    p      = document.createElement('p');
-    loader = document.createElement('img');
+    this.elems.hold = document.createElement('img');
+    errorDiv = document.createElement('div');
+    h2 = document.createElement('h2');
+    p  = document.createElement('p');
 
     this.elems.root.id = 'aIV';
     this.elems.sel.id  = 'aIV-selections';
@@ -272,38 +268,122 @@
     this.elems.sel.className  = 'selections';
     this.elems.main.className = 'main';
     this.elems.ques.className = 'questions';
-    error.className  = 'loadError';
-    loader.className = 'loader';
+    this.elems.hold.className = 'loader';
+    errorDiv.className = 'loadError';
 
     h1.textContent = 'Algorithm IV';
     h2.textContent = 'Load Error';
     p.textContent  = errorMsg;
 
-    loader.src = 'images/loading.gif';
+    this.elems.hold.src = 'images/loading.gif';
 
     this.elems.root.appendChild(h1);
     this.elems.root.appendChild(this.elems.sel);
     this.elems.root.appendChild(this.elems.main);
     this.elems.main.appendChild(this.elems.nav);
     this.elems.main.appendChild(this.elems.ques);
-    this.elems.ques.appendChild(error);
-    error.appendChild(h2);
-    error.appendChild(p);
-    this.elems.ques.appendChild(loader);
+    this.elems.ques.appendChild(errorDiv);
+    this.elems.ques.appendChild(this.elems.hold);
+    errorDiv.appendChild(h2);
+    errorDiv.appendChild(p);
 
     document.body.appendChild(this.elems.root);
   };
 
   /**
-   * ---------------------------------------------
-   * Public Method (App.prototype.setScrollbar)
-   * ---------------------------------------------
+   * -----------------------------------------------
+   * Public Method (App.prototype.appendNavElems)
+   * -----------------------------------------------
+   * @desc Creates and appends the main html elements for this app.
+   * @type {function()}
+   */
+  App.prototype.appendNavElems = function() {
+
+    DEBUG && this.debug.start('appendNavElems');
+
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var prev;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var pArrow;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var pBG;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var pTitle;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var next;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var nArrow;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var nBG;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var nTitle;
+
+    prev   = document.createElement('div');
+    pArrow = document.createElement('div');
+    pBG    = document.createElement('div');
+    pTitle = document.createElement('div');
+    next   = document.createElement('div');
+    nArrow = document.createElement('div');
+    nBG    = document.createElement('div');
+    nTitle = document.createElement('div');
+
+    pArrow.id = 'aIV-prev';
+    nArrow.id = 'aIV-next';
+
+    prev.className = 'prev';
+    next.className = 'next';
+    pArrow.className = nArrow.className = 'arrow';
+    pBG.className    = nBG.className    = 'bg';
+    pTitle.className = nTitle.className = 'title';
+
+    pTitle.textContent = pArrow.textContent = 'Previous';
+    nTitle.textContent = nArrow.textContent = 'Next';
+
+    prev.appendChild(pArrow);
+    prev.appendChild(pBG);
+    prev.appendChild(pTitle);
+    next.appendChild(nArrow);
+    next.appendChild(nBG);
+    next.appendChild(nTitle);
+
+    this.elems.nav.appendChild(prev);
+    this.elems.nav.appendChild(next);
+  };
+
+  /**
+   * -------------------------------------------------
+   * Public Method (App.prototype.setScrollbarHeight)
+   * -------------------------------------------------
    * @desc Saves the width of the browser's scrollbar.
    * @type {function()}
    */
-  App.prototype.setScrollbar = function() {
+  App.prototype.setScrollbarHeight = function() {
 
-    DEBUG && this.debug.start('setScrollbar');
+    DEBUG && this.debug.start('setScrollbarHeight');
 
     /**
      * @type {HTMLElement}
@@ -320,118 +400,92 @@
     document.body.removeChild(div);
   };
 
-    /**
-     * ---------------------------------------------
-     * Private Method (setPrettyCode)
-     * ---------------------------------------------
-     * set the height and padding options for syntax
-     *  highlighting
-     * @type {function()}
-     * @private
-     */
-    function setPrettyCode() {
-      // Debugger
-      DEBUG.LoadApp.call && console.log(
-        'CALL: LoadApp.setPrettyCode()'
-      );
-      // Declare method variables
-      var pre, code, ol, li, liHeight, olHeight;
-      // Create temporary elements
-      pre  = document.createElement('pre');
-      code = document.createElement('code');
-      ol   = document.createElement('ol');
-      li   = document.createElement('li');
-      // Hide from user view
-      pre.style.opacity = '0';
-      // Add dummy content
-      li.textContent = 'test';
-      // Append elements
-      roots.root.appendChild(pre);
-      pre.appendChild(code);
-      code.appendChild(ol);
-      ol.appendChild(li);
-      // Save line and list values
-      liHeight = li.offsetHeight;
-      olHeight = ol.offsetHeight - liHeight;
-      // Debugger
-      DEBUG.LoadApp.state && console.log(
-        'STATE: LoadApp.setPrettyCode() ' +
-        'Note: liHeight= %d, olHeight= %d', liHeight, olHeight
-      );
-      // Save the heights
-      configuration.prettyCode.olHeight = olHeight;
-      configuration.prettyCode.liHeight = liHeight;
-      // Remove elements
-      roots.root.removeChild(pre);
-    }
+  /**
+   * -------------------------------------------------
+   * Public Method (App.prototype.setCodeListHeight)
+   * -------------------------------------------------
+   * @desc Saves the height for list and list items in code elements.
+   * @type {function()}
+   */
+  App.prototype.setCodeListHeight = function() {
+
+    DEBUG && this.debug.start('setCodeListHeight');
 
     /**
-     * ---------------------------------------------
-     * Private Method (appendNav)
-     * ---------------------------------------------
-     * inserts the main html elements of this module
-     * @type {function()}
+     * @type {HTMLElement}
      * @private
      */
-    function appendNav() {
-      // Debugger
-      DEBUG.LoadApp.call && console.log(
-        'CALL: LoadApp.appendNav()'
-      );
-      // Declare method variables
-      var prev, pArrow, pBG, pTitle, nav,
-          next, nArrow, nBG, nTitle;
-      // Create tags
-      prev   = document.createElement('div');
-      pArrow = document.createElement('div');
-      pBG    = document.createElement('div');
-      pTitle = document.createElement('div');
-      next   = document.createElement('div');
-      nArrow = document.createElement('div');
-      nBG    = document.createElement('div');
-      nTitle = document.createElement('div');
-      // Add ids
-      pArrow.id = 'aIV-prev';
-      nArrow.id = 'aIV-next';
-      // Add classes
-      prev.className = 'prev';
-      next.className = 'next';
-      pArrow.className = nArrow.className = 'arrow';
-      pBG.className    = nBG.className    = 'bg';
-      pTitle.className = nTitle.className = 'title';
-      // Add content
-      pTitle.textContent = pArrow.textContent = 'Previous';
-      nTitle.textContent = nArrow.textContent = 'Next';
-      // Set nav element
-      nav = getID('aIV-nav');
-      // Append elements
-      nav.appendChild(prev);
-      nav.appendChild(next);
-      prev.appendChild(pArrow);
-      prev.appendChild(pBG);
-      prev.appendChild(pTitle);
-      next.appendChild(nArrow);
-      next.appendChild(nBG);
-      next.appendChild(nTitle);
-    }
+    var pre;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var code;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var ol;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var li;
+
+    pre  = document.createElement('pre');
+    code = document.createElement('code');
+    ol   = document.createElement('ol');
+    li   = document.createElement('li');
+
+    pre.style.opacity = '0';
+
+    li.textContent = 'test';
+
+    pre.appendChild(code);
+    code.appendChild(ol);
+    ol.appendChild(li);
+
+    this.elems.root.appendChild(pre);
+
+    this.elems.code.ol.height = ol.offsetHeight - li.offsetHeight;
+    this.elems.code.li.height = li.offsetHeight;
+
+    this.elems.root.removeChild(pre);
+  };
+
+  /**
+   * -------------------------------------------------
+   * Public Method (App.prototype.appendErrorElems)
+   * -------------------------------------------------
+   * @desc Creates and appends the error html elements for this app.
+   * @type {function()}
+   */
+  App.prototype.appendErrorElems = function() {
+
+    DEBUG && this.debug.start('appendErrorElems');
 
     /**
-     * ---------------------------------------------
-     * Private Method (appendError)
-     * ---------------------------------------------
-     * insert a module call error html elements
-     * @type {function()}
+     * @type {string}
      * @private
      */
-    function appendError() {
-      // Debugger
-      DEBUG.LoadApp.call && console.log(
-        'CALL: LoadApp.appendError()'
-      );
-      // Declare method variables
-      var message, error, h2, q;
-      // Set app error message
-      message = '' +
+    var errorMsg;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var errorDiv;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var h2;
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    var p;
+
+    errorMsg = '' +
       'Algorithm IV\'s initialization was triggered '   +
       'with an incorrect argument. Please do not edit ' +
       'the initialization function located at the '     +
@@ -441,19 +495,20 @@
       'open an issue</a> on the Algorithm IV GitHub '   +
       'repo. I hope Algorithm IV is able to help you '  +
       'learn more!&NewLine;- Adam';
-      // Create tags
-      error = document.createElement('div');
-      h2    = document.createElement('h2');
-      p     = document.createElement('p');
-      // Add classes
-      error.className = 'initError';
-      // Add content
-      h2.textContent = 'Setup Error';
-      p.textContent = message;
-      // Append elements
-      roots.qs.appendChild(error);
-      error.appendChild(h2);
-      error.appendChild(p);
-      // Hide loader
-      getClass('loader')[0].style.display = 'none';
-    }
+
+    errorDiv = document.createElement('div');
+    h2 = document.createElement('h2');
+    p  = document.createElement('p');
+
+    errorDiv.className = 'initError';
+
+    h2.textContent = 'Setup Error';
+    p.textContent  = message;
+
+    errorDiv.appendChild(h2);
+    errorDiv.appendChild(p);
+
+    this.elems.ques.appendChild(errorDiv);
+
+    this.elems.hold.style.display = 'none';
+  };
