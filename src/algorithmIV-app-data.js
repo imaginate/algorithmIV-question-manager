@@ -88,11 +88,13 @@
    */
   var questions = [];
 
-/* ---------------------------- *
- * -- DO NOT EDIT BELOW HERE -- *
- * ---------------------------- */
-//sedFlagMinifyInsert
-//sedFlagWorkerStart
+/* ~~~ -------------------------- *
+ * \  ~~~ v-v-v-v-v-v-v-v-v-v~  / *
+ *  \  -- ~~~ ---- ----- ----  /  *
+ *   > DO NOT EDIT BELOW HERE <   *
+ *  /  -- ~~~ ---- ----- ----  \  *
+ * /  ^-^-^-^ ~~~ ^-^-^-^-^-^~  \ *
+ * -------------- ~~~ algorithmIV */
 
 /**
  * ---------------------------------------------
@@ -2246,8 +2248,7 @@
   }());
 
 // END WEB WORKER
-}(questions));
-//sedFlagWorkerEnd
+})(questions);
+
 // END USER DATA
-}());
-//sedFlagEnd
+})();
