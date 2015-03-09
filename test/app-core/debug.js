@@ -11,7 +11,9 @@
 
     classTitle = classTitle || 'module';
     classTitle += '.';
-    turnOffTypes = turnOffTypes || [];
+    turnOffTypes = ( (Array.isArray(turnOffTypes)) ?
+      turnOffTypes.join(' ') : ''
+    );
 
     /**
      * -----------------------------------------------------
@@ -40,12 +42,12 @@
      * @private
      */
     var types = {
-      start: (turnOffTypes.indexOf('start') === -1) ? true : false,
-      args : (turnOffTypes.indexOf('args')  === -1) ? true : false,
-      fail : (turnOffTypes.indexOf('fail')  === -1) ? true : false,
-      group: (turnOffTypes.indexOf('group') === -1) ? true : false,
-      state: (turnOffTypes.indexOf('state') === -1) ? true : false,
-      misc : (turnOffTypes.indexOf('misc')  === -1) ? true : false
+      start: ( /(start)/i.test(turnOffTypes) ),
+      args : ( /(args)/i.test(turnOffTypes)  ),
+      fail : ( /(fail)/i.test(turnOffTypes)  ),
+      group: ( /(group)/i.test(turnOffTypes) ),
+      state: ( /(state)/i.test(turnOffTypes) ),
+      misc : ( /(misc)/i.test(turnOffTypes)  )
     };
 
     /**
