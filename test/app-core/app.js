@@ -225,22 +225,22 @@
      */
     var errorMsg;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var h1;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var errorDiv;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var h2;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var p;
@@ -302,42 +302,42 @@
     DEBUG && this.debug.start('appendNavElems');
 
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var prev;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var pArrow;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var pBG;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var pTitle;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var next;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var nArrow;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var nBG;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var nTitle;
@@ -386,7 +386,7 @@
     DEBUG && this.debug.start('setScrollbarHeight');
 
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var div;
@@ -412,22 +412,22 @@
     DEBUG && this.debug.start('setCodeListHeight');
 
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var pre;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var code;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var ol;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var li;
@@ -470,17 +470,17 @@
      */
     var errorMsg;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var errorDiv;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var h2;
     /**
-     * @type {HTMLElement}
+     * @type {elem}
      * @private
      */
     var p;

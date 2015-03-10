@@ -32,7 +32,7 @@
       debug.args('getTag', title, 'string', root, 'object=');
     }
 
-    root = root || roots.root;
+    root = root || app.elems.root;
 
     return root.getElementsByTagName(title);
   }
@@ -53,7 +53,7 @@
       debug.args('getClass', title, 'string', root, 'object=');
     }
 
-    root = root || roots.root;
+    root = root || app.elems.root;
 
     return root.getElementsByClassName(title);
   }

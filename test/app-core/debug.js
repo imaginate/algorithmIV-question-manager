@@ -11,7 +11,7 @@
 
     classTitle = classTitle || 'module';
     classTitle += '.';
-    turnOffTypes = ( (Array.isArray(turnOffTypes)) ?
+    turnOffTypes = ( ( Array.isArray(turnOffTypes) ) ?
       turnOffTypes.join(' ') : ''
     );
 
@@ -43,11 +43,11 @@
      */
     var types = {
       start: ( /(start)/i.test(turnOffTypes) ),
-      args : ( /(args)/i.test(turnOffTypes)  ),
-      fail : ( /(fail)/i.test(turnOffTypes)  ),
+      args : (  /(args)/i.test(turnOffTypes) ),
+      fail : (  /(fail)/i.test(turnOffTypes) ),
       group: ( /(group)/i.test(turnOffTypes) ),
       state: ( /(state)/i.test(turnOffTypes) ),
-      misc : ( /(misc)/i.test(turnOffTypes)  )
+      misc : (  /(misc)/i.test(turnOffTypes) )
     };
 
     /**
@@ -236,8 +236,6 @@
     args.unshift(message);
 
     console.log.apply(console, args);
-
-    return true;
   };
 
   /**
@@ -297,8 +295,6 @@
       message += 'Error: Incorrect argument operand.';
       console.log(message);
     }
-
-    return true;
   };
 
   /**
@@ -327,8 +323,6 @@
       message += 'Error: ' + errorMsg;
       console.log(message);
     }
-
-    return true;
   };
 
   /**
@@ -411,8 +405,6 @@
         console.groupEnd.apply(console, args);
       break;
     }
-
-    return true;
   };
 
   /**
@@ -470,8 +462,6 @@
     args.unshift(message);
 
     console.log.apply(console, args);
-
-    return true;
   };
 
   /**
@@ -522,8 +512,6 @@
     args.unshift(message);
 
     console.log.apply(console, args);
-
-    return true;
   };
 
   /**
@@ -547,8 +535,6 @@
     args.forEach(function(/** string */ val) {
       this.setType(val, true);
     }, this);
-
-    return true;
   };
 
   /**
@@ -572,6 +558,4 @@
     args.forEach(function(/** string */ val) {
       this.setType(val, false);
     }, this);
-
-    return true;
   };

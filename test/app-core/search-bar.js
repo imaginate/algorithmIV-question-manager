@@ -3,7 +3,8 @@
    * Public Class (SearchBar)
    * -----------------------------------------------------
    * @desc The available searchBar for each question.
-   * @param {?hashMap} searchBar - The user's searchBar.
+   * @param {Sources} sources - The app's sources.
+   * @param {Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(sources, categories) {
@@ -17,9 +18,9 @@
     this.debug = (DEBUG) ? new Debug('SearchBar') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'searchBar', searchBar);
-      this.debug.start('init', searchBar);
-      this.debug.args('init', searchBar, 'object');
+      this.debug.group('init', 'coll', 'sources', sources, 'categories', categories);
+      this.debug.start('init', sources, categories);
+      this.debug.args('init', sources, 'object', categories, 'object');
     }
 
     /**
@@ -177,19 +178,19 @@
     // Add source names
     if (!!sources.len) {
       sources.ids.forEach(function(/** string */ id) {
-        this.names.source[id] = sources.hMap[id].name;
+        this.names.source[id] = sources.data[id].name;
       }, this);
     }
 
     // Add category names and ids
     if (!!categories.len) {
       categories.ids.forEach(function(/** string */ id) {
-        this.names.mainCat[id] = categories.hMap[id].name;
-        if (!!categories.hMap[id].subs) {
-          this.ids.subCat[id] = categories.hMap[id].subs.slice(0).unshift('all');
+        this.names.mainCat[id] = categories.data[id].name;
+        if (!!categories.data[id].subs) {
+          this.ids.subCat[id] = categories.data[id].subs.slice(0).unshift('all');
           this.opts.subCat[id] = [];
-          categories.hMap[id].subs.forEach(function(/** string */ id) {
-            this.names.subCat[id] = categories.hMap[id].name;
+          categories.data[id].subs.forEach(function(/** string */ id) {
+            this.names.subCat[id] = categories.data[id].name;
           }, this);
         }
       }, this);
