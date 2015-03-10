@@ -4,9 +4,11 @@ Requirements:                                                  |
 GNU Sed (http://www.gnu.org/software/sed/)                     |
 Java (http://www.oracle.com/technetwork/java/javase/overview/) |
 ----------------------------------------------------------------
+
+----------------------------------------------------------------
 COMPILE TEST            |
 ----------------------- |    | -e "/FILENAME.js/ r FILENAME.js" ^
-File:                   |    | -e "/FILENAME.js/ r FILENAME.js" \
+File:                   |    | -e "/FILENAME.js/ r class/FILENAME.js" \
 algorithmIV-app-core.js |    |
 -------------------------    v
 
@@ -17,12 +19,17 @@ sed \
   -e "/external-api.js/ r external-api.js" \
   -e "/module-vars.js/ r module-vars.js" \
   -e "/module-methods.js/ r module-methods.js" \
-  -e "/app.js/ r app.js" \
-  -e "/sources.js/ r sources.js" \
-  -e "/categories.js/ r categories.js" \
-  -e "/config.js/ r config.js" \
-  -e "/search-bar.js/ r search-bar.js" \
-  -e "/debug.js/ r debug.js" <skeleton.js>algorithmIV-app-core-temp.js
+  -e "/app.js/ r class/app.js" \
+  -e "/config.js/ r class/config.js" \
+  -e "/sources.js/ r class/sources.js" \
+  -e "/source.js/ r class/source.js" \
+  -e "/categories.js/ r class/categories.js" \
+  -e "/category.js/ r class/category.js" \
+  -e "/search-bar.js/ r class/search-bar.js" \
+  -e "/questions.js/ r class/questions.js" \
+  -e "/question.js/ r class/question.js" \
+  -e "/question-format.js/ r class/question-format.js" \
+  -e "/debug.js/ r class/debug.js" <skeleton.js>algorithmIV-app-core-temp.js
 cd ..
 cp -u app-core/algorithmIV-app-core-temp.js algorithmIV-app-core.js
 rm -f app-core/algorithmIV-app-core-temp.js
@@ -34,12 +41,17 @@ sed ^
   -e "/external-api.js/ r external-api.js" ^
   -e "/module-vars.js/ r module-vars.js" ^
   -e "/module-methods.js/ r module-methods.js" ^
-  -e "/app.js/ r app.js" ^
-  -e "/sources.js/ r sources.js" ^
-  -e "/categories.js/ r categories.js" ^
-  -e "/config.js/ r config.js" ^
-  -e "/search-bar.js/ r search-bar.js" ^
-  -e "/debug.js/ r debug.js" <skeleton.js>algorithmIV-app-core-temp.js
+  -e "/app.js/ r class\app.js" ^
+  -e "/config.js/ r class\config.js" ^
+  -e "/sources.js/ r class\sources.js" ^
+  -e "/source.js/ r class\source.js" ^
+  -e "/categories.js/ r class\categories.js" ^
+  -e "/category.js/ r class\category.js" ^
+  -e "/search-bar.js/ r class\search-bar.js" ^
+  -e "/questions.js/ r class\questions.js" ^
+  -e "/question.js/ r class\question.js" ^
+  -e "/question-format.js/ r class\question-format.js" ^
+  -e "/debug.js/ r class\debug.js" <skeleton.js>algorithmIV-app-core-temp.js
 cd ..
 copy /y app-core\algorithmIV-app-core-temp.js algorithmIV-app-core-test.js
 del /f app-core\algorithmIV-app-core-temp.js
