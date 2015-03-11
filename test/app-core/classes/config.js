@@ -92,7 +92,7 @@
         linkID : linkID
       };
 
-      return settings[configName];
+      return settings[configName] || null;
     };
 
 

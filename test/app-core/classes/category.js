@@ -60,7 +60,7 @@
         subs: subs
       };
 
-      return category[part];
+      return category[part] || null;
     };
 
     /**

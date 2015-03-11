@@ -46,7 +46,7 @@
         initArgs: initArgs
       };
 
-      return flags[flagName];
+      return flags[flagName] || null;
     };
 
 

@@ -56,7 +56,7 @@
         category: category
       };
 
-      return settings[configName];
+      return settings[configName] || null;
     };
 
 

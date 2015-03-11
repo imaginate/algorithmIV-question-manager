@@ -98,7 +98,7 @@
         subCat  : subCat
       };
 
-      return settings[configName];
+      return settings[configName] || null;
     };
 
 

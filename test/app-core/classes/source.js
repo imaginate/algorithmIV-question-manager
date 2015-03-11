@@ -57,7 +57,7 @@
         ids : ids
       };
 
-      return source[part];
+      return source[part] || null;
     };
 
     /**
