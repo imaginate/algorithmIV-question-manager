@@ -4,9 +4,10 @@
    * -----------------------------------------------------
    * @desc The questions for this app.
    * @param {?Object} questions - The user's questions.
+   * @param {boolean} outputConfig - The config settings for output.
    * @constructor
    */
-  var Questions = function(questions) {
+  var Questions = function(questions, outputConfig) {
 
     /**
      * ---------------------------------------------------
@@ -18,8 +19,8 @@
 
     if (DEBUG) {
       this.debug.group('init', 'coll', 'questions', questions);
-      this.debug.start('init', questions);
-      this.debug.args('init', questions, 'object');
+      this.debug.start('init', questions, outputConfig);
+      this.debug.args('init', questions, 'object', outputConfig, 'boolean');
     }
 
     /**

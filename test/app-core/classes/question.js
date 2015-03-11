@@ -4,9 +4,67 @@
    * -----------------------------------------------------
    * @desc An object containing the details of a question.
    * @param {Object} question - The details of a new question.
+   * @param {number} index - The index of the question.
+   * @param {boolean} outputConfig - The config settings for output.
    * @constructor
    */
-  var Question = function(question) {
+  var Question = function(question, index, outputConfig) {
+
+    /**
+     * @type {number}
+     * @private
+     */
+    var id;
+    /**
+     * @type {string}
+     * @private
+     */
+    var url;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var complete;
+    /**
+     * @type {string}
+     * @private
+     */
+    var source;
+    /**
+     * @type {strings}
+     * @private
+     */
+    var mainCat;
+    /**
+     * @type {strings}
+     * @private
+     */
+    var subCat;
+    /**
+     * @type {links}
+     * @private
+     */
+    var links;
+    /**
+     * @type {string}
+     * @private
+     */
+    var problem;
+    /**
+     * @type {string}
+     * @private
+     */
+    var descr;
+    /**
+     * @type {string}
+     * @private
+     */
+    var solution;
+    /**
+     * @type {string}
+     * @private
+     */
+    var output;
 
     /**
      * ---------------------------------------------------
@@ -16,94 +74,137 @@
      */
     this.debug = (DEBUG) ? new Debug('Question') : null;
 
+    var args;
     if (DEBUG) {
-      this.debug.start('init', question);
-      this.debug.args('init', question, 'object');
+      this.debug.start('init', question, index, outputConfig);
+      args = [ 'init' ];
+      args.push(question, 'object', index, 'number', outputConfig, 'boolean');
+      this.debug.args(args);
     }
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.id)
+     * -----------------------------------------------
+     * @desc This question's id (i.e. its index plus 1).
+     * @return {number}
+     */
+    this.id = function() {
+      return id;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.url)
      * -----------------------------------------------
      * @desc The url name for this question.
-     * @type {string}
+     * @return {string}
      */
-    this.url = '';
+    this.url = function() {
+      return url;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.complete)
      * -----------------------------------------------
      * @desc This question's current completion status.
-     * @type {boolean}
+     * @return {boolean}
      */
-    this.complete = false;
+    this.complete = function() {
+      return complete;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.source)
      * -----------------------------------------------
      * @desc The id for this question's source.
-     * @type {string}
+     * @return {string}
      */
-    this.source = '';
+    this.source = function() {
+      return source;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.mainCat)
      * -----------------------------------------------
      * @desc The ids for this question's main categories.
-     * @type {strings}
+     * @return {strings}
      */
-    this.mainCat = [];
+    this.mainCat = function() {
+      return mainCat;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.subCat)
      * -----------------------------------------------
      * @desc The ids for this question's sub categories.
-     * @type {strings}
+     * @return {strings}
      */
-    this.subCat = [];
+    this.subCat = function() {
+      return subCat;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.links)
      * -----------------------------------------------
      * @desc This question's links.
-     * @type {Array<{
+     * @return {Array<{
      *   name: string,
      *   href: string
      * }>}
      */
-    this.links = [];
+    this.links = function() {
+      return links;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.problem)
      * -----------------------------------------------
      * @desc This question's problem.
-     * @type {string}
+     * @return {string}
      */
-    this.problem = '';
+    this.problem = function() {
+      return problem;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.descr)
      * -----------------------------------------------
      * @desc This question's description.
-     * @type {string}
+     * @return {string}
      */
-    this.descr = '';
+    this.descr = function() {
+      return descr;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Question.solution)
      * -----------------------------------------------
      * @desc This question's solution.
-     * @type {?Object}
+     * @return {string}
      */
-    this.solution = null;
+    this.solution = function() {
+      return solution;
+    };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.output)
+     * -----------------------------------------------
+     * @desc The solution's output for this question.
+     * @return {string}
+     */
+    this.output = function() {
+      return output;
+    };
 
     /**
      * ----------------------------------------------- 
@@ -124,40 +225,61 @@
     this.format = null;
 
 
-    if (typeof question.url === 'string') {
-      this.url = question.url;
+    // Set the properties
+    id = (typeof index === 'number') ? (index + 1) : 0;
+
+    url = '';
+    if (typeof question.url === 'string' && question.url) {
+      url = question.url.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
     }
 
-    if (typeof question.complete === 'boolean') {
-      this.complete = question.complete;
-    }
+    complete = (question.complete === true);
 
-    if (typeof question.source === 'string') {
-      this.source = question.source;
-    }
+    source = ( (typeof question.source === 'string' && question.source) ?
+      question.source : ''
+    );
 
-    if ( Array.isArray(question.mainCat) ) {
-      this.mainCat = question.mainCat;
-    }
+    mainCat = ( (Array.isArray(question.mainCat) && question.mainCat.length) ?
+      question.mainCat.slice(0) : []
+    );
 
-    if ( Array.isArray(question.subCat) ) {
-      this.subCat = question.subCat;
-    }
+    subCat = ( (Array.isArray(question.subCat) && question.subCat.length) ?
+      question.subCat.slice(0) : []
+    );
 
-    if ( Array.isArray(question.links) ) {
-      this.links = question.links;
-    }
+    links = ( (Array.isArray(question.links) && question.links.length) ?
+      question.links.slice(0) : []
+    );
 
-    if (typeof question.problem === 'string') {
-      this.problem = question.problem;
-    }
+    problem = ( (typeof question.problem === 'string' && question.problem) ?
+      question.problem : ''
+    );
 
-    if (typeof question.descr === 'string') {
-      this.descr = question.descr;
-    }
+    descr = ( (typeof question.descr === 'string' && question.descr) ?
+      question.descr : ''
+    );
 
+    solution = output = '';
     if (typeof question.solution === 'function') {
-      this.solution = question.solution;
+
+      solution = String(question.solution);
+
+      if (outputConfig) {
+        try {
+          output = question.solution();
+          output = String(output);
+        }
+        catch (e) {
+          args = [ 'init' ];
+          args.push('Question id %i\'s solution produced an error, %O.');
+          args.push(id, e);
+          this.debug.misc(args);
+
+          output = '';
+        }
+      }
     }
   };
 
