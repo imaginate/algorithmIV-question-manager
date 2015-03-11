@@ -91,6 +91,7 @@
       });
 
       // Set data
+      data = {};
       list.forEach(function(/** Object */ question) {
         if (question.url) {
           data[question.url] = question;
