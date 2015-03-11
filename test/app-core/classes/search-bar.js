@@ -176,25 +176,37 @@
     };
 
     // Add source names
-    if (!!sources.len) {
+    if (sources.len) {
       sources.ids.forEach(function(/** string */ id) {
-        this.names.source[id] = sources.data[id].name;
+        this.names.source[id] = sources.get(id).name;
       }, this);
     }
 
     // Add category names and ids
-    if (!!categories.len) {
+    if (categories.len) {
+
       categories.ids.forEach(function(/** string */ id) {
-        this.names.mainCat[id] = categories.data[id].name;
-        if (!!categories.data[id].subs) {
-          this.ids.subCat[id] = categories.data[id].subs.slice(0).unshift('all');
+        /**
+         * @type {Category}
+         * @private
+         */
+        var mainCat;
+
+        // Add the main category
+        mainCat = categories.get(id);
+        this.names.mainCat[id] = mainCat.name;
+
+        // Add the sub categories
+        if (mainCat.subs.length) {
+          this.ids.subCat[id] = mainCat.subs.slice(0).unshift('all');
           this.opts.subCat[id] = [];
-          categories.data[id].subs.forEach(function(/** string */ id) {
-            this.names.subCat[id] = categories.data[id].name;
+          mainCat.subs.forEach(function(/** string */ id) {
+            this.names.subCat[id] = categories.get(id).name;
           }, this);
         }
       }, this);
     }
+
 
     DEBUG && this.debug.group('init', 'end');
   };
