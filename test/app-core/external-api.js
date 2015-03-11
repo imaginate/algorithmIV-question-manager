@@ -52,12 +52,10 @@
 
       _initialized = true;
 
+      // Setup the app properties
       app = new App(config, sources, categories, questions);
 
-      if (app.config.worker) {
-        // --> new WebWorker();
-      }
-
+      // Start the app
       document.addEventListener('DOMContentLoaded', function() {
 
         app.appendMainElems();
@@ -69,24 +67,9 @@
           app.setCodeListHeight();
           // --> DisplaySearchBar.init();
           // --> AddEvents.init();
-
-          if (!app.config.worker) {
-            // --> FormatQuestions.init();
-            // --> AppendQuestions.init();
-            // --> DisplayQuestions.assembleQuestions();
-          }
-          else {
-
-            app.flags.initDone = true;
-
-            if (app.flags.workerFail) {
-              getClass('loadError')[0].style.display = 'block';
-            }
-
-            if (app.flags.workerPass || app.flags.workerFail) {
-              // --> DisplayQuestions.assembleQuestions();
-            }
-          }
+          // --> FormatQuestions.init();
+          // --> AppendQuestions.init();
+          // --> DisplayQuestions.assembleQuestions();
         }
         else {
           // Show error message

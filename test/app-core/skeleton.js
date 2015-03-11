@@ -31,6 +31,7 @@
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
  * @typedef {Array<HTMLElement>} elems
+ * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} hashMap
  * @typedef {Object<string, hashMap>} nestedHashMap
  * @typedef {{ init: function(?Object, ?hashMap, ?Object, ?Object) }} appCore
@@ -74,9 +75,39 @@
 
 
 /* -----------------------------------------------------------------------------
+ * | The App Flags Class                                                       |
+ * v ------------------------------------------------------------------------- v
+                                                       classes/app-flags.js */
+
+
+/* -----------------------------------------------------------------------------
  * | The Config Class                                                          |
  * v ------------------------------------------------------------------------- v
                                                           classes/config.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Search Bar Config Class                                               |
+ * v ------------------------------------------------------------------------- v
+                                               classes/search-bar-config.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The URL Search Bar Config Class                                           |
+ * v ------------------------------------------------------------------------- v
+                                           classes/url-search-bar-config.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Defaults Search Bar Config Class                                      |
+ * v ------------------------------------------------------------------------- v
+                                      classes/defaults-search-bar-config.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Questions Config Class                                                |
+ * v ------------------------------------------------------------------------- v
+                                                classes/questions-config.js */
 
 
 /* -----------------------------------------------------------------------------
