@@ -25,24 +25,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Questions.data)
-     * -----------------------------------------------
-     * @desc The array of question objects.
-     * @type {questions}
-     */
-    this.list = null;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.data)
-     * -----------------------------------------------
-     * @desc The hash map of question objects (key= url).
-     * @type {?Object<string, question>}
-     */
-    this.data = null;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (Questions.len)
      * -----------------------------------------------
      * @desc The number of questions supplied to this app istance.
@@ -50,15 +32,74 @@
      */
     this.len = 0;
 
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.list)
+     * -----------------------------------------------
+     * @desc The array of question objects.
+     * @type {?questions}
+     */
+    var list = null;
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Questions.data)
+     * -----------------------------------------------
+     * @desc The hash map of question objects (key= url).
+     * @type {?Object<string, question>}
+     */
+    var data = null;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Questions.list)
+     * -----------------------------------------------
+     * @desc Get the array of question objects.
+     * @return {?questions}
+     */
+    this.list = function() {
+      return list;
+    };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Questions.get)
+     * -----------------------------------------------
+     * @desc Gets a question.
+     * @param {(number|string)} id - The question id to get.
+     * @return {?Question}
+     */
+    this.get = function(id) {
+      /** @private */
+      var result;
+
+      result = ( (typeof id === 'number') ?
+        list[id] || null : (typeof id === 'string') ?
+          data[id] || null : null
+      );
+
+      return result;
+    };
+
+
+    // Set the properties
     if ( Array.isArray(questions) ) {
 
-      this.data = questions.map(function(/** Object */ question) {
-
-        //
+      // Set list
+      list = questions.map(function(/** Object */ question, /** number */ i) {
+        return new Question(question, i, outputConfig);
       });
 
-      this.len = this.data.length;
+      // Set data
+      list.forEach(function(/** Object */ question) {
+        if (question.url) {
+          data[question.url] = question;
+        }
+      });
     }
+    // Set len
+    this.len = list.length || 0;
+
 
     DEBUG && this.debug.group('init', 'end');
   };
@@ -68,25 +109,31 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (Questions.prototype.)
+   * Public Method (Questions.prototype.setFormats)
    * -----------------------------------------------------
-   * @desc .
-   * @param {}  - .
-   * @param {}  - .
-   * @param {}  - .
+   * @desc Sets the format for all of the questions.
    */
-  Questions.prototype.method = function() {
+  Questions.prototype.setFormats = function() {
 
-    if (DEBUG) {
-      this.debug.start('method', args);
-      this.debug.args('method', arg, '?object');
-    }
+    DEBUG && this.debug.start('setFormats');
 
     /**
-     * @type {boolean}
+     * @type {Object<string, boolean>}
      * @private
      */
-    var arg;
+    var config;
 
-    //
+    config = {
+      id      : app.config.questions.get('id'),
+      complete: app.config.questions.get('complete'),
+      source  : app.config.questions.get('source'),
+      category: app.config.questions.get('category'),
+      subCat  : app.config.questions.get('subCat'),
+      links   : app.config.questions.get('links')
+    };
+
+    this.list().forEach(function(/** Question */ question) {
+      question.setFormat(config);
+      question.addToSearch(config);
+    });
   };
