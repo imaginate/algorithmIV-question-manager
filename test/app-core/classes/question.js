@@ -268,8 +268,7 @@
 
       if (outputConfig) {
         try {
-          output = question.solution();
-          output = String(output);
+          output = String( question.solution() );
         }
         catch (e) {
           args = [ 'init' ];
@@ -288,25 +287,54 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (Question.prototype.)
+   * Public Method (Question.prototype.setFormat)
    * -----------------------------------------------------
-   * @desc .
-   * @param {}  - .
-   * @param {}  - .
-   * @param {}  - .
+   * @desc Sets the format for the question.
    */
   Question.prototype.method = function() {
 
-    if (DEBUG) {
-      this.debug.start('method', args);
-      this.debug.args('method', arg, '?object');
+    DEBUG && this.debug.start('setFormat');
+
+    this.format = new QuestionFormat({
+      id      : this.id(),
+      complete: this.complete(),
+      source  : this.source(),
+      mainCat : this.mainCat(),
+      subCat  : this.subCat(),
+      links   : this.links(),
+      solution: this.solution()
+    });
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Question.prototype.addToSearch)
+   * -----------------------------------------------------
+   * @desc Adds the question id to its matching search properties.
+   */
+  Question.prototype.addToSearch = function() {
+
+    DEBUG && this.debug.start('addToSearch');
+
+    if ( app.configuration.questions.complete() ) {
+
+      if (this.complete) {
+        app.searchBar.ques.stage['com'].push(this.id);
+      }
+      else {
+        
+      }
     }
 
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var arg;
+    if (this.source) {
+      
+    }
 
-    //
+    if (this.mainCat.length) {
+      
+    }
+
+    if (this.subCat.length) {
+      
+    }
   };

@@ -60,7 +60,7 @@
 
         app.appendMainElems();
 
-        if (app.flags.initArgs) {
+        if ( app.flags.get('initArgs') ) {
 
           app.appendNavElems();
           app.setScrollbarHeight();

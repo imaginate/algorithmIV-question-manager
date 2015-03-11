@@ -178,7 +178,7 @@
     // Add source names
     if (sources.len) {
       sources.ids.forEach(function(/** string */ id) {
-        this.names.source[id] = sources.get(id).name;
+        this.names.source[id] = sources.get(id).get('name');
       }, this);
     }
 
@@ -191,17 +191,23 @@
          * @private
          */
         var mainCat;
+        /**
+         * @type {strings}
+         * @private
+         */
+        var subs;
 
         // Add the main category
         mainCat = categories.get(id);
-        this.names.mainCat[id] = mainCat.name;
+        this.names.mainCat[id] = mainCat.get('name');
 
         // Add the sub categories
-        if (mainCat.subs.length) {
-          this.ids.subCat[id] = mainCat.subs.slice(0).unshift('all');
+        subs = mainCat.get('subs');
+        if (subs.length) {
+          this.ids.subCat[id] = subs.slice(0).unshift('all');
           this.opts.subCat[id] = [];
-          mainCat.subs.forEach(function(/** string */ id) {
-            this.names.subCat[id] = categories.get(id).name;
+          subs.forEach(function(/** string */ id) {
+            this.names.subCat[id] = categories.get(id).get('name');
           }, this);
         }
       }, this);
@@ -228,60 +234,49 @@
       this.debug.args('updateVals', vals, 'object');
     }
 
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var pass;
-
     if (typeof vals.view === 'string' &&
-        this.ids.view.indexOf(vals.view) !== -1) {
+        !!this.names.view[vals.view]) {
       this.vals.view = vals.view;
     }
 
     if (typeof vals.order === 'string' &&
-        this.ids.order.indexOf(vals.order) !== -1) {
+        !!this.names.order[vals.order]) {
       this.vals.order = vals.order;
     }
 
     if (typeof vals.stage === 'string' &&
-        this.ids.stage.indexOf(vals.stage) !== -1) {
+        !!this.names.stage[vals.stage]) {
       this.vals.stage = vals.stage;
     }
 
     if (typeof vals.source === 'string' &&
-        this.ids.source.indexOf(vals.source) !== -1) {
+        !!this.names.source[vals.source]) {
       this.vals.source = vals.source;
     }
 
     if (typeof vals.mainCat === 'string' &&
-        this.ids.mainCat.indexOf(vals.mainCat) !== -1) {
+        !!this.names.mainCat[vals.mainCat]) {
       this.vals.mainCat = vals.mainCat;
     }
 
     if (typeof vals.subCat === 'string') {
 
       if (this.vals.subCat === 'all') {
-        pass = true;
-      }
-      else if (this.vals.mainCat === 'all') {
-        pass = this.ids.mainCat.some(function(/** string */ id) {
-          return !!this.ids.subCat[id] &&
-                 this.ids.subCat[id].some(function(/** string */ id) {
-            return id === vals.subCat;
-          });
-        });
+        this.vals.subCat = vals.subCat;
       }
       else {
-        pass = !!this.ids.subCat[this.vals.mainCat] &&
-               this.ids.subCat[this.vals.mainCat].
-               some(function(/** string */ id) {
-          return id === vals.subCat;
-        });
-      }
 
-      if (!!pass) {
-        this.vals.subCat = vals.subCat;
+        if (!!this.names.subCat[vals.subCat]) {
+
+          if (this.vals.mainCat === 'all') {
+            this.vals.subCat = vals.subCat;
+          }
+          else {
+            if (this.ids.subCat[mainCat].indexOf(vals.subCat) !== -1) {
+              this.vals.subCat = vals.subCat;
+            }
+          }
+        }
       }
     }
   };

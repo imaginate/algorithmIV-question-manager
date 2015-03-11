@@ -43,22 +43,18 @@
      * Public Property (Sources.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the source ids in alphabetical order.
-     * @return {strings}
+     * @type {strings}
      */
-    this.ids = function() {
-      return ids;
-    };
+    this.ids;
 
     /**
      * ----------------------------------------------- 
      * Public Property (Sources.len)
      * -----------------------------------------------
      * @desc Saves the count of sources.
-     * @return {number}
+     * @type {number}
      */
-    this.len = function() {
-      return len;
-    };
+    this.len;
 
     /**
      * ----------------------------------------------- 
@@ -89,6 +85,9 @@
         data = new Source(sources[id]);
       });
     }
+
+    this.ids = ids;
+    this.len = len;
 
 
     DEBUG && this.debug.group('init', 'end');

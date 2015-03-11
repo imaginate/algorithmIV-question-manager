@@ -13,17 +13,6 @@
     config.questionFormat = config.questionFormat || {};
 
     /**
-     * @type {boolean}
-     * @private
-     */
-    var url;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var id;
-
-    /**
      * ---------------------------------------------------
      * Private Property (Config.debug)
      * ---------------------------------------------------
@@ -69,31 +58,47 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.showURL)
+     * Protected Property (Config.showURL)
      * -----------------------------------------------
      * @desc Indicates if formatted urls should be created for question
      *   ids and categories.
      * @type {boolean}
+     * @private
      */
-    this.showURL = function() {
-      return url;
-    };
+    var showURL;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.linkID)
+     * Protected Property (Config.linkID)
      * -----------------------------------------------
      * @desc Indicates if the question's id should be linked.
      * @type {boolean}
+     * @private
      */
-    this.linkID = function() {
-      return id;
+    var linkID;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Config.get)
+     * -----------------------------------------------
+     * @desc Gets a config setting.
+     * @param {string} configName - The name of the setting to get.
+     * @return {boolean}
+     */
+    this.get = function(configName) {
+      /** @private */
+      var settings = {
+        showURL: showURL,
+        linkID : linkID
+      };
+
+      return settings[configName];
     };
 
 
     // Set the properties
-    url = (config.showURL === true);
-    id = !(config.id === false || config.linkID === false);
+    showURL = (config.showURL === true);
+    linkID = !(config.id === false || config.linkID === false);
 
 
     DEBUG && this.debug.group('init', 'end');

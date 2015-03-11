@@ -9,17 +9,6 @@
   var UrlSearchBarConfig = function(config) {
 
     /**
-     * @type {boolean}
-     * @private
-     */
-    var id;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var category;
-
-    /**
      * ---------------------------------------------------
      * Private Property (UrlSearchBarConfig.debug)
      * ---------------------------------------------------
@@ -34,24 +23,40 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (UrlSearchBarConfig.id)
+     * Protected Property (UrlSearchBarConfig.id)
      * -----------------------------------------------
      * @desc Whether to display an id search option in the url.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.id = function() {
-      return id;
-    };
+    var id;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (UrlSearchBarConfig.category)
+     * Protected Property (UrlSearchBarConfig.category)
      * -----------------------------------------------
      * @desc Whether to display a category search option in the url.
+     * @type {boolean}
+     * @private
+     */
+    var category;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (UrlSearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a config setting.
+     * @param {string} configName - The name of the setting to get.
      * @return {boolean}
      */
-    this.category = function() {
-      return category;
+    this.get = function(configName) {
+      /** @private */
+      var settings = {
+        id      : id,
+        category: category
+      };
+
+      return settings[configName];
     };
 
 

@@ -11,27 +11,6 @@
     config.url = config.url || {};
 
     /**
-     * @type {boolean}
-     * @private
-     */
-    var stage;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var source;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var category;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var subCat;
-
-    /**
      * ---------------------------------------------------
      * Private Property (SearchBarConfig.debug)
      * ---------------------------------------------------
@@ -64,47 +43,64 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.stage)
+     * Protected Property (SearchBarConfig.stage)
      * -----------------------------------------------
      * @desc Whether to display the stage search option.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.stage = function() {
-      return stage;
-    };
+    var stage;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.source)
+     * Protected Property (SearchBarConfig.source)
      * -----------------------------------------------
      * @desc Whether to display the source search option.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.source = function() {
-      return source;
-    };
+    var source;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.category)
+     * Protected Property (SearchBarConfig.category)
      * -----------------------------------------------
      * @desc Whether to display the category search option.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.category = function() {
-      return category;
-    };
+    var category;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.subCat)
+     * Protected Property (SearchBarConfig.subCat)
      * -----------------------------------------------
      * @desc Whether to display the sub category search option.
+     * @type {boolean}
+     * @private
+     */
+    var subCat;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (SearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a config setting.
+     * @param {string} configName - The name of the setting to get.
      * @return {boolean}
      */
-    this.subCat = function() {
-      return subCat;
+    this.get = function(configName) {
+      /** @private */
+      var settings = {
+        stage   : stage,
+        source  : source,
+        category: category,
+        subCat  : subCat
+      };
+
+      return settings[configName];
     };
+
 
     // Set the properties
     stage    = (config.stage    !== false);
@@ -122,18 +118,20 @@
    * -------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
+   * @param {Object} names - The available search names.
    * @param {Object} ids - The available search ids.
    * @param {number} quesLen - The number of user's questions.
    */
-  SearchBarConfig.prototype.setDefaults = function(defaults, ids, quesLen) {
+  SearchBarConfig.prototype.setDefaults = function(defaults, names, ids, quesLen) {
 
     var args;
     if (DEBUG) {
-      this.debug.start('init', defaults, ids, quesLen);
+      this.debug.start('init', defaults, names, ids, quesLen);
       args = [ 'init' ];
-      args.push(defaults, 'object', ids, 'object', quesLen, 'number');
+      args.push(defaults, 'object', names, 'object');
+      args.push(ids, 'object', quesLen, 'number');
       this.debug.args(args);
     }
 
-    this.defaults = new DefaultsSearchBarConfig(defaults, ids, quesLen);
+    this.defaults = new DefaultsSearchBarConfig(defaults, names, ids, quesLen);
   };

@@ -176,16 +176,15 @@
      * @type {Questions}
      */
     this.questions = ( (pass) ?
-      new Questions(questions, this.config.questions, this.sources,
-                    this.categories)
-      : null
+      new Questions(questions, this.config.questions.get('output')) : null
     );
 
     // Update the config and search bar
     if (pass) {
       config.searchDefaults = config.searchDefaults || null;
       this.config.searchBar.setDefaults(config.searchDefaults,
-                                        this.searchBar.ids,
+                                        this.searchBar.names,
+                                        this.searchBar.ids.subCat,
                                         this.questions.len);
       this.searchBar.updateVals(this.config.searchBar.defaults);
     }

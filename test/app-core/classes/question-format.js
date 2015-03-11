@@ -99,15 +99,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.output)
-     * -----------------------------------------------
-     * @desc The solution's output for this question.
-     * @type {string}
-     */
-    this.output = '';
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (QuestionFormat.links)
      * -----------------------------------------------
      * @desc This question's links.
@@ -170,16 +161,6 @@
       this.solution.code = code.result;
       this.solution.height = code.lineCount * app.elems.code.li.height;
       this.solution.height += app.elems.code.ol.height;
-    }
-
-    // Format the output
-    if (app.config.questions.output && question.solution) {
-
-      this.output = question.solution();
-
-      if (typeof this.output !== 'string') {
-        this.output = String(this.output);
-      }
     }
 
     // Format the links

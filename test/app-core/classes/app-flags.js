@@ -10,12 +10,6 @@
   var AppFlags = function(pass) {
 
     /**
-     * @type {boolean}
-     * @private
-     */
-    var initArgs;
-
-    /**
      * ---------------------------------------------------
      * Private Property (AppFlags.debug)
      * ---------------------------------------------------
@@ -30,13 +24,29 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (AppFlags.initArgs)
+     * Protected Property (AppFlags.initArgs)
      * -----------------------------------------------
      * @desc Indicates whether the app was initialized with correct arguments.
+     * @type {boolean}
+     * @private
+     */
+    var initArgs;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (AppFlags.get)
+     * -----------------------------------------------
+     * @desc Gets a flag.
+     * @param {string} flagName - The name of the flag to get.
      * @return {boolean}
      */
-    this.initArgs = function() {
-      return initArgs;
+    this.get = function(flagName) {
+      /** @private */
+      var flags = {
+        initArgs: initArgs
+      };
+
+      return flags[flagName];
     };
 
 

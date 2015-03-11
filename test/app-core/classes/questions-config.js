@@ -9,52 +9,6 @@
   var QuestionsConfig = function(config) {
 
     /**
-     * @type {boolean}
-     * @private
-     */
-    var id;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var complete;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var source;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var category;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var subCat;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var links;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var problem;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var descr;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var output;
-
-    /**
      * ---------------------------------------------------
      * Private Property (QuestionsConfig.debug)
      * ---------------------------------------------------
@@ -69,101 +23,117 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.id)
+     * Protected Property (QuestionsConfig.id)
      * -----------------------------------------------
      * @desc Whether to display any question's id.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.id = function() {
-      return id;
-    };
+    var id;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.complete)
+     * Protected Property (QuestionsConfig.complete)
      * -----------------------------------------------
      * @desc Whether to display any question's completion status.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.complete = function() {
-      return complete;
-    };
+    var complete;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.source)
+     * Protected Property (QuestionsConfig.source)
      * -----------------------------------------------
      * @desc Whether to display any question's source.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.source = function() {
-      return source;
-    };
+    var source;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.category)
+     * Protected Property (QuestionsConfig.category)
      * -----------------------------------------------
      * @desc Whether to display any question's categories.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.category = function() {
-      return category;
-    };
+    var category;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.subCat)
+     * Protected Property (QuestionsConfig.subCat)
      * -----------------------------------------------
      * @desc Whether to display any question's sub categories.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.subCat = function() {
-      return subCat;
-    };
+    var subCat;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.links)
+     * Protected Property (QuestionsConfig.links)
      * -----------------------------------------------
      * @desc Whether to display any question's links.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.links = function() {
-      return links;
-    };
+    var links;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.problem)
+     * Protected Property (QuestionsConfig.problem)
      * -----------------------------------------------
      * @desc Whether to display any question's problem.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.problem = function() {
-      return problem;
-    };
+    var problem;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.descr)
+     * Protected Property (QuestionsConfig.descr)
      * -----------------------------------------------
      * @desc Whether to display any question's description.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.descr = function() {
-      return descr;
-    };
+    var descr;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionsConfig.output)
+     * Protected Property (QuestionsConfig.output)
      * -----------------------------------------------
      * @desc Whether to display the solution's output for any question.
+     * @type {boolean}
+     * @private
+     */
+    var output;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionsConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a config setting.
+     * @param {string} configName - The name of the setting to get.
      * @return {boolean}
      */
-    this.output = function() {
-      return output;
+    this.get = function(configName) {
+      /** @private */
+      var settings = {
+        id      : id,
+        complete: complete,
+        source  : source,
+        category: category,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        output  : output
+      };
+
+      return settings[configName];
     };
 
 

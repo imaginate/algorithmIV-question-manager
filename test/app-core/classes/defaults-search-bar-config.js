@@ -4,52 +4,12 @@
    * -----------------------------------------------------
    * @desc The on-load search defaults for this app.
    * @param {Object} defaults - The user's search defaults.
+   * @param {Object} names - The available search names.
    * @param {Object} ids - The available search ids.
    * @param {number} quesLen - The number of user's questions.
    * @constructor
    */
-  var DefaultsSearchBarConfig = function(defaults, ids, quesLen) {
-
-    /**
-     * @type {number}
-     * @private
-     */
-    var startID;
-    /**
-     * @type {string}
-     * @private
-     */
-    var view;
-    /**
-     * @type {string}
-     * @private
-     */
-    var order;
-    /**
-     * @type {string}
-     * @private
-     */
-    var stage;
-    /**
-     * @type {string}
-     * @private
-     */
-    var source;
-    /**
-     * @type {string}
-     * @private
-     */
-    var mainCat;
-    /**
-     * @type {string}
-     * @private
-     */
-    var subCat;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var pass;
+  var DefaultsSearchBarConfig = function(defaults, names, ids, quesLen) {
 
     /**
      * ---------------------------------------------------
@@ -61,87 +21,104 @@
 
     var args;
     if (DEBUG) {
-      this.debug.start('init', defaults, ids, quesLen);
+      this.debug.start('init', defaults, names, ids, quesLen);
       args = [ 'init' ];
-      args.push(defaults, 'object', ids, 'object', quesLen, 'number');
+      args.push(defaults, 'object', names, 'object');
+      args.push(ids, 'object', quesLen, 'number');
       this.debug.args(args);
     }
 
     /**
      * ---------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.startID)
+     * Protected Property (DefaultsSearchBarConfig.startID)
      * ---------------------------------------------------
      * @desc The first question to display.
-     * @return {boolean}
+     * @type {number}
+     * @private
      */
-    this.startID = function() {
-      return startID;
-    };
+    var startID;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (DefaultsSearchBarConfig.view)
+     * Protected Property (DefaultsSearchBarConfig.view)
      * -----------------------------------------------
      * @desc The search view option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.view = function() {
-      return view;
-    };
+    var view;
 
     /**
      * ------------------------------------------------- 
-     * Public Property (DefaultsSearchBarConfig.order)
+     * Protected Property (DefaultsSearchBarConfig.order)
      * -------------------------------------------------
      * @desc The search order option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.order = function() {
-      return order;
-    };
+    var order;
 
     /**
      * ------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.stage)
+     * Protected Property (DefaultsSearchBarConfig.stage)
      * ------------------------------------------------
      * @desc The search stage option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.stage = function() {
-      return stage;
-    };
+    var stage;
 
     /**
      * ------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.source)
+     * Protected Property (DefaultsSearchBarConfig.source)
      * ------------------------------------------------
      * @desc The search source option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.source = function() {
-      return source;
-    };
+    var source;
 
     /**
      * ---------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.mainCat)
+     * Protected Property (DefaultsSearchBarConfig.mainCat)
      * ---------------------------------------------------
      * @desc The search main category option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.mainCat = function() {
-      return mainCat;
-    };
+    var mainCat;
 
     /**
      * -------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.subCat)
+     * Protected Property (DefaultsSearchBarConfig.subCat)
      * -------------------------------------------------
      * @desc The search sub category option to load the app with.
-     * @return {boolean}
+     * @type {string}
+     * @private
      */
-    this.subCat = function() {
-      return subCat;
+    var subCat;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (DefaultsSearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a config setting.
+     * @param {string} configName - The name of the setting to get.
+     * @return {(string|number)}
+     */
+    this.get = function(configName) {
+      /** @private */
+      var settings = {
+        startID: startID,
+        view   : view,
+        order  : order,
+        stage  : stage,
+        source : source,
+        mainCat: mainCat,
+        subCat : subCat
+      };
+
+      return settings[configName];
     };
 
 
@@ -153,27 +130,27 @@
     );
 
     view = ( (typeof defaults.view === 'string' &&
-              ids.view.indexOf(defaults.view) !== -1) ?
+              !!names.view[defaults.view]) ?
       defaults.view : 'one'
     );
 
     order = ( (typeof defaults.order === 'string' &&
-               ids.order.indexOf(defaults.order) !== -1) ?
+               !!names.order[defaults.order]) ?
       defaults.order : 'asc'
     );
 
     stage = ( (typeof defaults.stage === 'string' &&
-               ids.stage.indexOf(defaults.stage) !== -1) ?
+               !!names.stage[defaults.stage]) ?
       defaults.stage : 'all'
     );
 
     source = ( (typeof defaults.source === 'string' &&
-                ids.source.indexOf(defaults.source) !== -1) ?
+                !!names.source[defaults.source]) ?
       defaults.source : 'all'
     );
 
     mainCat = ( (typeof defaults.mainCat === 'string' &&
-                 ids.mainCat.indexOf(defaults.mainCat) !== -1) ?
+                 !!names.mainCat[defaults.mainCat]) ?
       defaults.mainCat : 'all'
     );
 
@@ -181,22 +158,15 @@
     // Check the user default for the subCat property
     if (typeof defaults.subCat === 'string' && defaults.subCat !== 'all') {
 
-      if (mainCat === 'all') {
-        pass = ids.mainCat.some(function(/** string */ id) {
-          return !!ids.subCat[id] &&
-                 ids.subCat[id].some(function(/** string */ id) {
-            return id === defaults.subCat;
-          });
-        });
-      }
-      else {
-        pass = !!ids.subCat[mainCat] &&
-               ids.subCat[mainCat].some(function(/** string */ id) {
-          return id === defaults.subCat;
-        });
-      }
-      if (pass) {
-        subCat = defaults.subCat;
+      if (!!names.subCat[defaults.subCat]) {
+        if (mainCat === 'all') {
+          subCat = defaults.subCat;
+        }
+        else {
+          if (ids.subCat[mainCat].indexOf(defaults.subCat) !== -1) {
+            subCat = defaults.subCat;
+          }
+        }
       }
     }
   };

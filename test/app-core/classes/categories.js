@@ -48,22 +48,18 @@
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
-     * @return {strings}
+     * @type {strings}
      */
-    this.ids = function() {
-      return ids;
-    };
+    this.ids;
 
     /**
      * ----------------------------------------------- 
      * Public Property (Categories.len)
      * -----------------------------------------------
      * @desc Saves the count of main categories.
-     * @return {number}
+     * @type {number}
      */
-    this.len = function() {
-      return len;
-    };
+    this.len;
 
     /**
      * ----------------------------------------------- 
@@ -116,6 +112,9 @@
         } 
       });
     }
+
+    this.ids = ids;
+    this.len = len;
 
 
     DEBUG && this.debug.group('init', 'end');
