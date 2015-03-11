@@ -11,62 +11,6 @@
   var Question = function(question, index, outputConfig) {
 
     /**
-     * @type {number}
-     * @private
-     */
-    var id;
-    /**
-     * @type {string}
-     * @private
-     */
-    var url;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var complete;
-    /**
-     * @type {string}
-     * @private
-     */
-    var source;
-    /**
-     * @type {strings}
-     * @private
-     */
-    var mainCat;
-    /**
-     * @type {strings}
-     * @private
-     */
-    var subCat;
-    /**
-     * @type {links}
-     * @private
-     */
-    var links;
-    /**
-     * @type {string}
-     * @private
-     */
-    var problem;
-    /**
-     * @type {string}
-     * @private
-     */
-    var descr;
-    /**
-     * @type {string}
-     * @private
-     */
-    var solution;
-    /**
-     * @type {string}
-     * @private
-     */
-    var output;
-
-    /**
      * ---------------------------------------------------
      * Private Property (Question.debug)
      * ---------------------------------------------------
@@ -84,136 +28,153 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.id)
+     * Protected Property (Question.id)
      * -----------------------------------------------
      * @desc This question's id (i.e. its index plus 1).
-     * @return {number}
+     * @type {number}
+     * @private
      */
-    this.id = function() {
-      return id;
-    };
+    var id;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.url)
+     * Protected Property (Question.url)
      * -----------------------------------------------
      * @desc The url name for this question.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.url = function() {
-      return url;
-    };
+    var url;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.complete)
+     * Protected Property (Question.complete)
      * -----------------------------------------------
      * @desc This question's current completion status.
-     * @return {boolean}
+     * @type {boolean}
+     * @private
      */
-    this.complete = function() {
-      return complete;
-    };
+    var complete;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.source)
+     * Protected Property (Question.source)
      * -----------------------------------------------
      * @desc The id for this question's source.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.source = function() {
-      return source;
-    };
+    var source;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.mainCat)
+     * Protected Property (Question.mainCat)
      * -----------------------------------------------
      * @desc The ids for this question's main categories.
-     * @return {strings}
+     * @type {strings}
+     * @private
      */
-    this.mainCat = function() {
-      return mainCat;
-    };
+    var mainCat;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.subCat)
+     * Protected Property (Question.subCat)
      * -----------------------------------------------
      * @desc The ids for this question's sub categories.
-     * @return {strings}
+     * @type {strings}
+     * @private
      */
-    this.subCat = function() {
-      return subCat;
-    };
+    var subCat;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.links)
+     * Protected Property (Question.links)
      * -----------------------------------------------
      * @desc This question's links.
-     * @return {Array<{
-     *   name: string,
-     *   href: string
-     * }>}
+     * @type {links}
+     * @private
      */
-    this.links = function() {
-      return links;
-    };
+    var links;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.problem)
+     * Protected Property (Question.problem)
      * -----------------------------------------------
      * @desc This question's problem.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.problem = function() {
-      return problem;
-    };
+    var problem;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.descr)
+     * Protected Property (Question.descr)
      * -----------------------------------------------
      * @desc This question's description.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.descr = function() {
-      return descr;
-    };
+    var descr;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.solution)
+     * Protected Property (Question.solution)
      * -----------------------------------------------
      * @desc This question's solution.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.solution = function() {
-      return solution;
-    };
+    var solution;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.output)
+     * Protected Property (Question.output)
      * -----------------------------------------------
      * @desc The solution's output for this question.
-     * @return {string}
+     * @type {string}
+     * @private
      */
-    this.output = function() {
-      return output;
-    };
+    var output;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.codeWidth)
+     * Protected Property (Question.codeWidth)
      * -----------------------------------------------
      * @desc The amount of width overflow for this question's code element.
      * @type {number}
      */
-    this.codeWidth = 0;
+    var overflow;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Question.get)
+     * -----------------------------------------------
+     * @desc Gets info for a question.
+     * @param {string} part - The name of the part to get.
+     * @return {*}
+     */
+    this.get = function(part) {
+      /** @private */
+      var result;
+      /** @private */
+      var details = {
+        id      : id,
+        url     : url,
+        complete: complete,
+        source  : source,
+        mainCat : mainCat,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        solution: solution,
+        output  : output,
+        overflow: overflow
+      };
+
+      result = (details[part] !== undefined) ? details[part] : null;
+      return result;
+    };
 
     /**
      * ----------------------------------------------- 
@@ -290,20 +251,21 @@
    * Public Method (Question.prototype.setFormat)
    * -----------------------------------------------------
    * @desc Sets the format for the question.
+   * @param {Object<string, boolean>} config - The needed format config.
    */
-  Question.prototype.method = function() {
+  Question.prototype.setFormat = function(config) {
 
     DEBUG && this.debug.start('setFormat');
 
     this.format = new QuestionFormat({
-      id      : this.id(),
-      complete: this.complete(),
-      source  : this.source(),
-      mainCat : this.mainCat(),
-      subCat  : this.subCat(),
-      links   : this.links(),
-      solution: this.solution()
-    });
+      id      : this.get('id'),
+      complete: this.get('complete'),
+      source  : this.get('source'),
+      mainCat : this.get('mainCat'),
+      subCat  : this.get('subCat'),
+      links   : this.get('links'),
+      solution: this.get('solution')
+    }, config);
   };
 
   /**
@@ -311,30 +273,67 @@
    * Public Method (Question.prototype.addToSearch)
    * -----------------------------------------------------
    * @desc Adds the question id to its matching search properties.
+   * @param {Object<string, boolean>} config - The needed format config.
    */
-  Question.prototype.addToSearch = function() {
+  Question.prototype.addToSearch = function(config) {
 
     DEBUG && this.debug.start('addToSearch');
 
-    if ( app.configuration.questions.complete() ) {
+    /**
+     * @type {number}
+     * @private
+     */
+    var id;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var complete;
+    /**
+     * @type {string}
+     * @private
+     */
+    var source;
+    /**
+     * @type {strings}
+     * @private
+     */
+    var mainCat;
+    /**
+     * @type {strings}
+     * @private
+     */
+    var subCat;
 
-      if (this.complete) {
-        app.searchBar.ques.stage['com'].push(this.id);
+    id = this.get('id');
+    complete = this.get('complete');
+    source = this.get('source');
+    mainCat = this.get('mainCat');
+    subCat = this.get('subCat');
+
+    if (config.complete) {
+
+      if (complete) {
+        app.searchBar.ques.stage['com'].push(id);
       }
       else {
-        
+        app.searchBar.ques.stage['inc'].push(id);
       }
     }
 
-    if (this.source) {
-      
+    if (config.source && source) {
+      app.sources.get(source).addId(id);
     }
 
-    if (this.mainCat.length) {
-      
+    if (config.category && mainCat.length) {
+      mainCat.forEach(function(/** string */ catId) {
+        app.categories.get(catId).addId(id);
+      });
     }
 
-    if (this.subCat.length) {
-      
+    if (config.category && config.subCat && subCat.length) {
+      subCat.forEach(function(/** string */ catId) {
+        app.categories.get(catId).addId(id);
+      });
     }
   };
