@@ -12,19 +12,14 @@
   var App = function(config, sources, categories, questions) {
 
     /**
-     * @type {vals}
-     * @private
-     */
-    var vals;
-    /**
-     * @type {boolean}
+     * @type {(vals|boolean)}
      * @private
      */
     var pass;
 
     // Check the user inputs
-    vals = [ config, sources, categories, questions ];
-    pass = checkType(vals, 'object');
+    pass = [ config, sources, categories, questions ];
+    pass = checkType(pass, 'object');
 
     /**
      * ---------------------------------------------------
@@ -34,7 +29,6 @@
      */
     this.debug = (DEBUG) ? new Debug('App') : null;
 
-    // debugging var
     var args;
     if (DEBUG) {
       this.debug.start('init', config, sources, categories, questions);
@@ -49,24 +43,10 @@
      * Public Property (App.flags)
      * -----------------------------------------------
      * @desc Saves flags that explain the current state of the app.
-     *   <ol>
-     *     <li>workerPass: Indicates the web worker has completed formatting.</li>
-     *     <li>workerFail: Indicates the web worker has encountered an error.</li>
-     *     <li>initDone: Indicates the app has finished initializing.</li>
-     *   </ol>
-     * @type {{
-     *   workerPass: boolean,
-     *   workerFail: boolean,
-     *   initDone  : boolean
-     * }}
+     * @type {AppFlags}
      * @struct
      */
-    this.flags = {
-      workerPass: false,
-      workerFail: false,
-      initDone  : false,
-      initArgs  : pass
-    };
+    this.flags = new AppFlags(pass);
 
     /**
      * ----------------------------------------------- 
@@ -195,12 +175,18 @@
      * ---------------------------------------------------
      * @type {Questions}
      */
-    this.questions = (pass) ? new Questions(questions) : null;
+    this.questions = ( (pass) ?
+      new Questions(questions, this.config.questions, this.sources,
+                    this.categories)
+      : null
+    );
 
     // Update the config and search bar
     if (pass) {
-      this.config.setSearchDefaults(config.searchDefaults, this.searchBar,
-                                    this.questions.len);
+      config.searchDefaults = config.searchDefaults || null;
+      this.config.searchBar.setDefaults(config.searchDefaults,
+                                        this.searchBar.ids,
+                                        this.questions.len);
       this.searchBar.updateVals(this.config.searchBar.defaults);
     }
   };
