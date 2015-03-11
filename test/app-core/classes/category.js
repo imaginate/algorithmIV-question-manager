@@ -10,6 +10,17 @@
   var Category = function(name, subs) {
 
     /**
+     * @type {string}
+     * @private
+     */
+    var url;
+    /**
+     * @type {nums}
+     * @private
+     */
+    var qIds;
+
+    /**
      * ---------------------------------------------------
      * Private Property (Category.debug)
      * ---------------------------------------------------
@@ -27,27 +38,44 @@
      * Public Property (Category.name)
      * -----------------------------------------------
      * @desc The name of the category.
-     * @type {string}
+     * @return {string}
      */
-    this.name = (typeof name === 'string') ? name : '';
+    this.name = function() {
+      return name;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Category.url)
      * -----------------------------------------------
      * @desc The name to use for the url for this category.
-     * @type {string}
+     * @return {string}
      */
-    this.url = this.name;
+    this.url = function() {
+      return url;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Category.qIds)
      * -----------------------------------------------
      * @desc The indexes of the questions containing this category.
-     * @type {nums}
+     * @return {nums}
      */
-    this.qIds = [];
+    this.qIds = function() {
+      return qIds;
+    };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Category.addId)
+     * -----------------------------------------------
+     * @desc Add a question id to this category.
+     * @param {number} index - The index to add.
+     */
+    this.addId = function(index) {
+      qIds.push(index);
+    };
 
     /**
      * ----------------------------------------------- 
@@ -55,15 +83,24 @@
      * -----------------------------------------------
      * @desc This category's sub ids if they exist. If null then category
      *   is a sub category.
-     * @type {?strings}
+     * @return {?strings}
      */
-    this.subs = subs || null;
+    this.subs = function() {
+      return subs;
+    };
 
 
-    // Sanitize the url
-    this.url = this.url.toLowerCase();
-    this.url = this.url.replace(/[^0-9a-z\-\s]/g, '');
-    this.url = this.url.replace(/\s/g, '-');
+    // Set the properties
+    if (typeof name !== 'string') {
+      name = url = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    qIds = [];
+    subs = subs || null;
   };
 
   // Ensure constructor is set to this class.
