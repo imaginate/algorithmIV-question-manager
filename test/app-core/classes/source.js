@@ -9,6 +9,17 @@
   var Source = function(name) {
 
     /**
+     * @type {string}
+     * @private
+     */
+    var url;
+    /**
+     * @type {nums}
+     * @private
+     */
+    var qIds;
+
+    /**
      * ---------------------------------------------------
      * Private Property (Source.debug)
      * ---------------------------------------------------
@@ -26,33 +37,56 @@
      * Public Property (Source.name)
      * -----------------------------------------------
      * @desc The source's name.
-     * @type {string}
+     * @return {string}
      */
-    this.name = (typeof name === 'string') ? name : '';
+    this.name = function() {
+      return name;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Source.url)
      * -----------------------------------------------
      * @desc The source's url name.
-     * @type {string}
+     * @return {string}
      */
-    this.url = this.name;
+    this.url = function() {
+      return url;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Source.qIds)
      * -----------------------------------------------
      * @desc The indexes of the questions containing this source.
-     * @type {nums}
+     * @return {nums}
      */
-    this.qIds = [];
+    this.qIds = function() {
+      return qIds;
+    };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Source.addId)
+     * -----------------------------------------------
+     * @desc Add a question id to this source.
+     * @param {number} index - The index to add.
+     */
+    this.addId = function(index) {
+      qIds.push(index);
+    };
 
 
-    // Sanitize the url
-    this.url = this.url.toLowerCase();
-    this.url = this.url.replace(/[^0-9a-z\-\s]/g, '');
-    this.url = this.url.replace(/\s/g, '-');
+    // Set the properties
+    if (typeof name !== 'string') {
+      name = url = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    qIds = [];
   };
 
   // Ensure constructor is set to this class.

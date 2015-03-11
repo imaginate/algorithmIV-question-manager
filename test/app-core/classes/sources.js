@@ -9,6 +9,22 @@
   var Sources = function(sources) {
 
     /**
+     * @type {strings}
+     * @private
+     */
+    var ids;
+    /**
+     * @type {number}
+     * @private
+     */
+    var len;
+    /**
+     * @type {Object<string, Source>}
+     * @private
+     */
+    var data;
+
+    /**
      * ---------------------------------------------------
      * Private Property (Sources.debug)
      * ---------------------------------------------------
@@ -27,40 +43,51 @@
      * Public Property (Sources.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the source ids in alphabetical order.
-     * @type {strings}
+     * @return {strings}
      */
-    this.ids = (!!sources) ? Object.keys(sources) : [];
+    this.ids = function() {
+      return ids;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Sources.len)
      * -----------------------------------------------
      * @desc Saves the count of sources.
-     * @type {number}
+     * @return {number}
      */
-    this.len = this.ids.length;
+    this.len = function() {
+      return len;
+    };
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Sources.data)
+     * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Saves a hash map of the sources. The source ids are used as
-     *   the hash map's keys and object literals containing their names,
-     *   question ids, and url names as the values.
-     * @type {Object<string, Source>}
+     * @desc Returns the source object from a saved hash map of the sources.
+     *   The source ids are used as the hash map's keys and object literals
+     *   containing their names, question ids, and url names as the values.
+     * @param {string} id - The source id to get.
+     * @return {?Source}
      */
-    this.data = {};
+    this.get = function(id) {
+      return data[id] || null;
+    };
 
 
-    if (!!this.len) {
+    // Set the properties
+    ids = (sources) ? Object.keys(sources) : [];
+    len = ids.length;
+
+    if (len) {
 
       // Sort the ids
-      this.ids = sortKeys(this.ids, sources);
+      ids = sortKeys(ids, sources);
 
       // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
-        this.data = new Source(sources[id]);
-      }, this);
+      ids.forEach(function(/** string */ id) {
+        data = new Source(sources[id]);
+      });
     }
 
 
