@@ -31,149 +31,182 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.id)
+     * Protected Property (QuestionFormat.id)
      * -----------------------------------------------
      * @desc The id for this question.
      * @type {string}
+     * @private
      */
-    this.id = '';
+    var id;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.source)
+     * Protected Property (QuestionFormat.source)
      * -----------------------------------------------
      * @desc This question's source.
      * @type {string}
+     * @private
      */
-    this.source = '';
+    var source;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.complete)
+     * Protected Property (QuestionFormat.complete)
      * -----------------------------------------------
      * @desc This question's current completion status.
      * @type {string}
+     * @private
      */
-    this.complete = '';
+    var complete;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.category)
+     * Protected Property (QuestionFormat.mainCat)
      * -----------------------------------------------
-     * @desc This question's categories.
+     * @desc This question's main categories.
      * @type {{
-     *   main: {
-     *     h3: string,
-     *     p : string
-     *   },
-     *   sub: {
-     *     h3: string,
-     *     p : string
-     *   }
+     *   h3: string,
+     *   p : string
      * }}
+     * @private
      */
-    this.category = {
-      main: {
-        h3: '',
-        p : ''
-      },
-      sub: {
-        h3: '',
-        p : ''
-      }
-    };
+    var mainCat;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.solution)
+     * Protected Property (QuestionFormat.subCat)
+     * -----------------------------------------------
+     * @desc This question's sub categories.
+     * @type {{
+     *   h3: string,
+     *   p : string
+     * }}
+     * @private
+     */
+    var subCat;
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (QuestionFormat.solution)
      * -----------------------------------------------
      * @desc This question's solution.
      * @type {{
      *   code  : string,
      *   height: number
      * }}
+     * @private
      */
-    this.solution = {
-      code  : '',
-      height: 0
-    };
+    var solution;
 
     /**
      * ----------------------------------------------- 
-     * Public Property (QuestionFormat.links)
+     * Protected Property (QuestionFormat.links)
      * -----------------------------------------------
      * @desc This question's links.
      * @type {links}
+     * @private
      */
-    this.links = [];
+    var links;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionFormat.get)
+     * -----------------------------------------------
+     * @desc Gets info for a question.
+     * @param {string} part - The name of the part to get.
+     * @return {*}
+     */
+    this.get = function(part) {
+      /** @private */
+      var result;
+      /** @private */
+      var details = {
+        id      : id,
+        source  : source,
+        complete: complete,
+        mainCat : mainCat,
+        subCat  : subCat,
+        solution: solution,
+        links   : links
+      };
+
+      result = (details[part] !== undefined) ? details[part] : null;
+      return result;
+    };
 
 
-    // Save the formats
+    // Set the formats
 
     // Format the id
-    if (app.config.questions.id && question.id) {
-      this.id = ( (question.id < 10) ?
-        '00' + question.id : (question.id < 100) ?
-          '0' + question.id : '' + question.id
+    id = (config.id && question.id) ? question.id : '';
+    if (id) {
+      id = ( (id < 10) ?
+        '00' + id : (id < 100) ?
+          '0' + id : '' + id
       );
     }
 
     // Format the source
-    if (app.sources.len && app.config.questions.source && question.source) {
-      this.source = app.sources.data[question.source].name;
-    }
+    source = ( (app.sources.len && config.source && question.source) ?
+      app.sources.get('question.source').get('name') : ''
+    );
 
     // Format the completion status
-    if (app.configuration.questions.complete) {
-      this.complete = (question.complete) ? 'Yes' : 'No';
-    }
+    complete = ( (!config.complete) ?
+      '' : (question.complete) ?
+        'Yes' : 'No'
+    );
 
-    // Format the category
-    if (app.categories.len && app.config.questions.category) {
+    // Format the categories
+    mainCat = {};
+    subCat  = {};
+    if (app.categories.len && config.category) {
 
       if (question.mainCat.length) {
         // Set main category header
-        this.category.main.h3 = 'Main ' +
+        mainCat.h3 = 'Main ' +
         ( (question.mainCat.length > 1) ? 'Categories:' : 'Category:' );
         // Set main category names
         question.mainCat.forEach(function(/** string */ id, /** number */ i) {
-          this.category.main.p += (i === 0) ? '' : ', ';
-          this.category.main.p += app.categories.data[id].name;
-        }, this);
+          mainCat.p += (i === 0) ? '' : ', ';
+          mainCat.p += app.categories.get('id').get('name');
+        });
       }
 
-      if (app.config.questions.subCat && question.subCat.length) {
+      if (config.subCat && question.subCat.length) {
         // Set sub category header
-        this.category.sub.h3 = 'Sub ' +
+        subCat.h3 = 'Sub ' +
         ( (question.subCat.length > 1) ? 'Categories:' : 'Category:' );
         // Set sub category names
         question.subCat.forEach(function(/** string */ id, /** number */ i) {
-          this.category.sub.p += (i === 0) ? '' : ', ';
-          this.category.sub.p += app.categories.data[id].name;
-        }, this);
+          subCat.p += (i === 0) ? '' : ', ';
+          subCat.p += app.categories.get('id').get('name');
+        });
       }
     }
 
     // Format the solution
+    solution = {};
     if (question.solution) {
 
-      code = new PrettifiedList(solution);
+      code = new PrettyCode(solution);
 
-      this.solution.code = code.result;
-      this.solution.height = code.lineCount * app.elems.code.li.height;
-      this.solution.height += app.elems.code.ol.height;
+      solution.code = String(code.result);
+      solution.height = code.lineCount * app.elems.code.li.height;
+      solution.height += app.elems.code.ol.height;
     }
 
     // Format the links
-    if (app.config.questions.links && question.links.length) {
+    links = [];
+    if (config.links && question.links.length) {
 
       question.links.forEach(function(/** string */ data) {
         if (typeof data.name === 'string' &&
             typeof data.href === 'string' &&
             /(^http\:\/\/)|(^https\:\/\/)/.test(data.href)) {
-          this.links.push(data);
+          links.push(data);
         }
-      }, this);
+      });
     }
 
 
