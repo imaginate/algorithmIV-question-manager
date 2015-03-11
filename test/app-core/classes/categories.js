@@ -12,6 +12,21 @@
      * @type {strings}
      * @private
      */
+    var ids;
+    /**
+     * @type {number}
+     * @private
+     */
+    var len;
+    /**
+     * @type {Object<string, Category>}
+     * @private
+     */
+    var data;
+    /**
+     * @type {strings}
+     * @private
+     */
     var subIds;
 
     /**
@@ -33,61 +48,73 @@
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
-     * @type {strings}
+     * @return {strings}
      */
-    this.ids = ( (!!categories && !!categories.main) ?
-      Object.keys(categories.main) : []
-    );
+    this.ids = function() {
+      return ids;
+    };
 
     /**
      * ----------------------------------------------- 
      * Public Property (Categories.len)
      * -----------------------------------------------
      * @desc Saves the count of main categories.
-     * @type {number}
+     * @return {number}
      */
-    this.len = this.ids.length;
+    this.len = function() {
+      return len;
+    };
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Categories.data)
+     * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Saves a hash map of all the categories. The category ids are
-     *   used as the hash map's keys and object literals containing their
-     *   names, question ids, url name, and a list of the ids of their sub
-     *   categories (in alphabetical order if they exist) as the values.
-     * @type {Object<string, Category>}
+     * @desc Returns the category object from a saved hash map of all the
+     *   categories. The category ids are used as the hash map's keys and
+     *   object literals containing their names, question ids, url name,
+     *   and a list of the ids of their sub categories (in alphabetical
+     *   order if they exist) as the values.
+     * @param {string} id - The category id to get.
+     * @return {?Category}
      */
-    this.data = {};
+    this.get = function(id) {
+      return data[id] || null;
+    };
 
 
-    if (!!this.len) {
+    // Set the properties
+    ids = ( (categories && !!categories.main) ?
+      Object.keys(categories.main) : []
+    );
+    len = ids.length;
+
+    if (len) {
 
       // Sort the main category ids
-      this.ids = sortKeys(this.ids, categories.main);
+      ids = sortKeys(ids, categories.main);
 
       // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
+      ids.forEach(function(/** string */ id) {
 
         // Save and sort the sub category ids if they exist
         subIds = null;
         if (!!categories.sub[id]) {
           subIds = Object.keys(categories.sub[id]);
-          if (!!subIds.length) {
+          if (subIds.length) {
             subIds = sortKeys(subIds, categories.sub[id])
           }
         }
 
         // Add main category to the hash map
-        this.data[id] = new Category(categories.main[id], subIds);
+        data[id] = new Category(categories.main[id], subIds);
 
         // Add the sub categories to the hash map
-        if (!!subIds.length) {
+        if (subIds.length) {
           subIds.forEach(function(/** string */ subId) {
-            this.data[id] = new Category(categories.sub[id][subId]);
-          }, this);
+            data[id] = new Category(categories.sub[id][subId]);
+          });
         } 
-      }, this);
+      });
     }
 
 
