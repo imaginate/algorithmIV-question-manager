@@ -8,6 +8,8 @@
    */
   var Source = function(name) {
 
+    var that = this;
+
     /**
      * ---------------------------------------------------
      * Private Property (Source.debug)
@@ -51,13 +53,16 @@
      */
     this.get = function() {
       /** @private */
+      var result;
+      /** @private */
       var source = {
         name: name,
         url : url,
         ids : ids
       };
 
-      return source[part] || null;
+      result = (source[part] !== undefined) ? source[part] : null;
+      return result;
     };
 
     /**
@@ -68,7 +73,15 @@
      * @param {number} id - The index to add.
      */
     this.addId = function(id) {
-      ids.push(id);
+
+      if (DEBUG) {
+        that.debug.start('addId', id);
+        that.debug.args('addId', id, 'number');
+      }
+
+      if (typeof id === 'number' && id > 0) {
+        ids.push(id);
+      }
     };
 
 

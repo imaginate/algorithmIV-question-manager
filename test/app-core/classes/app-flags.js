@@ -37,16 +37,19 @@
      * Public Method (AppFlags.get)
      * -----------------------------------------------
      * @desc Gets a flag.
-     * @param {string} flagName - The name of the flag to get.
+     * @param {string} part - The name of the flag to get.
      * @return {boolean}
      */
-    this.get = function(flagName) {
+    this.get = function(part) {
+      /** @private */
+      var result;
       /** @private */
       var flags = {
         initArgs: initArgs
       };
 
-      return flags[flagName] || null;
+      result = (flags[part] !== undefined) ? flags[part] : null;
+      return result;
     };
 
 

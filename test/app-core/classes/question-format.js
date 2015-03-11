@@ -4,12 +4,13 @@
    * -----------------------------------------------------
    * @desc An object containing the formatted details of a question.
    * @param {Object} question - The pre-formatted details of the question.
+   * @param {Object<string, boolean>} config - The needed format config.
    * @constructor
    */
-  var QuestionFormat = function(question) {
+  var QuestionFormat = function(question, config) {
 
     /**
-     * @type {PrettifiedList}
+     * @type {PrettyCode}
      * @private
      */
     var code;

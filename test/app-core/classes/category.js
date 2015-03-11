@@ -10,6 +10,8 @@
    */
   var Category = function(name, subs) {
 
+    var that = this;
+
     /**
      * ---------------------------------------------------
      * Private Property (Category.debug)
@@ -53,6 +55,8 @@
      */
     this.get = function() {
       /** @private */
+      var result;
+      /** @private */
       var category = {
         name: name,
         url : url,
@@ -60,7 +64,8 @@
         subs: subs
       };
 
-      return category[part] || null;
+      result = (category[part] !== undefined) ? category[part] : null;
+      return result;
     };
 
     /**
@@ -71,7 +76,15 @@
      * @param {number} id - The id to add.
      */
     this.addId = function(id) {
-      ids.push(id);
+
+      if (DEBUG) {
+        that.debug.start('addId', id);
+        that.debug.args('addId', id, 'number');
+      }
+
+      if (typeof id === 'number' && id > 0) {
+        ids.push(id);
+      }
     };
 
 

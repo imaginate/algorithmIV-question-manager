@@ -86,10 +86,12 @@
      * Public Method (SearchBarConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} configName - The name of the setting to get.
+     * @param {string} part - The name of the setting to get.
      * @return {boolean}
      */
-    this.get = function(configName) {
+    this.get = function(part) {
+      /** @private */
+      var result;
       /** @private */
       var settings = {
         stage   : stage,
@@ -98,7 +100,8 @@
         subCat  : subCat
       };
 
-      return settings[configName] || null;
+      result = (settings[part] !== undefined) ? settings[part] : null;
+      return result;
     };
 
 

@@ -67,7 +67,7 @@
           app.setCodeListHeight();
           // --> DisplaySearchBar.init();
           // --> AddEvents.init();
-          // --> FormatQuestions.init();
+          app.questions.setFormats();
           // --> AppendQuestions.init();
           // --> DisplayQuestions.assembleQuestions();
         }
