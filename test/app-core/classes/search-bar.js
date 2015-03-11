@@ -222,58 +222,79 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (SearchBar.prototype.updateVals)
+   * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
-   * @desc Updates the current search bar's values.
-   * @param {Object} vals - The new search bar's values.
+   * @desc Updates the current search bar's values to the defaults.
+   * @param {Object} defaults - The default values.
    */
-  SearchBar.prototype.updateVals = function(vals) {
+  SearchBar.prototype.setToDefaults = function(defaults) {
 
     if (DEBUG) {
-      this.debug.start('updateVals', vals);
-      this.debug.args('updateVals', vals, 'object');
+      this.debug.start('setToDefaults', defaults);
+      this.debug.args('setToDefaults', defaults, 'object');
     }
 
-    if (typeof vals.view === 'string' &&
-        !!this.names.view[vals.view]) {
-      this.vals.view = vals.view;
+    /** @private */
+    var view;
+    /** @private */
+    var order;
+    /** @private */
+    var stage;
+    /** @private */
+    var source;
+    /** @private */
+    var mainCat;
+    /** @private */
+    var subCat;
+
+    view    = defaults.get('view');
+    order   = defaults.get('order');
+    stage   = defaults.get('stage');
+    source  = defaults.get('source');
+    mainCat = defaults.get('mainCat');
+    subCat  = defaults.get('subCat');
+
+    if (typeof view === 'string' &&
+        !!this.names.view[view]) {
+      this.vals.view = view;
     }
 
-    if (typeof vals.order === 'string' &&
-        !!this.names.order[vals.order]) {
-      this.vals.order = vals.order;
+    if (typeof order === 'string' &&
+        !!this.names.order[order]) {
+      this.vals.order = order;
     }
 
-    if (typeof vals.stage === 'string' &&
-        !!this.names.stage[vals.stage]) {
-      this.vals.stage = vals.stage;
+    if (typeof stage === 'string' &&
+        !!this.names.stage[stage]) {
+      this.vals.stage = stage;
     }
 
-    if (typeof vals.source === 'string' &&
-        !!this.names.source[vals.source]) {
-      this.vals.source = vals.source;
+    if (typeof source === 'string' &&
+        !!this.names.source[source]) {
+      this.vals.source = source;
     }
 
-    if (typeof vals.mainCat === 'string' &&
-        !!this.names.mainCat[vals.mainCat]) {
-      this.vals.mainCat = vals.mainCat;
+    if (typeof mainCat === 'string' &&
+        !!this.names.mainCat[mainCat]) {
+      this.vals.mainCat = mainCat;
     }
 
-    if (typeof vals.subCat === 'string') {
+    mainCat = this.vals.mainCat;
+    if (typeof subCat === 'string') {
 
       if (this.vals.subCat === 'all') {
-        this.vals.subCat = vals.subCat;
+        this.vals.subCat = subCat;
       }
       else {
 
-        if (!!this.names.subCat[vals.subCat]) {
+        if (!!this.names.subCat[subCat]) {
 
-          if (this.vals.mainCat === 'all') {
-            this.vals.subCat = vals.subCat;
+          if (mainCat === 'all') {
+            this.vals.subCat = subCat;
           }
           else {
-            if (this.ids.subCat[mainCat].indexOf(vals.subCat) !== -1) {
-              this.vals.subCat = vals.subCat;
+            if (this.ids.subCat[mainCat].indexOf(subCat) !== -1) {
+              this.vals.subCat = subCat;
             }
           }
         }

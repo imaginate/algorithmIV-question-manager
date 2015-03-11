@@ -186,7 +186,7 @@
                                         this.searchBar.names,
                                         this.searchBar.ids.subCat,
                                         this.questions.len);
-      this.searchBar.updateVals(this.config.searchBar.defaults);
+      this.searchBar.setToDefaults(this.config.searchBar.defaults);
     }
   };
 
