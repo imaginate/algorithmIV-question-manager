@@ -542,6 +542,7 @@
         }, this);
       }, this);
       // Create the options for all
+      this.opts.subCat['all'].push( makeOptElem('all', this.names.subCat['all']) );
       this.ids.mainCat.forEach(function(/** string */ mainId) {
         /** @type {string} */
         var name;
@@ -591,4 +592,26 @@
     app.elems.sel.appendChild(this.elems.source);
     app.elems.sel.appendChild(this.elems.mainCat);
     app.elems.sel.appendChild(this.elems.subCat);
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (SearchBar.prototype.updateSubCatOpts)
+   * -----------------------------------------------------
+   * @desc Updates the children appended to the sub category select element.
+   */
+  SearchBar.prototype.updateSubCatOpts = function() {
+
+    DEBUG && this.debug.start('updateSubCatOpts');
+
+    // Update the select value and clear its children
+    this.vals.subCat = 'all';
+    this.elems.subCat.value = 'all';
+    while (this.elems.subCat.firstChild) {
+      this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+    }
+    // Append the new children
+    this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+      this.elems.subCat.appendChild(elem);
+    }, this);
   };
