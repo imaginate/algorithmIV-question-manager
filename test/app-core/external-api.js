@@ -58,13 +58,13 @@
       // Start the app
       document.addEventListener('DOMContentLoaded', function() {
 
-        app.appendMainElems();
+        app.elems.appendMain();
 
         if ( app.flags.get('initArgs') ) {
 
-          app.appendNavElems();
-          app.setScrollbarHeight();
-          app.setCodeListHeight();
+          app.elems.appendNav();
+          app.elems.setScrollbarHeight();
+          app.elems.setCodeListHeight();
           app.searchBar.setMainElems();
           app.searchBar.setOptElems();
           app.searchBar.appendElems();
@@ -75,7 +75,7 @@
         }
         else {
           // Show error message
-          app.appendErrorElems();
+          app.elems.appendError();
         }
 
         DEBUG && debug.group('init', 'end');
