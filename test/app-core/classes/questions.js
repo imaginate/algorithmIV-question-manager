@@ -87,6 +87,7 @@
 
       // Set list
       list = questions.map(function(/** Object */ question, /** number */ i) {
+        ++i;
         return new Question(question, i, outputConfig);
       });
 
@@ -97,9 +98,15 @@
           data[question.url] = question;
         }
       });
+
+      // Add blank to beginning of list so ids and indexes match
+      list.unshift(null);
     }
     // Set len
     this.len = list.length || 0;
+    if (this.len) {
+      --this.len;
+    }
 
 
     DEBUG && this.debug.group('init', 'end');
@@ -134,7 +141,27 @@
     };
 
     this.list().forEach(function(/** Question */ question) {
-      question.setFormat(config);
-      question.addToSearch(config);
+      if (question) {
+        question.setFormat(config);
+        question.addToSearch(config);
+      }
+    });
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.appendElems)
+   * -----------------------------------------------------
+   * @desc Sets and appends the elements for all of the questions.
+   */
+  Questions.prototype.appendElems = function() {
+
+    DEBUG && this.debug.start('appendElems');
+
+    this.list().forEach(function(/** Question */ question) {
+      if (question) {
+        app.elems.ques.appendChild(question.elem.root);
+        question.addElemContent();
+      }
     });
   };

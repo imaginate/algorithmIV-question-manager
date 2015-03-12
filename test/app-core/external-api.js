@@ -70,7 +70,7 @@
           app.searchBar.appendElems();
           // --> AddEvents.init();
           app.questions.setFormats();
-          // --> AppendQuestions.init();
+          app.questions.appendElems();
           // --> DisplayQuestions.assembleQuestions();
         }
         else {

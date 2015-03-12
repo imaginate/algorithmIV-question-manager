@@ -4,11 +4,13 @@
    * -----------------------------------------------------
    * @desc An object containing the details of a question.
    * @param {Object} question - The details of a new question.
-   * @param {number} index - The index of the question.
+   * @param {number} id - The id for the question.
    * @param {boolean} outputConfig - The config settings for output.
    * @constructor
    */
-  var Question = function(question, index, outputConfig) {
+  var Question = function(question, id, outputConfig) {
+
+    var that = this;
 
     /**
      * ---------------------------------------------------
@@ -20,21 +22,11 @@
 
     var args;
     if (DEBUG) {
-      this.debug.start('init', question, index, outputConfig);
+      this.debug.start('init', question, id, outputConfig);
       args = [ 'init' ];
-      args.push(question, 'object', index, 'number', outputConfig, 'boolean');
+      args.push(question, 'object', id, 'number', outputConfig, 'boolean');
       this.debug.args(args);
     }
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Question.id)
-     * -----------------------------------------------
-     * @desc This question's id (i.e. its index plus 1).
-     * @type {number}
-     * @private
-     */
-    var id;
 
     /**
      * ----------------------------------------------- 
@@ -142,8 +134,27 @@
      * -----------------------------------------------
      * @desc The amount of width overflow for this question's code element.
      * @type {number}
+     * @private
      */
     var overflow;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.format)
+     * -----------------------------------------------
+     * @desc The formatted details for the question.
+     * @type {?QuestionFormat}
+     */
+    this.format = null;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.elem)
+     * -----------------------------------------------
+     * @desc The question element.
+     * @type {elem}
+     */
+    this.elem = new QuestionElem(id);
 
     /**
      * ----------------------------------------------- 
@@ -169,26 +180,16 @@
         descr   : descr,
         solution: solution,
         output  : output,
-        overflow: overflow
+        overflow: overflow,
+        elem    : elem
       };
 
       result = (details[part] !== undefined) ? details[part] : null;
       return result;
     };
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Question.format)
-     * -----------------------------------------------
-     * @desc The formatted details for the question.
-     * @type {?QuestionFormat}
-     */
-    this.format = null;
-
 
     // Set the properties
-    id = (typeof index === 'number') ? (index + 1) : 0;
-
     url = '';
     if (typeof question.url === 'string' && question.url) {
       url = question.url.toLowerCase();
@@ -336,4 +337,29 @@
         app.categories.get(catId).addId(id);
       });
     }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Question.prototype.addElemContent)
+   * -----------------------------------------------------
+   * @desc Adds the formatted content to the question element.
+   */
+  Question.prototype.addElemContent = function() {
+
+    DEBUG && this.debug.start('addElemContent');
+
+    this.elem.addContent({
+      id      : this.format.get('id'),
+      url     : this.get('url'),
+      complete: this.format.get('complete'),
+      source  : this.format.get('source'),
+      mainCat : this.format.get('mainCat'),
+      subCat  : this.format.get('subCat'),
+      links   : this.format.get('links'),
+      problem : this.get('problem'),
+      descr   : this.get('descr'),
+      solution: this.format.get('solution'),
+      output  : this.get('output')
+    });
   };
