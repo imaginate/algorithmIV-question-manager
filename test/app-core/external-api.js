@@ -65,6 +65,7 @@
           app.appendNavElems();
           app.setScrollbarHeight();
           app.setCodeListHeight();
+          app.searchBar.setElems();
           // --> DisplaySearchBar.init();
           // --> AddEvents.init();
           app.questions.setFormats();

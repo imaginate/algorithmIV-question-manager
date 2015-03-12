@@ -301,3 +301,98 @@
       }
     }
   };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (SearchBar.prototype.setElems)
+   * -----------------------------------------------------
+   * @desc Creates the search bar's select elements.
+   */
+  SearchBar.prototype.setElems = function() {
+
+    DEBUG && this.debug.start('setElems');
+
+    /** @private */
+    var stage;
+    /** @private */
+    var source;
+    /** @private */
+    var category;
+    /** @private */
+    var subCat;
+    /** @private */
+    var pass;
+
+    stage    = app.config.searchBar.get('stage');
+    source   = app.config.searchBar.get('source');
+    category = app.config.searchBar.get('category');
+    subCat   = app.config.searchBar.get('subCat');
+
+    // Set view search element
+    this.elems.view = document.createElement('select');
+    this.elems.view.id = 'aIV-view';
+    this.elems.view.className = 'showView';
+
+    // Set order search element
+    this.elems.order = document.createElement('select');
+    this.elems.order.id = 'aIV-order';
+    this.elems.order.className = 'showOrder';
+
+    // Set stage search element
+    if (stage) {
+      this.elems.stage = document.createElement('select');
+    }
+    else {
+      this.elems.stage = document.createElement('input');
+      this.elems.stage.type = 'hidden';
+      this.elems.stage.value = 'all';
+    }
+    this.elems.stage.id = 'aIV-stage';
+    this.elems.stage.className = 'showStage';
+
+    // Set source search element
+    if (source && app.sources.len) {
+      this.elems.source = document.createElement('select');
+    }
+    else {
+      this.elems.source = document.createElement('input');
+      this.elems.source.type = 'hidden';
+      this.elems.source.value = 'all';
+    }
+    this.elems.source.id = 'aIV-source';
+    this.elems.source.className = 'showSource';
+
+    // Set main and sub category search elements
+    if (category && app.categories.len) {
+
+      this.elems.mainCat = document.createElement('select');
+
+      if (subCat) {
+        pass = app.categories.ids.some(function(/** string */ id) {
+          return !!app.categories.get(id).get('subs').length;
+        });
+        if (pass) {
+          this.elems.subCat = document.createElement('select');
+        }
+      }
+      else {
+        pass = false;
+      }
+      if (!pass) {
+        this.elems.subCat.type = 'hidden';
+        this.elems.subCat.value = 'all';
+      }
+    }
+    else {
+      this.elems.mainCat.type = 'hidden';
+      this.elems.mainCat.value = 'all';
+
+      this.elems.subCat.type = 'hidden';
+      this.elems.subCat.value = 'all';
+    }
+    this.elems.mainCat.id = 'aIV-mainCat';
+    this.elems.mainCat.className = 'showMainCat';
+
+    this.elems.subCat.id = 'aIV-subCat';
+    this.elems.subCat.className = 'showSubCat';
+  };
