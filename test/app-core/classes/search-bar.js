@@ -282,13 +282,13 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (SearchBar.prototype.setElems)
+   * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
    */
-  SearchBar.prototype.setElems = function() {
+  SearchBar.prototype.setMainElems = function() {
 
-    DEBUG && this.debug.start('setElems');
+    DEBUG && this.debug.start('setMainElems');
 
     /**
      * @type {boolean}
@@ -325,15 +325,18 @@
     this.elems.view = document.createElement('select');
     this.elems.view.id = 'aIV-view';
     this.elems.view.className = 'showView';
+    this.elems.view.value = this.vals.view;
 
     // Set order search element
     this.elems.order = document.createElement('select');
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
+    this.elems.order.value = this.vals.order;
 
     // Set stage search element
     if (stage) {
       this.elems.stage = document.createElement('select');
+      this.elems.stage.value = this.vals.stage;
     }
     else {
       this.elems.stage = document.createElement('input');
@@ -346,6 +349,7 @@
     // Set source search element
     if (source && app.sources.len) {
       this.elems.source = document.createElement('select');
+      this.elems.source.value = this.vals.source;
     }
     else {
       this.elems.source = document.createElement('input');
@@ -359,6 +363,7 @@
     if (category && app.categories.len) {
 
       this.elems.mainCat = document.createElement('select');
+      this.elems.mainCat.value = this.vals.mainCat;
 
       if (subCat) {
         pass = app.categories.ids.some(function(/** string */ id) {
@@ -366,6 +371,7 @@
         });
         if (pass) {
           this.elems.subCat = document.createElement('select');
+          this.elems.subCat.value = this.vals.subCat;
         }
       }
       else {
@@ -392,13 +398,13 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (SearchBar.prototype.setOpts)
+   * Public Method (SearchBar.prototype.setOptElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's option elements.
    */
-  SearchBar.prototype.setOpts = function() {
+  SearchBar.prototype.setOptElems = function() {
 
-    DEBUG && this.debug.start('setOpts');
+    DEBUG && this.debug.start('setOptElems');
 
     /**
      * @type {boolean}
@@ -414,83 +420,175 @@
      * @type {boolean}
      * @private
      */
-    var category;
+    var mainCat;
     /**
      * @type {boolean}
      * @private
      */
     var subCat;
 
-    stage    = ('select' === this.elems.stage.tagName.toLowerCase());
-    source   = ('select' === this.elems.source.tagName.toLowerCase());
-    category = ('select' === this.elems.mainCat.tagName.toLowerCase());
-    subCat   = ('select' === this.elems.subCat.tagName.toLowerCase());
+    stage   = ('select' === this.elems.stage.tagName.toLowerCase());
+    source  = ('select' === this.elems.source.tagName.toLowerCase());
+    mainCat = ('select' === this.elems.mainCat.tagName.toLowerCase());
+    subCat  = ('select' === this.elems.subCat.tagName.toLowerCase());
 
-    // Set view search element
-    this.elems.view = document.createElement('select');
-    this.elems.view.id = 'aIV-view';
-    this.elems.view.className = 'showView';
+    /**
+     * @desc A helper function that creates option elements.
+     * @param {string} id - The search item's id. If blank then the
+     *   option is disabled.
+     * @param {string} name - The search item's name.
+     * @return {elem}
+     * @private
+     */
+    var makeOptElem = function(id, name) {
+      /** @type {elem} */
+      var elem;
 
-    // Set order search element
-    this.elems.order = document.createElement('select');
-    this.elems.order.id = 'aIV-order';
-    this.elems.order.className = 'showOrder';
-
-    // Set stage search element
-    if (stage) {
-      this.elems.stage = document.createElement('select');
-    }
-    else {
-      this.elems.stage = document.createElement('input');
-      this.elems.stage.type = 'hidden';
-      this.elems.stage.value = 'all';
-    }
-    this.elems.stage.id = 'aIV-stage';
-    this.elems.stage.className = 'showStage';
-
-    // Set source search element
-    if (source && app.sources.len) {
-      this.elems.source = document.createElement('select');
-    }
-    else {
-      this.elems.source = document.createElement('input');
-      this.elems.source.type = 'hidden';
-      this.elems.source.value = 'all';
-    }
-    this.elems.source.id = 'aIV-source';
-    this.elems.source.className = 'showSource';
-
-    // Set main and sub category search elements
-    if (category && app.categories.len) {
-
-      this.elems.mainCat = document.createElement('select');
-
-      if (subCat) {
-        pass = app.categories.ids.some(function(/** string */ id) {
-          return !!app.categories.get(id).get('subs').length;
-        });
-        if (pass) {
-          this.elems.subCat = document.createElement('select');
-        }
+      elem = document.createElement('option');
+      elem.textContent = name;
+      if (id) {
+        elem.value = id;
       }
       else {
-        pass = false;
+        elem.disabled = true;
       }
-      if (!pass) {
-        this.elems.subCat.type = 'hidden';
-        this.elems.subCat.value = 'all';
-      }
-    }
-    else {
-      this.elems.mainCat.type = 'hidden';
-      this.elems.mainCat.value = 'all';
+      return elem;
+    };
 
-      this.elems.subCat.type = 'hidden';
-      this.elems.subCat.value = 'all';
-    }
-    this.elems.mainCat.id = 'aIV-mainCat';
-    this.elems.mainCat.className = 'showMainCat';
+    // Set view search options
+    this.ids.view.forEach(function(/** string */ id) {
+      /** @type {string} */
+      var name;
+      /** @type {elem} */
+      var elem;
 
-    this.elems.subCat.id = 'aIV-subCat';
-    this.elems.subCat.className = 'showSubCat';
+      name = this.names.view[id];
+      elem = makeOptElem(id, name);
+      this.opts.view.push(elem);
+      this.elems.view.appendChild(elem);
+    }, this);
+
+    // Set order search options
+    this.ids.order.forEach(function(/** string */ id) {
+      /** @type {string} */
+      var name;
+      /** @type {elem} */
+      var elem;
+
+      name = this.names.order[id];
+      elem = makeOptElem(id, name);
+      this.opts.order.push(elem);
+      this.elems.order.appendChild(elem);
+    }, this);
+
+    // Set stage search options
+    if (stage) {
+      this.ids.stage.forEach(function(/** string */ id) {
+        /** @type {string} */
+        var name;
+        /** @type {elem} */
+        var elem;
+
+        name = this.names.stage[id];
+        elem = makeOptElem(id, name);
+        this.opts.stage.push(elem);
+        this.elems.stage.appendChild(elem);
+      }, this);
+    }
+
+    // Set source search options
+    if (source) {
+      this.ids.source.forEach(function(/** string */ id) {
+        /** @type {string} */
+        var name;
+        /** @type {elem} */
+        var elem;
+
+        name = this.names.source[id];
+        elem = makeOptElem(id, name);
+        this.opts.source.push(elem);
+        this.elems.source.appendChild(elem);
+      }, this);
+    }
+
+    // Set main category search options
+    if (mainCat) {
+      this.ids.mainCat.forEach(function(/** string */ id) {
+        /** @type {string} */
+        var name;
+        /** @type {elem} */
+        var elem;
+
+        name = this.names.mainCat[id];
+        elem = makeOptElem(id, name);
+        this.opts.mainCat.push(elem);
+        this.elems.mainCat.appendChild(elem);
+      }, this);
+    }
+
+    // Set sub category search options
+    if (subCat) {
+      // Create the options for each main category with subs
+      Object.keys(this.ids.subCat).forEach(function(/** string */ mainId) {
+        this.ids.subCat[mainId].forEach(function(/** string */ id) {
+          /** @type {string} */
+          var name;
+          /** @type {elem} */
+          var elem;
+
+          name = this.names.subCat[id];
+          elem = makeOptElem(id, name);
+          this.opts.subCat[mainId].push(elem);
+        }, this);
+      }, this);
+      // Create the options for all
+      this.ids.mainCat.forEach(function(/** string */ mainId) {
+        /** @type {string} */
+        var name;
+        /** @type {elem} */
+        var elem;
+
+        if (!!this.ids.subCat[mainId]) {
+
+          name = this.names.mainCat[mainId];
+          elem = makeOptElem('', name);
+          this.opts.subCat['all'].push(elem);
+
+          this.ids.subCat[mainId].forEach(function(/** string */ id) {
+            /** @type {string} */
+            var name;
+            /** @type {elem} */
+            var elem;
+
+            if (id !== 'all') {
+              name = this.names.subCat[id];
+              elem = makeOptElem(id, name);
+              this.opts.subCat['all'].push(elem);
+            }
+          }, this);
+        }
+      }, this);
+      // Append the correct sub categories to the select element
+      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+        this.elems.subCat.appendChild(elem);
+      }, this);
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (SearchBar.prototype.appendElems)
+   * -----------------------------------------------------
+   * @desc Appends the search bar's elements to the selections root.
+   */
+  SearchBar.prototype.appendElems = function() {
+
+    DEBUG && this.debug.start('appendElems');
+
+    app.elems.sel.appendChild(this.elems.view);
+    app.elems.sel.appendChild(this.elems.order);
+    app.elems.sel.appendChild(this.elems.stage);
+    app.elems.sel.appendChild(this.elems.source);
+    app.elems.sel.appendChild(this.elems.mainCat);
+    app.elems.sel.appendChild(this.elems.subCat);
   };
