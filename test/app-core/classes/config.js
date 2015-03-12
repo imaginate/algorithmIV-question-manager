@@ -69,13 +69,13 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (Config.linkID)
+     * Protected Property (Config.showLinks)
      * -----------------------------------------------
-     * @desc Indicates if the question's id should be linked.
+     * @desc Indicates if the question's links should be shown.
      * @type {boolean}
      * @private
      */
-    var linkID;
+    var showLinks;
 
     /**
      * ----------------------------------------------- 
@@ -90,8 +90,8 @@
       var result;
       /** @private */
       var settings = {
-        showURL: showURL,
-        linkID : linkID
+        showURL  : showURL,
+        showLinks: showLinks
       };
 
       result = (settings[part] !== undefined) ? settings[part] : null;
@@ -101,7 +101,7 @@
 
     // Set the properties
     showURL = (config.showURL === true);
-    linkID = !(config.id === false || config.linkID === false);
+    showLinks = (showURL && config.showLinks === true);
 
 
     DEBUG && this.debug.group('init', 'end');

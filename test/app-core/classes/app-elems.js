@@ -73,6 +73,15 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (AppElems.none)
+     * -----------------------------------------------
+     * @desc The section.empty element.
+     * @type {elem}
+     */
+    this.none = null;
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (AppElems.scrl)
      * -----------------------------------------------
      * @desc Saves the height of the browser's DOM loaded scrollbar.
@@ -161,6 +170,7 @@
     this.nav  = document.createElement('nav');
     this.ques = document.createElement('section');
     this.hold = document.createElement('img');
+    this.none = document.createElement('section');
     errorDiv = document.createElement('div');
     h2 = document.createElement('h2');
     p  = document.createElement('p');
@@ -175,11 +185,13 @@
     this.main.className = 'main';
     this.ques.className = 'questions';
     this.hold.className = 'loader';
+    this.none.className = 'empty';
     errorDiv.className = 'loadError';
 
     h1.textContent = 'Algorithm IV';
     h2.textContent = 'Load Error';
     p.textContent  = errorMsg;
+    this.none.textContent = 'No question(s) found.';
 
     this.hold.src = 'images/loading.gif';
 
@@ -190,6 +202,7 @@
     this.main.appendChild(this.ques);
     this.ques.appendChild(errorDiv);
     this.ques.appendChild(this.hold);
+    this.ques.appendChild(this.none);
     errorDiv.appendChild(h2);
     errorDiv.appendChild(p);
 

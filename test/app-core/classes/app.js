@@ -40,6 +40,15 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (App.url)
+     * -----------------------------------------------
+     * @desc Saves the base url for this app.
+     * @type {string}
+     */
+    this.url = ''; // FIX ME *************************
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (App.flags)
      * -----------------------------------------------
      * @desc Saves flags that explain the current state of the app.
