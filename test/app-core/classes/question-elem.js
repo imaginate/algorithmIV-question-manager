@@ -85,6 +85,8 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
+    var that = this;
+
     if (DEBUG) {
       this.debug.start('addContent', question);
       this.debug.args('addContent', question, 'object');
@@ -97,13 +99,24 @@
 
     // See the below private helper methods for more details
 
-    // Add the question id
     if (question.id) {
       appendID(question.id, question.url);
     }
 
-    // START HERE ***************************************
-    // appendSource
+    if (question.source) {
+      appendSource(question.source);
+    }
+
+    if (question.complete) {
+      appendComplete(question.complete);
+    }
+
+    if (!!question.mainCat.h3 || !!question.subCat.h3) {
+      appendCategory(question.mainCat, question.subCat);
+    }
+
+    // START HERE *************************************
+    // appendLinks
 
     /**
      * ---------------------------------------------
@@ -117,8 +130,8 @@
     function appendID(id, url) {
 
       if (DEBUG) {
-        this.debug.start('appendID', id);
-        this.debug.args('appendID', id, 'string');
+        that.debug.start('appendID', id, url);
+        that.debug.args('appendID', id, 'string', url, 'strinsg');
       }
 
       /**
@@ -178,33 +191,42 @@
      * ---------------------------------------------
      * Private Method (appendSource)
      * ---------------------------------------------
-     * appends the question source
-     * param: the question source (string)
-     * @type {function(string)}
+     * @desc Appends the question's source.
+     * @param {string} source - The name of the source.
      * @private
      */
     function appendSource(source) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendSource()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        typeof source === 'string',
-        'FAIL: AppendQuestions.appendSource() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p;
-      // Create elements
+
+      if (DEBUG) {
+        that.debug.start('appendSource', source);
+        that.debug.args('appendSource', source, 'string');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
       div = document.createElement('div');
       h3  = document.createElement('h3');
       p   = document.createElement('p');
-      // Add classes
+
       div.className = 'source';
-      // Add content
+
       h3.textContent = 'Source:';
       p.textContent  = source;
-      // Append elements
+
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
@@ -214,33 +236,42 @@
      * ---------------------------------------------
      * Private Method (appendComplete)
      * ---------------------------------------------
-     * appends the question completed status
-     * param: the question status (string)
-     * @type {function(string)}
+     * @desc Appends the question's completion status.
+     * @param {string} complete - The question's status.
      * @private
      */
     function appendComplete(complete) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendComplete()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        typeof complete === 'string',
-        'FAIL: AppendQuestions.appendComplete() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p;
-      // Create elements
+
+      if (DEBUG) {
+        that.debug.start('appendComplete', complete);
+        that.debug.args('appendComplete', complete, 'string');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
       div = document.createElement('div');
       h3  = document.createElement('h3');
       p   = document.createElement('p');
-      // Add classes
+
       div.className = 'stage';
-      // Add content
+
       h3.textContent = 'Completed:';
       p.textContent  = complete;
-      // Append elements
+
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
@@ -250,73 +281,75 @@
      * ---------------------------------------------
      * Private Method (appendCategory)
      * ---------------------------------------------
-     * appends the question categories
-     * param: the question's main categories (object)
-     * param: the question's sub categories (object)
-     * @type {function(Object)}
+     * @desc Appends the question's categories.
+     * @param {Object} main - The question's main categories.
+     * @param {Object} sub - The question's sub categories.
      * @private
      */
     function appendCategory(main, sub) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendCategory()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        (typeof main === 'object' &&
-         typeof sub  === 'object'),
-        'FAIL: AppendQuestions.appendCategory() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p, mdiv, mh3, mp, sdiv, sh3, sp;
-      // Create elements
-      div = document.createElement('div');
-      if (!main.flag && !sub.flag) {
-        h3 = document.createElement('h3');
-        p  = document.createElement('p');
+
+      if (DEBUG) {
+        that.debug.start('appendCategory', main, sub);
+        that.debug.args('appendCategory', main, 'object', sub, 'object');
       }
-      if (main.flag) {
-        mdiv = document.createElement('div');
-        mh3  = document.createElement('h3');
-        mp   = document.createElement('p');
-      }
-      if (sub.flag) {
-        sdiv = document.createElement('div');
-        sh3  = document.createElement('h3');
-        sp   = document.createElement('p');
-      }
-      // Add classes and content
-      div.className = 'category';
-      if (!main.flag && !sub.flag) {
-        h3.textContent = 'Category:';
-        p.textContent  = 'None';
-      }
-      if (main.flag) {
-        mdiv.className  = 'mainCategory';
-        mh3.textContent = main.h3;
-        mp.textContent  = main.p;
-      }
-      if (sub.flag) {
-        sdiv.className  = 'subCategory';
-        sh3.textContent = sub.h3;
-        sp.textContent  = sub.p;
-      }
-      // Append elements
-      q.appendChild(div);
-      if (!main.flag && !sub.flag) {
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var contain;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
+      var contain, div, h3, p;
+
+      contain = document.createElement('div');
+      contain.className = 'category';
+
+      if (!!main.h3) {
+        div = document.createElement('div');
+        h3  = document.createElement('h3');
+        p   = document.createElement('p');
+
+        div.className  = 'mainCategory';
+        h3.textContent = main.h3;
+        p.textContent  = main.p;
+
         div.appendChild(h3);
         div.appendChild(p);
+
+        contain.appendChild(div);
       }
-      if (main.flag) {
-        div.appendChild(mdiv);
-        mdiv.appendChild(mh3);
-        mdiv.appendChild(mp);
+
+      if (!!sub.h3) {
+        div = document.createElement('div');
+        h3  = document.createElement('h3');
+        p   = document.createElement('p');
+
+        div.className  = 'subCategory';
+        h3.textContent = sub.h3;
+        p.textContent  = sub.p;
+
+        div.appendChild(h3);
+        div.appendChild(p);
+
+        contain.appendChild(div);
       }
-      if (sub.flag) {
-        div.appendChild(sdiv);
-        sdiv.appendChild(sh3);
-        sdiv.appendChild(sp);
-      }
+
+      root.appendChild(contain);
     }
 
     /**
