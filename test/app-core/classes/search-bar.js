@@ -234,17 +234,35 @@
       this.debug.args('setToDefaults', defaults, 'object');
     }
 
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var view;
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var order;
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var stage;
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var source;
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var mainCat;
-    /** @private */
+    /**
+     * @type {string}
+     * @private
+     */
     var subCat;
 
     view    = defaults.get('view');
@@ -254,52 +272,12 @@
     mainCat = defaults.get('mainCat');
     subCat  = defaults.get('subCat');
 
-    if (typeof view === 'string' &&
-        !!this.names.view[view]) {
-      this.vals.view = view;
-    }
-
-    if (typeof order === 'string' &&
-        !!this.names.order[order]) {
-      this.vals.order = order;
-    }
-
-    if (typeof stage === 'string' &&
-        !!this.names.stage[stage]) {
-      this.vals.stage = stage;
-    }
-
-    if (typeof source === 'string' &&
-        !!this.names.source[source]) {
-      this.vals.source = source;
-    }
-
-    if (typeof mainCat === 'string' &&
-        !!this.names.mainCat[mainCat]) {
-      this.vals.mainCat = mainCat;
-    }
-
-    mainCat = this.vals.mainCat;
-    if (typeof subCat === 'string') {
-
-      if (this.vals.subCat === 'all') {
-        this.vals.subCat = subCat;
-      }
-      else {
-
-        if (!!this.names.subCat[subCat]) {
-
-          if (mainCat === 'all') {
-            this.vals.subCat = subCat;
-          }
-          else {
-            if (this.ids.subCat[mainCat].indexOf(subCat) !== -1) {
-              this.vals.subCat = subCat;
-            }
-          }
-        }
-      }
-    }
+    this.vals.view    = view;
+    this.vals.order   = order;
+    this.vals.stage   = stage;
+    this.vals.source  = source;
+    this.vals.mainCat = mainCat;
+    this.vals.subCat  = subCat;
   };
 
   /**
@@ -312,21 +290,141 @@
 
     DEBUG && this.debug.start('setElems');
 
-    /** @private */
+    /**
+     * @type {boolean}
+     * @private
+     */
     var stage;
-    /** @private */
+    /**
+     * @type {boolean}
+     * @private
+     */
     var source;
-    /** @private */
+    /**
+     * @type {boolean}
+     * @private
+     */
     var category;
-    /** @private */
+    /**
+     * @type {boolean}
+     * @private
+     */
     var subCat;
-    /** @private */
+    /**
+     * @type {boolean}
+     * @private
+     */
     var pass;
 
     stage    = app.config.searchBar.get('stage');
     source   = app.config.searchBar.get('source');
     category = app.config.searchBar.get('category');
     subCat   = app.config.searchBar.get('subCat');
+
+    // Set view search element
+    this.elems.view = document.createElement('select');
+    this.elems.view.id = 'aIV-view';
+    this.elems.view.className = 'showView';
+
+    // Set order search element
+    this.elems.order = document.createElement('select');
+    this.elems.order.id = 'aIV-order';
+    this.elems.order.className = 'showOrder';
+
+    // Set stage search element
+    if (stage) {
+      this.elems.stage = document.createElement('select');
+    }
+    else {
+      this.elems.stage = document.createElement('input');
+      this.elems.stage.type = 'hidden';
+      this.elems.stage.value = 'all';
+    }
+    this.elems.stage.id = 'aIV-stage';
+    this.elems.stage.className = 'showStage';
+
+    // Set source search element
+    if (source && app.sources.len) {
+      this.elems.source = document.createElement('select');
+    }
+    else {
+      this.elems.source = document.createElement('input');
+      this.elems.source.type = 'hidden';
+      this.elems.source.value = 'all';
+    }
+    this.elems.source.id = 'aIV-source';
+    this.elems.source.className = 'showSource';
+
+    // Set main and sub category search elements
+    if (category && app.categories.len) {
+
+      this.elems.mainCat = document.createElement('select');
+
+      if (subCat) {
+        pass = app.categories.ids.some(function(/** string */ id) {
+          return !!app.categories.get(id).get('subs').length;
+        });
+        if (pass) {
+          this.elems.subCat = document.createElement('select');
+        }
+      }
+      else {
+        pass = false;
+      }
+      if (!pass) {
+        this.elems.subCat.type = 'hidden';
+        this.elems.subCat.value = 'all';
+      }
+    }
+    else {
+      this.elems.mainCat.type = 'hidden';
+      this.elems.mainCat.value = 'all';
+
+      this.elems.subCat.type = 'hidden';
+      this.elems.subCat.value = 'all';
+    }
+    this.elems.mainCat.id = 'aIV-mainCat';
+    this.elems.mainCat.className = 'showMainCat';
+
+    this.elems.subCat.id = 'aIV-subCat';
+    this.elems.subCat.className = 'showSubCat';
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (SearchBar.prototype.setOpts)
+   * -----------------------------------------------------
+   * @desc Creates the search bar's option elements.
+   */
+  SearchBar.prototype.setOpts = function() {
+
+    DEBUG && this.debug.start('setOpts');
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var stage;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var source;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var category;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var subCat;
+
+    stage    = ('select' === this.elems.stage.tagName.toLowerCase());
+    source   = ('select' === this.elems.source.tagName.toLowerCase());
+    category = ('select' === this.elems.mainCat.tagName.toLowerCase());
+    subCat   = ('select' === this.elems.subCat.tagName.toLowerCase());
 
     // Set view search element
     this.elems.view = document.createElement('select');
