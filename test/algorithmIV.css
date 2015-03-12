@@ -424,6 +424,13 @@ body {
   display:inline-block;
   margin-right:20px;
   line-height:40px;
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .links a:hover,
+#aIV .links a:active {
+  text-decoration:none;
 }
 
 #aIV img.loader {
@@ -709,6 +716,11 @@ body {
 #aIV a.dark:hover,
 #aIV a.dark:active {
   text-decoration:none;
+}
+
+#aIV .hideLinks a.dark {
+  text-decoration:none;
+  cursor:default;
 }
 
 #aIV .error {
