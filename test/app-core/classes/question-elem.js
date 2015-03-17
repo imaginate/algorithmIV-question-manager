@@ -97,7 +97,8 @@
     /** @type {elem} */
     var info = this.info;
 
-    // See the below private helper methods for more details
+    // Append all the sections of the question
+    // Note: See the below private helper methods for more details
 
     if (question.id) {
       appendID(question.id, question.url);
@@ -115,8 +116,22 @@
       appendCategory(question.mainCat, question.subCat);
     }
 
-    // START HERE *************************************
-    // appendLinks
+    if (question.problem || question.descr) {
+      appendProblem(question.problem, question.descr);
+    }
+
+    if (question.solution) {
+      appendSolution(question.solution);
+    }
+
+    if (question.output) {
+      appendOutput(question.output);
+    }
+
+    if (question.links.length) {
+      appendLinks(question.links);
+    }
+
 
     /**
      * ---------------------------------------------
@@ -176,6 +191,9 @@
       div.appendChild(h3);
       div.appendChild(p);
 
+      /*
+       * ADD THIS FEATURE SOON
+       *
       if (config) {
         p.textContent = '';
         a = document.createElement('a');
@@ -185,6 +203,7 @@
         a.textContent = id;
         p.appendChild(a);
       }
+      */
     }
 
     /**
@@ -314,8 +333,6 @@
        */
       var p;
 
-      var contain, div, h3, p;
-
       contain = document.createElement('div');
       contain.className = 'category';
 
@@ -356,210 +373,396 @@
      * ---------------------------------------------
      * Private Method (appendProblem)
      * ---------------------------------------------
-     * appends the question problem
-     * param: the question problem (string)
-     * @type {function(string)}
+     * @desc Appends the question's problem or description.
+     * @param {string} problem - The question's problem.
+     * @param {string} descr - The question's description.
      * @private
      */
-    function appendProblem(problem) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendProblem()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        typeof problem === 'string',
-        'FAIL: AppendQuestions.appendProblem() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p;
-      // Create elements
+    function appendProblem(problem, descr) {
+
+      if (DEBUG) {
+        that.debug.start('appendProblem', problem, descr);
+        that.debug.args('appendProblem', problem, 'string', descr, 'string');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
       div = document.createElement('div');
       h3  = document.createElement('h3');
       p   = document.createElement('p');
-      // Add classes
+
       div.className = 'problem';
-      // Add content
-      h3.textContent = 'Problem:';
-      p.innerHTML  = problem;
-      // Append elements
-      q.appendChild(div);
+
+      if (problem) {
+        h3.textContent = 'Problem:';
+        p.innerHTML  = problem;
+      }
+      else {
+        h3.textContent = 'Description:';
+        p.innerHTML  = descr;
+      }
+
       div.appendChild(h3);
       div.appendChild(p);
+
+      root.appendChild(div);
     }
 
     /**
      * ---------------------------------------------
      * Private Method (appendSolution)
      * ---------------------------------------------
-     * appends the question solution
-     * param: the question's solution (object)
-     * param: the question index (number)
-     * @type {function(Object, number)}
+     * @desc Appends the question's solution.
+     * @param {Object} solution - The question's solution.
      * @private
      */
-    function appendSolution(solution, i) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendSolution()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        (typeof solution === 'object' &&
-         typeof i        === 'number'),
-        'FAIL: AppendQuestions.appendSolution() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p, pdiv, pre, code, ol, ext,
-          extClose, extOpen, extBG, extHov,
-          extHovC, extHovO;
-      // Create elements
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      // Add classes
-      div.className = 'solution';
-      // Add content
+    function appendSolution(solution) {
+
+      if (DEBUG) {
+        that.debug.start('appendSolution', solution);
+        that.debug.args('appendSolution', solution, 'object');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var contain;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var pre;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var code;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var ol;
+      /**
+       * @type {number}
+       * @private
+       */
+      var overflow;
+      /**
+       * @type {number}
+       * @private
+       */
+      var scrollbar;
+
+      contain  = document.createElement('div');
+      h3       = document.createElement('h3');
+      div      = document.createElement('div');
+      pre      = document.createElement('pre');
+      code     = document.createElement('code');
+      ol       = document.createElement('ol');
+
+      contain.className = 'solution';
+      div.className     = 'preContain';
+
+      ol.innerHTML = solution.code;
+
       h3.textContent = 'Solution:';
-      // Append elements
-      q.appendChild(div);
-      div.appendChild(h3);
-      // If (no error)
-      // Then {add solution code}
-      // Else {add error}
-      if (!solution.error) {
-        // Create elements
-        pdiv = document.createElement('div');
-        pre  = document.createElement('pre');
-        code = document.createElement('code');
-        ol   = document.createElement('ol');
-        ext  = document.createElement('div');
-        extClose = document.createElement('div');
-        extOpen  = document.createElement('div');
-        extBG    = document.createElement('div');
-        extHov   = document.createElement('div');
-        extHovC  = document.createElement('span');
-        extHovO  = document.createElement('span');
-        // Add ids
-        extOpen.id = 'aIV-extCode' + i;
-        // Add classes
-        pdiv.className = 'preContain';
-        ext.className  = 'extContain';
-        extClose.className = 'extCloseArrow';
-        extOpen.className  = 'extOpenArrow';
-        extBG.className    = 'extBG';
-        extHov.className   = 'extHover';
-        extHovC.className  = 'closeExt';
-        extHovO.className  = 'openExt';
-        // Add content
-        ol.innerHTML = solution.code;
-        extOpen.textContent = i;
-        extHovC.textContent = 'Close Extended Code View';
-        extHovO.textContent = 'Extend Code View';
-        // Set preContain height
-        pdiv.style.height = solution.height + 'px';
-        // Add events
-        extOpen.onmouseover = function() { AddEvents.extHoverIn(i) };
-        extOpen.onmouseout  = function() { AddEvents.extHoverOut(i) };
-        // Append elements
-        div.appendChild(pdiv);
-        pdiv.appendChild(pre);
-        pre.appendChild(code);
-        code.appendChild(ol);
-        pdiv.appendChild(ext);
-        ext.appendChild(extClose);
-        ext.appendChild(extOpen);
-        ext.appendChild(extBG);
-        pdiv.appendChild(extHov);
-        extHov.appendChild(extHovC);
-        extHov.appendChild(extHovO);
+
+      div.style.height = solution.height + 'px';
+
+      contain.appendChild(h3);
+      contain.appendChild(div);
+      div.appendChild(pre);
+      pre.appendChild(code);
+      code.appendChild(ol);
+
+      root.appendChild(contain);
+
+      overflow = code.scrollWidth - code.clientWidth;
+
+      if (overflow) {
+
+        appendCodeExt(div, overflow);
+
+        scrollbar = app.elems.scrl.height;
+        if (scrollbar) {
+          contain.style.padding = '0 0 ' + scrollbar + 'px';
+        }
       }
-      else {
-        // Create and append error element
-        p = document.createElement('p');
-        p.className = 'error';
-        p.textContent = 'Error: This solution was not wrapped in an anonymous function.';
-        div.appendChild(p);
+
+      root.style.display = 'none';
+      root.style.opacity = '1';
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (appendCodeExt)
+     * ---------------------------------------------
+     * @desc Appends the code view extender for the question's solution.
+     * @param {elem} div - The div container for the code.
+     * @param {number} overflow - The number of pixels to extend the code view by.
+     * @private
+     */
+    function appendCodeExt(div, overflow) {
+
+      if (DEBUG) {
+        that.debug.start('appendCodeExt', div, overflow);
+        that.debug.args('appendCodeExt', div, 'object', overflow, 'number');
       }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var ext;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extClose;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extOpen;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extBG;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extHov;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extHovC;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var extHovO;
+
+      ext      = document.createElement('div');
+      extClose = document.createElement('div');
+      extOpen  = document.createElement('div');
+      extBG    = document.createElement('div');
+      extHov   = document.createElement('div');
+      extHovC  = document.createElement('span');
+      extHovO  = document.createElement('span');
+
+      ext.className      = 'extContain';
+      extClose.className = 'extCloseArrow';
+      extOpen.className  = 'extOpenArrow';
+      extBG.className    = 'extBG';
+      extHov.className   = 'extHover';
+      extHovC.className  = 'closeExt';
+      extHovO.className  = 'openExt';
+
+      extOpen.textContent = 'open';
+      extHovC.textContent = 'Close Extended Code View';
+      extHovO.textContent = 'Extend Code View';  
+
+      extOpen.onmouseover = function() {
+        ext.style.opacity = '1';
+      };
+
+      extOpen.onmouseout = function() {
+        ext.style.opacity = '0';
+      };
+
+      extOpen.onclick = function() {
+
+        DEBUG && that.debug.start('extCodeView');
+
+        /**
+         * @type {number}
+         * @private
+         */
+        var newWidth;
+
+        newWidth = String(code.style.width);
+        newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
+        newWidth = Number(newWidth);
+
+        if (extOpen.textContent === 'close') {
+
+          extClose.style.opacity = '0.0';
+
+          ext.style.right = '-4px';
+
+          newWidth -= overflow;
+          code.style.width = newWidth + 'px';
+
+          setTimeout(function() {
+            extOpen.style.opacity = '0.8';
+            setTimeout(function() {
+              extOpen.textContent = 'open';
+              extHovC.style.display = 'none';
+              extHovO.style.display = 'block';
+            }, 600);
+          }, 400);
+        }
+        else if (extOpen.textContent === 'open') {
+
+          extOpen.style.opacity = '0.0';
+
+          ext.style.right = '-' + (4 + overflow) + 'px';
+
+          newWidth += overflow;
+          code.style.width = newWidth + 'px';
+
+          setTimeout(function() {
+            extClose.style.opacity = '0.8';
+            setTimeout(function() {
+              extOpen.textContent = 'close';
+              extHovO.style.display = 'none';
+              extHovC.style.display = 'block';
+            }, 600);
+          }, 400);
+        }
+      };
+
+      ext.appendChild(extClose);
+      ext.appendChild(extOpen);
+      ext.appendChild(extBG);
+      extHov.appendChild(extHovC);
+      extHov.appendChild(extHovO);
+
+      div.appendChild(ext);
+      div.appendChild(extHov);
     }
 
     /**
      * ---------------------------------------------
      * Private Method (appendOutput)
      * ---------------------------------------------
-     * appends the question's solution output
-     * param: the question's solution output (string)
-     * @type {function(string)}
+     * @desc Appends the solution's output for this question.
+     * @param {string} output - The solution's output.
      * @private
      */
     function appendOutput(output) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendOutput()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        typeof output === 'string',
-        'FAIL: AppendQuestions.appendOutput() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p;
-      // Create elements
+
+      if (DEBUG) {
+        that.debug.start('appendOutput', output);
+        that.debug.args('appendOutput', output, 'string');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
       div = document.createElement('div');
       h3  = document.createElement('h3');
       p   = document.createElement('p');
-      // Add classes
+
       div.className = 'output';
-      // Add content
+
       h3.textContent = 'Output:';
+
       p.innerHTML    = output;
-      // Append elements
-      q.appendChild(div);
+
       div.appendChild(h3);
       div.appendChild(p);
+
+      root.appendChild(div);
     }
 
     /**
      * ---------------------------------------------
      * Private Method (appendLinks)
      * ---------------------------------------------
-     * appends the question links
-     * param: the question links (array of objects)
-     * @type {function(Array.<Object>)}
+     * @desc Appends the question's links.
+     * @param {links} links - The question's links.
      * @private
      */
     function appendLinks(links) {
-      // Debuggers
-      DEBUG.AppendQuestions.call && console.log(
-        'CALL: AppendQuestions.appendLinks()'
-      );
-      DEBUG.AppendQuestions.fail && console.assert(
-        Array.isArray(links),
-        'FAIL: AppendQuestions.appendLinks() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var div, h3, p, linksLen, i, a;
-      // Create elements
+
+      if (DEBUG) {
+        that.debug.start('appendOutput', links);
+        that.debug.args('appendOutput', links, 'array');
+      }
+
+      /**
+       * @type {elem}
+       * @private
+       */
+      var div;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var h3;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var p;
+
       div = document.createElement('div');
       h3  = document.createElement('h3');
       p   = document.createElement('p');
-      // Add classes
+
       div.className = 'links';
-      // Add content
+
       h3.textContent = 'Links:';
-      // Append elements
-      q.appendChild(div);
+
       div.appendChild(h3);
       div.appendChild(p);
-      // Save link length
-      linksLen = links.length;
-      // Create and append links
-      for (i=0; i<linksLen; i++) {
+
+      links.forEach(function(/** Object */ l) {
+        /**
+         * @type {elem}
+         * @private
+         */
+        var a;
+
         a = document.createElement('a');
-        a.href = links[i].href;
+        a.href = l.href;
         a.target = '_blank';
-        a.textContent = links[i].name;
+        a.textContent = l.name;
         p.appendChild(a);
-      }
+      });
+
+      root.appendChild(div);
     }
   };

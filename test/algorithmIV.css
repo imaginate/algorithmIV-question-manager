@@ -560,7 +560,7 @@ body {
   position:absolute;
   top:25px;
   right:-4px;
-  display:none;
+  display:block;
   width:55px;
   height:35px;
   border-right:solid 2px #d8f0fa;

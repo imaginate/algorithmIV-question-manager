@@ -130,16 +130,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (Question.codeWidth)
-     * -----------------------------------------------
-     * @desc The amount of width overflow for this question's code element.
-     * @type {number}
-     * @private
-     */
-    var overflow;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
@@ -180,7 +170,6 @@
         descr   : descr,
         solution: solution,
         output  : output,
-        overflow: overflow,
         elem    : elem
       };
 
