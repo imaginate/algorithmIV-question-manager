@@ -21,7 +21,7 @@
     this.debug = (DEBUG) ? new Debug('Config') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'config', config);
+      this.debug.group('init', 'coll', 'config= $$', config);
       this.debug.start('init', config);
       this.debug.args('init', config, 'object');
     }

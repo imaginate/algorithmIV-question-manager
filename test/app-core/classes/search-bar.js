@@ -18,7 +18,7 @@
     this.debug = (DEBUG) ? new Debug('SearchBar') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'sources', sources, 'categories', categories);
+      this.debug.group('init', 'coll', 'sources= $$, categories= $$', sources, categories);
       this.debug.start('init', sources, categories);
       this.debug.args('init', sources, 'object', categories, 'object');
     }

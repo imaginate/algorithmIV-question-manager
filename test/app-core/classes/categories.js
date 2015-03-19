@@ -38,7 +38,7 @@
     this.debug = (DEBUG) ? new Debug('Categories') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'categories', categories);
+      this.debug.group('init', 'coll', 'categories= $$', categories);
       this.debug.start('init', categories);
       this.debug.args('init', categories, 'object');
     }

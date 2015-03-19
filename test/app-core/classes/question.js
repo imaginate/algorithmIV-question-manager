@@ -179,6 +179,7 @@
 
 
     // Set the properties
+
     url = '';
     if (typeof question.url === 'string' && question.url) {
       url = question.url.toLowerCase();
@@ -221,11 +222,11 @@
         try {
           output = String( question.solution() );
         }
-        catch (e) {
-          args = [ 'init' ];
-          args.push('Question id %i\'s solution produced an error, %O.');
-          args.push(id, e);
-          this.debug.misc(args);
+        catch (errorMsg) {
+          args = [ 'init', false ];
+          args.push('The question\'s solution produced an error. questionID= $$, error= $$');
+          args.push(id, errorMsg);
+          this.debug.fail(args);
 
           output = '';
         }

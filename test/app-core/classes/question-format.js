@@ -24,7 +24,7 @@
     this.debug = (DEBUG) ? new Debug('QuestionFormat') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'id', question.id, 'question', question);
+      this.debug.group('init', 'coll', 'id= $$, question= $$', question.id, question);
       this.debug.start('init', question);
       this.debug.args('init', question, 'object');
     }

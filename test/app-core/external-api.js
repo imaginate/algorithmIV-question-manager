@@ -44,9 +44,9 @@
     if (!_initialized) {
 
       if (DEBUG) {
-        args = [ 'init','open' ];
-        args.push('config', config, 'sources', sources);
-        args.push('categories', categories, 'questions', questions);
+        msg = 'config= $$, sources= $$, categories= $$, questions= $$';
+        args = [ 'init', 'open', msg ];
+        args.push(config, sources, categories, questions);
         debug.group(args);
       }
 

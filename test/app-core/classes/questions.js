@@ -18,7 +18,7 @@
     this.debug = (DEBUG) ? new Debug('Questions') : null;
 
     if (DEBUG) {
-      this.debug.group('init', 'coll', 'questions', questions);
+      this.debug.group('init', 'coll', 'questions= $$', questions);
       this.debug.start('init', questions, outputConfig);
       this.debug.args('init', questions, 'object', outputConfig, 'boolean');
     }
@@ -87,8 +87,14 @@
 
       // Set list
       list = questions.map(function(/** Object */ question, /** number */ i) {
-        ++i;
-        return new Question(question, i, outputConfig);
+        /**
+         * @type {number}
+         * @private
+         */
+        var id;
+
+        id = i + 1;
+        return new Question(question, id, outputConfig);
       });
 
       // Set data
