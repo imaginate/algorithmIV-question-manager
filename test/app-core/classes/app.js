@@ -64,6 +64,15 @@
     this.elems = new AppElems();
 
     /**
+     * ----------------------------------------------- 
+     * Public Property (App.vals)
+     * -----------------------------------------------
+     * @desc Saves the current values for this app.
+     * @type {AppVals}
+     */
+    this.vals = new AppVals();
+
+    /**
      * ---------------------------------------------------
      * Public Property (App.config)
      * ---------------------------------------------------
