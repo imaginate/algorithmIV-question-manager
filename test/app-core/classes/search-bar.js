@@ -2,7 +2,7 @@
    * -----------------------------------------------------
    * Public Class (SearchBar)
    * -----------------------------------------------------
-   * @desc The available searchBar for each question.
+   * @desc The search bar's values and elements for this app.
    * @param {Sources} sources - The app's sources.
    * @param {Categories} categories - The app's categories.
    * @constructor
@@ -288,7 +288,10 @@
    */
   SearchBar.prototype.setMainElems = function() {
 
-    DEBUG && this.debug.start('setMainElems');
+    if (DEBUG) {
+      this.debug.group('setMainElems', 'coll');
+      this.debug.start('setMainElems');
+    }
 
     /**
      * @type {boolean}
@@ -394,6 +397,8 @@
 
     this.elems.subCat.id = 'aIV-subCat';
     this.elems.subCat.className = 'showSubCat';
+
+    DEBUG && this.debug.group('setMainElems', 'end');
   };
 
   /**
@@ -404,7 +409,10 @@
    */
   SearchBar.prototype.setOptElems = function() {
 
-    DEBUG && this.debug.start('setOptElems');
+    if (DEBUG) {
+      this.debug.group('setOptElems', 'coll');
+      this.debug.start('setOptElems');
+    }
 
     /**
      * @type {boolean}
@@ -574,6 +582,8 @@
         this.elems.subCat.appendChild(elem);
       }, this);
     }
+
+    DEBUG && this.debug.group('setOptElems', 'end');
   };
 
   /**
