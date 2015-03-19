@@ -25,6 +25,7 @@
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
  * @typedef {*} val
+ * @typedef {number} num
  * @typedef {HTMLElement} elem
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
