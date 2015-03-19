@@ -29,9 +29,15 @@
      */
     this.debug = (DEBUG) ? new Debug('App') : null;
 
-    var args;
+    var args, msg;
     if (DEBUG) {
+      msg = 'config= $$, sources= $$, categories= $$, questions= $$';
+      args = [ 'init', 'open', msg ];
+      args.push(config, sources, categories, questions);
+      this.debug.group(args);
+
       this.debug.start('init', config, sources, categories, questions);
+
       args = [ 'init' ];
       args.push(config, 'object', sources, 'object');
       args.push(categories, 'object', questions, 'object');
@@ -110,6 +116,9 @@
                                         this.questions.len);
       this.searchBar.setToDefaults(this.config.searchBar.defaults);
     }
+
+
+    DEBUG && this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
@@ -117,14 +126,60 @@
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.)
+   * Public Method (App.prototype.setupDisplay)
    * -----------------------------------------------
-   * @desc .
+   * @desc Sets up the display for the app.
    * @type {function()}
    */
-  App.prototype.method = function() {
+  App.prototype.setupDisplay = function() {
 
-    DEBUG && this.debug.start('');
+    if (DEBUG) {
+     this.debug.group('setupDisplay', 'open');
+     this.debug.start('setupDisplay');
+    }
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var flip;
+
+    // Prepare and show the full app
+    this.elems.appendMain();
+    if ( this.flags.get('initArgs') ) {
+      this.elems.appendNav();
+      this.elems.setScrollbarHeight();
+      this.elems.setCodeListHeight();
+      this.searchBar.setMainElems();
+      this.searchBar.setOptElems();
+      this.searchBar.appendElems();
+      this.questions.setFormats();
+      this.questions.appendElems();
+      this.elems.hold.display = 'none';
+      flip = (this.config.searchBar.defaults.get('order') === 'desc');
+      this.updateDisplay(flip);
+    }
+    else {
+      this.elems.appendError();
+    }
+
+    DEBUG && this.debug.group('setupDisplay', 'end');
+  };
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.prototype.updateDisplay)
+   * -----------------------------------------------
+   * @desc Show the current matching questions for the app.
+   * @param {boolean=} flip - Indicates that the questions order
+   *   should be flipped.
+   */
+  App.prototype.setupDisplay = function(flip) {
+
+    if (DEBUG) {
+     this.debug.group('updateDisplay', 'coll');
+     this.debug.start('updateDisplay');
+    }
 
     /**
      * @type {string}
@@ -132,5 +187,31 @@
      */
     var v;
 
-    //
+    // Hide the questions while the updates occur
+    this.elems.main.style.opacity = '0';
+
+    // Wrap logic in timeout to allow css transitions to complete
+    setTimeout(function() {
+
+      // Show or hide the prev and next nav elements
+      this.elems.nav.style.display = ( (this.searchBar.vals.view === 'all') ?
+          'none' : (this.searchBar.vals.view === 'ten' && .length > 10) ?
+            'block' : (this.searchBar.vals.view === 'one' && .length > 1) ?
+              'block' : 'none'
+      );
+
+      // Check if the questions order should be flipped
+      if (!!flip) {
+        // ADD FLIP LOGIC HERE ****
+      }
+
+      // Display the correct questions
+      // ADD DISPLAY LOGIC HERE *****
+
+      // Bring the question's main element back into focus
+      setTimeout(function() {
+        this.elems.main.style.opacity = '1';
+        DEBUG && this.debug.group('updateDisplay', 'end');
+      }, 20);
+    }, 500);
   };

@@ -347,7 +347,7 @@
       if (app.searchBar.vals.order != event.target.value) {
         DEBUG && debug.group('searchBar.order.onchange', 'coll');
         app.searchBar.vals.order = event.target.value;
-        app.updateDisplay();
+        app.updateDisplay(true);
         DEBUG && debug.group('searchBar.order.onchange', 'end');
       }
     };

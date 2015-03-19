@@ -30,54 +30,29 @@
    */
   _core.init = function(config, sources, categories, questions) {
 
-    // debugging vars
+    // Debugging
     var args, msg;
     if (DEBUG) {
       args = [ 'init' ];
       args.push(config, 'object', sources, 'object');
       args.push(categories, 'object', questions, 'object');
       debug.args(args);
+
       msg = 'A second attempt to init this app occurred.';
       debug.fail('init', !_initialized, msg);
     }
 
+    // Check if app has been initialized
     if (!_initialized) {
-
-      if (DEBUG) {
-        msg = 'config= $$, sources= $$, categories= $$, questions= $$';
-        args = [ 'init', 'open', msg ];
-        args.push(config, sources, categories, questions);
-        debug.group(args);
-      }
 
       _initialized = true;
 
-      // Setup the app properties
+      // Setup the app
       app = new App(config, sources, categories, questions);
 
       // Start the app
       document.addEventListener('DOMContentLoaded', function() {
-
-        app.elems.appendMain();
-
-        if ( app.flags.get('initArgs') ) {
-
-          app.elems.appendNav();
-          app.elems.setScrollbarHeight();
-          app.elems.setCodeListHeight();
-          app.searchBar.setMainElems();
-          app.searchBar.setOptElems();
-          app.searchBar.appendElems();
-          app.questions.setFormats();
-          app.questions.appendElems();
-          // --> DisplayQuestions.assembleQuestions();
-        }
-        else {
-          // Show error message
-          app.elems.appendError();
-        }
-
-        DEBUG && debug.group('init', 'end');
+        app.setupDisplay();
       });
     }
   };
