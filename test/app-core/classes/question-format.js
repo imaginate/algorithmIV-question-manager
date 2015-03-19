@@ -189,7 +189,7 @@
     solution = {};
     if (question.solution) {
 
-      code = new PrettyCode(solution);
+      code = new PrettyCode(question.solution);
 
       solution.code = String(code.result);
       solution.height = code.lineCount * app.elems.code.li.height;
