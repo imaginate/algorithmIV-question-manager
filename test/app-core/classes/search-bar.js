@@ -329,17 +329,41 @@
     this.elems.view.id = 'aIV-view';
     this.elems.view.className = 'showView';
     this.elems.view.value = this.vals.view;
+    this.elems.view.onchange = function(event) {
+      if (app.searchBar.vals.view != event.target.value) {
+        DEBUG && debug.group('searchBar.view.onchange', 'coll');
+        app.searchBar.vals.view = event.target.value;
+        app.updateDisplay();
+        DEBUG && debug.group('searchBar.view.onchange', 'end');
+      }
+    };
 
     // Set order search element
     this.elems.order = document.createElement('select');
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
     this.elems.order.value = this.vals.order;
+    this.elems.order.onchange = function(event) {
+      if (app.searchBar.vals.order != event.target.value) {
+        DEBUG && debug.group('searchBar.order.onchange', 'coll');
+        app.searchBar.vals.order = event.target.value;
+        app.updateDisplay();
+        DEBUG && debug.group('searchBar.order.onchange', 'end');
+      }
+    };
 
     // Set stage search element
     if (stage) {
       this.elems.stage = document.createElement('select');
       this.elems.stage.value = this.vals.stage;
+      this.elems.stage.onchange = function(event) {
+        if (app.searchBar.vals.stage != event.target.value) {
+          DEBUG && debug.group('searchBar.stage.onchange', 'coll');
+          app.searchBar.vals.stage = event.target.value;
+          app.updateDisplay();
+          DEBUG && debug.group('searchBar.stage.onchange', 'end');
+        }
+      };
     }
     else {
       this.elems.stage = document.createElement('input');
@@ -353,6 +377,14 @@
     if (source && app.sources.len) {
       this.elems.source = document.createElement('select');
       this.elems.source.value = this.vals.source;
+      this.elems.source.onchange = function(event) {
+        if (app.searchBar.vals.source != event.target.value) {
+          DEBUG && debug.group('searchBar.source.onchange', 'coll');
+          app.searchBar.vals.source = event.target.value;
+          app.updateDisplay();
+          DEBUG && debug.group('searchBar.source.onchange', 'end');
+        }
+      };
     }
     else {
       this.elems.source = document.createElement('input');
@@ -367,6 +399,15 @@
 
       this.elems.mainCat = document.createElement('select');
       this.elems.mainCat.value = this.vals.mainCat;
+      this.elems.mainCat.onchange = function(event) {
+        if (app.searchBar.vals.mainCat != event.target.value) {
+          DEBUG && debug.group('searchBar.mainCat.onchange', 'coll');
+          app.searchBar.vals.mainCat = event.target.value;
+          app.searchBar.updateSubCatOpts();
+          app.updateDisplay();
+          DEBUG && debug.group('searchBar.mainCat.onchange', 'end');
+        }
+      };
 
       if (subCat) {
         pass = app.categories.ids.some(function(/** string */ id) {
@@ -375,20 +416,31 @@
         if (pass) {
           this.elems.subCat = document.createElement('select');
           this.elems.subCat.value = this.vals.subCat;
+          this.elems.subCat.onchange = function(event) {
+            if (app.searchBar.vals.subCat != event.target.value) {
+              DEBUG && debug.group('searchBar.subCat.onchange', 'coll');
+              app.searchBar.vals.subCat = event.target.value;
+              app.updateDisplay();
+              DEBUG && debug.group('searchBar.subCat.onchange', 'end');
+            }
+          };
         }
       }
       else {
         pass = false;
       }
       if (!pass) {
+        this.elems.subCat = document.createElement('input');
         this.elems.subCat.type = 'hidden';
         this.elems.subCat.value = 'all';
       }
     }
     else {
+      this.elems.mainCat = document.createElement('input');
       this.elems.mainCat.type = 'hidden';
       this.elems.mainCat.value = 'all';
 
+      this.elems.subCat = document.createElement('input');
       this.elems.subCat.type = 'hidden';
       this.elems.subCat.value = 'all';
     }

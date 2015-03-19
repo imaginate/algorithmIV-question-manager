@@ -68,7 +68,6 @@
           app.searchBar.setMainElems();
           app.searchBar.setOptElems();
           app.searchBar.appendElems();
-          // --> AddEvents.init();
           app.questions.setFormats();
           app.questions.appendElems();
           // --> DisplayQuestions.assembleQuestions();
