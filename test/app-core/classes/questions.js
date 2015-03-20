@@ -27,7 +27,7 @@
      * ----------------------------------------------- 
      * Public Property (Questions.len)
      * -----------------------------------------------
-     * @desc The number of questions supplied to this app istance.
+     * @desc The number of questions supplied to this app instance.
      * @type {number}
      */
     this.len = 0;
