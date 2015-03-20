@@ -194,19 +194,23 @@
      * @type {string}
      * @private
      */
-    var v;
+    var view;
 
     // Hide the questions while the updates occur
     this.elems.main.style.opacity = '0';
+
+    // Update the current matching question ids
+    this.updateValues();
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      this.elems.nav.style.display = ( (this.searchBar.vals.view === 'all') ?
-          'none' : (this.searchBar.vals.view === 'ten' && .length > 10) ?
-            'block' : (this.searchBar.vals.view === 'one' && .length > 1) ?
-              'block' : 'none'
+      view = this.searchBar.vals.view;
+      this.elems.nav.style.display = ( (view === 'all') ?
+        'none' : (view === 'ten' && this.vals.get('len') > 10) ?
+          'block' : (view === 'one' && this.vals.get('len') > 1) ?
+            'block' : 'none'
       );
 
       // Check if the questions order should be flipped
@@ -223,4 +227,167 @@
         DEBUG && this.debug.group('updateDisplay', 'end');
       }, 20);
     }, 500);
+  };
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.prototype.updateValues)
+   * -----------------------------------------------
+   * @desc Updates the current selected values for the app.
+   * @type {function()}
+   */
+  App.prototype.updateValues = function() {
+
+    DEBUG && this.debug.start('updateValues');
+
+    /**
+     * @type {?nums}
+     * @private
+     */
+    var stage;
+    /**
+     * @type {?nums}
+     * @private
+     */
+    var source;
+    /**
+     * @type {?nums}
+     * @private
+     */
+    var mainCat;
+    /**
+     * @type {?nums}
+     * @private
+     */
+    var subCat;
+    /**
+     * @type {num}
+     * @private
+     */
+    var len;
+    /**
+     * @type {num}
+     * @private
+     */
+    var i;
+    /**
+     * @type {nums}
+     * @private
+     */
+    var newIds;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var pass;
+
+    // Save the current values
+    stage   = this.searchBar.vals.stage;
+    source  = this.searchBar.vals.source;
+    mainCat = this.searchBar.vals.mainCat;
+    subCat  = this.searchBar.vals.subCat;
+
+    // Save the matching ids
+    stage   = (stage   === 'all') ? null : this.searchBar.ques.stage[ stage ];
+    source  = (source  === 'all') ? null : this.sources.get(source).get('ids');
+    mainCat = (mainCat === 'all') ? null : this.categories.get(mainCat).get('ids');
+    subCat  = (subCat  === 'all') ? null : this.categories.get(subCat).get('ids');
+
+    // Copy the arrays or add empty objects
+    if (stage) {
+      stage = (stage.length) ? stage.slice(0) : { length: 0 };
+    }
+    if (source) {
+      source = (source.length) ? source.slice(0) : { length: 0 };
+    }
+    if (mainCat) {
+      mainCat = (mainCat.length) ? mainCat.slice(0) : { length: 0 };
+    }
+    if (subCat) {
+      subCat = (subCat.length) ? subCat.slice(0) : { length: 0 };
+    }
+
+    // Check for empty arrays
+    if ((stage   && !stage.length)   ||
+        (source  && !source.length)  ||
+        (mainCat && !mainCat.length) ||
+        (subCat  && !subCat.length)) {
+      this.vals.reset([], 0);
+      return;
+    }
+
+    // Setup needed vars
+    newIds = [];
+    len = this.questions.len;
+    i = 0;
+
+    // Get the current matching question ids
+    while (true) {
+      ++i;
+      pass = true;
+
+      if (stage) {
+        if (!stage.length) {
+          break;
+        }
+        if (stage[0] === i) {
+          stage.shift();
+        }
+        else {
+          pass = false;
+        }
+      }
+
+      if (source) {
+        if (!source.length) {
+          break;
+        }
+        if (source[0] === i) {
+          source.shift();
+        }
+        else {
+          pass = false;
+        }
+      }
+
+      if (mainCat) {
+        if (!mainCat.length) {
+          break;
+        }
+        if (mainCat[0] === i) {
+          mainCat.shift();
+        }
+        else {
+          pass = false;
+        }
+      }
+
+      if (subCat) {
+        if (!subCat.length) {
+          break;
+        }
+        if (subCat[0] === i) {
+          subCat.shift();
+        }
+        else {
+          pass = false;
+        }
+      }
+
+      if (pass) {
+        newIds.push(i);
+      }
+
+      if (i === len) {
+        break;
+      }
+    }
+
+    // Check if results should be reversed
+    if (this.searchBar.vals.order === 'desc') {
+      newIds.reverse();
+    }
+
+    // Update the values
+    this.vals.reset(newIds, 0);
   };
