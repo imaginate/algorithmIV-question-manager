@@ -369,6 +369,7 @@
       this.elems.stage = document.createElement('input');
       this.elems.stage.type = 'hidden';
       this.elems.stage.value = 'all';
+      this.vals.stage = 'all';
     }
     this.elems.stage.id = 'aIV-stage';
     this.elems.stage.className = 'showStage';
@@ -390,6 +391,7 @@
       this.elems.source = document.createElement('input');
       this.elems.source.type = 'hidden';
       this.elems.source.value = 'all';
+      this.vals.source = 'all';
     }
     this.elems.source.id = 'aIV-source';
     this.elems.source.className = 'showSource';
@@ -433,16 +435,19 @@
         this.elems.subCat = document.createElement('input');
         this.elems.subCat.type = 'hidden';
         this.elems.subCat.value = 'all';
+        this.vals.subCat = 'all';
       }
     }
     else {
       this.elems.mainCat = document.createElement('input');
       this.elems.mainCat.type = 'hidden';
       this.elems.mainCat.value = 'all';
+      this.vals.mainCat = 'all';
 
       this.elems.subCat = document.createElement('input');
       this.elems.subCat.type = 'hidden';
       this.elems.subCat.value = 'all';
+      this.vals.subCat = 'all';
     }
     this.elems.mainCat.id = 'aIV-mainCat';
     this.elems.mainCat.className = 'showMainCat';
