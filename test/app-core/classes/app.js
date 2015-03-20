@@ -215,7 +215,7 @@
 
       // Check if the questions order should be flipped
       if (!!flip) {
-        // ADD FLIP LOGIC HERE ****
+        this.questions.reverseElems();
       }
 
       // Display the correct questions

@@ -171,3 +171,43 @@
       }
     });
   };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.reverseElems)
+   * -----------------------------------------------------
+   * @desc Appends the elements for all of the questions in the reverse order.
+   */
+  Questions.prototype.reverseElems = function() {
+
+    DEBUG && this.debug.start('reverseElems');
+
+    /**
+     * @type {?questions}
+     * @private
+     */
+    var list;
+    /**
+     * @type {num}
+     * @private
+     */
+    var i;
+
+    list = this.list();
+
+    if (app.searchBar.vals.order === 'asc') {
+      list.forEach(function(/** Question */ question) {
+        if (question) {
+          app.elems.ques.appendChild(question.elem.root);
+        }
+      });
+    }
+    else {
+      i = this.len;
+      while (i) {
+        if (list[i]) {
+          app.elems.ques.appendChild(list[i].elem.root);
+        }
+      }
+    }
+  };
