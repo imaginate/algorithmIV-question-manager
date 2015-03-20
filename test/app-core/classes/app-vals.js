@@ -30,6 +30,17 @@
 
     /**
      * ----------------------------------------------- 
+     * Protected Property (AppVals.len)
+     * -----------------------------------------------
+     * @desc The number of questions that match the current search
+     *   criteria.
+     * @type {num}
+     * @private
+     */
+    var len;
+
+    /**
+     * ----------------------------------------------- 
      * Protected Property (AppVals.index)
      * -----------------------------------------------
      * @desc The current index being displayed (for view 'one' and 'ten').
@@ -52,6 +63,7 @@
       /** @private */
       var values = {
         ids  : ids,
+        len  : len,
         index: index
       };
 
@@ -82,10 +94,10 @@
       var checkIds;
 
       // Check newIds
-      checkIds = ( ( Array.isArray(newIds) ) ?
+      checkIds = ( (Array.isArray(newIds) && newIds.length) ?
         newIds.every(function(/** number */ val) {
           return (typeof val === 'number');
-        }) : false
+        }) : Array.isArray(newIds)
       );
       if (!checkIds) {
         if (DEBUG) {
@@ -101,7 +113,8 @@
       }
 
       // Reset the values
-      ids = newIds.slice(0);
+      ids = (newIds.length) ? newIds.slice(0) : [];
+      len = ids.length;
       index = newIndex;
     };
 
@@ -197,6 +210,7 @@
 
     // Setup the properties
     ids = [];
+    len = 0;
     index = 0;
   };
 
