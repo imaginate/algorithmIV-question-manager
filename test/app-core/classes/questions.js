@@ -3,8 +3,9 @@
    * Public Class (Questions)
    * -----------------------------------------------------
    * @desc The questions for this app.
-   * @param {?Object} questions - The user's questions.
-   * @param {boolean} outputConfig - The config settings for output.
+   * @param {objects} questions - The user's questions.
+   * @param {boolean} outputConfig - The config setting for formatting
+   *   the output of a question's solution.
    * @constructor
    */
   var Questions = function(questions, outputConfig) {
@@ -81,34 +82,31 @@
       return result;
     };
 
+    
+    // Set the list
+    list = questions.map(function(/** Object */ question, /** number */ i) {
+      /**
+       * @type {number}
+       * @private
+       */
+      var id;
 
-    // Set the properties
-    if ( Array.isArray(questions) ) {
+      id = i + 1;
+      return new Question(question, id, outputConfig);
+    });
 
-      // Set list
-      list = questions.map(function(/** Object */ question, /** number */ i) {
-        /**
-         * @type {number}
-         * @private
-         */
-        var id;
+    // Set the data
+    data = {};
+    list.forEach(function(/** Object */ question) {
+      if (question.url) {
+        data[question.url] = question;
+      }
+    });
 
-        id = i + 1;
-        return new Question(question, id, outputConfig);
-      });
+    // Add blank to beginning of list so ids and indexes match
+    list.unshift(null);
 
-      // Set data
-      data = {};
-      list.forEach(function(/** Object */ question) {
-        if (question.url) {
-          data[question.url] = question;
-        }
-      });
-
-      // Add blank to beginning of list so ids and indexes match
-      list.unshift(null);
-    }
-    // Set len
+    // Set the len
     this.len = list.length || 0;
     if (this.len) {
       --this.len;
