@@ -2,7 +2,7 @@
    * ---------------------------------------------------
    * Global Variable (aIV)
    * ---------------------------------------------------
-   * @desc Holds the publically available api
+   * @desc Holds the public API for aIV's apps, tools, and libraries.
    * @struct
    * @global
    */
@@ -12,11 +12,8 @@
    * ---------------------------------------------------
    * Global Method (aIV.app)
    * ---------------------------------------------------
-   * @desc Initializes this app
-   * @param {?Object} config - The user's config settings.
-   * @param {?hashMap} sources - The user's sources.
-   * @param {?Object} categories - The user's categories.
-   * @param {?Object} questions - The user's questions.
+   * @desc Initializes the aIV question management app.
+   * @param {?Object} settings - The app's settings.
    * @global
    */
-  aIV.app = core.init(config, sources, categories, questions);
+  aIV.app = core.init(settings);

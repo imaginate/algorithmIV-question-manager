@@ -23,29 +23,41 @@
    * Public Method (_core.init)
    * -----------------------------------------------------
    * @desc Initializes the app.
-   * @param {?Object} config - The user's config settings.
-   * @param {?hashMap} sources - The user's sources.
-   * @param {?Object} categories - The user's categories.
-   * @param {?Object} questions - The user's questions.
+   * @param {?Object} settings - The app's settings.
    */
-  _core.init = function(config, sources, categories, questions) {
+  _core.init = function(settings) {
 
     // Debugging
-    var args, msg;
+    var msg;
     if (DEBUG) {
-      args = [ 'init' ];
-      args.push(config, 'object', sources, 'object');
-      args.push(categories, 'object', questions, 'object');
-      debug.args(args);
-
-      msg = 'A second attempt to init this app occurred.';
+      debug.args('init', settings);
+      msg = 'Error: A second attempt to init this app occurred.';
       debug.fail('init', !_initialized, msg);
     }
+
+    /* @type {?Object} */
+    var config;
+    /* @type {?hashMap} */
+    var sources;
+    /* @type {?Object} */
+    var categories;
+    /* @type {?Object} */
+    var questions;
 
     // Check if app has been initialized
     if (!_initialized) {
 
+      // Save the init of this app to prevent second init
       _initialized = true;
+
+      // Setup the app arguments
+      config  = settings.config || settings.configuration || null;
+      sources = settings.sources || settings.source || null;
+      categories = settings.categories || settings.category || null;
+      questions  = settings.questions  || settings.question || null;
+      if (questions && (!Array.isArray(questions) || !questions.length)) {
+        questions = null;
+      }
 
       // Setup the app
       app = new App(config, sources, categories, questions);
