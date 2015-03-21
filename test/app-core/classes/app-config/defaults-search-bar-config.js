@@ -2,11 +2,11 @@
    * -----------------------------------------------------
    * Public Class (DefaultsSearchBarConfig)
    * -----------------------------------------------------
-   * @desc The on-load search defaults for this app.
+   * @desc The onLoad search defaults for this app.
    * @param {Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search names.
-   * @param {Object} ids - The available search ids.
-   * @param {number} quesLen - The number of user's questions.
+   * @param {Object} names - The available search option names.
+   * @param {Object} ids - The available sub category ids.
+   * @param {number} quesLen - The number of questions for this app.
    * @constructor
    */
   var DefaultsSearchBarConfig = function(defaults, names, ids, quesLen) {
