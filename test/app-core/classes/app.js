@@ -12,25 +12,28 @@
   var App = function(config, sources, categories, questions) {
 
     /**
-     * @type {(vals|boolean)}
+     * @type {boolean}
      * @private
      */
     var pass;
 
     // Check the user inputs
-    pass = [ config, sources, categories, questions ];
-    pass = checkType(pass, 'object');
+    pass = !!questions;
 
     /**
      * ---------------------------------------------------
      * Private Property (App.debug)
      * ---------------------------------------------------
+     * @desc The Debug instance for the App class.
      * @type {?Debug}
      */
     this.debug = (DEBUG) ? new Debug('App') : null;
 
     var args, msg;
     if (DEBUG) {
+      msg = 'Error: No questions were provided to this app\'s init.';
+      this.debug.fail('init', pass, msg);
+
       msg = 'config= $$, sources= $$, categories= $$, questions= $$';
       args = [ 'init', 'open', msg ];
       args.push(config, sources, categories, questions);
@@ -165,7 +168,7 @@
       this.questions.setFormats();
       this.questions.appendElems();
       this.elems.hold.display = 'none';
-      flip = (this.config.searchBar.defaults.get('order') === 'desc');
+      flip = (this.searchBar.vals.order === 'desc');
       this.updateDisplay(flip);
     }
     else {
@@ -183,7 +186,7 @@
    * @param {boolean=} flip - Indicates that the questions order
    *   should be flipped.
    */
-  App.prototype.setupDisplay = function(flip) {
+  App.prototype.updateDisplay = function(flip) {
 
     if (DEBUG) {
      this.debug.group('updateDisplay', 'coll');
@@ -191,16 +194,46 @@
     }
 
     /**
+     * @type {nums}
+     * @private
+     */
+    var oldIds;
+    /**
+     * @type {num}
+     * @private
+     */
+    var oldIndex;
+    /**
+     * @type {nums}
+     * @private
+     */
+    var newIds;
+    /**
+     * @type {num}
+     * @private
+     */
+    var newIndex;
+    /**
      * @type {string}
      * @private
      */
     var view;
 
-    // Hide the questions while the updates occur
-    this.elems.main.style.opacity = '0';
+    // Save the old matching question ids and index
+    oldIds = this.vals.get('len');
+    oldIds = (oldIds) ? this.vals.get('ids').slice(0) : null;
+    oldIndex = this.vals.get('index');
 
     // Update the current matching question ids
     this.updateValues();
+
+    // Save the new matching question ids and index
+    newIds = this.vals.get('len');
+    newIds = (newIds) ? this.vals.get('ids').slice(0) : null;
+    newIndex = this.vals.get('index');
+
+    // Hide the question's main element
+    this.elems.main.style.opacity = '0';
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
@@ -218,15 +251,17 @@
         this.questions.reverseElems();
       }
 
-      // Display the correct questions
-      // ADD DISPLAY LOGIC HERE *****
+      // Hide the old questions
+      this.questions.hideElems(oldIds, oldIndex);
 
-      // Bring the question's main element back into focus
-      setTimeout(function() {
-        this.elems.main.style.opacity = '1';
-        DEBUG && this.debug.group('updateDisplay', 'end');
-      }, 20);
-    }, 500);
+      // Show the new questions
+      this.questions.showElems(newIds, newIndex);
+
+      // Show the question's main element
+      this.elems.main.style.opacity = '1';
+        
+      DEBUG && this.debug.group('updateDisplay', 'end');
+    }, 520);
   };
 
   /**
@@ -241,22 +276,22 @@
     DEBUG && this.debug.start('updateValues');
 
     /**
-     * @type {?nums}
+     * @type {nums}
      * @private
      */
     var stage;
     /**
-     * @type {?nums}
+     * @type {nums}
      * @private
      */
     var source;
     /**
-     * @type {?nums}
+     * @type {nums}
      * @private
      */
     var mainCat;
     /**
-     * @type {?nums}
+     * @type {nums}
      * @private
      */
     var subCat;
@@ -389,5 +424,5 @@
     }
 
     // Update the values
-    this.vals.reset(newIds, 0);
+    this.vals.reset(newIds);
   };
