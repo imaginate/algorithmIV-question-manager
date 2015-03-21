@@ -194,7 +194,7 @@
     }
 
     /**
-     * @type {nums}
+     * @type {?nums}
      * @private
      */
     var oldIds;
@@ -204,7 +204,7 @@
      */
     var oldIndex;
     /**
-     * @type {nums}
+     * @type {?nums}
      * @private
      */
     var newIds;
@@ -347,7 +347,7 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.vals.reset([], 0);
+      this.vals.reset([]);
       return;
     }
 
