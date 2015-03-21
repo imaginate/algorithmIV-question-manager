@@ -124,6 +124,7 @@
    * Public Method (Questions.prototype.setFormats)
    * -----------------------------------------------------
    * @desc Sets the format for all of the questions.
+   * @type {function()}
    */
   Questions.prototype.setFormats = function() {
 
@@ -157,6 +158,7 @@
    * Public Method (Questions.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Sets and appends the elements for all of the questions.
+   * @type {function()}
    */
   Questions.prototype.appendElems = function() {
 
@@ -175,6 +177,7 @@
    * Public Method (Questions.prototype.reverseElems)
    * -----------------------------------------------------
    * @desc Appends the elements for all of the questions in the reverse order.
+   * @type {function()}
    */
   Questions.prototype.reverseElems = function() {
 
@@ -207,5 +210,174 @@
           app.elems.ques.appendChild(list[i].elem.root);
         }
       }
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.hideElems)
+   * -----------------------------------------------------
+   * @desc Updates the display to 'none' for the provided questions.
+   * @param {?nums} ids - The previous active question ids.
+   * @param {num} index - The index of the ids to hide from view.
+   */
+  Questions.prototype.hideElems = function(ids, index) {
+
+    // Debugging
+    var msg;
+    if (DEBUG) {
+      this.debug.start('hideElems', ids, index);
+      this.debug.args('hideElems', ids, 'array', index, 'number');
+    }
+
+    /**
+     * @type {num}
+     * @private
+     */
+    var id;
+
+    if (index === -1) {
+
+      // No questions to hide (i.e. hide the empty message)
+      if (!ids) {
+        app.elems.none.style.display = 'none';
+        return;
+      }
+
+      // Hide all of the provided ids
+      ids.forEach(function(/** num */ id) {
+        if ( this.get(id) ) {
+          this.get(id).elem.root.style.display = 'none';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('hideElems', false, msg, id);
+        }
+      }, this);
+    }
+    else {
+
+      if (DEBUG) {
+        msg = 'Error: No ids were provided with a non-negative index. ids= $$';
+        this.debug.fail('hideElems', (!!ids && !!ids.length), msg, ids);
+      }
+
+      // Hide only the index of the provided ids
+      if (app.searchBar.vals.view === 'one') {
+        id = ids[index];
+        if ( this.get(id) ) {
+          this.get(id).elem.root.style.display = 'none';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('hideElems', false, msg, id);
+        }
+        return;
+      }
+
+      // Hide the index plus ten (or to the array end)
+      ids = ( (ids.length < (index + 11)) ?
+        ids.slice(index) : ids.slice(index, (index + 11))
+      );
+      ids.forEach(function(/** num */ id) {
+        if ( this.get(id) ) {
+          this.get(id).elem.root.style.display = 'none';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('hideElems', false, msg, id);
+        }
+      }, this);
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.showElems)
+   * -----------------------------------------------------
+   * @desc Updates the display to 'block' for the provided questions.
+   * @param {?nums} ids - The new active question ids.
+   * @param {num} index - The index of the ids to show.
+   */
+  Questions.prototype.showElems = function(ids, index) {
+
+    // Debugging
+    var msg;
+    if (DEBUG) {
+      this.debug.start('showElems', ids, index);
+      this.debug.args('showElems', ids, 'array', index, 'number');
+    }
+
+    /**
+     * @type {num}
+     * @private
+     */
+    var id;
+
+    if (index === -1) {
+
+      // Show no questions (i.e. show the empty message)
+      if (!ids) {
+        app.elems.none.style.display = 'block';
+        return;
+      }
+
+      // Show all of the provided ids
+      ids.forEach(function(/** num */ id, /** num */ i) {
+        if ( this.get(id) ) {
+          this.get(id).elem.root.className = ( (i % 2) ?
+            'question shade2' : 'question shade1'
+          );
+          this.get(id).elem.root.style.display = 'block';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('showElems', false, msg, id);
+        }
+      }, this);
+    }
+    else {
+
+      if (DEBUG) {
+        msg = 'Error: No ids were provided with a non-negative index. ids= $$';
+        this.debug.fail('showElems', (!!ids && !!ids.length), msg, ids);
+      }
+
+      // Show only the index of the provided ids
+      if (app.searchBar.vals.view === 'one') {
+        id = ids[index];
+        if ( this.get(id) ) {
+          this.get(id).elem.root.className = 'question shade1';
+          this.get(id).elem.root.style.display = 'block';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('showElems', false, msg, id);
+        }
+        return;
+      }
+
+      // Show the index plus ten (or to the array end)
+      ids = ( (ids.length < (index + 11)) ?
+        ids.slice(index) : ids.slice(index, (index + 11))
+      );
+      ids.forEach(function(/** num */ id, /** num */ i) {
+        if ( this.get(id) ) {
+          this.get(id).elem.root.className = ( (i % 2) ?
+            'question shade2' : 'question shade1'
+          );
+          this.get(id).elem.root.style.display = 'block';
+          return;
+        }
+        if (DEBUG) {
+          msg = 'Error: A question id was not found. id= $$';
+          this.debug.fail('showElems', false, msg, id);
+        }
+      }, this);
     }
   };
