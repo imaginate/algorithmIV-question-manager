@@ -135,33 +135,10 @@
     DEBUG && this.debug.start('appendMain');
 
     /**
-     * @type {string}
-     * @private
-     */
-    var errorMsg;
-    /**
      * @type {elem}
      * @private
      */
     var h1;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var errorDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var h2;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var p;
-
-    errorMsg = 'The web worker failed. Please wait ' +
-               'while the app is being loaded manually.';
 
     this.root = document.createElement('div');
     h1 = document.createElement('h1');
@@ -171,9 +148,6 @@
     this.ques = document.createElement('section');
     this.hold = document.createElement('img');
     this.none = document.createElement('section');
-    errorDiv = document.createElement('div');
-    h2 = document.createElement('h2');
-    p  = document.createElement('p');
 
     this.root.id = 'aIV';
     this.sel.id  = 'aIV-selections';
@@ -186,11 +160,8 @@
     this.ques.className = 'questions';
     this.hold.className = 'loader';
     this.none.className = 'empty';
-    errorDiv.className = 'loadError';
 
     h1.textContent = 'Algorithm IV';
-    h2.textContent = 'Load Error';
-    p.textContent  = errorMsg;
     this.none.textContent = 'No question(s) found.';
 
     this.hold.src = 'images/loading.gif';
@@ -200,11 +171,8 @@
     this.root.appendChild(this.main);
     this.main.appendChild(this.nav);
     this.main.appendChild(this.ques);
-    this.ques.appendChild(errorDiv);
     this.ques.appendChild(this.hold);
     this.ques.appendChild(this.none);
-    errorDiv.appendChild(h2);
-    errorDiv.appendChild(p);
 
     document.body.appendChild(this.root);
   };
@@ -294,9 +262,9 @@
   };
 
   /**
-   * -------------------------------------------------
+   * ------------------------------------------------------
    * Public Method (AppElems.prototype.setScrollbarHeight)
-   * -------------------------------------------------
+   * ------------------------------------------------------
    * @desc Saves the width of the browser's scrollbar.
    * @type {function()}
    */
@@ -320,9 +288,9 @@
   };
 
   /**
-   * -------------------------------------------------
+   * -----------------------------------------------------
    * Public Method (AppElems.prototype.setCodeListHeight)
-   * -------------------------------------------------
+   * -----------------------------------------------------
    * @desc Saves the height for list and list items in code elements.
    * @type {function()}
    */
@@ -389,6 +357,21 @@
      */
     var errorMsg;
     /**
+     * @type {string}
+     * @private
+     */
+    var example;
+    /**
+     * @type {num}
+     * @private
+     */
+    var exampleLineCount;
+    /**
+     * @type {num}
+     * @private
+     */
+    var divHeight;
+    /**
      * @type {elem}
      * @private
      */
@@ -403,31 +386,180 @@
      * @private
      */
     var p;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var exampleDiv;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var h3;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var div;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var pre;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var code;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var ol;
 
     errorMsg = '' +
-      'Algorithm IV\'s initialization was triggered '   +
-      'with an incorrect argument. Please do not edit ' +
-      'the initialization function located at the '     +
-      'bottom of algorithmIVData.js. If this error '    +
-      'persists please <a href="https://github.com'     +
-      '/imaginate/algorithmiv/issues" class="dark">'    +
-      'open an issue</a> on the Algorithm IV GitHub '   +
-      'repo. I hope Algorithm IV is able to help you '  +
-      'learn more!&NewLine;- Adam';
+      'Algorithm IV\'s question (or code sample) management app was '        +
+      'initialized without any questions. Please ensure you correctly gave ' +
+      'your settings to this app. The app should be initialized with '       +
+      'an object that contains properties for all of your settings (see '    +
+      'below). If this error persists please open an issue with '            +
+      '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
+      'class="dark">aIV on GitHub</a> or send an email to <a href="mailto:'  +
+      'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
+      'will solve your problem or answer your question as quickly as we '    +
+      'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
+      'maximize your development skills and projects!&NewLine;'              +
+      'Best,&NewLine;'                                                       +
+      '&ndash; Adam from Algorithm IV';
+//aIV.app({ config: yourConfig, sources: yourSources, categories: yourCategories, questions: yourQuestions })
 
+    example = '' +
+      '<li>' +
+        '<span class="cmt">// Create an empty object for your settings</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="defKey">var</span> <span class="idt">settings</span> ' +
+        '<span class="opr">=</span> <span class="brc">{}</span>'             +
+        '<span class="smc">;</span>'                                         +
+      '</li>' +
+      '<li>&nbsp;</li>' +
+      '<li>'  +
+        '<span class="cmt">/*</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * If you want to change the default configuration' +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * settings, add sources, add categories, or add'   +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * questions simply add one or all of the matching' +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * properties to your empty settings object. Note'  +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * that the names of your properties must match'    +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * the correct names for each setting - config,'    +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * sources, categories, and questions. You can'     +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * get in-depth details about creating a config,'   +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * sources, categories, or questions object by'     +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * visiting ' + // ...v.com/docs.'                  +
+          '<a href="http://www.algorithmiv.com/docs/questions"' +
+          ' target="_blank">algorithmiv.com/docs</a>.' +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> */</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="idt">settings.config</span> <span class="opr">=</span> ' +
+        '<span class="idt">yourConfig</span><span class="smc">;</span>'        +
+      '</li>' +
+      '<li>'  +
+        '<span class="idt">settings.sources</span> <span class="opr">=</span>' +
+        ' <span class="idt">yourSources</span><span class="smc">;</span>'      +
+      '</li>' +
+      '<li>'  +
+        '<span class="idt">settings.categories</span> <span class="opr">=</sp' +
+        'an> <span class="idt">yourCategories</span><span class="smc">;</span>'+
+      '</li>' +
+      '<li>'  +
+        '<span class="idt">settings.questions</span> <span class="opr">=</sp'  +
+        'an> <span class="idt">yourQuestions</span><span class="smc">;</span>' +
+      '</li>' +
+      '<li>&nbsp;</li>' +
+      '<li><span class="cmt">// Initialize Algorithm IV\'s app</span></li>'    +
+      '<li>'  +
+        '<span class="idt">aIV</span><span class="per">.</span><span class="'  +
+        'idt">app</span><span class="brc">(</span><span class="idt">settings'  +
+        '</span><span class="brc">)</span><span class="smc">;</span>'          +
+      '</li>';
+
+    exampleLineCount = 22;
+
+    divHeight = exampleLineCount * app.elems.code.li.height;
+    divHeight += app.elems.code.ol.height;
+
+    // Create the error elements
     errorDiv = document.createElement('div');
     h2 = document.createElement('h2');
     p  = document.createElement('p');
 
-    errorDiv.className = 'initError';
+    // Create the example elements
+    exampleDiv = document.createElement('div');
+    h3   = document.createElement('h3');
+    div  = document.createElement('div');
+    pre  = document.createElement('pre');
+    code = document.createElement('code');
+    ol   = document.createElement('ol');
 
-    h2.textContent = 'Setup Error';
+    // Assign the class names
+    errorDiv.className   = 'initError';
+    exampleDiv.className = 'initExample';
+    div.className = 'containExample';
+
+    // Add the content
+    h2.textContent = 'Initialization Error';
     p.textContent  = message;
+    h3.textContent = 'App Init Example';
+    ol.innerHTML   = example;
 
+    // Complete all dynamic formatting
+    div.style.height = height + 'px';
+
+    // Append initError's children
     errorDiv.appendChild(h2);
     errorDiv.appendChild(p);
+    errorDiv.appendChild(exampleDiv);
+    exampleDiv.appendChild(h3);
+    exampleDiv.appendChild(div);
+    div.appendChild(pre);
+    pre.appendChild(code);
+    code.appendChild(ol);
 
+    // Append initError to #aIV-questions
     this.ques.appendChild(errorDiv);
 
+    // Hide the loader
     this.hold.style.display = 'none';
   };
