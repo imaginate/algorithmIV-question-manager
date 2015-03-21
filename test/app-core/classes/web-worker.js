@@ -1,8 +1,111 @@
 /* -------------------------------------------------------------------------- *
- * ------ AS OF VERSION 1.1.0 THIS WEB WORKER HAS BEEN DISCONTINUED --------- *
+ * ---------- AS OF VERSION 1.1.0 THE WEB WORKER WAS DISCONTINUED ----------- *
  * -------------------------------------------------------------------------- *
- * The performance gain was not enough to justify the loss in usability.      *
- * In fact on smaller samples the worker produced a net loss in performance.  *
+ * The performance gain was not enough to justify the loss in usability. For  *
+ * some smaller samples the worker even produced a net loss in performance.   *
+ * -------------------------------------------------------------------------- *
+ * In case a web worker is brought back in the future below is code that was  *
+ * used to implement it.                                                      *
+ * -------------------------------------------------------------------------- */
+
+
+/* -------------------------------------------------------------------------- *
+ * ---------------------- BELOW: AppElems.appendMain() ---------------------- *
+ * -------------------------------------------------------------------------- *
+ * The method before the worker load error elements and logic were removed.   *
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------
+   * Public Method (AppElems.prototype.appendMain)
+   * -----------------------------------------------
+   * @desc Creates and appends the main html elements.
+   * @type {function()}
+   */
+  AppElems.prototype.appendMain = function() {
+
+    DEBUG && this.debug.start('appendMain');
+
+    /**
+     * @type {string}
+     * @private
+     */
+    var errorMsg;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var h1;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var errorDiv;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var h2;
+    /**
+     * @type {elem}
+     * @private
+     */
+    var p;
+
+    errorMsg = 'The web worker failed. Please wait ' +
+               'while the app is being loaded manually.';
+
+    this.root = document.createElement('div');
+    h1 = document.createElement('h1');
+    this.sel  = document.createElement('nav');
+    this.main = document.createElement('div');
+    this.nav  = document.createElement('nav');
+    this.ques = document.createElement('section');
+    this.hold = document.createElement('img');
+    this.none = document.createElement('section');
+    errorDiv = document.createElement('div');
+    h2 = document.createElement('h2');
+    p  = document.createElement('p');
+
+    this.root.id = 'aIV';
+    this.sel.id  = 'aIV-selections';
+    this.main.id = 'aIV-main';
+    this.nav.id  = 'aIV-nav';
+    this.ques.id = 'aIV-questions';
+
+    this.sel.className  = 'selections';
+    this.main.className = 'main';
+    this.ques.className = 'questions';
+    this.hold.className = 'loader';
+    this.none.className = 'empty';
+    errorDiv.className = 'loadError';
+
+    h1.textContent = 'Algorithm IV';
+    h2.textContent = 'Load Error';
+    p.textContent  = errorMsg;
+    this.none.textContent = 'No question(s) found.';
+
+    this.hold.src = 'images/loading.gif';
+
+    this.root.appendChild(h1);
+    this.root.appendChild(this.sel);
+    this.root.appendChild(this.main);
+    this.main.appendChild(this.nav);
+    this.main.appendChild(this.ques);
+    this.ques.appendChild(errorDiv);
+    this.ques.appendChild(this.hold);
+    this.ques.appendChild(this.none);
+    errorDiv.appendChild(h2);
+    errorDiv.appendChild(p);
+
+    document.body.appendChild(this.root);
+  };
+
+
+/* -------------------------------------------------------------------------- *
+ * ---------------------------- BELOW: WebWorker ---------------------------- *
+ * -------------------------------------------------------------------------- *
+ * The class used to implement the web worker in version 1.0.2.               *
  * -------------------------------------------------------------------------- */
 
   /**
