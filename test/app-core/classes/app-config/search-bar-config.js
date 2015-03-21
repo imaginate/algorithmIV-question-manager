@@ -34,6 +34,15 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (SearchBarConfig.links)
+     * -----------------------------------------------
+     * @desc Whether to display search links on each question.
+     * @type {LinksSearchBarConfig}
+     */
+    this.links = new LinksSearchBarConfig(config.links);
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (SearchBarConfig.defaults)
      * -----------------------------------------------
      * @desc The default search options to display upon app init.
