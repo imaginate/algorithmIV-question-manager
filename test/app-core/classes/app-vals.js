@@ -43,7 +43,8 @@
      * ----------------------------------------------- 
      * Protected Property (AppVals.index)
      * -----------------------------------------------
-     * @desc The current index being displayed (for view 'one' and 'ten').
+     * @desc The current index of the ids array being displayed.
+     *   If the view = 'all' or no ids match then index = -1.
      * @type {num}
      * @private
      */
@@ -59,16 +60,13 @@
      */
     this.get = function(part) {
       /** @private */
-      var result;
-      /** @private */
       var values = {
         ids  : ids,
         len  : len,
         index: index
       };
 
-      result = ( values.hasOwnProperty(part) ) ? values[part] : null;
-      return result;
+      return ( values.hasOwnProperty(part) ) ? values[part] : null;
     };
 
     /**
@@ -88,17 +86,30 @@
       }
 
       /**
+       * @type {num}
+       * private
+       */
+      var len;
+      /**
        * @type {boolean}
        * @private
        */
       var checkIds;
+      /**
+       * @type {string}
+       * private
+       */
+      var view;
+
+      len = newIds.length || 0;
 
       // Check newIds
-      checkIds = ( (Array.isArray(newIds) && newIds.length) ?
-        newIds.every(function(/** number */ val) {
+      checkIds = Array.isArray(newIds);
+      if (checkIds && len) {
+        checkIds = newIds.every(function(/** number */ val) {
           return (typeof val === 'number');
-        }) : Array.isArray(newIds)
-      );
+        });
+      }
       if (!checkIds) {
         if (DEBUG) {
           msg = 'Error: The newIds given were not an array of numbers. newIds= $$';
@@ -107,9 +118,22 @@
         return;
       }
 
-      // Check newIndex
-      if (typeof newIndex !== 'number' || newIndex < 1) {
-        newIndex = 0;
+      // Save the value of the current view
+      view = app.searchBar.vals.view;
+
+      // Set newIndex
+      if (view === 'all') {
+        newIndex = -1;
+      }
+      else {
+        if (len) {
+          if (typeof newIndex !== 'number' || newIndex < 0 || newIndex >= len) {
+            newIndex = 0;
+          }
+        }
+        else {
+          newIndex = -1;
+        }
       }
 
       // Reset the values
