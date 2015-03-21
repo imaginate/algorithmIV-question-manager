@@ -4,16 +4,28 @@
    * -----------------------------------------------------
    * @desc Contains the debugging methods for this module.
    * @param {string=} classTitle - The name of the class.
-   * @param {strings=} turnOffTypes - The instance's debug categories to disable.
+   * @param {?(string|strings)=} turnOffTypes - The debug categories to disable
+   *   for this Debug class instance. If 'all' is provided then all categories
+   *   for this Debug instance are disabled.
+   * @param {?(string|strings)=} turnOnBuggers - The debugger instances to
+   *   enable for this Debug class instance. If 'all' is provided then all
+   *   instances of debugger are enabled.
    * @constructor
    */
-  var Debug = function(classTitle, turnOffTypes) {
+  var Debug = function(classTitle, turnOffTypes, turnOnBuggers) {
 
-    classTitle = classTitle || 'module';
+    classTitle = classTitle || 'unknown';
     classTitle += '.';
-    turnOffTypes = ( ( Array.isArray(turnOffTypes) ) ?
-      turnOffTypes.join(' ') : ''
-    );
+    if (typeof turnOffTypes !== 'string') {
+      turnOffTypes = ( ( Array.isArray(turnOffTypes) ) ?
+        turnOffTypes.join(' ') : ''
+      );
+    }
+    if (typeof turnOnBuggers !== 'string') {
+      turnOnBuggers = ( ( Array.isArray(turnOnBuggers) ) ?
+        turnOnBuggers.join(' ') : 'args fail'
+      );
+    }
 
     /**
      * -----------------------------------------------------
@@ -42,12 +54,36 @@
      * @private
      */
     var types = {
-      start: ( !/(start)/i.test(turnOffTypes) ),
-      args : (  !/(args)/i.test(turnOffTypes) ),
-      fail : (  !/(fail)/i.test(turnOffTypes) ),
-      group: ( !/(group)/i.test(turnOffTypes) ),
-      state: ( !/(state)/i.test(turnOffTypes) ),
-      misc : (  !/(misc)/i.test(turnOffTypes) )
+      start: ( !/(start)|(all)/i.test(turnOffTypes) ),
+      args : (  !/(args)|(all)/i.test(turnOffTypes) ),
+      fail : (  !/(fail)|(all)/i.test(turnOffTypes) ),
+      group: ( !/(group)|(all)/i.test(turnOffTypes) ),
+      state: ( !/(state)|(all)/i.test(turnOffTypes) ),
+      misc : (  !/(misc)|(all)/i.test(turnOffTypes) )
+    };
+
+    /**
+     * -----------------------------------------------------
+     * Private Variable (buggers)
+     * -----------------------------------------------------
+     * @desc Allows disabling of debugger instances in debug methods.
+     * @type {{
+     *   start: boolean,
+     *   args : boolean,
+     *   fail : boolean,
+     *   group: boolean,
+     *   state: boolean,
+     *   misc : boolean
+     * }}
+     * @private
+     */
+    var buggers = {
+      start: ( /(start)|(all)/i.test(turnOnBuggers) ),
+      args : (  /(args)|(all)/i.test(turnOnBuggers) ),
+      fail : (  /(fail)|(all)/i.test(turnOnBuggers) ),
+      group: ( /(group)|(all)/i.test(turnOnBuggers) ),
+      state: ( /(state)|(all)/i.test(turnOnBuggers) ),
+      misc : (  /(misc)|(all)/i.test(turnOnBuggers) )
     };
 
     /**
@@ -73,6 +109,18 @@
 
     /**
      * ---------------------------------------------------
+     * Public Method (Debug.getBugger)
+     * ---------------------------------------------------
+     * @desc Retrieve this instance's debuuger value for the supplied type.
+     * @param {string} type - The type's debugger setting to get.
+     * @return {boolean}
+     */
+    this.getBugger = function(type) {
+      return (!!buggers[type]);
+    };
+
+    /**
+     * ---------------------------------------------------
      * Public Method (Debug.setType)
      * ---------------------------------------------------
      * @desc Set this instance's value for the supplied type.
@@ -81,11 +129,55 @@
      * @return {boolean} Indicates whether correct arguments were given.
      */
     this.setType = function(type, val) {
-      if (typeof type === 'string' && types.hasOwnProperty(type) &&
-          typeof val  === 'boolean') {
-        types[type] = val;
+
+      if (typeof type === 'string' && typeof val  === 'boolean' &&
+          (types.hasOwnProperty(type) || type === 'all')) {
+
+        if (type === 'all') {
+          for (type in types) {
+            if ( types.hasOwnProperty(type) ) {
+              types[type] = val;
+            }
+          }
+        }
+        else {
+          types[type] = val;
+        }
+
         return true;
       }
+
+      return false;
+    };
+
+    /**
+     * ---------------------------------------------------
+     * Public Method (Debug.setBugger)
+     * ---------------------------------------------------
+     * @desc Set this instance's debugger value for the supplied type.
+     * @param {string} type - The type's debugger value to set.
+     * @param {boolean} val - The type's new debugger value.
+     * @return {boolean} Indicates whether correct arguments were given.
+     */
+    this.setBugger = function(type, val) {
+
+      if (typeof type === 'string' && typeof val  === 'boolean' &&
+          (buggers.hasOwnProperty(type) || type === 'all')) {
+
+        if (type === 'all') {
+          for (type in buggers) {
+            if ( buggers.hasOwnProperty(type) ) {
+              buggers[type] = val;
+            }
+          }
+        }
+        else {
+          buggers[type] = val;
+        }
+
+        return true;
+      }
+
       return false;
     };
   };
@@ -290,6 +382,11 @@
     else {
       console.log(message);
     }
+
+    // Pause the script
+    if ( this.getBugger('start') ) {
+      debugger;
+    }
   };
 
   /**
@@ -375,7 +472,9 @@
     console.error(message);
 
     // Pause the script
-    debugger;
+    if ( this.getBugger('args') ) {
+      debugger;
+    }
   };
 
   /**
@@ -475,7 +574,9 @@
     }
 
     // Pause the script
-    debugger;
+    if ( this.getBugger('fail') ) {
+      debugger;
+    }
   };
 
   /**
@@ -591,6 +692,11 @@
 
     // Open a console group
     console.group.apply(console, args);
+
+    // Pause the script
+    if ( this.getBugger('group') ) {
+      debugger;
+    }
   };
 
   /**
@@ -665,6 +771,11 @@
 
     // Log the state
     console.log.apply(console, args);
+
+    // Pause the script
+    if ( this.getBugger('state') ) {
+      debugger;
+    }
   };
 
   /**
@@ -743,6 +854,11 @@
     else {
       console.log(message);
     }
+
+    // Pause the script
+    if ( this.getBugger('misc') ) {
+      debugger;
+    }
   };
 
   /**
@@ -751,6 +867,7 @@
    * -----------------------------------------------------
    * @desc Use to show a category of logs that was hidden.
    * @param {...(string|strings)} logCat - The log category(ies) to show.
+   *   If 'all' is provided then all categories will be shown.
    * @example
    *   debug.turnOn('start', 'state', ...);
    *   // OR
@@ -799,7 +916,7 @@
     if (!testSet) {
       logCat = 'A debug.turnOn method\'s arg(s) was wrong. ';
       logCat += 'Ensure that the correct operands are given, ';
-      logCat += 'and each string is a valid debug category.';
+      logCat += 'and each string is a valid debug category or \'all\'.';
       console.error(logCat);
       debugger;
     }
@@ -811,6 +928,7 @@
    * -----------------------------------------------------
    * @desc Use to hide a category of logs from the console.
    * @param {...(string|strings)} logCat - The log category(ies) to hide.
+   *   If 'all' is provided then all categories will be hidden.
    * @example
    *   debug.turnOff('args', 'fail', ...);
    *   // OR
@@ -859,7 +977,129 @@
     if (!testSet) {
       logCat = 'A debug.turnOff method\'s arg(s) was wrong. ';
       logCat += 'Ensure that the correct operands are given, ';
-      logCat += 'and each string is a valid debug category.';
+      logCat += 'and each string is a valid debug category or \'all\'.';
+      console.error(logCat);
+      debugger;
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.turnOnDebugger)
+   * -----------------------------------------------------
+   * @desc Use to enable debugger instances in a debug method.
+   * @param {...(string|strings)} logCat - The log category(ies)'s debuggers to show.
+   *   If 'all' is provided then all debugger instances will be enabled.
+   * @example
+   *   debug.turnOnDebugger('args', 'fail', ...);
+   *   // OR
+   *   debug.turnOnDebugger([ 'args', 'fail', ... ]);
+   */
+  Debug.prototype.turnOnDebugger = function(logCat) {
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var testSet;
+    /**
+     * @type {?strings}
+     * @private
+     */
+    var args;
+
+    // Ensure arguments are supplied
+    if (!logCat) {
+      console.error('A debug.turnOnDebugger method received no args.');
+      debugger;
+      return;
+    }
+
+    // Setup the variables
+    args = ( (Array.isArray(logCat) && logCat.length > 1) ?
+      logCat.slice(0) : (arguments.length > 1) ?
+        Array.prototype.slice.call(arguments, 0) : null
+    );
+    logCat = ( (args) ?
+      null : (typeof logCat === 'string') ?
+        logCat : ( Array.isArray(logCat) ) ?
+          logCat[0] : null
+    );
+
+    // Turn off the debug method category(ies) & save the result(s)
+    testSet = ( (args) ?
+      args.every(function(/** string */ val) {
+        return (!!val && typeof val === 'string' && this.setBugger(val, true));
+      }, this)
+      : (!!logCat && this.setBugger(logCat, true))
+    );
+
+    // Test the result(s)
+    if (!testSet) {
+      logCat = 'A debug.turnOnDebugger method\'s arg(s) was wrong. ';
+      logCat += 'Ensure that the correct operands are given, ';
+      logCat += 'and each string is a valid debug category or \'all\'.';
+      console.error(logCat);
+      debugger;
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Debug.prototype.turnOffDebugger)
+   * -----------------------------------------------------
+   * @desc Use to disable debugger instances in a debug method.
+   * @param {...(string|strings)} logCat - The log category(ies)'s debuggers to hide.
+   *   If 'all' is provided then all debugger instances will be disabled.
+   * @example
+   *   debug.turnOffDebugger('args', 'fail', ...);
+   *   // OR
+   *   debug.turnOffDebugger([ 'args', 'fail', ... ]);
+   */
+  Debug.prototype.turnOffDebugger = function(logCat) {
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    var testSet;
+    /**
+     * @type {?strings}
+     * @private
+     */
+    var args;
+
+    // Ensure arguments are supplied
+    if (!logCat) {
+      console.error('A debug.turnOffDebugger method received no args.');
+      debugger;
+      return;
+    }
+
+    // Setup the variables
+    args = ( (Array.isArray(logCat) && logCat.length > 1) ?
+      logCat.slice(0) : (arguments.length > 1) ?
+        Array.prototype.slice.call(arguments, 0) : null
+    );
+    logCat = ( (args) ?
+      null : (typeof logCat === 'string') ?
+        logCat : ( Array.isArray(logCat) ) ?
+          logCat[0] : null
+    );
+
+    // Turn off the debug method category(ies) & save the result(s)
+    testSet = ( (args) ?
+      args.every(function(/** string */ val) {
+        return (!!val && typeof val === 'string' && this.setBugger(val, false));
+      }, this)
+      : (!!logCat && this.setBugger(logCat, false))
+    );
+
+    // Test the result(s)
+    if (!testSet) {
+      logCat = 'A debug.turnOffDebugger method\'s arg(s) was wrong. ';
+      logCat += 'Ensure that the correct operands are given, ';
+      logCat += 'and each string is a valid debug category or \'all\'.';
       console.error(logCat);
       debugger;
     }

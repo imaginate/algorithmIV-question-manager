@@ -14,7 +14,7 @@
    * @desc The Debug instance for the module's public methods.
    * @type {Debug}
    */
-  var debug = (DEBUG) ? new Debug() : null;
+  var debug = (DEBUG) ? new Debug('module') : null;
 
   /**
    * ----------------------------------------------- 
