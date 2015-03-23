@@ -249,11 +249,11 @@
    * @param {val} val - The value to be evaluated.
    * @param {string} type - The type to evaluate the value against.
    *   The optional types are 'string', 'number', 'boolean', 'object',
-   *   'undefined', 'array', 'strings', 'numbers', 'booleans', and
-   *   'objects'. Use '|' as the separator for multiple types (e.g.
-   *   'strings|numbers'). Use '=' to indicate the value is optional
-   *   (e.g. 'array=' or 'string|number='). Use '!' to indicate that
-   *   null is not a possibility (e.g. '!string').
+   *   'elem', 'undefined', 'array', 'strings', 'numbers', 'booleans',
+   *   'objects', and 'elems'. Use '|' as the separator for multiple
+   *    types (e.g.'strings|numbers'). Use '=' to indicate the value
+   *   is optional (e.g. 'array=' or 'string|number='). Use '!' to
+   *   indicate that null is not a possibility (e.g. '!string').
    * @return {boolean} The evaluation result.
    */
   Debug.checkType = function(val, type) {
@@ -289,9 +289,10 @@
      */
     var types;
 
-    arrays = /^array$|^strings$|^numbers$|^booleans$|^objects$/;
+    arrays = /^array$|^strings$|^numbers$|^booleans$|^objects$|^elems$/;
     simple = /^string$|^number$|^boolean$|^object$/;
-    allTypes = new RegExp('^undefined$|' + simple.source + '|' + arrays.source);
+    allTypes = '^elem$|^undefined$|' + simple.source + '|' + arrays.source;
+    allTypes = new RegExp(allTypes);
 
     type = type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
 
@@ -343,11 +344,23 @@
             return true;
           }
 
+          // Evaluate an array of elements
+          if (cleanType === 'elems') {
+            return val.every(function(subVal) {
+              return (subVal instanceof HTMLElement);
+            });
+          }
+
           // Evaluate each value of the array
           cleanType = cleanType.replace(/s$/, '');
           return val.every(function(subVal) {
             return (typeof subVal === cleanType);
           });
+        }
+
+        // Evaluate element
+        if (cleanType === 'elem') {
+          return (val instanceof HTMLElement);
         }
 
         // Evaluate string, number, boolean, and object types
