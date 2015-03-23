@@ -249,56 +249,115 @@
    * @param {val} val - The value to be evaluated.
    * @param {string} type - The type to evaluate the value against.
    *   The optional types are 'string', 'number', 'boolean', 'object',
-   *   'undefined', and 'array'. Use '|' as the separator for multiple
-   *   types (e.g. 'string|number'). Use '=' to indicate the value is
-   *   optional (e.g. 'array=' or 'string|number='). Use '!' to
-   *   indicate that null is not a possibility (e.g. '!string').
+   *   'undefined', 'array', 'strings', 'numbers', 'booleans', and
+   *   'objects'. Use '|' as the separator for multiple types (e.g.
+   *   'strings|numbers'). Use '=' to indicate the value is optional
+   *   (e.g. 'array=' or 'string|number='). Use '!' to indicate that
+   *   null is not a possibility (e.g. '!string').
    * @return {boolean} The evaluation result.
    */
   Debug.checkType = function(val, type) {
 
+    // Test the given arguments before executing
+    var msg;
+    if (typeof type !== 'string') {
+      msg = 'A Debug.checkType method\'s type was the wrong operand. ';
+      msg += 'It should be a string. The given type was a(n) %s.';
+      console.error(msg, (typeof type));
+      debugger;
+      return false;
+    }
+
+    /**
+     * @type {RegExp}
+     * @private
+     */
+    var arrays;
+    /**
+     * @type {RegExp}
+     * @private
+     */
+    var simple;
+    /**
+     * @type {RegExp}
+     * @private
+     */
+    var allTypes;
     /**
      * @type {strings}
      * @private
      */
     var types;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var pass;
+
+    arrays = /^array$|^strings$|^numbers$|^booleans$|^objects$/;
+    simple = /^string$|^number$|^boolean$|^object$/;
+    allTypes = new RegExp('^undefined$|' + simple.source + '|' + arrays.source);
 
     type = type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
 
     types = ( /\|/.test(type) ) ? type.split('|') : [ type ];
 
-    pass = types.some(function(/** string */ type) {
+    return types.some(function(/** string */ type) {
+      /**
+       * @type {string}
+       * @private
+       */
+      var cleanType;
 
+      cleanType = type.replace(/\!|\=/g, '');
+
+      // Ensure a correct type was given
+      if ( !allTypes.test(cleanType) ) {
+        msg = 'A Debug.checkType method\'s type was the wrong value. ';
+        msg += 'See the docs for acceptable values. ';
+        msg += 'The incorrect value was \'%s\'.';
+        console.error(msg, type);
+        debugger;
+        return false;
+      }
+
+      // Handle undefined val
       if (val === undefined) {
-        if (/\=/.test(type) || type === 'undefined') {
-          return true;
-        }
+        type = type.replace(/\!/g, '');
+        return /\=|^undefined$/.test(type);
       }
       else {
 
-        if (val === null && /\!/.test(type) === false) {
-          return true;
-        }
-        type = type.replace(/\!|\=/g, '');
-
-        if (type === 'array' && Array.isArray(val)) {
-          return true;
+        // Evaluate null
+        if (val === null) {
+          return !(/\!/.test(type));
         }
 
-        if (typeof val === type) {
-          return true;
+        if (cleanType === 'undefined') {
+          return false;
+        }
+
+        // Evaluate array types
+        if ( arrays.test(cleanType) ) {
+
+          if ( !Array.isArray(val) ) {
+            return false;
+          }
+
+          if (cleanType === 'array') {
+            return true;
+          }
+
+          // Evaluate each value of the array
+          cleanType = cleanType.replace(/s$/, '');
+          return val.every(function(subVal) {
+            return (typeof subVal === cleanType);
+          });
+        }
+
+        // Evaluate string, number, boolean, and object types
+        if ( simple.test(cleanType) ) {
+          return (typeof val === cleanType);
         }
       }
 
       return false;
     });
-
-    return pass;
   };
 
   // Ensure constructor is set to this class.
