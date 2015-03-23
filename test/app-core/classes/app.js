@@ -183,19 +183,29 @@
    * Public Method (App.prototype.updateDisplay)
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
-   * @param {boolean=} flip - Indicates that the questions order
-   *   should be flipped.
-   * @param {string=} oldView - The value of view before the update.
+   * @param {Object=} settings - Settings to change the update actions.
+   * @param {boolean=} settings.noVals - If set to true it indicates
+   *   that new matching values should NOT be calculated.
+   * @param {boolean=} settings.flip - If set to true it indicates that
+   *   the order of each question's element should be flipped.
+   * @param {string=} settings.oldView - The value of view before the
+   *   update. Defaults to the value of the new view.
+   * @param {boolean=} settings.reset - If set to true it indicates
+   *   that the ids and index should be reset.
+   * @param {boolean=} settings.index - If set to true it indicates
+   *   that the index should NOT be changed.
    */
-  App.prototype.updateDisplay = function(flip, oldView) {
+  App.prototype.updateDisplay = function(newVals, flip, oldView) {
 
     // Debugging
-    var msg;
+    var msg, args;
     if (DEBUG) {
-     msg = 'flip= $$, oldView= $$';
-     this.debug.group('updateDisplay', 'coll', msg, flip, oldView);
+     msg = 'newVals= $$, flip= $$, oldView= $$';
+     this.debug.group('updateDisplay', 'coll', msg, newVals, flip, oldView);
      this.debug.start('updateDisplay', flip, oldView);
-     this.debug.args('updateDisplay', flip, 'boolean=', oldView, 'string=');
+     args = [ 'updateDisplay' ];
+     args.push(newVals, 'boolean=', flip, 'boolean=', oldView, 'string=');
+     this.debug.args(args);
     }
 
     /**
@@ -212,6 +222,16 @@
      * @type {?nums}
      * @private
      */
+    var resetIds;
+    /**
+     * @type {num}
+     * @private
+     */
+    var resetIndex;
+    /**
+     * @type {?nums}
+     * @private
+     */
     var newIds;
     /**
      * @type {num}
@@ -224,13 +244,26 @@
      */
     var view;
 
+    settings = settings || {};
+
     // Save the old matching question ids and index
     oldIds = this.vals.get('len');
     oldIds = (oldIds) ? this.vals.get('ids').slice(0) : null;
     oldIndex = this.vals.get('index');
 
-    // Update the current matching question ids
-    this.updateValues();
+    // Update the current matching question ids and index
+    if (!!settings.noVals) {
+      if (!!settings.reset) {
+        resetIds = (oldIds) ? oldIds.slice(0) : null;
+        if (!!settings.flip && resetIds) {
+          resetIds.reverse();
+        }
+        resetIndex = (!!settings.index) ? oldIndex : 0;
+        this.vals.reset(resetIds, resetIndex);
+      }
+    else {
+      this.updateValues();
+    }
 
     // Save the new matching question ids and index
     newIds = this.vals.get('len');
@@ -252,13 +285,15 @@
       );
 
       // Check if the questions order should be flipped
-      if (!!flip) {
+      if (!!settings.flip) {
         this.questions.reverseElems();
       }
 
       // Hide the old questions
-      oldView = oldView || view;
-      this.questions.hideElems(oldIds, oldIndex, oldView);
+      if (!!settings.oldView) {
+        view = settings.oldView;
+      }
+      this.questions.hideElems(oldIds, oldIndex, view);
 
       // Show the new questions
       this.questions.showElems(newIds, newIndex);
