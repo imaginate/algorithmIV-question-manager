@@ -63,8 +63,6 @@
       app = new App(config, sources, categories, questions);
 
       // Start the app
-      document.addEventListener('DOMContentLoaded', function() {
-        app.setupDisplay();
-      });
+      document.addEventListener('DOMContentLoaded', app.setupDisplay);
     }
   };
