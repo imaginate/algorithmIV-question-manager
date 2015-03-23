@@ -100,8 +100,8 @@
 
 
     // Set the properties
-    showURL = (config.showURL === true);
-    showLinks = (showURL && config.showLinks === true);
+    showURL = (!!config.showURL && config.showURL === true);
+    showLinks = (!!config.showLinks && config.showLinks === true);
 
 
     DEBUG && this.debug.group('init', 'end');

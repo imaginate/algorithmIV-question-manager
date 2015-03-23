@@ -30,7 +30,8 @@
     // Debugging
     var msg;
     if (DEBUG) {
-      debug.args('init', settings);
+      debug.start('init', settings);
+      debug.args('init', settings, 'object');
       msg = 'Error: A second attempt to init this app occurred.';
       debug.fail('init', !_initialized, msg);
     }

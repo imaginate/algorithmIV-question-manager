@@ -29,7 +29,7 @@
 
     if (DEBUG) {
       debug.start('getTag', title, root);
-      debug.args('getTag', title, 'string', root, 'object=');
+      debug.args('getTag', title, 'string', root, 'elem=');
     }
 
     root = root || app.elems.root;
@@ -50,7 +50,7 @@
 
     if (DEBUG) {
       debug.start('getClass', title, root);
-      debug.args('getClass', title, 'string', root, 'object=');
+      debug.args('getClass', title, 'string', root, 'elem=');
     }
 
     root = root || app.elems.root;
@@ -218,7 +218,7 @@
 
     if (DEBUG) {
       debug.start('sortKeys', ids, hMap);
-      debug.args('sortKeys', ids, 'array', hMap, 'object');
+      debug.args('sortKeys', ids, 'strings', hMap, 'object');
     }
 
     /**

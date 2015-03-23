@@ -25,8 +25,8 @@
 
     if (DEBUG) {
       this.debug.group('init', 'coll', 'id= $$, question= $$', question.id, question);
-      this.debug.start('init', question);
-      this.debug.args('init', question, 'object');
+      this.debug.start('init', question, config);
+      this.debug.args('init', question, 'object', config, 'object');
     }
 
     /**

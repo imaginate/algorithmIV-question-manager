@@ -146,7 +146,7 @@
 
       if (DEBUG) {
         that.debug.start('appendID', id, url);
-        that.debug.args('appendID', id, 'string', url, 'strinsg');
+        that.debug.args('appendID', id, 'string', url, 'string');
       }
 
       /**
@@ -531,7 +531,7 @@
 
       if (DEBUG) {
         that.debug.start('appendCodeExt', div, overflow);
-        that.debug.args('appendCodeExt', div, 'object', overflow, 'number');
+        that.debug.args('appendCodeExt', div, 'elem', overflow, 'number');
       }
 
       /**
@@ -719,7 +719,7 @@
 
       if (DEBUG) {
         that.debug.start('appendOutput', links);
-        that.debug.args('appendOutput', links, 'array');
+        that.debug.args('appendOutput', links, 'objects');
       }
 
       /**

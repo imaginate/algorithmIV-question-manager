@@ -43,7 +43,7 @@
 
       args = [ 'init' ];
       args.push(config, 'object', sources, 'object');
-      args.push(categories, 'object', questions, 'object');
+      args.push(categories, 'object', questions, 'objects');
       this.debug.args(args);
     }
 

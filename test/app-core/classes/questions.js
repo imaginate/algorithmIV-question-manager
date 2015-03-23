@@ -21,7 +21,7 @@
     if (DEBUG) {
       this.debug.group('init', 'coll', 'questions= $$', questions);
       this.debug.start('init', questions, outputConfig);
-      this.debug.args('init', questions, 'object', outputConfig, 'boolean');
+      this.debug.args('init', questions, 'objects', outputConfig, 'boolean');
     }
 
     /**
@@ -308,7 +308,7 @@
     var args, msg, nullMsg;
     if (DEBUG) {
       this.debug.start('hideElems', ids, index);
-      this.debug.args('hideElems', ids, 'array', index, 'number');
+      this.debug.args('hideElems', ids, 'numbers', index, 'number');
       // Error message for finding null questions
       nullMsg = 'Error: A null question was found. id= $$';
     }
@@ -396,7 +396,7 @@
     var args, msg, nullMsg;
     if (DEBUG) {
       this.debug.start('showElems', ids, index);
-      this.debug.args('showElems', ids, 'array', index, 'number');
+      this.debug.args('showElems', ids, 'numbers', index, 'number');
       // Error message for finding null questions
       nullMsg = 'Error: A null question was found. id= $$';
     }

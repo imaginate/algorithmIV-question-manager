@@ -82,7 +82,7 @@
       var msg;
       if (DEBUG) {
         this.debug.start('reset', newIds, newIndex);
-        this.debug.args('reset', newIds, 'array', newIndex, 'number=');
+        this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
       }
 
       /**
