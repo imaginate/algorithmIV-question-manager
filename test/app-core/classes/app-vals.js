@@ -89,36 +89,14 @@
        * @type {num}
        * private
        */
-      var len;
-      /**
-       * @type {boolean}
-       * @private
-       */
-      var checkIds;
+      var newLen;
       /**
        * @type {string}
        * private
        */
       var view;
 
-      len = newIds.length || 0;
-
-      // Check newIds
-      checkIds = Array.isArray(newIds);
-      if (checkIds && len) {
-        checkIds = newIds.every(function(/** number */ val) {
-          return (typeof val === 'number');
-        });
-      }
-      if (!checkIds) {
-        if (DEBUG) {
-          msg = 'Error: The newIds given were not an array of numbers. newIds= $$';
-          this.debug.fail('reset', false, msg, newIds);
-        }
-        return;
-      }
-
-      // Save the value of the current view
+      newLen = newIds.length || 0;
       view = app.searchBar.vals.view;
 
       // Set newIndex
@@ -126,8 +104,9 @@
         newIndex = -1;
       }
       else {
-        if (len) {
-          if (typeof newIndex !== 'number' || newIndex < 0 || newIndex >= len) {
+        if (newLen) {
+          if (typeof newIndex !== 'number' ||
+              newIndex < 0 || newIndex >= newLen) {
             newIndex = 0;
           }
         }
@@ -137,8 +116,8 @@
       }
 
       // Reset the values
-      ids = (newIds.length) ? newIds.slice(0) : [];
-      len = ids.length;
+      ids = (newLen) ? newIds.slice(0) : [];
+      len = newLen;
       index = newIndex;
     };
 
