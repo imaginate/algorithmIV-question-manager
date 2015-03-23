@@ -74,7 +74,8 @@
 
 
     // Set the properties
-    id       = (config.id       !== false);
+    id = (config.id !== false);
+    source = (config.source === true);
     category = (config.category !== false);
   };
 
