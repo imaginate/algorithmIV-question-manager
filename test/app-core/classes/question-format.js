@@ -65,8 +65,8 @@
      * -----------------------------------------------
      * @desc This question's main categories.
      * @type {{
-     *   h3: string,
-     *   p : string
+     *   h3   : string,
+     *   names: strings
      * }}
      * @private
      */
@@ -78,8 +78,8 @@
      * -----------------------------------------------
      * @desc This question's sub categories.
      * @type {{
-     *   h3: string,
-     *   p : string
+     *   h3   : string,
+     *   names: strings
      * }}
      * @private
      */
@@ -167,9 +167,8 @@
         mainCat.h3 = 'Main ' +
         ( (question.mainCat.length > 1) ? 'Categories:' : 'Category:' );
         // Set main category names
-        question.mainCat.forEach(function(/** string */ id, /** number */ i) {
-          mainCat.p += (i === 0) ? '' : ', ';
-          mainCat.p += app.categories.get('id').get('name');
+        mainCat.names = question.mainCat.map(function(/** string */ id) {
+          return app.categories.get(id).get('name');
         });
       }
 
@@ -178,9 +177,8 @@
         subCat.h3 = 'Sub ' +
         ( (question.subCat.length > 1) ? 'Categories:' : 'Category:' );
         // Set sub category names
-        question.subCat.forEach(function(/** string */ id, /** number */ i) {
-          subCat.p += (i === 0) ? '' : ', ';
-          subCat.p += app.categories.get('id').get('name');
+        subCat.names = question.subCat.map(function(/** string */ id) {
+          return app.categories.get(id).get('name');
         });
       }
     }
