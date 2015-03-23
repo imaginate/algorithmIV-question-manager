@@ -452,7 +452,7 @@
     if (view === 'one') {
       id = ids[index];
       DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
-      this.get(id).elem.root.className = 'question shade1';
+      this.get(id).elem.root.className = 'question shade1 hideLink';
       this.setStyle(id, 'display', 'block');
       return;
     }
