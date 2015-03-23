@@ -330,10 +330,17 @@
     this.elems.view.className = 'showView';
     this.elems.view.value = this.vals.view;
     this.elems.view.onchange = function(event) {
+      /**
+       * @type {string}
+       * @private
+       */
+      var oldVal;
+
       if (app.searchBar.vals.view != event.target.value) {
         DEBUG && debug.group('searchBar.view.onchange', 'coll');
+        oldVal = app.searchBar.vals.view;
         app.searchBar.vals.view = event.target.value;
-        app.updateDisplay();
+        app.updateDisplay(false, oldVal);
         DEBUG && debug.group('searchBar.view.onchange', 'end');
       }
     };
