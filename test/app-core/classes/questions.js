@@ -82,7 +82,68 @@
       return result;
     };
 
-    
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Questions.setStyle)
+     * -----------------------------------------------
+     * @desc Sets the style for a question's element.
+     * @param {(number|string)} id - The question id to set.
+     * @param {(string|hashMap)} type - The style setting to set. If a
+     *   string is given then another param with the value is required.
+     *   If an object is provided then use key => value pairs as such
+     *   styleType => newValue (e.g. { display: 'none' }).
+     * @param {(string|number)=} val - If the type param is a string then
+     *   this is the new value for the it.
+     */
+    this.setStyle = function(id, type, val) {
+
+      // Debugging
+      var args, msg;
+      if (DEBUG) {
+        this.debug.start('setStyle', id, type, val);
+
+        args = [ 'setStyle' ];
+        args.push(id, '!number|string', type, '!string|object');
+        args.push(val, 'string|number=');
+        this.debug.args(args);
+
+        msg = 'Error: An invalid question id was provided. id= $$';
+        this.debug.fail('setStyle', !!this.get(id), msg, id);
+
+        if (typeof type === 'string') {
+          msg = 'Error: A third param (val) is required when the given type ';
+          msg += 'is a string. It should be a string or number. val= $$';
+          args = [ 'setStyle' ]
+          args.push(checkType([ val ], 'string|number'), msg, val);
+          this.debug.fail(args);
+        }
+      }
+
+      // Handle one type change
+      if (typeof type === 'string') {
+
+        // Replace dashes with camel case
+        if ( /\-/.test(type) ) {
+          type = camelCase(type);
+        }
+
+        this.get(id).elem.root.style[type] = val;
+        return;
+      }
+
+      // Handle multiple type changes
+      Object.keys().forEach(function(/** string */ key) {
+
+        // Replace dashes with camel case
+        if ( /\-/.test(key) ) {
+          key = camelCase(key);
+        }
+
+        this.get(id).elem.root.style[key] = type[key];
+      }, this);
+    };
+
+
     // Set the list
     list = questions.map(function(/** Object */ question, /** number */ i) {
       /**
@@ -176,13 +237,25 @@
    * -----------------------------------------------------
    * Public Method (Questions.prototype.reverseElems)
    * -----------------------------------------------------
-   * @desc Appends the elements for all of the questions in the reverse order.
+   * @desc Appends each question's element to #aIV-questions in the direction
+   *   of the current search order.
    * @type {function()}
    */
   Questions.prototype.reverseElems = function() {
 
-    DEBUG && this.debug.start('reverseElems');
+    // Debugging
+    var msg;
+    if (DEBUG) {
+      this.debug.start('reverseElems');
+      // Error message for finding null questions
+      msg = 'Error: A null question exists in the list of questions. id= $$';
+    }
 
+    /**
+     * @type {string}
+     * @private
+     */
+    var direction;
     /**
      * @type {?questions}
      * @private
@@ -192,23 +265,31 @@
      * @type {num}
      * @private
      */
+    var len;
+    /**
+     * @type {num}
+     * @private
+     */
     var i;
 
+    direction = app.searchBar.vals.order;
     list = this.list();
+    len = this.len + 1;
 
-    if (app.searchBar.vals.order === 'asc') {
-      list.forEach(function(/** Question */ question) {
-        if (question) {
-          app.elems.ques.appendChild(question.elem.root);
-        }
-      });
+    // Appends in asc order
+    if (direction === 'asc') {
+      i = 0;
+      while (++i < len) {
+        DEBUG && this.debug.fail('reverseElems', !!list[i], msg, i);
+        app.elems.ques.appendChild(list[i].elem.root);
+      }
     }
+    // Appends in desc order
     else {
-      i = this.len;
-      while (i) {
-        if (list[i]) {
-          app.elems.ques.appendChild(list[i].elem.root);
-        }
+      i = len;
+      while (--i) {
+        DEBUG && this.debug.fail('reverseElems', !!list[i], msg, i);
+        app.elems.ques.appendChild(list[i].elem.root);
       }
     }
   };
@@ -224,17 +305,29 @@
   Questions.prototype.hideElems = function(ids, index) {
 
     // Debugging
-    var msg;
+    var args, msg, nullMsg;
     if (DEBUG) {
       this.debug.start('hideElems', ids, index);
       this.debug.args('hideElems', ids, 'array', index, 'number');
+      // Error message for finding null questions
+      nullMsg = 'Error: A null question was found. id= $$';
     }
 
+    /**
+     * @type {string}
+     * @private
+     */
+    var view;
     /**
      * @type {num}
      * @private
      */
     var id;
+    /**
+     * @type {num}
+     * @private
+     */
+    var i;
 
     if (index === -1) {
 
@@ -245,52 +338,47 @@
       }
 
       // Hide all of the provided ids
-      ids.forEach(function(/** num */ id) {
-        if ( this.get(id) ) {
-          this.get(id).elem.root.style.display = 'none';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('hideElems', false, msg, id);
-        }
-      }, this);
+      i = ids.length;
+      while (i--) {
+        id = ids[i];
+        DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+        this.setStyle(id, 'display', 'none');
+      }
+
+      return;
     }
-    else {
 
-      if (DEBUG) {
-        msg = 'Error: No ids were provided with a non-negative index. ids= $$';
-        this.debug.fail('hideElems', (!!ids && !!ids.length), msg, ids);
-      }
+    if (DEBUG) {
+      msg = 'Error: No ids were provided with a non-negative index. ids= $$';
+      this.debug.fail('hideElems', (!!ids && !!ids.length), msg, ids);
+      msg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+      args = [ 'hideElems' ];
+      args.push((index > -1 && index < ids.length), msg, ids, index);
+      this.debug.fail(args);
+    }
 
-      // Hide only the index of the provided ids
-      if (app.searchBar.vals.view === 'one') {
-        id = ids[index];
-        if ( this.get(id) ) {
-          this.get(id).elem.root.style.display = 'none';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('hideElems', false, msg, id);
-        }
-        return;
-      }
+    view = app.searchBar.vals.view;
 
-      // Hide the index plus ten (or to the array end)
+    // Hide only the index of the provided ids
+    if (view === 'one') {
+      id = ids[index];
+      DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+      this.setStyle(id, 'display', 'none');
+      return;
+    }
+
+    // Hide the index plus ten (or to the array end)
+    if (view === 'ten') {
       ids = ( (ids.length < (index + 11)) ?
         ids.slice(index) : ids.slice(index, (index + 11))
       );
-      ids.forEach(function(/** num */ id) {
-        if ( this.get(id) ) {
-          this.get(id).elem.root.style.display = 'none';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('hideElems', false, msg, id);
-        }
-      }, this);
+      i = ids.length;
+      while (i--) {
+        id = ids[i];
+        DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+        this.setStyle(id, 'display', 'none');
+      }
+      return;
     }
   };
 
@@ -305,79 +393,86 @@
   Questions.prototype.showElems = function(ids, index) {
 
     // Debugging
-    var msg;
+    var args, msg, nullMsg;
     if (DEBUG) {
       this.debug.start('showElems', ids, index);
       this.debug.args('showElems', ids, 'array', index, 'number');
+      // Error message for finding null questions
+      nullMsg = 'Error: A null question was found. id= $$';
     }
 
+    /**
+     * @type {string}
+     * @private
+     */
+    var view;
     /**
      * @type {num}
      * @private
      */
     var id;
+    /**
+     * @type {num}
+     * @private
+     */
+    var i;
 
     if (index === -1) {
 
-      // Show no questions (i.e. show the empty message)
+      // No questions to show (i.e. show the empty message)
       if (!ids) {
         app.elems.none.style.display = 'block';
         return;
       }
 
       // Show all of the provided ids
-      ids.forEach(function(/** num */ id, /** num */ i) {
-        if ( this.get(id) ) {
-          this.get(id).elem.root.className = ( (i % 2) ?
-            'question shade2' : 'question shade1'
-          );
-          this.get(id).elem.root.style.display = 'block';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('showElems', false, msg, id);
-        }
-      }, this);
+      i = ids.length;
+      while (i--) {
+        id = ids[i];
+        DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+        this.get(id).elem.root.className = ( (i % 2) ?
+          'question shade2' : 'question shade1'
+        );
+        this.setStyle(id, 'display', 'block');
+      }
+
+      return;
     }
-    else {
 
-      if (DEBUG) {
-        msg = 'Error: No ids were provided with a non-negative index. ids= $$';
-        this.debug.fail('showElems', (!!ids && !!ids.length), msg, ids);
-      }
+    if (DEBUG) {
+      msg = 'Error: No ids were provided with a non-negative index. ids= $$';
+      this.debug.fail('showElems', (!!ids && !!ids.length), msg, ids);
+      msg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+      args = [ 'showElems' ];
+      args.push((index > -1 && index < ids.length), msg, ids, index);
+      this.debug.fail(args);
+    }
 
-      // Show only the index of the provided ids
-      if (app.searchBar.vals.view === 'one') {
-        id = ids[index];
-        if ( this.get(id) ) {
-          this.get(id).elem.root.className = 'question shade1';
-          this.get(id).elem.root.style.display = 'block';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('showElems', false, msg, id);
-        }
-        return;
-      }
+    view = app.searchBar.vals.view;
 
-      // Show the index plus ten (or to the array end)
+    // Hide only the index of the provided ids
+    if (view === 'one') {
+      id = ids[index];
+      DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+      this.get(id).elem.root.className = 'question shade1';
+      this.setStyle(id, 'display', 'block');
+      return;
+    }
+
+    // Hide the index plus ten (or to the array end)
+    if (view === 'ten') {
       ids = ( (ids.length < (index + 11)) ?
         ids.slice(index) : ids.slice(index, (index + 11))
       );
-      ids.forEach(function(/** num */ id, /** num */ i) {
-        if ( this.get(id) ) {
-          this.get(id).elem.root.className = ( (i % 2) ?
-            'question shade2' : 'question shade1'
-          );
-          this.get(id).elem.root.style.display = 'block';
-          return;
-        }
-        if (DEBUG) {
-          msg = 'Error: A question id was not found. id= $$';
-          this.debug.fail('showElems', false, msg, id);
-        }
-      }, this);
+      i = ids.length;
+      while (i--) {
+        id = ids[i];
+        DEBUG && this.debug.fail('hideElems', !!this.get(id), nullMsg, id);
+        this.get(id).elem.root.className = ( (i % 2) ?
+          'question shade2' : 'question shade1'
+        );
+        this.setStyle(id, 'display', 'block');
+      }
+      return;
     }
   };
