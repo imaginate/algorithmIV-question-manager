@@ -250,6 +250,17 @@
     pTitle.textContent = pArrow.textContent = 'Previous';
     nTitle.textContent = nArrow.textContent = 'Next';
 
+    pArrow.onclick = function() {
+      DEBUG && debug.group('prev.onclick', 'coll');
+      app.moveDisplay('prev');
+      DEBUG && debug.group('prev.onclick', 'end');
+    };
+    nArrow.onclick = function() {
+      DEBUG && debug.group('next.onclick', 'coll');
+      app.moveDisplay('next');
+      DEBUG && debug.group('next.onclick', 'end');
+    };
+
     prev.appendChild(pArrow);
     prev.appendChild(pBG);
     prev.appendChild(pTitle);
