@@ -285,6 +285,7 @@
    * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
+   * @type {function()}
    */
   SearchBar.prototype.setMainElems = function() {
 
@@ -340,7 +341,11 @@
         DEBUG && debug.group('searchBar.view.onchange', 'coll');
         oldVal = app.searchBar.vals.view;
         app.searchBar.vals.view = event.target.value;
-        app.updateDisplay(false, oldVal);
+        app.updateDisplay({
+          noVals: true,
+          reset : true,
+          oldVal: oldVal
+        });
         DEBUG && debug.group('searchBar.view.onchange', 'end');
       }
     };
@@ -354,7 +359,12 @@
       if (app.searchBar.vals.order != event.target.value) {
         DEBUG && debug.group('searchBar.order.onchange', 'coll');
         app.searchBar.vals.order = event.target.value;
-        app.updateDisplay(true);
+        app.updateDisplay({
+          noVals: true,
+          reset : true,
+          flip  : true,
+          index : true
+        });
         DEBUG && debug.group('searchBar.order.onchange', 'end');
       }
     };
@@ -470,6 +480,7 @@
    * Public Method (SearchBar.prototype.setOptElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's option elements.
+   * @type {function()}
    */
   SearchBar.prototype.setOptElems = function() {
 
@@ -655,6 +666,7 @@
    * Public Method (SearchBar.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Appends the search bar's elements to the selections root.
+   * @type {function()}
    */
   SearchBar.prototype.appendElems = function() {
 
@@ -673,17 +685,25 @@
    * Public Method (SearchBar.prototype.updateSubCatOpts)
    * -----------------------------------------------------
    * @desc Updates the children appended to the sub category select element.
+   * @param {string=} val - The new value to update subCat to.
    */
-  SearchBar.prototype.updateSubCatOpts = function() {
+  SearchBar.prototype.updateSubCatOpts = function(val) {
 
-    DEBUG && this.debug.start('updateSubCatOpts');
+    if (DEBUG) {
+      this.debug.start('updateSubCatOpts', val);
+      this.debug.args('updateSubCatOpts', val, 'string=');
+    }
 
-    // Update the select value and clear its children
-    this.vals.subCat = 'all';
-    this.elems.subCat.value = 'all';
+    // Update the select value
+    val = val || 'all';
+    this.vals.subCat = val;
+    this.elems.subCat.value = val;
+
+    // Clear subCat's children
     while (this.elems.subCat.firstChild) {
       this.elems.subCat.removeChild(this.elems.subCat.firstChild);
     }
+
     // Append the new children
     this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
       this.elems.subCat.appendChild(elem);
