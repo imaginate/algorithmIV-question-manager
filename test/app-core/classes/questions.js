@@ -301,23 +301,21 @@
    * @desc Updates the display to 'none' for the provided questions.
    * @param {?nums} ids - The previous active question ids.
    * @param {num} index - The index of the ids to hide from view.
+   * @param {string=} view - The old value of app.searchBar.vals.view.
    */
-  Questions.prototype.hideElems = function(ids, index) {
+  Questions.prototype.hideElems = function(ids, index, view) {
 
     // Debugging
     var args, msg, nullMsg;
     if (DEBUG) {
-      this.debug.start('hideElems', ids, index);
-      this.debug.args('hideElems', ids, 'numbers', index, 'number');
+      this.debug.start('hideElems', ids, index, view);
+      args = [ 'hideElems' ];
+      args.push(ids, 'numbers', index, 'number', view, 'string=');
+      this.debug.args(args);
       // Error message for finding null questions
       nullMsg = 'Error: A null question was found. id= $$';
     }
 
-    /**
-     * @type {string}
-     * @private
-     */
-    var view;
     /**
      * @type {num}
      * @private
@@ -357,7 +355,7 @@
       this.debug.fail(args);
     }
 
-    view = app.searchBar.vals.view;
+    view = view || app.searchBar.vals.view;
 
     // Hide only the index of the provided ids
     if (view === 'one') {
