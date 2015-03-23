@@ -343,9 +343,20 @@
       id      : this.format.get('id'),
       url     : this.get('url'),
       complete: this.format.get('complete'),
-      source  : this.format.get('source'),
-      mainCat : this.format.get('mainCat'),
-      subCat  : this.format.get('subCat'),
+      source  : {
+        id  : this.get('source'),
+        name: this.format.get('source')
+      },
+      mainCat : {
+        ids  : this.get('mainCat'),
+        h3   : this.format.get('mainCat').h3 || null,
+        names: this.format.get('mainCat').names  || null
+      },
+      subCat  : {
+        ids  : this.get('subCat'),
+        h3   : this.format.get('subCat').h3 || null,
+        names: this.format.get('subCat').names  || null
+      },
       links   : this.format.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
