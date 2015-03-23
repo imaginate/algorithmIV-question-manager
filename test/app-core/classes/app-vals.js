@@ -146,18 +146,20 @@
      * ----------------------------------------------- 
      * Public Method (AppVals.move)
      * -----------------------------------------------
-     * @desc Go to the prev or next index.
-     * @param {string} way - The direction to move the index (prev or next).
-     * @return {(num|nums)} The question id(s) for the new index.
+     * @desc Go to the prev, next, or a specific index.
+     * @param {(string|number)} way - The location to move the index.
+     *   The options are 'prev', 'next', or a question id.
+     * @return {num} The new index.
      */
     this.move = function(way) {
 
-      var msg;
+      // Debugging
+      var msg, pass;
       if (DEBUG) {
         this.debug.start('move', way);
-        this.debug.args('move', way, 'string');
-        msg = 'Error: This method should not have been called now. ';
-        msg += 'The nav elements should be hidden.';
+        this.debug.args('move', way, 'string|number');
+        // Error message for initial value checks
+        msg = 'Error: An incorrect value was given for way. way= $$';
       }
 
       /**
@@ -171,25 +173,44 @@
        */
       var last;
 
+      // Check the value for way
+      if (typeof way === 'string' &&
+          way !== 'prev' && way !== 'next') {
+        way = way.replace(/[^0-9]/g, '');
+        DEBUG && this.debug.fail('move', !!way, msg, way);
+        way = Number(way);
+      }
+
+      if (DEBUG && typeof way !== 'string') {
+        pass = (way > 0 && way <= app.questions.len);
+        this.debug.fail('move', pass, msg, way);
+      }
+
       // Save the value of the current view
       view = app.searchBar.vals.view;
 
-      // Check the view
-      if (view !== 'one' && view !== 'ten') {
-        DEBUG && this.debug.fail('move', false, msg);
-        return;
+      if (typeof way === 'number') {
+        if (view !== 'one') {
+          app.searchBar.vals.view = 'one';
+        }
+        index = ids.indexOf(way);
+        DEBUG && this.debug.fail('move', (index !== -1), msg, way);
+        return index;
+      }
+
+      if (DEBUG) {
+        // Error message for remaining debugging
+        msg = 'Error: This method should not have been called now. ';
+        msg += 'The nav elements should be hidden.';
       }
 
       // Save the last index
-      last = ids.length - 1;
+      last = len - 1;
 
       // The single view actions
       if (view === 'one') {
 
-        if (ids.length < 2) {
-          DEBUG && this.debug.fail('move', false, msg);
-          return;
-        }
+        DEBUG && this.debug.fail('move', (len > 1), msg);
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -198,16 +219,13 @@
           index = (index === last) ? 0 : ++index;
         }
 
-        return ids[index];
+        return index;
       }
 
       // The ten view actions
       if (view === 'ten') {
 
-        if (ids.length < 11) {
-          DEBUG && this.debug.fail('move', false, msg);
-          return;
-        }
+        DEBUG && this.debug.fail('move', (len > 10), msg);
 
         // Update the last index
         last -= (last % 10);
@@ -219,9 +237,7 @@
           index = (index === last) ? 0 : (index + 10);
         }
 
-        return ( (index === last) ?
-          ids.slice(last) : ids.slice(index, (index + 11))
-        );
+        return index;
       }
 
       if (DEBUG) {
