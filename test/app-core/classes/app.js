@@ -185,12 +185,17 @@
    * @desc Show the current matching questions for the app.
    * @param {boolean=} flip - Indicates that the questions order
    *   should be flipped.
+   * @param {string=} oldView - The value of view before the update.
    */
-  App.prototype.updateDisplay = function(flip) {
+  App.prototype.updateDisplay = function(flip, oldView) {
 
+    // Debugging
+    var msg;
     if (DEBUG) {
-     this.debug.group('updateDisplay', 'coll');
-     this.debug.start('updateDisplay');
+     msg = 'flip= $$, oldView= $$';
+     this.debug.group('updateDisplay', 'coll', msg, flip, oldView);
+     this.debug.start('updateDisplay', flip, oldView);
+     this.debug.args('updateDisplay', flip, 'boolean=', oldView, 'string=');
     }
 
     /**
@@ -252,7 +257,8 @@
       }
 
       // Hide the old questions
-      this.questions.hideElems(oldIds, oldIndex);
+      oldView = oldView || view;
+      this.questions.hideElems(oldIds, oldIndex, oldView);
 
       // Show the new questions
       this.questions.showElems(newIds, newIndex);
@@ -425,4 +431,73 @@
 
     // Update the values
     this.vals.reset(newIds);
+  };
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.prototype.moveDisplay)
+   * -----------------------------------------------
+   * @desc Show the prev, next, or a specific question(s).
+   * @param {(string|number)} way - The location to show.
+   *   The options are 'prev', 'next', or a question id.
+   */
+  App.prototype.moveDisplay = function(way) {
+
+    if (DEBUG) {
+     this.debug.group('moveDisplay', 'coll', 'way= $$', way);
+     this.debug.start('moveDisplay', way);
+     this.debug.args('moveDisplay', way, 'string|number');
+    }
+
+    /**
+     * @type {?nums}
+     * @private
+     */
+    var ids;
+    /**
+     * @type {num}
+     * @private
+     */
+    var oldIndex;
+    /**
+     * @type {num}
+     * @private
+     */
+    var newIndex;
+    /**
+     * @type {string}
+     * @private
+     */
+    var oldView;
+
+    ids = this.vals.get('len');
+    ids = (ids) ? this.vals.get('ids').slice(0) : null;
+
+    oldView = this.searchBar.vals.view;
+
+    oldIndex = this.vals.get('index');
+    newIndex = this.vals.move(way);
+
+    // Hide the question's main element
+    this.elems.main.style.opacity = '0';
+
+    // Wrap logic in timeout to allow css transitions to complete
+    setTimeout(function() {
+
+      // Show or hide the prev and next nav elements
+      this.elems.nav.style.display = ( (this.vals.get('len') > 1) ?
+        'block' : 'none'
+      );
+
+      // Hide the old questions
+      this.questions.hideElems(ids, oldIndex, oldView);
+
+      // Show the new questions
+      this.questions.showElems(ids, newIndex);
+
+      // Show the question's main element
+      this.elems.main.style.opacity = '1';
+        
+      DEBUG && this.debug.group('moveDisplay', 'end');
+    }, 520);
   };
