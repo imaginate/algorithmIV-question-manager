@@ -64,14 +64,19 @@
    *   id      : string,
    *   url     : string,
    *   complete: string,
-   *   source  : string,
+   *   source  : {
+   *     id  : string,
+   *     name: string
+   *   },
    *   mainCat : {
-   *     h3: string,
-   *     p : string
+   *     ids  : strings,
+   *     h3   : string,
+   *     names: strings
    *   },
    *   subCat  : {
-   *     h3: string,
-   *     p : string
+   *     ids  : strings,
+   *     h3   : string,
+   *     names: strings
    *   },
    *   links   : links,
    *   problem : string,
@@ -104,7 +109,7 @@
       appendID(question.id, question.url);
     }
 
-    if (question.source) {
+    if (question.source.name) {
       appendSource(question.source);
     }
 
@@ -176,7 +181,7 @@
       var a;
 
       config = (app.config.get('showLinks') &&
-                app.config.searchBar.url.get('id'));
+                app.config.searchBar.links.get('id'));
 
       div = document.createElement('div');
       h3  = document.createElement('h3');
@@ -191,19 +196,30 @@
       div.appendChild(h3);
       div.appendChild(p);
 
-      /*
-       * ADD THIS FEATURE SOON
-       *
       if (config) {
+
         p.textContent = '';
-        a = document.createElement('a');
+
         url = url || Number(id);
-        a.href = app.url + '/id/' + url;
-        a.className = 'dark';
+
+        a = document.createElement('a');
+        a.href = '/id/' + url;
+        // ADD URL LOGIC HERE ******
+        //a.href = app.url + '/id/' + url;
+        // TO HERE *****************
         a.textContent = id;
+        a.onclick = function() {
+          DEBUG && debug.group('QuestionElem.id.onclick', 'coll', 'id= $$', id);
+
+          app.moveDisplay(id);
+          // ADD URL LOGIC HERE ******
+
+          DEBUG && debug.group('QuestionElem.id.onclick', 'end');
+          return false;
+        };
+
         p.appendChild(a);
       }
-      */
     }
 
     /**
@@ -211,16 +227,21 @@
      * Private Method (appendSource)
      * ---------------------------------------------
      * @desc Appends the question's source.
-     * @param {string} source - The name of the source.
+     * @param {Object} source - The id and name of the source.
      * @private
      */
     function appendSource(source) {
 
       if (DEBUG) {
         that.debug.start('appendSource', source);
-        that.debug.args('appendSource', source, 'string');
+        that.debug.args('appendSource', source, 'object');
       }
 
+      /**
+       * @type {boolean}
+       * @private
+       */
+      var config;
       /**
        * @type {elem}
        * @private
@@ -236,6 +257,14 @@
        * @private
        */
       var p;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var a;
+
+      config = (app.config.get('showLinks') &&
+                app.config.searchBar.links.get('source'));
 
       div = document.createElement('div');
       h3  = document.createElement('h3');
@@ -244,11 +273,40 @@
       div.className = 'source';
 
       h3.textContent = 'Source:';
-      p.textContent  = source;
+      p.textContent  = source.name;
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
+      if (config) {
+
+        p.textContent = '';
+
+        a = document.createElement('a');
+        a.href = 'javascript: void(0);';
+        a.className = 'dark';
+        a.textContent = source.name;
+        a.onclick = function() {
+          if (app.searchBar.vals.source != source.id) {
+            // Debugging
+            var args;
+            if (DEBUG) {
+              args = [ 'QuestionElem.source.onclick' ];
+              args.push('coll', 'source= $$', source);
+              debug.group(args);
+            }
+
+            app.searchBar.vals.source = source.id;
+            app.updateDisplay();
+
+            DEBUG && debug.group('QuestionElem.source.onclick', 'end');
+          }
+          return false;
+        };
+
+        p.appendChild(a);
+      }
     }
 
     /**
@@ -313,6 +371,11 @@
       }
 
       /**
+       * @type {boolean}
+       * @private
+       */
+      var config;
+      /**
        * @type {elem}
        * @private
        */
@@ -332,6 +395,29 @@
        * @private
        */
       var p;
+      /**
+       * @type {num}
+       * @private
+       */
+      var i;
+      /**
+       * @type {string}
+       * @private
+       */
+      var url;
+      /**
+       * @type {elem}
+       * @private
+       */
+      var a;
+      /**
+       * @type {Object}
+       * @private
+       */
+      var subParent;
+
+      config = (app.config.get('showLinks') &&
+                app.config.searchBar.links.get('category'));
 
       contain = document.createElement('div');
       contain.className = 'category';
@@ -343,12 +429,52 @@
 
         div.className  = 'mainCategory';
         h3.textContent = main.h3;
-        p.textContent  = main.p;
+        p.textContent  = main.names.join(',');
 
         div.appendChild(h3);
         div.appendChild(p);
 
         contain.appendChild(div);
+
+        if (config) {
+          p.textContent = '';
+
+          main.ids.reverse();
+          main.names.reverse();
+
+          // Add the each main category's anchor tag
+          i = main.ids.length;
+          while (i--) {
+            a = document.createElement('a');
+            url = app.categories.get(main.ids[i]).get('url');
+            a.href = '/category/' + url;
+            // ADD URL LOGIC HERE ******
+            //a.href = app.url + '/category/' + url;
+            // TO HERE *****************
+            a.className = 'dark';
+            a.textContent = main.names[i];
+            a.onclick = function() {
+              if (app.searchBar.vals.mainCat != main.ids[i]) {
+                // Debugging
+                var args;
+                if (DEBUG) {
+                  args = [ 'QuestionElem.mainCat.onclick' ];
+                  args.push('coll', 'mainCat= $$', mainCat);
+                  debug.group(args);
+                }
+
+                app.searchBar.vals.mainCat = main.ids[i];
+                app.searchBar.updateSubCatOpts();
+                app.updateDisplay();
+
+                DEBUG && debug.group('QuestionElem.mainCat.onclick', 'end');
+              }
+              return false;
+            };
+
+            p.appendChild(a);
+          }
+        }
       }
 
       if (!!sub.h3) {
@@ -358,12 +484,80 @@
 
         div.className  = 'subCategory';
         h3.textContent = sub.h3;
-        p.textContent  = sub.p;
+        p.textContent  = sub.names.join(',');
 
         div.appendChild(h3);
         div.appendChild(p);
 
         contain.appendChild(div);
+
+        if (config) {
+          p.textContent = '';
+
+          sub.ids.reverse();
+          sub.names.reverse();
+          subParent = {};
+
+          // Add the each sub category's anchor tag
+          i = sub.ids.length;
+          while (i--) {
+            app.categories.some(function(/** string */ id) {
+              /** @private */
+              var category;
+              /** @private */
+              var subs;
+
+              category = app.categories.get(id);
+              subs = category.get('subs');
+              if (subs && !!subs[ sub.ids[i] ]) {
+                subParent.id = id;
+                subParent.url = category.get('url');
+                subParent.name = category.get('name');
+                return true;
+              }
+              return false;
+            });
+            a = document.createElement('a');
+            url = app.categories.get(sub.ids[i]).get('url');
+            a.href = '/category/' + subParent.url + '/' + url;
+            // ADD URL LOGIC HERE ******
+            //a.href = app.url + '/category/' + subParent.url + '/' + url;
+            // TO HERE *****************
+            a.className = 'dark';
+            a.textContent = sub.names[i];
+            a.onclick = function() {
+              if (app.searchBar.vals.subCat != sub.ids[i]) {
+                // Debugging
+                var args;
+                if (DEBUG) {
+                  args = [ 'QuestionElem.subCat.onclick' ];
+                  args.push('coll', 'subCat= $$, subParent= $$');
+                  args.push(subCat, subParent);
+                  debug.group(args);
+                }
+
+                // Check the main category and update the values and options
+                if (app.searchBar.vals.mainCat !== 'all' ||
+                    app.searchBar.vals.mainCat !== subParent.id) {
+                  app.searchBar.vals.mainCat === 'all';
+                  app.searchBar.updateSubCatOpts(sub.ids[i]);
+                }
+                else {
+                  app.searchBar.vals.subCat = sub.ids[i];
+                }
+
+                // Finish the display update
+                app.updateDisplay();
+
+                DEBUG && debug.group('QuestionElem.subCat.onclick', 'end');
+              }
+
+              return false;
+            };
+
+            p.appendChild(a);
+          }
+        }
       }
 
       root.appendChild(contain);
