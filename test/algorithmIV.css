@@ -420,6 +420,21 @@ body {
  * Question Section Extras
  * ------------------------------- */
 
+#aIV .idContain a {
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .idContain a:hover,
+#aIV .idContain a:active {
+  text-decoration:none;
+}
+
+#aIV .hideLink .idContain a {
+  text-decoration:none;
+  cursor:default;
+}
+
 #aIV .links a {
   display:inline-block;
   margin-right:20px;
@@ -742,11 +757,6 @@ body {
 #aIV a.dark:hover,
 #aIV a.dark:active {
   text-decoration:none;
-}
-
-#aIV .hideLinks a.dark {
-  text-decoration:none;
-  cursor:default;
 }
 
 #aIV .error {
