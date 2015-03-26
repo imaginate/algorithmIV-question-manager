@@ -1,12 +1,12 @@
   /**
    * -----------------------------------------------------
-   * Private Variable (_core)
+   * Private Variable (_return)
    * -----------------------------------------------------
    * @desc Holds the public methods for the core module.
-   * @typedef {appCore}
+   * @typedef {initApp}
    * @struct
    */
-  var _core = {};
+  var _return = {};
 
   /**
    * -----------------------------------------------------
@@ -20,12 +20,12 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (_core.init)
+   * Public Method (_return.init)
    * -----------------------------------------------------
    * @desc Initializes the app.
    * @param {?Object} settings - The app's settings.
    */
-  _core.init = function(settings) {
+  _return.init = function(settings) {
 
     // Debugging
     var msg;
@@ -36,13 +36,25 @@
       debug.fail('init', !_initialized, msg);
     }
 
-    /* @type {?Object} */
+    /**
+     * @type {?Object}
+     * @private
+     */
     var config;
-    /* @type {?hashMap} */
+    /**
+     * @type {?hashMap}
+     * @private
+     */
     var sources;
-    /* @type {?Object} */
+    /**
+     * @type {?Object}
+     * @private
+     */
     var categories;
-    /* @type {?Object} */
+    /**
+     * @type {?Object}
+     * @private
+     */
     var questions;
 
     // Check if app has been initialized
@@ -60,8 +72,9 @@
         questions = null;
       }
 
-      // Setup the app
+      // Setup and freeze the app
       app = new App(config, sources, categories, questions);
+      Object.freeze(app);
 
       // Start the app
       document.addEventListener('DOMContentLoaded', app.setupDisplay);
