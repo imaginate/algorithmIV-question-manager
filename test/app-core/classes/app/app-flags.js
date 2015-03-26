@@ -37,19 +37,55 @@
      * Public Method (AppFlags.get)
      * -----------------------------------------------
      * @desc Gets a flag.
-     * @param {string} part - The name of the flag to get.
+     * @param {string} prop - The name of the flag to get.
      * @return {boolean}
      */
-    this.get = function(part) {
-      /** @private */
-      var result;
+    this.get = function(prop) {
+
+      // Debugging
+      var msg;
+      if (DEBUG) {
+        this.debug.start('get', prop);
+        this.debug.args('get', prop, 'string');
+        msg = 'Error: The given property does not exist. property= $$';
+        this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
+      }
+
       /** @private */
       var flags = {
         initArgs: initArgs
       };
 
-      result = (flags[part] !== undefined) ? flags[part] : null;
-      return result;
+      return flags[prop];
+    };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (AppFlags.set)
+     * -----------------------------------------------
+     * @desc Sets a flag.
+     * @param {string} prop - The name of the flag to set.
+     * @param {boolean} val - The value to set the flag to.
+     */
+    this.set = function(prop, val) {
+
+      // Debugging
+      var msg;
+      if (DEBUG) {
+        this.debug.start('set', prop, val);
+        this.debug.args('set', prop, 'string', val, 'boolean');
+        msg = 'Error: The given property does not exist. property= $$';
+        this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
+      }
+
+      /** @private */
+      var flags = {
+        initArgs: function () {
+          initArgs = val;
+        }
+      };
+
+      flags[prop]();
     };
 
 

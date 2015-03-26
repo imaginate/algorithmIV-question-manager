@@ -261,6 +261,7 @@
         resetIndex = (!!settings.index) ? oldIndex : 0;
         this.vals.reset(resetIds, resetIndex);
       }
+    }
     else {
       this.updateValues();
     }

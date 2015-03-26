@@ -2,21 +2,25 @@
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV App - Core Module (v1.1.0)
+ * Algorithm IV App - Test Module (v1.1.0)
  * -----------------------------------------------------------------------------
- * @file The core module for implementing the question management app.
- * @module core
+ * @file The module for implementing the aIV question management app with
+ *   debugging code included and turned on.
+ * @module aIVApp
  * @version 1.1.0
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
  * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  **
- * @desc More details about Algorithm IV app's core module:
+ * @desc More details about aIV.app's module:
  * <ol>
- *   <li>annotations: [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
- *       and [See JSDoc3]{@link http://usejsdoc.org/index.html}</li>
- *   <li>outline: [See all the props, methods, and classes]{@link https://github.com/imaginate/algorithmIV/blob/master/docs/core-structure.md}</li>
- *   <li>contributing: [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}</li>
+ *   <li>annotations: 
+ *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       and [See JSDoc3]{@link http://usejsdoc.org/}
+ *   </li>
+ *   <li>contributing: 
+ *       [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}
+ *   </li>
  * </ol>
  */
 
@@ -36,10 +40,10 @@
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} hashMap
  * @typedef {Object<string, hashMap>} nestedHashMap
- * @typedef {{ init: function(?Object, ?hashMap, ?Object, ?Object) }} appCore
+ * @typedef {{ init: function(?Object) }} initApp
  */
 
-(function(/** Window */ window, /** appCore */ core) {
+(function(/** Window */ window, /** initApp */ core) {
   "use strict";
 
 
@@ -73,61 +77,61 @@
 /* -----------------------------------------------------------------------------
  * | The App Class                                                             |
  * v ------------------------------------------------------------------------- v
-                                                             classes/app.js */
+                                                         classes/app/app.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The App Flags Class                                                       |
  * v ------------------------------------------------------------------------- v
-                                                       classes/app-flags.js */
+                                                   classes/app/app-flags.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The App Elems Class                                                       |
  * v ------------------------------------------------------------------------- v
-                                                       classes/app-elems.js */
+                                                   classes/app/app-elems.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The App Vals Class                                                        |
  * v ------------------------------------------------------------------------- v
-                                                        classes/app-vals.js */
+                                                    classes/app/app-vals.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Config Class                                                          |
  * v ------------------------------------------------------------------------- v
-                                               classes/app-config/config.js */
+                                                   classes/config/config.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Search Bar Config Class                                               |
  * v ------------------------------------------------------------------------- v
-                                    classes/app-config/search-bar-config.js */
+                                        classes/config/search-bar-config.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The URL Search Bar Config Class                                           |
  * v ------------------------------------------------------------------------- v
-                                classes/app-config/url-search-bar-config.js */
+                                    classes/config/url-search-bar-config.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Links Search Bar Config Class                                         |
  * v ------------------------------------------------------------------------- v
-                              classes/app-config/links-search-bar-config.js */
+                                  classes/config/links-search-bar-config.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Defaults Search Bar Config Class                                      |
  * v ------------------------------------------------------------------------- v
-                           classes/app-config/defaults-search-bar-config.js */
+                               classes/config/defaults-search-bar-config.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Questions Config Class                                                |
  * v ------------------------------------------------------------------------- v
-                                     classes/app-config/questions-config.js */
+                                         classes/config/questions-config.js */
 
 
 /* -----------------------------------------------------------------------------
@@ -169,19 +173,25 @@
 /* -----------------------------------------------------------------------------
  * | The Question Class                                                        |
  * v ------------------------------------------------------------------------- v
-                                                        classes/question.js */
+                                               classes/question/question.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Question Format Class                                                 |
  * v ------------------------------------------------------------------------- v
-                                                 classes/question-format.js */
+                                        classes/question/question-format.js */
 
 
 /* -----------------------------------------------------------------------------
  * | The Question Elem Class                                                   |
  * v ------------------------------------------------------------------------- v
-                                                   classes/question-elem.js */
+                                          classes/question/question-elem.js */
+
+
+/* -----------------------------------------------------------------------------
+ * | The Prettifier Class                                                      |
+ * v ------------------------------------------------------------------------- v
+                                           classes/prettifier/prettifier.js */
 
 
 /* -----------------------------------------------------------------------------
@@ -194,6 +204,6 @@
  * | End of module                                                             |
  * v ------------------------------------------------------------------------- v
                                                                             */
-  return _core;
+  return _return;
 
 })(window, document));

@@ -55,10 +55,20 @@
      * Public Method (AppVals.get)
      * -----------------------------------------------
      * @desc Gets an app value.
-     * @param {string} part - The name of the value to get.
+     * @param {string} prop - The name of the value to get.
      * @return {(num|nums)}
      */
     this.get = function(part) {
+
+      // Debugging
+      var msg;
+      if (DEBUG) {
+        this.debug.start('get', prop);
+        this.debug.args('get', prop, 'string');
+        msg = 'Error: The given property does not exist. property= $$';
+        this.debug.fail('get', values.hasOwnProperty(prop), msg, prop);
+      }
+
       /** @private */
       var values = {
         ids  : ids,
@@ -66,7 +76,7 @@
         index: index
       };
 
-      return ( values.hasOwnProperty(part) ) ? values[part] : null;
+      return values[prop];
     };
 
     /**
