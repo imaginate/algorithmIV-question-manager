@@ -1,0 +1,139 @@
+COMPILE AND MINIFY COMMANDS                                    |
+-------------------------------------------------------------- |
+Requirements:                                                  |
+GNU Sed (http://www.gnu.org/software/sed/)                     |
+Java (http://www.oracle.com/technetwork/java/javase/overview/) |
+----------------------------------------------------------------
+
+----------------------------------------------------------------
+COMPILE TESTS/APP        |
+------------------------ |    |
+File:                    |    |
+tests/algorithmIV-app.js |    |
+--------------------------    v
+
+## UNIX Commands
+cd tests/pre-compiled-app
+sed \
+  -e "/public-api.js/ r public-api.js" \
+  -e "/external-api.js/ r external-api.js" \
+  -e "/module-vars.js/ r module-vars.js" \
+  -e "/module-methods.js/ r module-methods.js" \
+  -e "/app.js/ r class/app.js" \
+  -e "/config.js/ r class/config.js" \
+  -e "/sources.js/ r class/sources.js" \
+  -e "/source.js/ r class/source.js" \
+  -e "/categories.js/ r class/categories.js" \
+  -e "/category.js/ r class/category.js" \
+  -e "/search-bar.js/ r class/search-bar.js" \
+  -e "/questions.js/ r class/questions.js" \
+  -e "/question.js/ r class/question.js" \
+  -e "/question-format.js/ r class/question-format.js" \
+  -e "/debug.js/ r class/debug.js" <skeleton.js>algorithmIV-app-temp.js
+cd ..
+cp -u pre-compiled-app/algorithmIV-app-temp.js algorithmIV-app.js
+rm -f pre-compiled-app/algorithmIV-app-temp.js
+
+## MS-DOS Commands
+cd tests\pre-compiled-app
+sed ^
+  -e "/public-api.js/ r public-api.js" ^
+  -e "/external-api.js/ r external-api.js" ^
+  -e "/module-vars.js/ r module-vars.js" ^
+  -e "/module-methods.js/ r module-methods.js" ^
+  -e "/app.js/ r class\app.js" ^
+  -e "/config.js/ r class\config.js" ^
+  -e "/sources.js/ r class\sources.js" ^
+  -e "/source.js/ r class\source.js" ^
+  -e "/categories.js/ r class\categories.js" ^
+  -e "/category.js/ r class\category.js" ^
+  -e "/search-bar.js/ r class\search-bar.js" ^
+  -e "/questions.js/ r class\questions.js" ^
+  -e "/question.js/ r class\question.js" ^
+  -e "/question-format.js/ r class\question-format.js" ^
+  -e "/debug.js/ r class\debug.js" <skeleton.js>algorithmIV-app-temp.js
+cd ..
+copy /y pre-compiled-app\algorithmIV-app-temp.js algorithmIV-app.js
+del /f pre-compiled-app\algorithmIV-app-temp.js
+
+----------------------------------------------------------------
+COMPILE TESTS/TESTS        |
+-------------------------- |    |
+File:                      |    |
+tests/algorithmIV-tests.js |    |
+----------------------------    v
+
+## UNIX Commands
+cd tests/pre-compiled-tests
+sed \
+  ##
+cd ..
+cp -u pre-compiled-tests/algorithmIV-tests-temp.js algorithmIV-tests.js
+rm -f pre-compiled-tests/algorithmIV-tests-temp.js
+
+## MS-DOS Commands
+cd tests\pre-compiled-tests
+sed ^
+  ##
+cd ..
+copy /y pre-compiled-tests\algorithmIV-tests-temp.js algorithmIV-tests.js
+del /f pre-compiled-tests\algorithmIV-tests-temp.js
+
+
+----------------------------------------------------------------
+COMPILE SRC             |
+----------------------- |    |
+File:                   |    |
+src/algorithmIV-app.js  |    |
+-------------------------    v
+
+## UNIX Commands
+cd src/pre-compiled-parts
+sed \
+  ## Sed commands here
+cd ..
+cp -u pre-compiled-parts/algorithmIV-app-temp.js algorithmIV-app.js
+rm -f pre-compiled-parts/algorithmIV-app-temp.js
+
+## MS-DOS Commands
+cd src\pre-compiled-parts
+sed ^
+  ## Sed commands here
+cd ..
+copy /y pre-compiled-parts\algorithmIV-app-temp.js algorithmIV-app.js
+del /f pre-compiled-parts\algorithmIV-app-temp.js
+
+----------------------------------------------------------------
+MINIFY SRC              |
+----------------------- |    |
+File:                   |    |
+src/algorithmIV-app.js  |    |
+-------------------------    v
+
+## UNIX Commands
+sed "3,25 d" <src/algorithmIV-app.js>compile/algorithmIV-app.js
+cd compile
+java \
+  -jar minifier.jar \
+  --js algorithmIV-app.js \
+  --js_output_file algorithmIV-app.min.js
+rm -f algorithmIV-app.js
+cd ..
+sed \
+  -e "2 r compile/copyright.txt" \
+  -e "1,2 d" <compile/algorithmIV-app.min.js>src/algorithmIV-app.min.js
+rm -f compile/algorithmIV-app.min.js
+
+## MS-DOS Commands
+sed "3,25 d" <src\algorithmIV-app.js>compile\algorithmIV-app.js
+cd compile
+java ^
+  -jar minifier.jar ^
+  --js algorithmIV-app.js ^
+  --js_output_file algorithmIV-app.min.js
+del /f algorithmIV-app.js
+cd ..
+sed ^
+  -e "2 r compile\copyright.txt" ^
+  -e "1,2 d" <compile\algorithmIV-app.min.js>src\algorithmIV-app.min.js
+del /f compile\algorithmIV-app.min.js

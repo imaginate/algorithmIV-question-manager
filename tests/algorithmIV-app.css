@@ -1,8 +1,16 @@
-/* Algorithm IV (v1.0.1) (learn@algorithmiv.com)
+/* Algorithm IV App (v1.1.0) (learn@algorithmiv.com)
  * Section: CSS Style Guide
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
  * The MIT License (algorithmiv.com/docs/license) */
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Import Fonts
+ * ------------------------------- */
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
 /* ------------------------------- *
  * New Section:
@@ -13,7 +21,7 @@
 body {
   padding:0 0 30px;
   color:#000;
-  font-family:"ff-tisa-sans-web-pro", sans-serif;
+  font-family:"ff-tisa-sans-web-pro", "Open Sans", sans-serif;
   font-size:0;
   background:#fff;
 }
@@ -295,7 +303,7 @@ body {
 #aIV .question {
   display:block;
   padding:20px 28px 32px;
-  margin:0 0 20px 0;
+  margin:0 0 20px;
   font-size:0;
   opacity:0;
 }
@@ -420,10 +428,32 @@ body {
  * Question Section Extras
  * ------------------------------- */
 
+#aIV .idContain a {
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .idContain a:hover,
+#aIV .idContain a:active {
+  text-decoration:none;
+}
+
+#aIV .hideLink .idContain a {
+  text-decoration:none;
+  cursor:default;
+}
+
 #aIV .links a {
   display:inline-block;
   margin-right:20px;
   line-height:40px;
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .links a:hover,
+#aIV .links a:active {
+  text-decoration:none;
 }
 
 #aIV img.loader {
@@ -467,6 +497,32 @@ body {
   color:#192037;
   font-size:24px;
   font-weight:400;
+}
+
+#aIV .initExample {
+  display:block;
+  padding:20px 28px 32px;
+  margin:10px 0 20px;
+  text-align:center;
+  font-size:0;
+}
+
+#aIV .initExample h3 {
+  display:block;
+  padding:0;
+  margin:0 auto 5px;
+  line-height:34px;
+  color:#f00;
+  font-size:26px;
+  font-weight:700;
+}
+
+#aIV .containExample {
+  position:relative;
+  display:block;
+  padding:0;
+  margin:0 auto;
+  font-size:0;
 }
 
 #aIV .loadError {
@@ -553,7 +609,7 @@ body {
   position:absolute;
   top:25px;
   right:-4px;
-  display:none;
+  display:block;
   width:55px;
   height:35px;
   border-right:solid 2px #d8f0fa;
@@ -758,6 +814,5 @@ body {
   top:-9999px;
   width:100px;
   height:100px;
-  opacity:0;
   overflow:scroll;
 }

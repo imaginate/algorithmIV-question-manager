@@ -1,649 +1,3 @@
-/* Algorithm IV (v1.0.2) (learn@algorithmiv.com)
- * Section: User Data, App Initialization, & Web Worker
- * Author: Adam Smith (adamsmith@youlum.com)
- * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
- * The MIT License (algorithmiv.com/docs/license) */
-
-/**
- * ------------------------------------------------------------------
- * Algorithm IV User Data (v1.0.2)
- * ------------------------------------------------------------------
- * manages a list of practice questions and detailed solutions
-    for learning computer science focused algorithms and data
-    structures, improving programming skillsets, and preparing
-    for technical interviews
- * settings: configuration, categories, sources, and questions
- * directions:
-   - see algorithmiv.com/docs/start
- */
-(function() {
-  "use strict";
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (configuration)
-   * -----------------------------------------------
-   * an object containing the configuration settings
-      for this module
-   * details:
-     - see algorithmiv.com/docs/configuration
-   */
-  var configuration = {
-    searchSettings: {
-         stage: true,
-        source: true,
-      category: true,
-        subCat: true
-    },
-    searchDefaults: {
-         view: 'one',
-        order: 'asc',
-        stage: 'all',
-       source: 'all',
-      mainCat: 'all',
-       subCat: 'all',
-      startID:  0
-    },
-    questionFormat: {
-            id: true,
-      complete: true,
-        source: true,
-      category: true,
-         links: true,
-        output: true
-    },
-        id: true,
-    worker: true
-  };
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (sources)
-   * -----------------------------------------------
-   * an object containing all of the problem sources
-   * details:
-     - see algorithmiv.com/docs/sources
-   */
-  var sources = {};
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (categories)
-   * -----------------------------------------------
-   * an object containing each main and sub question
-     category
-   * details:
-     - see algorithmiv.com/docs/categories
-   */
-  var categories = { main:{}, sub:{} };
-
-  /**
-   * ---------------------------------------------
-   * Public Variable (questions)
-   * ---------------------------------------------
-   * an array of objects containing each question,
-      its details, and your solution for it
-   * details:
-     - see algorithmiv.com/docs/questions
-   */
-  var questions = [];
-
-/*______________________________*
- |\  ~~~ v-v-v-v-v-v-v-v-v-v   /|
- | \  -- ~~~ ---- ----- ----  / |
- | (} DO NOT EDIT BELOW HERE {= |
- | /  -- ~~~ ---- ----- ----  \ |
- |/  ^-^-^-^ ~~~ ^-^-^-^-^-^   \|
- *------------- ~~~ algorithmIV */
-
-/**
- * ---------------------------------------------
- * Initialize Algorithm IV (v1.0.2)
- * ---------------------------------------------
- * triggers module init with user settings
- * @type {function(Object, Object, Object, Object)}
- * @private
- */
-(function(configuration, categories, sources, questions) {
-  // Verify objects have been set
-  var newConfiguration = configuration || {}, 
-      newCategories    = categories    || {},
-      newSources       = sources       || {},
-      newQuestions     = questions     || [];
-  newConfiguration.searchSettings = configuration.searchSettings || {};
-  newConfiguration.searchDefaults = configuration.searchDefaults || {};
-  newConfiguration.questionFormat = configuration.questionFormat || {};
-  newConfiguration.prettyCode     = configuration.prettyCode     || {};
-  newCategories.main = categories.main || {};
-  newCategories.sub  = categories.sub  || {};
-  // Trigger Algorithm IV
-  if (typeof window !== 'undefined') {
-    algorithmIV.init(newConfiguration, newCategories, newSources, newQuestions);
-  }
-}(configuration, categories, sources, questions));
-
-/**
- * ------------------------------------------------------------------
- * Algorithm IV Web Worker (v1.0.2)
- * ------------------------------------------------------------------
- * handles converting your list of questions into a string of html
- * annotation:
-   - Closure Compiler specific JSDoc: developers.google.com/closure/compiler/
- * structure:
-   - see github.com/imaginate/algorithmIV/blob/master/workerStructure.md
-   - contains an outline of all the variables, methods, and classes
-      used in this web worker
- * contributing:
-   - see github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md
- */
-(function(questions) {
-  /**
-   * -----------------------------------------------
-   * Initialize Worker
-   * -----------------------------------------------
-   * initializes the web worker
-   */
-  onmessage = function(event) {
-    // Declare method variables
-    var args;
-    // Save event.data reference
-    args = event.data;
-    // Set question length
-    qLen = args.qLen;
-    // Set configuration
-    configuration = args.configuration;
-    // Set sources
-    sources = args.sources;
-    // Set categories
-    categories = args.categories;
-    // Format the questions
-    FormatQuestions.init();
-    // Return formatted questions
-    self.postMessage(configuration.content);
-  };
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (qLen)
-   * -----------------------------------------------
-   * the length of the questions array
-   * @type {number}
-   * @private
-   */
-  var qLen;
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (configuration)
-   * -----------------------------------------------
-   * an object containing the display configuration
-      settings for the module
-   * @type {{
-       searchSettings: {
-            stage: boolean,
-           source: boolean,
-         category: boolean,
-           subCat: boolean
-       },
-       searchDefaults: {
-            view: string,
-           order: string,
-           stage: string,
-          source: string,
-         mainCat: string,
-          subCat: string,
-         startID: number
-       },
-       questionFormat: {
-               id: boolean,
-         complete: boolean,
-           source: boolean,
-         category: boolean,
-            links: boolean,
-           output: boolean
-       },
-       prettyCode: {
-         olHeight: number,
-         liHeight: number
-       },
-              id: boolean,
-          worker: boolean,
-         content: Array.<Object>,
-       scrollbar: number
-     }}
-   * @private
-   */
-  var configuration = {};
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (sources)
-   * -----------------------------------------------
-   * an array of objects containing the question
-      sources
-   * @type {{
-        list: Object,
-         len: number,
-         ids: Array.<string>
-     }}
-   * @private
-   */
-  var sources = {};
-
-  /**
-   * -----------------------------------------------
-   * Public Variable (categories)
-   * -----------------------------------------------
-   * an array of objects containing the question
-      categories
-   * @type {{
-       main: Object,
-        sub: Object,
-        opt: Object,
-        len: {
-          main: number,
-           sub: Object
-        },
-        ids: {
-          main: Array.<string>,
-           sub: Array.<string>
-        }
-     }}
-   * @private
-   */
-  var categories = {};
-
-  /**
-   * ---------------------------------------------
-   * Public Class (FormatQuestions)
-   * ---------------------------------------------
-   * formats questions for live view
-   * @type {function(): {
-       init: function(),
-       formatCodeView: function()
-     }}
-   * @private
-   */
-  var FormatQuestions = (function() {
-
-    /**
-     * ---------------------------------------------
-     * Private Variable (_return)
-     * ---------------------------------------------
-     * the public methods of this class
-     * @type {{
-         init: function(),
-         formatCodeView: function()
-       }}
-     * @private
-     */
-    var _return = {
-      /**
-       * ---------------------------------------------
-       * Public Method (FormatQuestions.init)
-       * ---------------------------------------------
-       * initialize FormatQuestions
-       */
-      init: function() {
-        init();
-      }
-    };
-
-    /**
-     * ---------------------------------------------
-     * Private Format (formatted)
-     * ---------------------------------------------
-     * saves the content for each question
-     * @type {{
-         id: {
-           flag: boolean,
-           content: string
-         },
-         source: {
-           flag: boolean,
-           content: string
-         },
-         complete: {
-           flag: boolean,
-           content: string
-         },
-         category: {
-           flag: boolean,
-           main: {
-             flag: boolean,
-             h3: string,
-             p: string
-           },
-           sub: {
-             flag: boolean,
-             h3: string,
-             p: string
-           }
-         },
-         solution: {
-           error: boolean,
-           code: string,
-           height: number
-         },
-         output: {
-           flag: boolean,
-           content: string
-         },
-         links: {
-           flag: boolean,
-           content: Array.<{
-             href: string,
-             name: string
-           }>
-         }
-       }}
-     * @private
-     */
-    var formatted;
-
-    /**
-     * ---------------------------------------------
-     * Private Method (init)
-     * ---------------------------------------------
-     * converts questions to html
-     * @type {function()}
-     * @private
-     */
-    function init() {
-      // Declare method variables
-      var i;
-      // Format the questions
-      for (i=0; i<qLen; i++) {
-        clearFormat();
-        formatID(i);
-        formatSource(questions[i].source);
-        formatComplete(questions[i].complete);
-        formatCategory(questions[i].mainCat, questions[i].subCat);
-        formatSolution(questions[i].solution, i);
-        formatOutput(questions[i].solution);
-        formatLinks(questions[i].links);
-        // Save formatted question
-        configuration.content.push(formatted);
-      }
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (clearFormat)
-     * ---------------------------------------------
-     * clears the previous question format
-     * @type {function()}
-     * @private
-     */
-    function clearFormat() {
-      // Clear formatted
-      formatted = {
-        id: {
-          flag   : false,
-          content: ''
-        },
-        source: {
-          flag   : false,
-          content: ''
-        },
-        complete: {
-          flag   : false,
-          content: ''
-        },
-        category: {
-          flag: false,
-          main: {
-            flag: false,
-            h3  : '',
-            p   : ''
-          },
-          sub: {
-            flag: false,
-            h3  : '',
-            p   : ''
-          }
-        },
-        solution: {
-          error : false,
-          code  : '',
-          height: 0
-        },
-        output: {
-          flag   : false,
-          content: ''
-        },
-        links: {
-          flag   : false,
-          content: []
-        }
-      };
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatID)
-     * ---------------------------------------------
-     * formats the question id
-     * param: the question index (number)
-     * @type {function(number)}
-     * @private
-     */
-    function formatID(i) {
-      // Declare method variables
-      var flag, id;
-      // Set flag and id
-      flag = configuration.questionFormat.id;
-      id = '';
-      if (flag) {
-        // Save question id
-        id = i + 1;
-        // Ensure id length is min of 3
-        id = ( (id < 10) ?
-          '00' + id : (id < 100) ?
-            '0' + id : '' + id
-        );
-      }
-      // Save format
-      formatted.id.flag = flag;
-      formatted.id.content = id;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatSource)
-     * ---------------------------------------------
-     * formats the question source
-     * param: the question source (string)
-     * @type {function(string)}
-     * @private
-     */
-    function formatSource(sourceID) {
-      // Declare method variables
-      var sLen, flag;
-      // Save app sources length and flag
-      sLen = sources.len;
-      flag = (sLen > 0 && configuration.questionFormat.source);
-      // Save format
-      formatted.source.flag = flag;
-      formatted.source.content = ( (flag) ?
-        sources.list[sourceID] : ''
-      );
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatComplete)
-     * ---------------------------------------------
-     * formats the question completion status
-     * param: the question complete value (boolean)
-     * @type {function(boolean)}
-     * @private
-     */
-    function formatComplete(completed) {
-      // Declare method variables
-      var flag;
-      // Save flag
-      flag = configuration.questionFormat.complete;
-      // Save format
-      formatted.complete.flag = flag;
-      formatted.complete.content = ( (!configuration.questionFormat.complete) ?
-        '' : (completed) ? 'Yes' : 'No'
-      );
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatCategory)
-     * ---------------------------------------------
-     * formats the question categories
-     * param: the main question's categories (array of strings)
-     * param: the sub question's categories (array of strings)
-     * @type {function(Array.<string>, Array.<string>)}
-     * @private
-     */
-    function formatCategory(main, sub) {
-      // Declare method variables
-      var flag, cLen, mLen, sLen, i, id, subCats;
-      // Save the length of all the main categories and
-      //  the question's main and sub categories
-      cLen = categories.len.main;
-      mLen = main.length;
-      sLen = sub.length;
-      // Save flags
-      flag = {
-         cat: (cLen > 0 && configuration.questionFormat.category),
-        main: (mLen > 0),
-         sub: (sLen > 0)
-      };
-      formatted.category.flag = flag.cat;
-      formatted.category.main.flag = flag.main;
-      formatted.category.sub.flag  = flag.sub;
-      // If (a main category exists and category config enabled)
-      if (flag.cat) {
-        // If (question has main categories)
-        // Then {save main category format}
-        if (flag.main) {
-          formatted.category.main.h3 = 'Main ' +
-          ( (mLen > 1) ? 'Categories:' : 'Category:' );
-          // Find matching main category names
-          for (i=0; i<mLen; i++) {
-            formatted.category.main.p += (i === 0) ? '' : ', ';
-            formatted.category.main.p += categories.main[main[i]];
-          }
-        }
-        // If (question has sub categories)
-        // Then {save sub category format}
-        if (sLen > 0) {
-          formatted.category.sub.h3 = 'Sub ' +
-          ( (sLen > 1) ? 'Categories:' : 'Category:' );
-          // Find matching sub category names
-          for (i=0; i<sLen; i++) {
-            formatted.category.sub.p += (i === 0) ? '' : ', ';
-            loop:
-            for (id in categories.sub) {
-              // If (property not native)
-              if ( categories.sub.hasOwnProperty(id) ) {
-                // Save sub category objects
-                subCats = categories.sub[id];
-                // If (property exists)
-                if (typeof subCats[sub[i]] === 'string') {
-                  formatted.category.sub.p += subCats[sub[i]];
-                  break loop;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatSolution)
-     * ---------------------------------------------
-     * formats the question solution
-     * param: the question solution (function)
-     * param: the question index (number)
-     * @type {function(Object, number)}
-     * @private
-     */
-    function formatSolution(solution, i) {
-      // Declare method variables
-      var error, code, height;
-      // Save error
-      error = (typeof solution !== 'function');
-      // If (no error)
-      // Then {prettify code}
-      if (!error) {
-        code = PrettifyCode.init(solution);
-        // Calculate the pre element's div container height
-        height  = code.lineCount * configuration.prettyCode.liHeight;
-        height += configuration.prettyCode.olHeight;
-      }
-      // Save format
-      formatted.solution.error  = error;
-      formatted.solution.code   = (error) ? '' : code.result;
-      formatted.solution.height = (error) ?  0 : height;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatOutput)
-     * ---------------------------------------------
-     * formats the output of the question solution
-     * param: the question solution (function)
-     * @type {function(Object)}
-     * @private
-     */
-    function formatOutput(solution) {
-      // Declare method variables
-      var flag, output;
-      // Save flag
-      flag = (typeof solution === 'function' &&
-              configuration.questionFormat.output);
-      // Save output
-      output = (flag) ? solution() : '';
-      output = (typeof output !== 'string') ? String(output) : output;
-      // Save format
-      formatted.output.flag = flag;
-      formatted.output.content = output;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (formatLinks)
-     * ---------------------------------------------
-     * formats the question links
-     * param: the links (array of objects)
-     * @type {function(Array.<Object>)}
-     * @private
-     */
-    function formatLinks(links) {
-      // Declare method variables
-      var flag, linksLen, i;
-      // Save link length
-      linksLen = links.length;
-      // Save flag
-      flag = (linksLen > 0 && configuration.questionFormat.links);
-      // Save formatted links
-      if (flag) {
-        for (i=0; i<linksLen; i++) {
-          formatted.links.content.push({
-            href: links[i].href,
-            name: links[i].name
-          });
-        }
-      }
-      else {
-        formatted.links.content = [];
-      }
-      formatted.links.flag = flag;
-    }
-
-    // END CLASS: FormatQuestions
-    return _return;
-  }());
-
   /**
    * ---------------------------------------------
    * Public Class (PrettifyCode)
@@ -684,7 +38,18 @@
        * param: a js function (function)
        */
       init: function(f) {
-        return init(f);
+        // OPEN: PrettifyCode Group
+        DEBUG.PrettifyCode.group && console.groupCollapsed(
+          'GROUP: PrettifyCode'
+        );
+        // Declare method variables
+        var result;
+        // Run class
+        result = init(f);
+        // CLOSE: PrettifyCode Group
+        DEBUG.PrettifyCode.group && console.groupEnd();
+        // Return formatted question
+        return result;
       }
     };
 
@@ -755,7 +120,7 @@
      * ---------------------------------------------
      * list of valid plain number characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
@@ -766,7 +131,7 @@
      * ---------------------------------------------
      * list of valid hex number characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
@@ -777,7 +142,7 @@
      * ---------------------------------------------
      * list of valid starting identifier characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
@@ -788,7 +153,7 @@
      * ---------------------------------------------
      * list of valid identifier characters
      * @const
-     * @type {string}
+     * @type {Object}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
@@ -917,6 +282,9 @@
         '-escape'             : { cat: 'nat', props: null },
         '-eval'               : { cat: 'nat', props: null },
         '-EvalError'          : { cat: 'nat', props: null },
+        '-every'              : { cat: 'nat', props: null },
+        '-filter'             : { cat: 'nat', props: null },
+        '-forEach'            : { cat: 'nat', props: null },
         '-fromCharCode'       : { cat: 'nat', props: null },
         '-Function'           : { cat: 'nat', props: null },
         '-Generator'          : { cat: 'nat', props: null },
@@ -952,6 +320,7 @@
         } },
         '-lastIndexOf'        : { cat: 'nat', props: null },
         '-length'             : { cat: 'nat', props: null },
+        '-map'                : { cat: 'nat', props: null },
         '-match'              : { cat: 'nat', props: null },
         '-Math'               : { cat: 'nat', props: {
           '-abs'   : 1,
@@ -1044,6 +413,7 @@
         '-setYear'            : { cat: 'nat', props: null },
         '-shift'              : { cat: 'nat', props: null },
         '-slice'              : { cat: 'nat', props: null },
+        '-some'               : { cat: 'nat', props: null },
         '-sort'               : { cat: 'nat', props: null },
         '-splice'             : { cat: 'nat', props: null },
         '-split'              : { cat: 'nat', props: null },
@@ -1255,6 +625,15 @@
      * @private
      */
     function init(f) {
+      // Debuggers
+      DEBUG.PrettifyCode.call && console.log(
+        'CALL: PrettifyCode.init()'
+      );
+      DEBUG.PrettifyCode.fail && console.assert(
+        typeof f === 'function',
+        'FAIL: PrettifyCode.init() ' +
+        'Note: Incorrect argument operand.'
+      );
       // First: convert function to array of lines
       // Then: convert array of lines to a formatted string
       return formatLines( prepareArray(f) );
@@ -1271,6 +650,17 @@
      * @private
      */
     function setPadding(first, last) {
+      // Debuggers
+      DEBUG.PrettifyCode.call && console.log(
+        'CALL: PrettifyCode.setPadding(%s, %s)', first, last
+      );
+      DEBUG.PrettifyCode.fail && console.assert(
+        (typeof first === 'string' &&
+         typeof last  === 'string'),
+        'FAIL: PrettifyCode.setPadding() ' +
+        'Note: Incorrect argument operand.'
+      );
+      // Declare method variables
       var padding;
       // Adjust padding level
       switch (first) {
@@ -1310,6 +700,15 @@
      * @private
      */
     function prepareLine(l) {
+      // Debuggers
+      DEBUG.PrettifyCode.call && console.log(
+        'CALL: PrettifyCode.prepareLine()'
+      );
+      DEBUG.PrettifyCode.fail && console.assert(
+        typeof l === 'string',
+        'FAIL: PrettifyCode.prepareLine() ' +
+        'Note: Incorrect argument operand.'
+      );
       // Declare method variables
       var i, len, last, line;
       // Convert line to array
@@ -1372,6 +771,15 @@
      * @private
      */
     function formatLines(lines) {
+      // Debuggers
+      DEBUG.PrettifyCode.call && console.log(
+        'CALL: PrettifyCode.formatLines()'
+      );
+      DEBUG.PrettifyCode.fail && console.assert(
+        typeof lines === 'object',
+        'FAIL: PrettifyCode.formatLines() ' +
+        'Note: Incorrect argument operand.'
+      );
       // Declare method variables
       var i, line, lineCount;
       // Set level of padding to 0
@@ -1387,10 +795,15 @@
         // Set line padding and highlight syntax
         if (!line.empty) {
           line.padding = setPadding(line.first, line.last);
-          line.code = HighlightSyntax.init(line.code);
+          line.code = HighlightSyntax.init(line.code, i);
         }
         lines[i] = '<li style="padding-left:' +
         line.padding +'px">'+ line.code +'</li>';
+        // Debugger
+        DEBUG.PrettifyCode.state && console.log(
+          'STATE: PrettifyCode.formatLines() ' +
+          'Note: lines[i]= %s', lines[i]
+        );
       }
       return { result: lines.join(''), lineCount: lineCount };
     }
@@ -1407,6 +820,16 @@
      * @private
      */
     function prepareArray(f) {
+      // Debuggers
+      DEBUG.PrettifyCode.call && console.log(
+        'CALL: PrettifyCode.prepareArray()'
+      );
+      DEBUG.PrettifyCode.fail && console.assert(
+        typeof f === 'function',
+        'FAIL: PrettifyCode.prepareArray() ' +
+        'Note: Incorrect argument operand.'
+      );
+      // Declare method variables
       var code;
       // First: convert function to string
       // Then: standardize all line breaks
@@ -1448,8 +871,20 @@
          * initializes HighlightSyntax
          * param: a line of code (string)
          */
-        init: function (l) {
-          return _init(l);
+        init: function (l, i) {
+          // OPEN: HighlightSyntax Group
+          DEBUG.HighlightSyntax.group && console.groupCollapsed(
+            'GROUP: HighlightSyntax ' +
+            'Note: lineNumber= %d', (i + 1)
+          );
+          // Declare method variables
+          var result;
+          // Run class
+          result = _init(l);
+          // CLOSE: HighlightSyntax Group
+          DEBUG.HighlightSyntax.group && console.groupEnd();
+          // Return formatted question
+          return result;
         }
       };
 
@@ -1570,15 +1005,30 @@
        * Private Method (_init)
        * ---------------------------------------------
        * adds highlighting spans to a line of code
+       * param: a line of code (string)
        * @type {function(string): string}
        * @private
        */
       function _init(l) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.init()'
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof l === 'string',
+          'FAIL: HighlightSyntax.init() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Convert line from string to array
         line = l.split('');
         // Save line array length and last index
         lLen = line.length;
         lLast = (lLen > 0) ? lLen - 1 : 0;
+        // Debugger
+        DEBUG.HighlightSyntax.state && console.log(
+          'STATE: HighlightSyntax.init() ' +
+          'Note: lLen= %d, lLast= %d', lLen, lLast
+        );
         // Save copy of line array
         // for final output
         newLine = line.slice(0);
@@ -1595,6 +1045,10 @@
        * @private
        */
       function formatLine() {
+        // Debugger
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatLine()'
+        );
         // Declare method variables
         var i, preceding;
         // Set index to start
@@ -1637,6 +1091,15 @@
        * @private
        */
       function isRegex(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.isRegex(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.isRegex() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var end, regexBody;
         // Set end to start
@@ -1681,6 +1144,15 @@
        * @private
        */
       function sanitizeCharacter(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.sanitizeCharacter(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.sanitizeCharacter() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var c;
         // Save character
@@ -1702,6 +1174,15 @@
        * @private
        */
       function skipComment(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.skipComment(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.skipComment() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Loop through line starting at index
         while (true) {
           ++i;
@@ -1733,6 +1214,15 @@
        * @private
        */
       function skipString(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.skipString(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.skipString() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var s;
         // Save string type
@@ -1771,6 +1261,15 @@
        * @private
        */
       function skipSpace(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.skipSpace(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.skipSpace() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Loop through line starting at index
         while (true) {
           // If (next index not space)
@@ -1792,6 +1291,15 @@
        * @private
        */
       function skipNumber(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.skipNumber(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.skipNumber() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var start, numbers;
         // Save first two spots in number sequence
@@ -1825,6 +1333,15 @@
        * @private
        */
       function skipIdentifier(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.skipIdentifier(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.skipIdentifier() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var iName;
         // Start string for the identifier name
@@ -1862,6 +1379,15 @@
        * @private
        */
       function formatCommentOpen(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatCommentOpen(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatCommentOpen() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add comment span
         newLine[i] = '<span class="cmt">/';
         // Increase index
@@ -1894,6 +1420,15 @@
        * @private
        */
       function formatCommentClose(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatCommentClose(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatCommentClose() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add comment span to line start
         newLine[i]  = (line[i] === '*') ? ' ' : '';
         newLine[i] += '<span class="cmt">' + line[i];
@@ -1936,6 +1471,15 @@
        * @private
        */
       function formatLineComment(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatLineComment(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatLineComment() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add comment span
         newLine[i] = '<span class="cmt">/';
         // Moves index to line end
@@ -1957,6 +1501,15 @@
        * @private
        */
       function formatString(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatString(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatString() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add string span
         newLine[i] = '<span class="str">' + line[i];
         // Move index to end of string
@@ -1979,6 +1532,16 @@
        * @private
        */
       function formatRegex(i, end) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatRegex(%d, %d)', i, end
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          (typeof i   === 'number' &&
+           typeof end === 'number'),
+          'FAIL: HighlightSyntax.formatRegex() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var usedFlags, c;
         // Add regex span
@@ -2019,6 +1582,15 @@
        * @private
        */
       function formatSpace(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatSpace(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatSpace() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add space span
         newLine[i] = '<span class="spc"> ';
         // Move index to end of space sequence
@@ -2039,6 +1611,15 @@
        * @private
        */
       function formatBracket(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatBracket(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatBracket() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add bracket spans
         newLine[i] = '' +
         '<span class="brc">' +
@@ -2058,6 +1639,15 @@
        * @private
        */
       function formatOperator(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatOperator(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatOperator() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Sanitize the character
         sanitizeCharacter(i);
         // Add operator spans
@@ -2079,6 +1669,15 @@
        * @private
        */
       function formatComma(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatComma(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatComma() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add comma spans
         newLine[i] = '<span class="cmm">,</span>';
         // Return index
@@ -2095,6 +1694,15 @@
        * @private
        */
       function formatSemicolon(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatSemicolon(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatSemicolon() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add semicolon spans
         newLine[i] = '<span class="smc">;</span>';
         // Return index
@@ -2111,6 +1719,15 @@
        * @private
        */
       function formatColon(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatColon(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatColon() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add colon spans
         newLine[i] = '<span class="cln">:</span>';
         // Return index
@@ -2127,6 +1744,15 @@
        * @private
        */
       function formatPeriod(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatPeriod(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatPeriod() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add period spans
         newLine[i] = '<span class="per">.</span>';
         // Return index
@@ -2144,6 +1770,15 @@
        * @private
        */
       function formatNumber(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatNumber(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatNumber() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add number span
         newLine[i] = '<span class="num">' + line[i];
         // Move index to end of number
@@ -2168,6 +1803,17 @@
        * @private
        */
       function formatIdentifier(i, extras) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatIdentifier(%d, %s)', i, !!extras
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          (typeof i === 'number' &&
+           (typeof extras === 'undefined' ||
+            typeof extras === 'string')),
+          'FAIL: HighlightSyntax.formatIdentifier() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Declare method variables
         var identifier, catID, keyClass;
         // Save identifier name, last index, and props val
@@ -2230,6 +1876,15 @@
        * @private
        */
       function formatMisc(i) {
+        // Debuggers
+        DEBUG.HighlightSyntax.call && console.log(
+          'CALL: HighlightSyntax.formatMisc(%d)', i
+        );
+        DEBUG.HighlightSyntax.fail && console.assert(
+          typeof i === 'number',
+          'FAIL: HighlightSyntax.formatMisc() ' +
+          'Note: Incorrect argument operand.'
+        );
         // Add misc spans
         newLine[i] = '' +
         '<span class="msc">' +
@@ -2246,9 +1901,3 @@
     // END CLASS: PrettifyCode
     return _return;
   }());
-
-// END WEB WORKER
-})(questions);
-
-// END USER DATA
-})();

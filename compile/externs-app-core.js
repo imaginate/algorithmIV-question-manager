@@ -1,4 +1,0 @@
-
-window.aIV = {
-  app: function() {}
-};

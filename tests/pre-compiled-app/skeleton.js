@@ -2,7 +2,7 @@
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV App - Test Module (v1.1.0)
+ * Algorithm IV Question Manager - App Module (v1.1.0)
  * -----------------------------------------------------------------------------
  * @file The module for implementing the aIV question management app with
  *   debugging code included and turned on.
