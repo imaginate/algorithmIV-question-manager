@@ -10,16 +10,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (QuestionsConfig.debug)
+     * Public Property (QuestionsConfig.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the QuestionsConfig class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('QuestionsConfig') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'QuestionsConfig',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', config);
-      this.debug.args('init', config, 'object');
-    }
+    this.debug.start('init', config);
+    this.debug.args('init', config, 'object');
 
     /**
      * ----------------------------------------------- 

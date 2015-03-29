@@ -12,16 +12,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (LinksSearchBarConfig.debug)
+     * Public Property (LinksSearchBarConfig.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the LinksSearchBarConfig class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('LinksSearchBarConfig') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'LinksSearchBarConfig',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', config);
-      this.debug.args('init', config, 'object');
-    }
+    this.debug.start('init', config);
+    this.debug.args('init', config, 'object');
 
     /**
      * ----------------------------------------------- 

@@ -10,16 +10,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (UrlSearchBarConfig.debug)
+     * Public Property (UrlSearchBarConfig.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the UrlSearchBarConfig class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('UrlSearchBarConfig') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'UrlSearchBarConfig',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', config);
-      this.debug.args('init', config, 'object');
-    }
+    this.debug.start('init', config);
+    this.debug.args('init', config, 'object');
 
     /**
      * ----------------------------------------------- 

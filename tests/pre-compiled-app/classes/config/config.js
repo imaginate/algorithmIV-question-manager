@@ -14,17 +14,19 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (Config.debug)
+     * Public Property (Config.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Config class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Config') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Config',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.group('init', 'coll', 'config= $$', config);
-      this.debug.start('init', config);
-      this.debug.args('init', config, 'object');
-    }
+    this.debug.group('init', 'coll', 'config= $$', config);
+    this.debug.start('init', config);
+    this.debug.args('init', config, 'object');
 
     /**
      * ----------------------------------------------- 
@@ -104,7 +106,7 @@
     showLinks = (!!config.showLinks && config.showLinks === true);
 
 
-    DEBUG && this.debug.group('init', 'end');
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.

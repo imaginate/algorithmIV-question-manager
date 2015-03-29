@@ -12,16 +12,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (SearchBarConfig.debug)
+     * Public Property (SearchBarConfig.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the SearchBarConfig class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('SearchBarConfig') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'SearchBarConfig',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', config);
-      this.debug.args('init', config, 'object');
-    }
+    this.debug.start('init', config);
+    this.debug.args('init', config, 'object');
 
     /**
      * ----------------------------------------------- 
@@ -136,14 +138,13 @@
    */
   SearchBarConfig.prototype.setDefaults = function(defaults, names, ids, quesLen) {
 
+    // Debugging vars
     var args;
-    if (DEBUG) {
-      this.debug.start('init', defaults, names, ids, quesLen);
-      args = [ 'init' ];
-      args.push(defaults, 'object', names, 'object');
-      args.push(ids, 'object', quesLen, 'number');
-      this.debug.args(args);
-    }
+    this.debug.start('init', defaults, names, ids, quesLen);
+    args = [ 'init' ];
+    args.push(defaults, 'object', names, 'object');
+    args.push(ids, 'object', quesLen, 'number');
+    this.debug.args(args);
 
     this.defaults = new DefaultsSearchBarConfig(defaults, names, ids, quesLen);
   };
