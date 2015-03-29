@@ -28,11 +28,11 @@
   _return.init = function(settings) {
 
     // Debugging vars
-    var errorMsg;
+    var errorMsg, failCheck;
     debug.start('init', settings);
     debug.args('init', settings, 'object');
     errorMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', !_initialized, errorMsg);
+    debug.fail('init', (!_initialized), errorMsg);
 
     /**
      * @type {?Object}
@@ -78,8 +78,46 @@
         settings.questions : (!!settings.question) ?
           settings.question : null
       );
-      if (questions && (!Array.isArray(questions) || !questions.length)) {
-        questions = null;
+
+      failCheck = (!config || typeof config === 'object');
+      errorMsg = 'Error: The given config property was an ';
+      errorMsg += 'incorrect operand. config= $$';
+      debug.fail('init', failCheck, errorMsg, config);
+
+      failCheck = (!sources || typeof sources === 'object');
+      errorMsg = 'Error: The given sources property was an ';
+      errorMsg += 'incorrect operand. sources= $$';
+      debug.fail('init', failCheck, errorMsg, sources);
+
+      failCheck = (!categories || typeof categories === 'object');
+      errorMsg = 'Error: The given categories property was an ';
+      errorMsg += 'incorrect operand. categories= $$';
+      debug.fail('init', failCheck, errorMsg, categories);
+
+      errorMsg = 'Error: No questions were provided.';
+      debug.fail('init', (!!questions), errorMsg);
+
+      if (questions) {
+        failCheck = (checkType(questions, 'objects') && !!questions.length);
+        errorMsg = 'Error: The given questions property was an ';
+        errorMsg += 'incorrect operand. questions= $$';
+        debug.fail('init', failCheck, errorMsg, questions);
+      }
+
+      // Check the types of the arguments
+      if (config && typeof config !== 'object') {
+        config = null;
+      }
+      if (sources && typeof sources !== 'object') {
+        sources = null;
+      }
+      if (categories && typeof categories !== 'object') {
+        categories = null;
+      }
+      if (questions) {
+        if (!checkType(questions, 'objects') || !questions.length) {
+          questions = null;
+        }
       }
 
       // Setup and freeze the app
