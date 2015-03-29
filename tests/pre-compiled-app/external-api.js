@@ -64,10 +64,22 @@
       _initialized = true;
 
       // Setup the app arguments
-      config  = settings.config || settings.configuration || null;
-      sources = settings.sources || settings.source || null;
-      categories = settings.categories || settings.category || null;
-      questions  = settings.questions  || settings.question || null;
+      config = ( (!!settings.config) ?
+        settings.config : (!!settings.configuration) ?
+          settings.configuration : null
+      );
+      sources = ( (!!settings.sources) ?
+        settings.sources : (!!settings.source) ?
+          settings.source : null
+      );
+      categories = ( (!!settings.categories) ?
+        settings.categories : (!!settings.category) ?
+          settings.category : null
+      );
+      questions = ( (!!settings.questions) ?
+        settings.questions : (!!settings.question) ?
+          settings.question : null
+      );
       if (questions && (!Array.isArray(questions) || !questions.length)) {
         questions = null;
       }

@@ -16,4 +16,4 @@
    * @param {?Object} settings - The app's settings.
    * @global
    */
-  aIV.app = core.init(settings);
+  aIV.app = core.init;
