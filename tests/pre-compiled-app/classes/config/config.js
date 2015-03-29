@@ -91,15 +91,15 @@
      * Public Method (Config.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
+     * @param {string} prop - The name of the setting to get.
      * @return {boolean}
      */
-    this.get = function(part) {
+    this.get = function(prop) {
 
       // Debugging vars
       var errorMsg;
-      this.debug.start('get', part);
-      this.debug.args('get', part, 'string');
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
 
       /** @type {Object<string, boolean>} */
       var settings = {
@@ -110,7 +110,7 @@
       errorMsg = 'Error: The given property does not exist. property= $$';
       this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
 
-      return settings[part];
+      return settings[prop];
     };
     Object.freeze(this.get);
 
