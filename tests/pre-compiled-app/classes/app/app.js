@@ -22,30 +22,32 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (App.debug)
+     * Public Property (App.debug)
      * ---------------------------------------------------
      * @desc The Debug instance for the App class.
-     * @type {?Debug}
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('App') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'App',
+      turnOnDebuggers: 'args fail'
+    });
 
+    // Debugging vars
     var args, msg;
-    if (DEBUG) {
-      msg = 'Error: No questions were provided to this app\'s init.';
-      this.debug.fail('init', pass, msg);
+    msg = 'Error: No questions were provided to this app\'s init.';
+    this.debug.fail('init', pass, msg);
 
-      msg = 'config= $$, sources= $$, categories= $$, questions= $$';
-      args = [ 'init', 'open', msg ];
-      args.push(config, sources, categories, questions);
-      this.debug.group(args);
+    msg = 'config= $$, sources= $$, categories= $$, questions= $$';
+    args = [ 'init', 'open', msg ];
+    args.push(config, sources, categories, questions);
+    this.debug.group(args);
 
-      this.debug.start('init', config, sources, categories, questions);
+    this.debug.start('init', config, sources, categories, questions);
 
-      args = [ 'init' ];
-      args.push(config, 'object', sources, 'object');
-      args.push(categories, 'object', questions, 'objects');
-      this.debug.args(args);
-    }
+    args = [ 'init' ];
+    args.push(config, 'object', sources, 'object');
+    args.push(categories, 'object', questions, 'objects');
+    this.debug.args(args);
 
     /**
      * ----------------------------------------------- 
@@ -130,7 +132,7 @@
     }
 
 
-    DEBUG && this.debug.group('init', 'end');
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
@@ -145,10 +147,8 @@
    */
   App.prototype.setupDisplay = function() {
 
-    if (DEBUG) {
-     this.debug.group('setupDisplay', 'open');
-     this.debug.start('setupDisplay');
-    }
+   this.debug.group('setupDisplay', 'open');
+   this.debug.start('setupDisplay');
 
     /**
      * @type {boolean}
@@ -175,7 +175,7 @@
       this.elems.appendError();
     }
 
-    DEBUG && this.debug.group('setupDisplay', 'end');
+    this.debug.group('setupDisplay', 'end');
   };
 
   /**
@@ -195,18 +195,11 @@
    * @param {boolean=} settings.index - If set to true it indicates
    *   that the index should NOT be changed.
    */
-  App.prototype.updateDisplay = function(newVals, flip, oldView) {
+  App.prototype.updateDisplay = function(settings) {
 
-    // Debugging
-    var msg, args;
-    if (DEBUG) {
-     msg = 'newVals= $$, flip= $$, oldView= $$';
-     this.debug.group('updateDisplay', 'coll', msg, newVals, flip, oldView);
-     this.debug.start('updateDisplay', flip, oldView);
-     args = [ 'updateDisplay' ];
-     args.push(newVals, 'boolean=', flip, 'boolean=', oldView, 'string=');
-     this.debug.args(args);
-    }
+    this.debug.group('updateDisplay', 'coll', 'settings= $$', settings);
+    this.debug.start('updateDisplay', settings);
+    this.debug.args('updateDisplay', settings, 'object=');
 
     /**
      * @type {?nums}
@@ -302,7 +295,7 @@
       // Show the question's main element
       this.elems.main.style.opacity = '1';
         
-      DEBUG && this.debug.group('updateDisplay', 'end');
+      this.debug.group('updateDisplay', 'end');
     }, 520);
   };
 
@@ -315,7 +308,7 @@
    */
   App.prototype.updateValues = function() {
 
-    DEBUG && this.debug.start('updateValues');
+    this.debug.start('updateValues');
 
     /**
      * @type {nums}
@@ -479,11 +472,9 @@
    */
   App.prototype.moveDisplay = function(way) {
 
-    if (DEBUG) {
-     this.debug.group('moveDisplay', 'coll', 'way= $$', way);
-     this.debug.start('moveDisplay', way);
-     this.debug.args('moveDisplay', way, 'string|number');
-    }
+    this.debug.group('moveDisplay', 'coll', 'way= $$', way);
+    this.debug.start('moveDisplay', way);
+    this.debug.args('moveDisplay', way, 'string|number');
 
     /**
      * @type {?nums}
@@ -534,6 +525,6 @@
       // Show the question's main element
       this.elems.main.style.opacity = '1';
         
-      DEBUG && this.debug.group('moveDisplay', 'end');
+      this.debug.group('moveDisplay', 'end');
     }, 520);
   };

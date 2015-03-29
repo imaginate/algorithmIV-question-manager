@@ -9,13 +9,17 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (AppVals.debug)
+     * Public Property (AppVals.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the AppVals class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('AppVals') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'AppVals',
+      turnOnDebuggers: 'args fail'
+    });
 
-    DEBUG && this.debug.start('init');
+    this.debug.start('init');
 
     /**
      * ----------------------------------------------- 
@@ -60,16 +64,14 @@
      */
     this.get = function(part) {
 
-      // Debugging
+      // Debugging vars
       var msg;
-      if (DEBUG) {
-        this.debug.start('get', prop);
-        this.debug.args('get', prop, 'string');
-        msg = 'Error: The given property does not exist. property= $$';
-        this.debug.fail('get', values.hasOwnProperty(prop), msg, prop);
-      }
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+      msg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', values.hasOwnProperty(prop), msg, prop);
 
-      /** @private */
+      /** @type {Object<string, (num|nums)>} */
       var values = {
         ids  : ids,
         len  : len,
@@ -89,11 +91,10 @@
      */
     this.reset = function(newIds, newIndex) {
 
+      // Debugging vars
       var msg;
-      if (DEBUG) {
-        this.debug.start('reset', newIds, newIndex);
-        this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
-      }
+      this.debug.start('reset', newIds, newIndex);
+      this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
 
       /**
        * @type {num}
@@ -142,14 +143,12 @@
      */
     this.move = function(way) {
 
-      // Debugging
+      // Debugging vars
       var msg, pass;
-      if (DEBUG) {
-        this.debug.start('move', way);
-        this.debug.args('move', way, 'string|number');
-        // Error message for initial value checks
-        msg = 'Error: An incorrect value was given for way. way= $$';
-      }
+      this.debug.start('move', way);
+      this.debug.args('move', way, 'string|number');
+      // Error message for initial value checks
+      msg = 'Error: An incorrect value was given for way. way= $$';
 
       /**
        * @type {string}
@@ -166,11 +165,11 @@
       if (typeof way === 'string' &&
           way !== 'prev' && way !== 'next') {
         way = way.replace(/[^0-9]/g, '');
-        DEBUG && this.debug.fail('move', !!way, msg, way);
+        this.debug.fail('move', !!way, msg, way);
         way = Number(way);
       }
 
-      if (DEBUG && typeof way !== 'string') {
+      if (typeof way !== 'string') {
         pass = (way > 0 && way <= app.questions.len);
         this.debug.fail('move', pass, msg, way);
       }
@@ -183,15 +182,13 @@
           app.searchBar.vals.view = 'one';
         }
         index = ids.indexOf(way);
-        DEBUG && this.debug.fail('move', (index !== -1), msg, way);
+        this.debug.fail('move', (index !== -1), msg, way);
         return index;
       }
 
-      if (DEBUG) {
-        // Error message for remaining debugging
-        msg = 'Error: This method should not have been called now. ';
-        msg += 'The nav elements should be hidden.';
-      }
+      // Error message for remaining debugging
+      msg = 'Error: This method should not have been called now. ';
+      msg += 'The nav elements should be hidden.';
 
       // Save the last index
       last = len - 1;
@@ -199,7 +196,7 @@
       // The single view actions
       if (view === 'one') {
 
-        DEBUG && this.debug.fail('move', (len > 1), msg);
+        this.debug.fail('move', (len > 1), msg);
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -214,7 +211,7 @@
       // The ten view actions
       if (view === 'ten') {
 
-        DEBUG && this.debug.fail('move', (len > 10), msg);
+        this.debug.fail('move', (len > 10), msg);
 
         // Update the last index
         last -= (last % 10);
@@ -229,11 +226,9 @@
         return index;
       }
 
-      if (DEBUG) {
-        msg = 'Error: An incorrect view was parsed. ';
-        msg += 'app.searchBar.vals.view= $$';
-        this.debug.fail('move', false, msg, view);
-      }
+      msg = 'Error: An incorrect view was parsed. ';
+      msg += 'app.searchBar.vals.view= $$';
+      this.debug.fail('move', false, msg, view);
     };
 
 

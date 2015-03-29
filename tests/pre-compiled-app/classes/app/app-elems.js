@@ -9,13 +9,17 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (AppElems.debug)
+     * Public Property (AppElems.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the AppElems class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('AppElems') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'AppElems',
+      turnOnDebuggers: 'args fail'
+    });
 
-    DEBUG && this.debug.start('init');
+    this.debug.start('init');
 
     /**
      * ----------------------------------------------- 
@@ -132,7 +136,7 @@
    */
   AppElems.prototype.appendMain = function() {
 
-    DEBUG && this.debug.start('appendMain');
+    this.debug.start('appendMain');
 
     /**
      * @type {elem}
@@ -186,7 +190,7 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    DEBUG && this.debug.start('appendNav');
+    this.debug.start('appendNav');
 
     /**
      * @type {elem}
@@ -251,14 +255,14 @@
     nTitle.textContent = nArrow.textContent = 'Next';
 
     pArrow.onclick = function() {
-      DEBUG && debug.group('prev.onclick', 'coll');
+      events.debug.group('prev.onclick', 'coll');
       app.moveDisplay('prev');
-      DEBUG && debug.group('prev.onclick', 'end');
+      events.debug.group('prev.onclick', 'end');
     };
     nArrow.onclick = function() {
-      DEBUG && debug.group('next.onclick', 'coll');
+      events.debug.group('next.onclick', 'coll');
       app.moveDisplay('next');
-      DEBUG && debug.group('next.onclick', 'end');
+      events.debug.group('next.onclick', 'end');
     };
 
     prev.appendChild(pArrow);
@@ -281,7 +285,7 @@
    */
   AppElems.prototype.setScrollbarHeight = function() {
 
-    DEBUG && this.debug.start('setScrollbarHeight');
+    this.debug.start('setScrollbarHeight');
 
     /**
      * @type {elem}
@@ -307,7 +311,7 @@
    */
   AppElems.prototype.setCodeListHeight = function() {
 
-    DEBUG && this.debug.start('setCodeListHeight');
+    this.debug.start('setCodeListHeight');
 
     /**
      * @type {elem}
@@ -360,7 +364,7 @@
    */
   AppElems.prototype.appendError = function() {
 
-    DEBUG && this.debug.start('appendError');
+    this.debug.start('appendError');
 
     /**
      * @type {string}
@@ -442,7 +446,6 @@
       'maximize your development skills and projects!&NewLine;'              +
       'Best,&NewLine;'                                                       +
       '&ndash; Adam from Algorithm IV';
-//aIV.app({ config: yourConfig, sources: yourSources, categories: yourCategories, questions: yourQuestions })
 
     example = '' +
       '<li>' +
@@ -551,7 +554,7 @@
 
     // Add the content
     h2.textContent = 'Initialization Error';
-    p.textContent  = message;
+    p.innerHTML    = message;
     h3.textContent = 'App Init Example';
     ol.innerHTML   = example;
 

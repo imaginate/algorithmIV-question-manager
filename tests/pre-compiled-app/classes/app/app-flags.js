@@ -11,16 +11,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (AppFlags.debug)
+     * Public Property (AppFlags.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the AppFlags class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('AppFlags') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'AppFlags',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', pass);
-      this.debug.args('init', pass, 'boolean');
-    }
+    this.debug.start('init', pass);
+    this.debug.args('init', pass, 'boolean');
 
     /**
      * ----------------------------------------------- 
@@ -42,16 +44,14 @@
      */
     this.get = function(prop) {
 
-      // Debugging
+      // Debugging vars
       var msg;
-      if (DEBUG) {
-        this.debug.start('get', prop);
-        this.debug.args('get', prop, 'string');
-        msg = 'Error: The given property does not exist. property= $$';
-        this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
-      }
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+      msg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
 
-      /** @private */
+      /** @type {Object<string, boolean>} */
       var flags = {
         initArgs: initArgs
       };
@@ -69,14 +69,12 @@
      */
     this.set = function(prop, val) {
 
-      // Debugging
+      // Debugging vars
       var msg;
-      if (DEBUG) {
-        this.debug.start('set', prop, val);
-        this.debug.args('set', prop, 'string', val, 'boolean');
-        msg = 'Error: The given property does not exist. property= $$';
-        this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
-      }
+      this.debug.start('set', prop, val);
+      this.debug.args('set', prop, 'string', val, 'boolean');
+      msg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
 
       /** @private */
       var flags = {
