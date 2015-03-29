@@ -45,19 +45,21 @@
     this.get = function(prop) {
 
       // Debugging vars
-      var msg;
+      var errorMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
-      msg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
 
       /** @type {Object<string, boolean>} */
       var flags = {
         initArgs: initArgs
       };
 
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+
       return flags[prop];
     };
+    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -70,11 +72,9 @@
     this.set = function(prop, val) {
 
       // Debugging vars
-      var msg;
+      var errorMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'boolean');
-      msg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), msg, prop);
 
       /** @private */
       var flags = {
@@ -83,11 +83,15 @@
         }
       };
 
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+
       flags[prop]();
     };
+    Object.freeze(this.set);
 
 
-    // Set the properties
+    // Setup the properties
     initArgs = pass;
   };
 
