@@ -3,7 +3,7 @@
    * Public Class (DefaultsSearchBarConfig)
    * -----------------------------------------------------
    * @desc The onLoad search defaults for this app.
-   * @param {Object} defaults - The user's search defaults.
+   * @param {?Object} defaults - The user's search defaults.
    * @param {Object} names - The available search option names.
    * @param {Object} ids - The available sub category ids.
    * @param {number} quesLen - The number of questions for this app.
@@ -106,13 +106,17 @@
      * Public Method (DefaultsSearchBarConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
+     * @param {string} prop - The name of the setting to get.
      * @return {(string|number)}
      */
-    this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+    this.get = function(prop) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, (string|number)> */
       var settings = {
         startID: startID,
         view   : view,
@@ -123,55 +127,54 @@
         subCat : subCat
       };
 
-      result = (settings[part] !== undefined) ? settings[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      return settings[prop];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
+    // Check the user supplied defaults
+    if (!defaults || typeof defaults !== 'object') {
+      defaults = {};
+    }
 
-    startID = ( (typeof defaults.startID === 'number' &&
-                 defaults.startID && defaults.startID <= quesLen) ?
+    // Setup the properties
+    startID = ( (!!defaults.startID && typeof defaults.startID === 'number' &&
+                 defaults.startID <= quesLen) ?
       defaults.startID : 0
     );
-
-    view = ( (typeof defaults.view === 'string' &&
+    view = ( (!!defaults.view && typeof defaults.view === 'string' &&
               !!names.view[defaults.view]) ?
       defaults.view : 'one'
     );
-
-    order = ( (typeof defaults.order === 'string' &&
+    order = ( (!!defaults.order && typeof defaults.order === 'string' &&
                !!names.order[defaults.order]) ?
       defaults.order : 'asc'
     );
-
-    stage = ( (typeof defaults.stage === 'string' &&
+    stage = ( (!!defaults.stage && typeof defaults.stage === 'string' &&
                !!names.stage[defaults.stage]) ?
       defaults.stage : 'all'
     );
-
-    source = ( (typeof defaults.source === 'string' &&
+    source = ( (!!defaults.source && typeof defaults.source === 'string' &&
                 !!names.source[defaults.source]) ?
       defaults.source : 'all'
     );
-
-    mainCat = ( (typeof defaults.mainCat === 'string' &&
+    mainCat = ( (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
                  !!names.mainCat[defaults.mainCat]) ?
       defaults.mainCat : 'all'
     );
-
     subCat = 'all';
     // Check the user default for the subCat property
-    if (typeof defaults.subCat === 'string' && defaults.subCat !== 'all') {
-
-      if (!!names.subCat[defaults.subCat]) {
-        if (mainCat === 'all') {
+    if (!!defaults.subCat && typeof defaults.subCat === 'string' &&
+        defaults.subCat !== 'all' && !!names.subCat[defaults.subCat]) {
+      if (mainCat === 'all') {
+        subCat = defaults.subCat;
+      }
+      else {
+        if (ids.subCat[mainCat].indexOf(defaults.subCat) !== -1) {
           subCat = defaults.subCat;
-        }
-        else {
-          if (ids.subCat[mainCat].indexOf(defaults.subCat) !== -1) {
-            subCat = defaults.subCat;
-          }
         }
       }
     }
