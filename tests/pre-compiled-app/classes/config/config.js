@@ -19,6 +19,12 @@
     config.prettyCode = ( (!!config.prettyCode) ?
       config.prettyCode : {}
     );
+    config.showURL = ( (!!config.showURL) ?
+      config.showURL : {}
+    );
+    config.showLinks = ( (!!config.showLinks) ?
+      config.showLinks : {}
+    );
 
     /**
      * ---------------------------------------------------
@@ -34,27 +40,6 @@
 
     this.debug.group('init', 'coll', 'config= $$', config);
     this.debug.start('init', config);
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Config.showURL)
-     * -----------------------------------------------
-     * @desc Indicates if formatted urls should be created for question
-     *   ids and categories.
-     * @type {boolean}
-     * @private
-     */
-    var showURL;
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Config.showLinks)
-     * -----------------------------------------------
-     * @desc Indicates if the question's links should be shown.
-     * @type {boolean}
-     * @private
-     */
-    var showLinks;
 
     /**
      * ----------------------------------------------- 
@@ -78,54 +63,45 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.pretty)
+     * Public Property (Config.prettifier)
      * -----------------------------------------------
      * @desc The prettifier's settings.
      * @type {PrettyConfig}
      * @struct
      */
-    this.pretty;
+    this.prettifier;
 
     /**
      * ----------------------------------------------- 
-     * Public Method (Config.get)
+     * Public Property (Config.url)
      * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
+     * @desc Whether to create formatted urls for the questions.
+     * @type {UrlConfig}
      */
-    this.get = function(prop) {
+    this.url;
 
-      // Debugging vars
-      var errorMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        showURL  : showURL,
-        showLinks: showLinks
-      };
-
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Config.links)
+     * -----------------------------------------------
+     * @desc Whether to display search links for each question.
+     * @type {LinksConfig}
+     */
+    this.links;
 
 
     // Setup the properties
-    showURL = (!!config.showURL && config.showURL === true);
-    showLinks = (!!config.showLinks && config.showLinks === true);
-
-    this.searchBar = new SearchBarConfig(config.searchSettings);
-    this.questions = new QuestionsConfig(config.questionFormat);
-    this.pretty = new PrettyConfig(config.prettyCode);
+    this.searchBar  = new SearchBarConfig(config.searchSettings);
+    this.questions  = new QuestionsConfig(config.questionFormat);
+    this.prettifier = new PrettyConfig(config.prettyCode);
+    this.url        = new UrlConfig(config.url);
+    this.links      = new LinksConfig(config.links);
 
     Object.freeze(this.searchBar);
     Object.freeze(this.questions);
-    Object.freeze(this.pretty);
+    Object.freeze(this.prettifier);
+    Object.freeze(this.url);
+    Object.freeze(this.links);
 
 
     this.debug.group('init', 'end');
