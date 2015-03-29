@@ -65,11 +65,9 @@
     this.get = function(part) {
 
       // Debugging vars
-      var msg;
+      var errorMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
-      msg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', values.hasOwnProperty(prop), msg, prop);
 
       /** @type {Object<string, (num|nums)>} */
       var values = {
@@ -78,8 +76,12 @@
         index: index
       };
 
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', values.hasOwnProperty(prop), errorMsg, prop);
+
       return values[prop];
     };
+    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -91,8 +93,6 @@
      */
     this.reset = function(newIds, newIndex) {
 
-      // Debugging vars
-      var msg;
       this.debug.start('reset', newIds, newIndex);
       this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
 
@@ -101,17 +101,11 @@
        * private
        */
       var newLen;
-      /**
-       * @type {string}
-       * private
-       */
-      var view;
 
       newLen = newIds.length || 0;
-      view = app.searchBar.vals.view;
 
       // Set newIndex
-      if (view === 'all') {
+      if (app.searchBar.vals.view === 'all') {
         newIndex = -1;
       }
       else {
@@ -131,6 +125,7 @@
       len = newLen;
       index = newIndex;
     };
+    Object.freeze(this.reset);
 
     /**
      * ----------------------------------------------- 
@@ -144,11 +139,11 @@
     this.move = function(way) {
 
       // Debugging vars
-      var msg, pass;
+      var errorMsg, failCheck;
       this.debug.start('move', way);
       this.debug.args('move', way, 'string|number');
       // Error message for initial value checks
-      msg = 'Error: An incorrect value was given for way. way= $$';
+      errorMsg = 'Error: An incorrect value was given for way. way= $$';
 
       /**
        * @type {string}
@@ -165,13 +160,13 @@
       if (typeof way === 'string' &&
           way !== 'prev' && way !== 'next') {
         way = way.replace(/[^0-9]/g, '');
-        this.debug.fail('move', !!way, msg, way);
+        this.debug.fail('move', !!way, errorMsg, way);
         way = Number(way);
       }
 
       if (typeof way !== 'string') {
-        pass = (way > 0 && way <= app.questions.len);
-        this.debug.fail('move', pass, msg, way);
+        failCheck = (way > 0 && way <= app.questions.len);
+        this.debug.fail('move', failCheck, errorMsg, way);
       }
 
       // Save the value of the current view
@@ -182,13 +177,12 @@
           app.searchBar.vals.view = 'one';
         }
         index = ids.indexOf(way);
-        this.debug.fail('move', (index !== -1), msg, way);
+        this.debug.fail('move', (index !== -1), errorMsg, way);
         return index;
       }
 
-      // Error message for remaining debugging
-      msg = 'Error: This method should not have been called now. ';
-      msg += 'The nav elements should be hidden.';
+      errorMsg = 'Error: This method should not have been called now. ';
+      errorMsg += 'The nav elements should be hidden.';
 
       // Save the last index
       last = len - 1;
@@ -196,7 +190,7 @@
       // The single view actions
       if (view === 'one') {
 
-        this.debug.fail('move', (len > 1), msg);
+        this.debug.fail('move', (len > 1), errorMsg);
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -211,7 +205,7 @@
       // The ten view actions
       if (view === 'ten') {
 
-        this.debug.fail('move', (len > 10), msg);
+        this.debug.fail('move', (len > 10), errorMsg);
 
         // Update the last index
         last -= (last % 10);
@@ -226,10 +220,11 @@
         return index;
       }
 
-      msg = 'Error: An incorrect view was parsed. ';
-      msg += 'app.searchBar.vals.view= $$';
-      this.debug.fail('move', false, msg, view);
+      errorMsg = 'Error: An incorrect view was parsed. ';
+      errorMsg += 'app.searchBar.vals.view= $$';
+      this.debug.fail('move', false, errorMsg, view);
     };
+    Object.freeze(this.move);
 
 
     // Setup the properties
