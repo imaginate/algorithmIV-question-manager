@@ -17,4 +17,4 @@ Email learn@algorithmiv.com with any questions.
 ###Have Fun Mastering Algorithms!
 
 --
-![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-icon.png)
+![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-logo.png)
