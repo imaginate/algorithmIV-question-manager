@@ -19,6 +19,7 @@
       turnOnDebuggers: 'args fail'
     });
 
+    this.debug.group('init', 'coll');
     this.debug.start('init');
 
     /**
@@ -28,7 +29,7 @@
      * @desc The #aIV element.
      * @type {elem}
      */
-    this.root = null;
+    this.root;
 
     /**
      * ----------------------------------------------- 
@@ -37,7 +38,7 @@
      * @desc The #aIV-selections element.
      * @type {elem}
      */
-    this.sel = null;
+    this.sel;
 
     /**
      * ----------------------------------------------- 
@@ -46,7 +47,7 @@
      * @desc The #aIV-main element.
      * @type {elem}
      */
-    this.main = null;
+    this.main;
 
     /**
      * ----------------------------------------------- 
@@ -55,7 +56,7 @@
      * @desc The #aIV-nav element.
      * @type {elem}
      */
-    this.nav = null;
+    this.nav;
 
     /**
      * ----------------------------------------------- 
@@ -64,7 +65,7 @@
      * @desc The #aIV-questions element.
      * @type {elem}
      */
-    this.ques = null;
+    this.ques;
 
     /**
      * ----------------------------------------------- 
@@ -73,7 +74,7 @@
      * @desc The img.loader element.
      * @type {elem}
      */
-    this.hold = null;
+    this.hold;
 
     /**
      * ----------------------------------------------- 
@@ -82,21 +83,17 @@
      * @desc The section.empty element.
      * @type {elem}
      */
-    this.none = null;
+    this.none;
 
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.scrl)
      * -----------------------------------------------
      * @desc Saves the height of the browser's DOM loaded scrollbar.
-     * @type {{
-     *   height: number
-     * }}
+     * @type {{ height: number }}
      * @struct
      */
-    this.scrl = {
-      height: 0
-    };
+    this.scrl;
 
     /**
      * ----------------------------------------------- 
@@ -104,48 +101,17 @@
      * -----------------------------------------------
      * @desc Saves values of the DOM loaded prettified list elements.
      * @type {{
-     *   ol: {
-     *     height: number
-     *   },
-     *   li: {
-     *     height: number
-     *   }
+     *   ol: { height: number },
+     *   li: { height: number }
      * }}
      * @struct
      
      */
-    this.code = {
-      ol: {
-        height: 0
-      },
-      li: {
-        height: 0
-      }
-    };
-  };
+    this.code;
 
-  // Ensure constructor is set to this class.
-  AppElems.prototype.constructor = AppElems;
 
-  /**
-   * -----------------------------------------------
-   * Public Method (AppElems.prototype.appendMain)
-   * -----------------------------------------------
-   * @desc Creates and appends the main html elements.
-   * @type {function()}
-   */
-  AppElems.prototype.appendMain = function() {
-
-    this.debug.start('appendMain');
-
-    /**
-     * @type {elem}
-     * @private
-     */
-    var h1;
-
+    // Setup the elements
     this.root = document.createElement('div');
-    h1 = document.createElement('h1');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
     this.nav  = document.createElement('nav');
@@ -165,12 +131,45 @@
     this.hold.className = 'loader';
     this.none.className = 'empty';
 
-    h1.textContent = 'Algorithm IV';
+    this.root.innerHTML = '<h1>Algorithm IV</h1>';
     this.none.textContent = 'No question(s) found.';
 
     this.hold.src = 'images/loading.gif';
 
-    this.root.appendChild(h1);
+    // Setup the scrollbar element details
+    this.scrl = {};
+    this.scrl.height = 0;
+    Object.freeze(this.scrl);
+
+    // Setup the code element details
+    this.code = {};
+    this.code.ol = {};
+    this.code.li = {};
+    this.code.ol.height = 0;
+    this.code.li.height = 0;
+
+    Object.freeze(this.code);
+    Object.freeze(this.code.ol);
+    Object.freeze(this.code.li);
+
+
+    this.debug.group('init', 'end');
+  };
+
+  // Ensure constructor is set to this class.
+  AppElems.prototype.constructor = AppElems;
+
+  /**
+   * -----------------------------------------------
+   * Public Method (AppElems.prototype.appendMain)
+   * -----------------------------------------------
+   * @desc Creates and appends the main html elements.
+   * @type {function()}
+   */
+  AppElems.prototype.appendMain = function() {
+
+    this.debug.start('appendMain');
+
     this.root.appendChild(this.sel);
     this.root.appendChild(this.main);
     this.main.appendChild(this.nav);
