@@ -27,14 +27,12 @@
    */
   _return.init = function(settings) {
 
-    // Debugging
-    var msg;
-    if (DEBUG) {
-      debug.start('init', settings);
-      debug.args('init', settings, 'object');
-      msg = 'Error: A second attempt to init this app occurred.';
-      debug.fail('init', !_initialized, msg);
-    }
+    // Debugging vars
+    var errorMsg;
+    debug.start('init', settings);
+    debug.args('init', settings, 'object');
+    errorMsg = 'Error: A second attempt to init this app occurred.';
+    debug.fail('init', !_initialized, errorMsg);
 
     /**
      * @type {?Object}

@@ -8,10 +8,8 @@
    */
   function getID(title) {
 
-    if (DEBUG) {
-      debug.start('getID', title);
-      debug.args('getID', title, 'string');
-    }
+    debug.start('getID', title);
+    debug.args('getID', title, 'string');
 
     return document.getElementById(title);
   }
@@ -27,10 +25,8 @@
    */
   function getTag(title, root) {
 
-    if (DEBUG) {
-      debug.start('getTag', title, root);
-      debug.args('getTag', title, 'string', root, 'elem=');
-    }
+    debug.start('getTag', title, root);
+    debug.args('getTag', title, 'string', root, 'elem=');
 
     root = root || app.elems.root;
 
@@ -48,10 +44,8 @@
    */
   function getClass(title, root) {
 
-    if (DEBUG) {
-      debug.start('getClass', title, root);
-      debug.args('getClass', title, 'string', root, 'elem=');
-    }
+    debug.start('getClass', title, root);
+    debug.args('getClass', title, 'string', root, 'elem=');
 
     root = root || app.elems.root;
 
@@ -76,15 +70,12 @@
    */
   function checkType(vals, types) {
 
-    // Debugging
-    var msg;
-    if (DEBUG) {
-      debug.start('checkType', vals, types);
-      debug.args('checkType', vals, 'array', types, 'string|strings');
-      // Error message for type check
-      msg = 'Error: A given type was the wrong value. The incorrect ';
-      msg += 'value was \'$$\'. See the docs for acceptable values.';
-    }
+    // Debugging vars
+    var errorMsg;
+    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
+    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    debug.start('checkType', vals, types);
+    debug.args('checkType', vals, 'array', types, 'string|strings');
 
     /**
      * @type {RegExp}
@@ -144,7 +135,7 @@
 
         // Ensure a correct type was given
         if ( !allTypes.test(cleanType) ) {
-          DEBUG && debug.fail('checkType', false, msg, type);
+          debug.fail('checkType', false, errorMsg, type);
           return false;
         }
 
@@ -216,10 +207,8 @@
    */
   function sortKeys(ids, hMap) {
 
-    if (DEBUG) {
-      debug.start('sortKeys', ids, hMap);
-      debug.args('sortKeys', ids, 'strings', hMap, 'object');
-    }
+    debug.start('sortKeys', ids, hMap);
+    debug.args('sortKeys', ids, 'strings', hMap, 'object');
 
     /**
      * @type {strings}
@@ -302,10 +291,8 @@
    */
   function capFirst(str) {
 
-    if (DEBUG) {
-      debug.start('capFirst', str);
-      debug.args('capFirst', str, 'string');
-    }
+    debug.start('capFirst', str);
+    debug.args('capFirst', str, 'string');
 
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -321,10 +308,8 @@
    */
   function camelCase(str) {
 
-    if (DEBUG) {
-      debug.start('camelCase', str);
-      debug.args('camelCase', str, 'string');
-    }
+    debug.start('camelCase', str);
+    debug.args('camelCase', str, 'string');
 
     /**
      * @type {strings}
