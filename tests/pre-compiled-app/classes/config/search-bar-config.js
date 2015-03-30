@@ -8,8 +8,6 @@
    */
   var SearchBarConfig = function(config) {
 
-    config.url = config.url || {};
-
     /**
      * ---------------------------------------------------
      * Public Property (SearchBarConfig.debug)
@@ -24,15 +22,6 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.defaults)
-     * -----------------------------------------------
-     * @desc The default search options to display upon app init.
-     * @type {?DefaultsSearchBarConfig}
-     */
-    this.defaults = null;
 
     /**
      * ----------------------------------------------- 
@@ -76,16 +65,29 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (SearchBarConfig.defaults)
+     * -----------------------------------------------
+     * @desc The default search options to display upon app init.
+     * @type {DefaultsSearchBarConfig}
+     */
+    this.defaults;
+
+    /**
+     * ----------------------------------------------- 
      * Public Method (SearchBarConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
+     * @param {string} prop - The name of the setting to get.
      * @return {boolean}
      */
-    this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+    this.get = function(prop) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean> */
       var settings = {
         stage   : stage,
         source  : source,
@@ -93,40 +95,23 @@
         subCat  : subCat
       };
 
-      result = (settings[part] !== undefined) ? settings[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      return settings[prop];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
+    // Setup the properties
     stage    = (config.stage    !== false);
     source   = (config.source   !== false);
     category = (config.category !== false);
     subCat   = (config.subCat   !== false);
+
+    this.defaults = new DefaultsSearchBarConfig();
+    Object.freeze(this.defaults);
   };
 
   // Ensure constructor is set to this class.
   SearchBarConfig.prototype.constructor = SearchBarConfig;
-
-  /**
-   * -------------------------------------------------------
-   * Public Method (SearchBarConfig.prototype.setDefaults)
-   * -------------------------------------------------------
-   * @desc Sets the search defaults to the user's settings.
-   * @param {Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search names.
-   * @param {Object} ids - The available search ids.
-   * @param {number} quesLen - The number of user's questions.
-   */
-  SearchBarConfig.prototype.setDefaults = function(defaults, names, ids, quesLen) {
-
-    // Debugging vars
-    var args;
-    this.debug.start('init', defaults, names, ids, quesLen);
-    args = [ 'init' ];
-    args.push(defaults, 'object', names, 'object');
-    args.push(ids, 'object', quesLen, 'number');
-    this.debug.args(args);
-
-    this.defaults = new DefaultsSearchBarConfig(defaults, names, ids, quesLen);
-  };
