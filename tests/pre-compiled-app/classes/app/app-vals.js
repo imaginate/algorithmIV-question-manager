@@ -62,7 +62,7 @@
      * @param {string} prop - The name of the value to get.
      * @return {(num|nums)}
      */
-    this.get = function(part) {
+    this.get = function(prop) {
 
       // Debugging vars
       var errorMsg;
