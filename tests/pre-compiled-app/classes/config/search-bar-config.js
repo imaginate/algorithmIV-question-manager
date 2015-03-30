@@ -104,10 +104,23 @@
 
 
     // Setup the properties
-    stage    = (config.stage    !== false);
-    source   = (config.source   !== false);
-    category = (config.category !== false);
-    subCat   = (config.subCat   !== false);
+    stage    = true;
+    source   = true;
+    category = true;
+    subCat   = true;
+
+    if (config.hasOwnProperty(stage) && config.stage === false) {
+      stage = false;
+    }
+    if (config.hasOwnProperty(source) && config.source === false) {
+      source = false;
+    }
+    if (config.hasOwnProperty(category) && config.category === false) {
+      category = false;
+    }
+    if (config.hasOwnProperty(subCat) && config.subCat === false) {
+      subCat = false;
+    }
 
     this.defaults = new DefaultsSearchBarConfig();
     Object.freeze(this.defaults);
