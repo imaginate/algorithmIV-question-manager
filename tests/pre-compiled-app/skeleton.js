@@ -38,8 +38,10 @@
  * @typedef {Array<Question>} questions
  * @typedef {Array<HTMLElement>} elems
  * @typedef {Array<{name: string, href: string}>} links
- * @typedef {Object<string, string>} hashMap
- * @typedef {Object<string, hashMap>} nestedHashMap
+ * @typedef {Object<string, string>} stringMap
+ * @typedef {Object<string, number>} numberMap
+ * @typedef {Object<string, object>} objectMap
+ * @typedef {Object<string, boolean>} booleanMap
  * @typedef {{ init: function(?Object) }} initApp
  */
 
