@@ -10,9 +10,6 @@
      */
     Object.keys = (function(obj) {
 
-      polyfill.debug.start('Object.keys', obj);
-      polyfill.debug.args('Object.keys', obj, '!object|function');
-
       /** @type {Object} */
       var testObj;
       /** @type {boolean} */
@@ -33,11 +30,17 @@
       ];
 
       return function(obj) {
+
+        polyfill.debug.start('Object.keys', obj);
+        polyfill.debug.args('Object.keys', obj, '!object|function');
+
         if (typeof obj !== 'object' && typeof obj !== 'function') {
+          throw new TypeError('Object.keys only accepts objects.');
           return;
         }
 
         if (obj === null) {
+          throw new TypeError('Object.keys does not accept null types.');
           return;
         }
 
@@ -68,4 +71,45 @@
         return result;
       };
     })();
+  }
+
+  if (!Object.freeze) {
+    /**
+     * ---------------------------------------------
+     * Public Method (Object.freeze)
+     * ---------------------------------------------
+     * @desc A polyfill for the native method. For method details
+     *   [see MDN]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze}
+     * @param {Object} obj
+     * @return {Object}
+     */
+    Object.freeze = function(obj) {
+
+      polyfill.debug.start('Object.freeze', obj);
+      polyfill.debug.args('Object.freeze', obj, 'object|function');
+
+      if (typeof obj !== 'object' && typeof obj !== 'function') {
+        throw new TypeError('Object.freeze only accepts objects.');
+        return;
+      }
+
+      return obj;
+    };
+  }
+
+  // Fix Object.freeze function param bug
+  try {
+    Object.freeze(function() {});
+  }
+  catch (e) {
+    Object.freeze = (function(originalFreeze) {
+      return function(obj) {
+        if (typeof obj === 'function') {
+          return obj;
+        }
+        else {
+          return originalFreeze(obj);
+        }
+      };
+    }(Object.freeze));
   }
