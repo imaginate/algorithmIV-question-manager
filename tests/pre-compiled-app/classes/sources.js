@@ -93,7 +93,7 @@
 
       // Build the hash map
       this.ids.forEach(function(/** string */ id) {
-        data = new Source(sources[id]);
+        data[id] = new Source(sources[id]);
       });
     }
 
