@@ -4,32 +4,32 @@
    * -----------------------------------------------------
    * @desc An object containing the details of a category.
    * @param {string} name - The name of the category.
-   * @param {?Object=} subs - This category's sub ids if they exist.
+   * @param {?strings=} subs - This category's sub ids if they exist.
    *   If null then category is a sub category.
    * @constructor
    */
   var Category = function(name, subs) {
 
-    var that = this;
-
     /**
      * ---------------------------------------------------
-     * Private Property (Category.debug)
+     * Public Property (Category.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Category class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Category') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Category',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', name, subs);
-      this.debug.args('init', name, 'string', subs, 'object=');
-    }
+    this.debug.start('init', name, subs);
+    this.debug.args('init', name, 'string', subs, 'strings=');
 
     /**
      * ----------------------------------------------- 
      * Protected Property (Category.url)
      * -----------------------------------------------
-     * @desc The name to use for the url for this category.
+     * @desc The url name for this category.
      * @type {string}
      * @private
      */
@@ -49,48 +49,59 @@
      * ----------------------------------------------- 
      * Public Method (Category.get)
      * -----------------------------------------------
-     * @desc Gets a detail for the category.
-     * @param {string} part - The name of the detail to get.
+     * @desc Gets a property from the category.
+     * @param {string} prop - The name of the detail to get.
      * @return {(string|nums)}
      */
     this.get = function() {
-      /** @private */
-      var result;
-      /** @private */
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, function>} */
       var category = {
-        name: name,
-        url : url,
-        ids : ids,
-        subs: subs
+        name: function() { return name; },
+        url : function() { return url; },
+        ids : function() {
+          return Object.freeze( ids.slice(0) );
+        },
+        subs: function() {
+          return (subs) ? Object.freeze( subs.slice(0) ) : null;
+        }
       };
 
-      result = (category[part] !== undefined) ? category[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', category.hasOwnProperty(prop), errorMsg, prop);
+
+      return category[prop]();
     };
+    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (Category.addId)
      * -----------------------------------------------
-     * @desc Add a question id to this category.
+     * @desc Adds a question id to this category.
      * @param {number} id - The id to add.
      */
     this.addId = function(id) {
 
-      if (DEBUG) {
-        that.debug.start('addId', id);
-        that.debug.args('addId', id, 'number');
-      }
+      this.debug.start('addId', id);
+      this.debug.args('addId', id, 'number');
 
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
+    Object.freeze(this.addId);
 
 
-    // Set the properties
-    if (typeof name !== 'string' || !name) {
-      name = url = '';
+    // Setup the properties
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
     }
     else {
       url = name.toLowerCase();
