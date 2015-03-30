@@ -3,7 +3,7 @@
    * Public Class (Categories)
    * -----------------------------------------------------
    * @desc The available categories for each question.
-   * @param {?Object} categories - The user's categories.
+   * @param {?(objectMap|stringMap)} categories - The user's categories.
    * @constructor
    */
   var Categories = function(categories) {
@@ -25,7 +25,7 @@
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
     this.debug.start('init', categories);
-    this.debug.args('init', categories, 'object');
+    this.debug.args('init', categories, 'objectMap|stringMap');
 
     /**
      * ----------------------------------------------- 
@@ -82,24 +82,23 @@
     Object.freeze(this.get);
 
 
-    // Check for null argument properties
-    if (!categories || typeof categories !== 'object') {
-      categories = {};
+    // Check the argument data types
+    if ( checkType(categories, '!stringMap') ) {
+      categories = {
+        main: categories,
+        sub : {}
+      };
     }
-    if (!categories.main) {
-      if (!!categories.sub) {
-        categories = ( (typeof categories.sub === 'object') ?
-          { main: categories, sub: deepCopy(categories.sub) }
-          : { main: categories, sub: {} }
-        );
-        delete categories.main.sub;
+    else {
+      if (!categories) {
+        categories = {};
       }
-      else {
-        categories = { main: categories, sub: {} };
+      if (!categories.main || !checkType(categories.main, '!stringMap')) {
+        categories.main = {};
       }
-    }
-    if (typeof categories.main !== 'object') {
-      categories.main = {};
+      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
+        categories.sub = {};
+      }
     }
 
     // Setup the properties
