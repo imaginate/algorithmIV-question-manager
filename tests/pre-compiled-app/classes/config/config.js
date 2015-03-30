@@ -94,8 +94,8 @@
     this.searchBar  = new SearchBarConfig(config.searchSettings);
     this.questions  = new QuestionsConfig(config.questionFormat);
     this.prettifier = new PrettyConfig(config.prettyCode);
-    this.url        = new UrlConfig(config.url);
-    this.links      = new LinksConfig(config.links);
+    this.url        = new UrlConfig(config.showURL);
+    this.links      = new LinksConfig(config.showLinks);
 
     Object.freeze(this.searchBar);
     Object.freeze(this.questions);
