@@ -42,6 +42,8 @@
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
+ * @typedef {Object<string, HTMLElement>} elemMap
+ * @typedef {Object<string, strings>} stringsMap
  * @typedef {{ init: function(?Object) }} initApp
  */
 

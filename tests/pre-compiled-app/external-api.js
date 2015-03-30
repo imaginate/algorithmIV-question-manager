@@ -23,7 +23,7 @@
    * Public Method (_return.init)
    * -----------------------------------------------------
    * @desc Initializes the app.
-   * @param {?Object} settings - The app's settings.
+   * @param {?objectMap} settings - The app's settings.
    */
   _return.init = function(settings) {
 
@@ -35,22 +35,22 @@
     debug.fail('init', (!_initialized), errorMsg);
 
     /**
-     * @type {?Object}
+     * @type {?objectMap}
      * @private
      */
     var config;
     /**
-     * @type {?hashMap}
+     * @type {?stringMap}
      * @private
      */
     var sources;
     /**
-     * @type {?Object}
+     * @type {?(objectMap|stringMap)}
      * @private
      */
     var categories;
     /**
-     * @type {?Object}
+     * @type {?objects}
      * @private
      */
     var questions;
@@ -81,17 +81,17 @@
 
       failCheck = (!config || typeof config === 'object');
       errorMsg = 'Error: The given config property was an ';
-      errorMsg += 'incorrect operand. config= $$';
+      errorMsg += 'incorrect data type. config= $$';
       debug.fail('init', failCheck, errorMsg, config);
 
       failCheck = (!sources || typeof sources === 'object');
       errorMsg = 'Error: The given sources property was an ';
-      errorMsg += 'incorrect operand. sources= $$';
+      errorMsg += 'incorrect data type. sources= $$';
       debug.fail('init', failCheck, errorMsg, sources);
 
       failCheck = (!categories || typeof categories === 'object');
       errorMsg = 'Error: The given categories property was an ';
-      errorMsg += 'incorrect operand. categories= $$';
+      errorMsg += 'incorrect data type. categories= $$';
       debug.fail('init', failCheck, errorMsg, categories);
 
       errorMsg = 'Error: No questions were provided.';
@@ -100,7 +100,7 @@
       if (questions) {
         failCheck = (checkType(questions, 'objects') && !!questions.length);
         errorMsg = 'Error: The given questions property was an ';
-        errorMsg += 'incorrect operand. questions= $$';
+        errorMsg += 'incorrect data type. questions= $$';
         debug.fail('init', failCheck, errorMsg, questions);
       }
 

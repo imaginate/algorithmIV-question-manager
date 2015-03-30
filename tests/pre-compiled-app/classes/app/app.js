@@ -3,10 +3,10 @@
    * Public Class (App)
    * -----------------------------------------------------
    * @desc The base class for this app.
-   * @param {?Object} config - The user's config settings.
-   * @param {?hashMap} sources - The user's sources.
-   * @param {?Object} categories - The user's categories.
-   * @param {?Object} questions - The user's questions.
+   * @param {?objectMap} config - The user's config settings.
+   * @param {?stringMap} sources - The user's sources.
+   * @param {?(objectMap|stringMap)} categories - The user's categories.
+   * @param {?objects} questions - The user's questions.
    * @constructor
    */
   var App = function(config, sources, categories, questions) {
@@ -15,9 +15,9 @@
     var output;
     /** @type {?Object<string, (string|num)>} */
     var defaults;
-    /** @type {Object<string, hashMap>} */
+    /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {Object<string, strings>} */
+    /** @type {stringsMap} */
     var ids;
     /** @type {number} */
     var len;

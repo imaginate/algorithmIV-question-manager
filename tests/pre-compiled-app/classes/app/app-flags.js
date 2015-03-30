@@ -4,7 +4,7 @@
    * -----------------------------------------------------
    * @desc The flags that explain states of the environment in the app.
    * @param {boolean} pass - Indicates whether the user's supplied settings
-   *   were the correct operands.
+   *   were the correct data types.
    * @constructor
    */
   var AppFlags = function(pass) {
