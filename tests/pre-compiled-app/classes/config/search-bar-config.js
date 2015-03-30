@@ -87,7 +87,7 @@
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, boolean> */
+      /** @type {Object<string, boolean>} */
       var settings = {
         stage   : stage,
         source  : source,

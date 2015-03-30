@@ -106,7 +106,7 @@
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, (string|number)> */
+      /** @type {Object<string, (string|number)>} */
       var settings = {
         startID: startID,
         view   : view,
