@@ -58,50 +58,32 @@
    * ---------------------------------------------------
    * @param {vals} vals - An array of the value(s) to be evaluated.
    *   Note that the values must be provided in an array.
-   * @param {(string|strings)} types - The type(s) to evaluate the
-   *   value(s) against. The optional types are 'string', 'number',
-   *   'boolean', 'object', 'elem', 'undefined', 'array', 'strings',
-   *   'numbers', 'booleans' 'objects', and 'elems'. Use '|' as the
-   *   separator for multiple types (e.g. 'strings|numbers'). Use '='
-   *   to indicate the value is optional (e.g. 'array=' or
-   *   'string|number='). Use '!' to indicate that null is not a
+   * @param {(string|strings)} types - The type(s) to evaluate the value(s)
+   *   against. The optional types are 'string', 'number', 'boolean', 'object',
+   *   'function', 'elem', 'undefined', 'array', 'strings', 'numbers',
+   *   'booleans', 'objects', 'functions', 'arrays', 'elems', 'stringMap',
+   *   'numberMap', 'booleanMap', 'objectMap', 'functionMap', 'arrayMap', and
+   *   'elemMap'. Use '|' as the separator for multiple types (e.g.
+   *   'strings|numbers'). Use '=' to indicate the value is optional (e.g.
+   *   'array=' or 'string|number='). Use '!' to indicate that null is not a
    *   possibility (e.g. '!string').
    * @return {boolean} The evaluation result.
    */
   function checkType(vals, types) {
 
     // Debugging vars
-    var errorMsg;
-    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
-    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    var errorMsg, failCheck;
     debug.start('checkType', vals, types);
     debug.args('checkType', vals, 'array', types, 'string|strings');
+    // Error message for checking the type value of each input
+    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
+    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
 
     /**
-     * @type {RegExp}
-     * @private
-     */
-    var arrays;
-    /**
-     * @type {RegExp}
-     * @private
-     */
-    var simple;
-    /**
-     * @type {RegExp}
-     * @private
-     */
-    var allTypes;
-    /**
-     * @type {*}
+     * @type {val}
      * @private
      */
     var val;
-
-    arrays = /^array$|^strings$|^numbers$|^booleans$|^objects$|^elems$/;
-    simple = /^string$|^number$|^boolean$|^object$/;
-    allTypes = '^elem$|^undefined$|' + simple.source + '|' + arrays.source;
-    allTypes = new RegExp(allTypes);
 
     if (typeof types === 'string') {
       types = vals.map(function() {
@@ -109,9 +91,10 @@
       });
     }
 
-    if (vals.length !== types.length) {
-      return false;
-    }
+    errorMsg = 'Error: The length of the arguments to be checked ';
+    errorMsg += 'were not the same. vals= $$, types= $$';
+    failCheck = (vals.length !== types.length);
+    debug.fail('checkType', failCheck, errorMsg, vals, types);
 
     return types.every(function(/** string */ _type, /** number */ i) {
       /**
@@ -133,11 +116,8 @@
 
         cleanType = type.replace(/\!|\=/g, '');
 
-        // Ensure a correct type was given
-        if ( !allTypes.test(cleanType) ) {
-          debug.fail('checkType', false, errorMsg, type);
-          return false;
-        }
+        failCheck = !regexps.types.all.test(cleanType);
+        debug.fail('checkType', failCheck, errorMsg, type);
 
         // Handle undefined val
         if (val === undefined) {
@@ -156,14 +136,22 @@
           }
 
           // Evaluate array types
-          if ( arrays.test(cleanType) ) {
+          if ( regexps.types.arrays.test(cleanType) ) {
 
             if ( !Array.isArray(val) ) {
               return false;
             }
 
+            // Evaluate a basic array
             if (cleanType === 'array') {
               return true;
+             }
+
+            // Evaluate an array of arrays
+            if (cleanType === 'arrays') {
+              return val.every(function(subVal) {
+                return ( Array.isArray(subVal) );
+              });
             }
 
             // Evaluate an array of elements
@@ -185,9 +173,37 @@
             return (val instanceof HTMLElement);
           }
 
-          // Evaluate string, number, boolean, and object types
-          if ( simple.test(cleanType) ) {
+          // Evaluate string, number, boolean, object, and function types
+          if ( regexps.types.basic.test(cleanType) ) {
             return (typeof val === cleanType);
+          }
+
+          // Evaluate hash map types
+          if ( regexps.types.maps.test(cleanType) ) {
+
+            if (typeof val !== 'object') {
+              return false;
+            }
+
+            // Evaluate a hash map of arrays
+            if (cleanType === 'arrayMap') {
+              return Object.keys(val).every(function(subVal) {
+                return ( Array.isArray(val[ subVal ]) );
+              });
+            }
+
+            // Evaluate a hash map of elements
+            if (cleanType === 'elems') {
+              return Object.keys(val).every(function(subVal) {
+                return (val[ subVal ] instanceof HTMLElement);
+              });
+            }
+
+            // Evaluate each value of the hash map
+            cleanType = cleanType.replace(/Map$/, '');
+            return Object.keys(val).every(function(subVal) {
+              return (typeof val[ subVal ] === cleanType);
+            });
           }
         }
 
@@ -202,13 +218,13 @@
    * ---------------------------------------------------
    * @desc A helper method that sorts the keys of an object.
    * @param {strings} ids - The unsorted keys.
-   * @param {hashMap} hMap - The object acting as a hash map.
+   * @param {stringMap} data - A hash map of ids and names.
    * @return {strings} The sorted keys.
    */
-  function sortKeys(ids, hMap) {
+  function sortKeys(ids, data) {
 
-    debug.start('sortKeys', ids, hMap);
-    debug.args('sortKeys', ids, 'strings', hMap, 'object');
+    debug.start('sortKeys', ids, data);
+    debug.args('sortKeys', ids, 'strings', data, 'stringMap');
 
     /**
      * @type {strings}
@@ -241,25 +257,26 @@
      */
     var ii;
 
-    keys = [];
+    keys  = [];
     names = [];
 
     // Add the first key and its name to keys and names
-    i = ids.length - 1;
-    id = ids[i];
-    name = hMap[id].toLowerCase();
+    i    = ids.length - 1;
+    id   = ids[i];
+    name = data[id].toLowerCase();
 
     keys.push(id);
     names.push(name);
 
     // Add the remaining keys and their names in order
+    ++i;
     while (i--) {
-      id = ids[i];
-      name = hMap[id].toLowerCase();
+      id   = ids[i];
+      name = data[id].toLowerCase();
 
       // The sorting logic (pre-sorted keys get linear time)
       len = names.length;
-      ii = 0;
+      ii  = 0;
       while (true) {
 
         if (ii === len) {
