@@ -118,13 +118,17 @@
      * Public Method (QuestionsConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
-     * @return {?boolean}
+     * @param {string} prop - The name of the setting to get.
+     * @return {boolean}
      */
-    this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+    this.get = function(prop) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean> */
       var settings = {
         id      : id,
         complete: complete,
@@ -137,21 +141,52 @@
         output  : output
       };
 
-      result = (settings[part] !== undefined) ? settings[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      return settings[prop];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
-    id       = (config.id       !== false);
-    complete = (config.complete !== false);
-    source   = (config.source   !== false);
-    category = (config.category !== false);
-    subCat   = (config.subCat   !== false);
-    links    = (config.links    !== false);
-    problem  = (config.problem  !== false);
-    descr    = (config.descr    === true );
-    output   = (config.output   !== false);
+    // Setup the properties
+    id       = true;
+    complete = true;
+    source   = true;
+    category = true;
+    subCat   = true;
+    links    = true;
+    problem  = true;
+    descr    = false;
+    output   = true;
+
+    if (config.hasOwnProperty(id) && config.id === false) {
+      id = false;
+    }
+    if (config.hasOwnProperty(complete) && config.complete === false) {
+      complete = false;
+    }
+    if (config.hasOwnProperty(source) && config.source === false) {
+      source = false;
+    }
+    if (config.hasOwnProperty(category) && config.category === false) {
+      category = false;
+    }
+    if (config.hasOwnProperty(subCat) && config.subCat === false) {
+      subCat = false;
+    }
+    if (config.hasOwnProperty(links) && config.links === false) {
+      links = false;
+    }
+    if (config.hasOwnProperty(problem) && config.problem === false) {
+      problem = false;
+    }
+    if (config.hasOwnProperty(descr) && config.descr === true) {
+      descr = true;
+    }
+    if (config.hasOwnProperty(output) && config.output === false) {
+      output = false;
+    }
   };
 
   // Ensure constructor is set to this class.
