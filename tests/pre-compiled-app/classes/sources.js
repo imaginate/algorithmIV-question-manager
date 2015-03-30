@@ -3,40 +3,36 @@
    * Public Class (Sources)
    * -----------------------------------------------------
    * @desc The available sources for each question.
-   * @param {?hashMap} sources - The user's sources.
+   * @param {?stringMap} sources - The user's sources.
    * @constructor
    */
   var Sources = function(sources) {
 
     /**
-     * @type {strings}
-     * @private
+     * ---------------------------------------------------
+     * Public Property (Sources.debug)
+     * ---------------------------------------------------
+     * @desc The Debug instance for the Sources class.
+     * @type {Debug}
      */
-    var ids;
+    this.debug = aIV.debug({
+      classTitle     : 'Sources',
+      turnOnDebuggers: 'args fail'
+    });
+
+    this.debug.group('init', 'coll', 'sources= $$', sources);
+    this.debug.start('init', sources);
+    this.debug.args('init', sources, 'stringMap');
+
     /**
-     * @type {number}
-     * @private
-     */
-    var len;
-    /**
+     * ----------------------------------------------- 
+     * Protected Property (Sources.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the source objects using the ids as keys.
      * @type {Object<string, Source>}
      * @private
      */
     var data;
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Sources.debug)
-     * ---------------------------------------------------
-     * @type {?Debug}
-     */
-    this.debug = (DEBUG) ? new Debug('Sources') : null;
-
-    if (DEBUG) {
-      this.debug.group('init', 'coll', 'sources= $$', sources);
-      this.debug.start('init', sources);
-      this.debug.args('init', sources, 'object');
-    }
 
     /**
      * ----------------------------------------------- 
@@ -64,30 +60,45 @@
      *   The source ids are used as the hash map's keys and object literals
      *   containing their names, question ids, and url names as the values.
      * @param {string} id - The source id to get.
-     * @return {?Source}
+     * @return {Source}
      */
     this.get = function(id) {
-      return data[id] || null;
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', id);
+      this.debug.args('get', id, 'string');
+
+      errorMsg = 'Error: The given source does not exist. sourceID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+
+      return data[id];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
-    ids = (sources) ? Object.keys(sources) : [];
-    len = ids.length;
+    // Check the argument data types
+    if ( !checkType(sources, '!stringMap') ) {
+      sources = {};
+    }
 
-    if (len) {
+    // Setup the properties
+    this.ids = Object.keys(sources);
+    this.len = this.ids.length;
+
+    if (this.len) {
 
       // Sort the ids
-      ids = sortKeys(ids, sources);
+      this.ids = sortKeys(this.ids, sources);
 
       // Build the hash map
-      ids.forEach(function(/** string */ id) {
+      this.ids.forEach(function(/** string */ id) {
         data = new Source(sources[id]);
       });
     }
 
-    this.ids = ids;
-    this.len = len;
+    Object.freeze(this.ids);
+    Object.freeze(this.len);
 
 
     DEBUG && this.debug.group('init', 'end');
