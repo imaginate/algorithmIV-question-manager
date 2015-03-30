@@ -124,11 +124,13 @@
 
         // Add main category to the hash map
         data[id] = new Category(categories.main[id], subIds);
+        Object.freeze(data[id]);
 
         // Add the sub categories to the hash map
         if (subIds.length) {
           subIds.forEach(function(/** string */ subId) {
             data[id] = new Category(categories.sub[id][subId]);
+            Object.freeze(data[id]);
           });
         } 
       });
