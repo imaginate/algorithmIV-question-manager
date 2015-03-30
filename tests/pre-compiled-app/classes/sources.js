@@ -101,7 +101,7 @@
     Object.freeze(this.len);
 
 
-    DEBUG && this.debug.group('init', 'end');
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
