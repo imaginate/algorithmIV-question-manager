@@ -19,6 +19,8 @@
     var names;
     /** @type {Object<string, strings>} */
     var ids;
+    /** @type {number} */
+    var len;
 
     /**
      * ---------------------------------------------------
@@ -143,7 +145,8 @@
     );
     names = this.searchBar.names;
     ids = this.searchBar.ids.subCat;
-    this.config.searchBar.setDefaults(defaults, names, ids, this.questions.len);
+    len = this.questions.len;
+    this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
