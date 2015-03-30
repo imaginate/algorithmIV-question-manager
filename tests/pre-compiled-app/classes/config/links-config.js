@@ -1,6 +1,6 @@
   /**
    * -----------------------------------------------------
-   * Public Class (LinksSearchBarConfig)
+   * Public Class (LinksConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for whether to show search links for
    *   portions of each question.
@@ -8,17 +8,17 @@
    *   formatting.
    * @constructor
    */
-  var LinksSearchBarConfig = function(config) {
+  var LinksConfig = function(config) {
 
     /**
      * ---------------------------------------------------
-     * Public Property (LinksSearchBarConfig.debug)
+     * Public Property (LinksConfig.debug)
      * ---------------------------------------------------
-     * @desc The Debug instance for the LinksSearchBarConfig class.
+     * @desc The Debug instance for the LinksConfig class.
      * @type {Debug}
      */
     this.debug = aIV.debug({
-      classTitle     : 'LinksSearchBarConfig',
+      classTitle     : 'LinksConfig',
       turnOnDebuggers: 'args fail'
     });
 
@@ -27,7 +27,7 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (LinksSearchBarConfig.id)
+     * Protected Property (LinksConfig.id)
      * -----------------------------------------------
      * @desc Whether to display an id search option for every question.
      * @type {boolean}
@@ -37,7 +37,7 @@
 
     /**
      * ------------------------------------------------- 
-     * Protected Property (LinksSearchBarConfig.source)
+     * Protected Property (LinksConfig.source)
      * -------------------------------------------------
      * @desc Whether to display a source search option for every question.
      * @type {boolean}
@@ -47,7 +47,7 @@
 
     /**
      * ----------------------------------------------------
-     * Protected Property (LinksSearchBarConfig.category)
+     * Protected Property (LinksConfig.category)
      * ----------------------------------------------------
      * @desc Whether to display a category search option in the url.
      * @type {boolean}
@@ -57,29 +57,49 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Method (LinksSearchBarConfig.get)
+     * Public Method (LinksConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
-     * @return {?boolean}
+     * @param {string} prop - The name of the setting to get.
+     * @return {boolean}
      */
-    this.get = function(part) {
-      /** @private */
+    this.get = function(prop) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean> */
       var settings = {
         id      : id,
         source  : source,
         category: category
       };
- 
-      return ( settings.hasOwnProperty(part) ) ? settings[part] : null;
+
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      return settings[prop];
     };
+    Object.freeze(this.get);
 
 
     // Set the properties
-    id = (config.id !== false);
-    source = (config.source === true);
-    category = (config.category !== false);
+    id       = true;
+    source   = false;
+    category = true;
+
+    if (config.hasOwnProperty(id) && config.id === false) {
+      id = false;
+    }
+    if (config.hasOwnProperty(source) && config.source === false) {
+      source = false;
+    }
+    if (config.hasOwnProperty(category) && config.category === false) {
+      category = false;
+    }
   };
 
   // Ensure constructor is set to this class.
-  LinksSearchBarConfig.prototype.constructor = LinksSearchBarConfig;
+  LinksConfig.prototype.constructor = LinksConfig;
