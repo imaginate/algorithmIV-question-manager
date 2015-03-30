@@ -1,22 +1,22 @@
   /**
    * -----------------------------------------------------
-   * Public Class (UrlSearchBarConfig)
+   * Public Class (UrlConfig)
    * -----------------------------------------------------
-   * @desc The configuration settings for the search bar's use of the url.
+   * @desc The configuration settings for creating urls for the questions.
    * @param {Object} config - The user's config settings for url searches.
    * @constructor
    */
-  var UrlSearchBarConfig = function(config) {
+  var UrlConfig = function(config) {
 
     /**
      * ---------------------------------------------------
-     * Public Property (UrlSearchBarConfig.debug)
+     * Public Property (UrlConfig.debug)
      * ---------------------------------------------------
-     * @desc The Debug instance for the UrlSearchBarConfig class.
+     * @desc The Debug instance for the UrlConfig class.
      * @type {Debug}
      */
     this.debug = aIV.debug({
-      classTitle     : 'UrlSearchBarConfig',
+      classTitle     : 'UrlConfig',
       turnOnDebuggers: 'args fail'
     });
 
@@ -25,7 +25,7 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (UrlSearchBarConfig.id)
+     * Protected Property (UrlConfig.id)
      * -----------------------------------------------
      * @desc Whether to display an id search option in the url.
      * @type {boolean}
@@ -35,7 +35,7 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (UrlSearchBarConfig.category)
+     * Protected Property (UrlConfig.category)
      * -----------------------------------------------
      * @desc Whether to display a category search option in the url.
      * @type {boolean}
@@ -45,30 +45,44 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Method (UrlSearchBarConfig.get)
+     * Public Method (UrlConfig.get)
      * -----------------------------------------------
      * @desc Gets a config setting.
-     * @param {string} part - The name of the setting to get.
-     * @return {?boolean}
+     * @param {string} prop - The name of the setting to get.
+     * @return {boolean}
      */
-    this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+    this.get = function(prop) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean> */
       var settings = {
         id      : id,
         category: category
       };
 
-      result = (settings[part] !== undefined) ? settings[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      return settings[prop];
     };
+    Object.freeze(this.get);
 
 
     // Set the properties
-    id       = (config.id       !== false);
-    category = (config.category !== false);
+    id       = false;
+    category = false;
+
+    if (config.hasOwnProperty(id) && config.id === true) {
+      id = true;
+    }
+    if (config.hasOwnProperty(category) && config.category === true) {
+      category = true;
+    }
   };
 
   // Ensure constructor is set to this class.
-  UrlSearchBarConfig.prototype.constructor = UrlSearchBarConfig;
+  UrlConfig.prototype.constructor = UrlConfig;
