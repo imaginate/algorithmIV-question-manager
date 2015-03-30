@@ -8,40 +8,34 @@
    */
   var Categories = function(categories) {
 
-    /**
-     * @type {strings}
-     * @private
-     */
-    var ids;
-    /**
-     * @type {number}
-     * @private
-     */
-    var len;
-    /**
-     * @type {Object<string, Category>}
-     * @private
-     */
-    var data;
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var subIds;
 
     /**
      * ---------------------------------------------------
-     * Private Property (Categories.debug)
+     * Public Property (Categories.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Categories class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Categories') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Categories',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.group('init', 'coll', 'categories= $$', categories);
-      this.debug.start('init', categories);
-      this.debug.args('init', categories, 'object');
-    }
+    this.debug.group('init', 'coll', 'categories= $$', categories);
+    this.debug.start('init', categories);
+    this.debug.args('init', categories, 'object');
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Categories.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the category objects using the ids as keys.
+     * @type {Object<string, Category>}
+     * @private
+     */
+    var data;
 
     /**
      * ----------------------------------------------- 
@@ -71,33 +65,61 @@
      *   and a list of the ids of their sub categories (in alphabetical
      *   order if they exist) as the values.
      * @param {string} id - The category id to get.
-     * @return {?Category}
+     * @return {Category}
      */
     this.get = function(id) {
-      return data[id] || null;
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', id);
+      this.debug.args('get', id, 'string');
+
+      errorMsg = 'Error: The given category does not exist. catID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+
+      return data[id];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
-    ids = ( (categories && !!categories.main) ?
-      Object.keys(categories.main) : []
-    );
-    len = ids.length;
+    // Check for null argument properties
+    if (!categories || typeof categories !== 'object') {
+      categories = {};
+    }
+    if (!categories.main) {
+      if (!!categories.sub) {
+        categories = ( (typeof categories.sub === 'object') ?
+          { main: categories, sub: deepCopy(categories.sub) }
+          : { main: categories, sub: {} }
+        );
+        delete categories.main.sub;
+      }
+      else {
+        categories = { main: categories, sub: {} };
+      }
+    }
+    if (typeof categories.main !== 'object') {
+      categories.main = {};
+    }
 
-    if (len) {
+    // Setup the properties
+    this.ids = Object.keys(categories.main);
+    this.len = this.ids.length;
+
+    if (this.len) {
 
       // Sort the main category ids
-      ids = sortKeys(ids, categories.main);
+      this.ids = sortKeys(this.ids, categories.main);
 
       // Build the hash map
-      ids.forEach(function(/** string */ id) {
+      this.ids.forEach(function(/** string */ id) {
 
         // Save and sort the sub category ids if they exist
         subIds = null;
         if (!!categories.sub[id]) {
           subIds = Object.keys(categories.sub[id]);
           if (subIds.length) {
-            subIds = sortKeys(subIds, categories.sub[id])
+            subIds = sortKeys(subIds, categories.sub[id]);
           }
         }
 
@@ -113,11 +135,11 @@
       });
     }
 
-    this.ids = ids;
-    this.len = len;
+    Object.freeze(this.ids);
+    Object.freeze(this.len);
 
 
-    DEBUG && this.debug.group('init', 'end');
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
