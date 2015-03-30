@@ -3,13 +3,9 @@
    * Public Class (DefaultsSearchBarConfig)
    * -----------------------------------------------------
    * @desc The onLoad search defaults for this app.
-   * @param {?Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search option names.
-   * @param {Object} ids - The available sub category ids.
-   * @param {number} quesLen - The number of questions for this app.
    * @constructor
    */
-  var DefaultsSearchBarConfig = function(defaults, names, ids, quesLen) {
+  var DefaultsSearchBarConfig = function() {
 
     /**
      * ---------------------------------------------------
@@ -23,13 +19,7 @@
       turnOnDebuggers: 'args fail'
     });
 
-    // Debugging vars
-    var args;
-    this.debug.start('init', defaults, names, ids, quesLen);
-    args = [ 'init' ];
-    args.push(defaults, 'object', names, 'object');
-    args.push(ids, 'object', quesLen, 'number');
-    this.debug.args(args);
+    this.debug.start('init');
 
     /**
      * ---------------------------------------------------
@@ -134,51 +124,125 @@
     };
     Object.freeze(this.get);
 
+    /**
+     * ----------------------------------------------- 
+     * Public Method (DefaultsSearchBarConfig.set)
+     * -----------------------------------------------
+     * @desc Sets a config setting.
+     * @param {string} prop - The name of the setting to set.
+     * @param {(string|number)} val - The value to set the
+     *   property to.
+     */
+    this.set = function(prop, val) {
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('set', prop, val);
+      this.debug.args('set', prop, 'string', val, 'string|number');
+
+      /** @private */
+      var settings = {
+        startID: function() { startID = val; },
+        view   : function() { view    = val; },
+        order  : function() { order   = val; },
+        stage  : function() { stage   = val; },
+        source : function() { source  = val; },
+        mainCat: function() { mainCat = val; },
+        subCat : function() { subCat  = val; }
+      };
+
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('set', settings.hasOwnProperty(prop), errorMsg, prop);
+
+      settings[prop]();
+    };
+    Object.freeze(this.set);
+
+
+    // Setup the properties
+    startID = 0;
+    view    = 'one';
+    order   = 'asc';
+    stage   = 'all';
+    source  = 'all';
+    mainCat = 'all';
+    subCat  = 'all';
+  };
+
+  // Ensure constructor is set to this class.
+  DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
+
+  /**
+   * ---------------------------------------------------------
+   * Public Method (DefaultsSearchBarConfig.prototype.update)
+   * ---------------------------------------------------------
+   * @desc Sets the search defaults to the user's settings.
+   * @param {Object} defaults - The user's search defaults.
+   * @param {Object} names - The available search ids and names.
+   * @param {Object} ids - The available sub category ids.
+   * @param {number} quesLen - The number of user's questions.
+   */
+  DefaultsSearchBarConfig.prototype.update = function(defaults, names,
+                                                      ids, quesLen) {
+    // Debugging vars
+    var args;
+    this.debug.start('update', defaults, names, ids, quesLen);
+    args = [ 'update' ];
+    args.push(defaults, 'object', names, 'object');
+    args.push(ids, 'object', quesLen, 'number');
+    this.debug.args(args);
 
     // Check the user supplied defaults
     if (!defaults || typeof defaults !== 'object') {
       defaults = {};
     }
 
-    // Setup the properties
-    startID = ( (!!defaults.startID && typeof defaults.startID === 'number' &&
-                 defaults.startID <= quesLen) ?
-      defaults.startID : 0
-    );
-    view = ( (!!defaults.view && typeof defaults.view === 'string' &&
-              !!names.view[defaults.view]) ?
-      defaults.view : 'one'
-    );
-    order = ( (!!defaults.order && typeof defaults.order === 'string' &&
-               !!names.order[defaults.order]) ?
-      defaults.order : 'asc'
-    );
-    stage = ( (!!defaults.stage && typeof defaults.stage === 'string' &&
-               !!names.stage[defaults.stage]) ?
-      defaults.stage : 'all'
-    );
-    source = ( (!!defaults.source && typeof defaults.source === 'string' &&
-                !!names.source[defaults.source]) ?
-      defaults.source : 'all'
-    );
-    mainCat = ( (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
-                 !!names.mainCat[defaults.mainCat]) ?
-      defaults.mainCat : 'all'
-    );
-    subCat = 'all';
-    // Check the user default for the subCat property
+    // Set the startID
+    if (!!defaults.startID && typeof defaults.startID === 'number' &&
+        defaults.startID <= quesLen) {
+      this.set('startID', defaults.startID);
+    }
+
+    // Set the view
+    if (!!defaults.view && typeof defaults.view === 'string' &&
+        !!names.view[defaults.view]) {
+      this.set('view', defaults.view);
+    }
+
+    // Set the order
+    if (!!defaults.order && typeof defaults.order === 'string' &&
+        !!names.order[defaults.order]) {
+      this.set('order', defaults.order);
+    }
+
+    // Set the stage
+    if (!!defaults.stage && typeof defaults.stage === 'string' &&
+        !!names.stage[defaults.stage]) {
+      this.set('stage', defaults.stage);
+    }
+
+    // Set the source
+    if (!!defaults.source && typeof defaults.source === 'string' &&
+        !!names.source[defaults.source]) {
+      this.set('source', defaults.source);
+    }
+
+    // Set the main category
+    if (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
+        !!names.mainCat[defaults.mainCat]) {
+      this.set('mainCat', defaults.mainCat);
+    }
+
+    // Set the sub category
     if (!!defaults.subCat && typeof defaults.subCat === 'string' &&
         defaults.subCat !== 'all' && !!names.subCat[defaults.subCat]) {
-      if (mainCat === 'all') {
-        subCat = defaults.subCat;
+      if (this.get('mainCat') === 'all') {
+        this.set('subCat', defaults.subCat);
       }
       else {
-        if (ids.subCat[mainCat].indexOf(defaults.subCat) !== -1) {
-          subCat = defaults.subCat;
+        if (ids.subCat[this.get('mainCat')].indexOf(defaults.subCat) !== -1) {
+          this.set('subCat', defaults.subCat);
         }
       }
     }
   };
-
-  // Ensure constructor is set to this class.
-  DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
