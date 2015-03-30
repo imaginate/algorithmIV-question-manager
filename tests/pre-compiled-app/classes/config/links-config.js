@@ -93,8 +93,8 @@
     if (config.hasOwnProperty(id) && config.id === false) {
       id = false;
     }
-    if (config.hasOwnProperty(source) && config.source === false) {
-      source = false;
+    if (config.hasOwnProperty(source) && config.source === true) {
+      source = true;
     }
     if (config.hasOwnProperty(category) && config.category === false) {
       category = false;
