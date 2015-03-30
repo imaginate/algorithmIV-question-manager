@@ -8,20 +8,20 @@
    */
   var Source = function(name) {
 
-    var that = this;
-
     /**
      * ---------------------------------------------------
-     * Private Property (Source.debug)
+     * Public Property (Source.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Source class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Source') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Source',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', name);
-      this.debug.args('init', name, 'string');
-    }
+    this.debug.start('init', name);
+    this.debug.args('init', name, 'string');
 
     /**
      * ----------------------------------------------- 
@@ -52,42 +52,51 @@
      * @return {(string|nums)}
      */
     this.get = function() {
-      /** @private */
-      var result;
-      /** @private */
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, function>} */
       var source = {
-        name: name,
-        url : url,
-        ids : ids
+        name: function() { return name; },
+        url : function() { return url; },
+        ids : function() {
+          return Object.freeze( ids.slice(0) );
+        }
       };
 
-      result = (source[part] !== undefined) ? source[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', source.hasOwnProperty(prop), errorMsg, prop);
+
+      return source[prop]();
     };
+    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (Source.addId)
      * -----------------------------------------------
-     * @desc Add a question id to this source.
+     * @desc Adds a question id to this source.
      * @param {number} id - The index to add.
      */
     this.addId = function(id) {
 
-      if (DEBUG) {
-        that.debug.start('addId', id);
-        that.debug.args('addId', id, 'number');
-      }
+      this.debug.start('addId', id);
+      this.debug.args('addId', id, 'number');
 
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
+    Object.freeze(this.addId);
 
 
-    // Set the properties
-    if (typeof name !== 'string') {
-      name = url = '';
+    // Setup the properties
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
     }
     else {
       url = name.toLowerCase();
