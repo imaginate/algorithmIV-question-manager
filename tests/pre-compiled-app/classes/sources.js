@@ -56,23 +56,23 @@
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Returns the source object from a saved hash map of the sources.
-     *   The source ids are used as the hash map's keys and object literals
-     *   containing their names, question ids, and url names as the values.
+     * @desc Get a source object or property.
      * @param {string} id - The source id to get.
-     * @return {Source}
+     * @param {string=} prop - If only one property is desired
+     *   state it here.
+     * @return {(Source|string|nums)}
      */
-    this.get = function(id) {
+    this.get = function(id, prop) {
 
       // Debugging vars
       var errorMsg;
-      this.debug.start('get', id);
-      this.debug.args('get', id, 'string');
+      this.debug.start('get', id, prop);
+      this.debug.args('get', id, 'string', prop, 'string=');
 
       errorMsg = 'Error: The given source does not exist. sourceID= $$';
       this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
 
-      return data[id];
+      return (!!prop) ? data[id].get(prop) : data[id];
     };
     Object.freeze(this.get);
 

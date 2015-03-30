@@ -59,25 +59,23 @@
      * ----------------------------------------------- 
      * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Returns the category object from a saved hash map of all the
-     *   categories. The category ids are used as the hash map's keys and
-     *   object literals containing their names, question ids, url name,
-     *   and a list of the ids of their sub categories (in alphabetical
-     *   order if they exist) as the values.
+     * @desc Get a category object or property.
      * @param {string} id - The category id to get.
-     * @return {Category}
+     * @param {string=} prop - If only one property is desired
+     *   state it here.
+     * @return {(Category|string|nums)}
      */
     this.get = function(id) {
 
       // Debugging vars
       var errorMsg;
-      this.debug.start('get', id);
-      this.debug.args('get', id, 'string');
+      this.debug.start('get', id, prop);
+      this.debug.args('get', id, 'string', prop, 'string=');
 
       errorMsg = 'Error: The given category does not exist. catID= $$';
       this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
 
-      return data[id];
+      return (!!prop) ? data[id].get(prop) : data[id];
     };
     Object.freeze(this.get);
 
