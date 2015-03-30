@@ -10,37 +10,30 @@
    */
   var Questions = function(questions, outputConfig) {
 
+    /** @type {number} */
+    var i;
+    /** @type {number} */
+    var id;
+    /** @type {number} */
+    var len;
+    /** @type {string} */
+    var url;
+
     /**
      * ---------------------------------------------------
-     * Private Property (Questions.debug)
+     * Public Property (Questions.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Questions class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Questions') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Questions',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.group('init', 'coll', 'questions= $$', questions);
-      this.debug.start('init', questions, outputConfig);
-      this.debug.args('init', questions, 'objects', outputConfig, 'boolean');
-    }
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.len)
-     * -----------------------------------------------
-     * @desc The number of questions supplied to this app instance.
-     * @type {number}
-     */
-    this.len = 0;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.list)
-     * -----------------------------------------------
-     * @desc The array of question objects.
-     * @type {?questions}
-     */
-    var list = null;
+    this.debug.group('init', 'coll', 'questions= $$', questions);
+    this.debug.start('init', questions, outputConfig);
+    this.debug.args('init', questions, 'objects', outputConfig, 'boolean');
 
     /**
      * ----------------------------------------------- 
@@ -49,74 +42,83 @@
      * @desc The hash map of question objects (key= url).
      * @type {?Object<string, question>}
      */
-    var data = null;
+    var data;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.len)
+     * -----------------------------------------------
+     * @desc The number of questions supplied to this app instance.
+     * @type {number}
+     */
+    this.len;
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.list)
      * -----------------------------------------------
-     * @desc Get the array of question objects.
+     * @desc The array of question objects.
      * @return {?questions}
      */
-    this.list = function() {
-      return list;
-    };
+    this.list;
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question.
+     * @desc Gets a question by id or url.
      * @param {(number|string)} id - The question id to get.
-     * @return {?Question}
+     * @return {Question}
      */
     this.get = function(id) {
-      /** @private */
-      var result;
 
-      result = ( (typeof id === 'number') ?
-        list[id] || null : (typeof id === 'string') ?
-          data[id] || null : null
-      );
+      // Debugging vars
+      var errorMsg, failCheck;
+      this.debug.start('get', id);
+      this.debug.args('get', id, 'number|string');
 
-      return result;
+      errorMsg = 'Error: The given question does not exist. questionKey= $$';
+      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('get', failCheck, errorMsg, id);
+
+      return (typeof id === 'number') ? this.list[id] : data[id];
     };
+    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.setStyle)
      * -----------------------------------------------
      * @desc Sets the style for a question's element.
-     * @param {(number|string)} id - The question id to set.
-     * @param {(string|hashMap)} type - The style setting to set. If a
+     * @param {!(number|string)} id - The question id to set.
+     * @param {!(string|stringMap)} type - The style setting to set. If a
      *   string is given then another param with the value is required.
      *   If an object is provided then use key => value pairs as such
      *   styleType => newValue (e.g. { display: 'none' }).
-     * @param {(string|number)=} val - If the type param is a string then
+     * @param {!(string|number)=} val - If the type param is a string then
      *   this is the new value for the it.
      */
     this.setStyle = function(id, type, val) {
 
-      // Debugging
-      var args, msg;
-      if (DEBUG) {
-        this.debug.start('setStyle', id, type, val);
+      // Debugging vars
+      var args, errorMsg, failCheck;
+      this.debug.start('setStyle', id, type, val);
 
+      args = [ 'setStyle' ];
+      args.push(id, '!number|string', type, '!string|stringMap');
+      args.push(val, '!string|number=');
+      this.debug.args(args);
+
+      errorMsg = 'Error: An invalid question id was provided. id= $$';
+      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('setStyle', failCheck, errorMsg, id);
+
+      if (typeof type === 'string') {
+        errorMsg = 'Error: A third param (val) is required when the given type ';
+        errorMsg += 'is a string. It should be a string or number. val= $$';
         args = [ 'setStyle' ];
-        args.push(id, '!number|string', type, '!string|object');
-        args.push(val, 'string|number=');
-        this.debug.args(args);
-
-        msg = 'Error: An invalid question id was provided. id= $$';
-        this.debug.fail('setStyle', !!this.get(id), msg, id);
-
-        if (typeof type === 'string') {
-          msg = 'Error: A third param (val) is required when the given type ';
-          msg += 'is a string. It should be a string or number. val= $$';
-          args = [ 'setStyle' ]
-          args.push(checkType([ val ], 'string|number'), msg, val);
-          this.debug.fail(args);
-        }
+        args.push(checkType(val, 'string|number'), errorMsg, val);
+        this.debug.fail(args);
       }
 
       // Handle one type change
@@ -132,7 +134,7 @@
       }
 
       // Handle multiple type changes
-      Object.keys().forEach(function(/** string */ key) {
+      Object.keys(type).forEach(function(/** string */ key) {
 
         // Replace dashes with camel case
         if ( /\-/.test(key) ) {
@@ -142,39 +144,50 @@
         this.get(id).elem.root.style[key] = type[key];
       }, this);
     };
+    Object.freeze(this.setStyle);
 
 
-    // Set the list
-    list = questions.map(function(/** Object */ question, /** number */ i) {
-      /**
-       * @type {number}
-       * @private
-       */
-      var id;
-
-      id = i + 1;
-      return new Question(question, id, outputConfig);
-    });
-
-    // Set the data
-    data = {};
-    list.forEach(function(/** Object */ question) {
-      if (question.url) {
-        data[question.url] = question;
-      }
-    });
-
-    // Add blank to beginning of list so ids and indexes match
-    list.unshift(null);
-
-    // Set the len
-    this.len = list.length || 0;
-    if (this.len) {
-      --this.len;
+    // Check the argument data type
+    if (!questions || !checkType(questions, '!objects')) {
+      questions = [];
     }
 
+    // Setup the len and list properties
+    this.len = questions.length;
+    len = this.len + 1;
+    this.list = (this.len) ? new Array(len) : [];
 
-    DEBUG && this.debug.group('init', 'end');
+    // Add blank to beginning of list so ids and indexes match
+    if (this.len) {
+      this.list[0] = null;
+    }
+
+    // Add the questions
+    --len;
+    i = -1;
+    while (++i < len) {
+      id = i + 1;
+      this.list[id] = new Question(question[i], id, outputConfig);
+      Object.freeze(this.list[id]);
+    }
+
+    // Setup the data hash map
+    data = {};
+
+    ++i;
+    while (--i) {
+      url = this.list[i].get('url');
+      if (url) {
+        data[url] = this.list[i];
+      }
+    }
+
+    Object.freeze(this.len);
+    Object.freeze(this.list);
+    Object.freeze(data);
+
+
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
