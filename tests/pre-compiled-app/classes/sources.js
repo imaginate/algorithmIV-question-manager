@@ -98,7 +98,6 @@
     }
 
     Object.freeze(this.ids);
-    Object.freeze(this.len);
 
 
     this.debug.group('init', 'end');

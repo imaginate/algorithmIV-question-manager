@@ -182,7 +182,6 @@
       }
     }
 
-    Object.freeze(this.len);
     Object.freeze(this.list);
     Object.freeze(data);
 
