@@ -11,6 +11,8 @@
    */
   var App = function(config, sources, categories, questions) {
 
+    /** @type {booleanMap} */
+    var tmpConfig;
     /** @type {boolean} */
     var output;
     /** @type {?Object<string, (string|num)>} */
@@ -126,9 +128,16 @@
     this.config  = new Config(config);
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
-    this.searchBar  = new SearchBar(this.sources, this.categories);
+
+    tmpConfig = {};
+    tmpConfig.stage = this.config.searchBar.get('stage');
+    tmpConfig.source = this.config.searchBar.get('source');
+    tmpConfig.category = this.config.searchBar.get('category');
+    tmpConfig.subCat = this.config.searchBar.get('subCat');
+    this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
+
     output = this.config.questions.get('output');
-    this.questions  = new Questions(questions, output);
+    this.questions = new Questions(questions, output);
 
     Object.freeze(this.flags);
     Object.freeze(this.elems);
