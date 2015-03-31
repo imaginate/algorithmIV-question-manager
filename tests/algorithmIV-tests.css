@@ -1,0 +1,99 @@
+/* Algorithm IV App Tests (v1.1.0) (learn@algorithmiv.com)
+ * Section: CSS Style Guide
+ * Author: Adam Smith (adamsmith@youlum.com)
+ * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * The MIT License (algorithmiv.com/docs/license) */
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Interaction Container
+ * ------------------------------- */
+
+#aIV-tests {
+  display:block;
+  width:90%;
+  padding:20px;
+  margin:0 auto;
+  text-align:center;
+  background:#d8f0fa;
+}
+@media only screen and (min-width:600px) {
+  #aIV-tests {
+    width:560px;
+    padding:30px;
+  }
+}
+@media only screen and (min-width:1200px) {
+  #aIV-tests {
+    width:700px;
+    padding:40px;
+  }
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * UI Container
+ * ------------------------------- */
+
+#aIV-tests .ui {
+  display:block;
+  width:100%;
+  min-height:99px;
+  text-align:center;
+  font-size:0;
+  opacity:1;
+  -webkit-transition:opacity 500ms;
+  -moz-transition:opacity 500ms;
+  -o-transition:opacity 500ms;
+  transition:opacity 500ms;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Messages
+ * ------------------------------- */
+
+#aIV-tests .msg {
+  display:block;
+  min-height:34px;
+  padding:0;
+  margin:0 auto 20px;
+  text-align:center;
+  line-height:34px;
+  color:#192037;
+  font-size:23px;
+  font-weight:400;
+}
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Start
+ * ------------------------------- */
+
+#aIV-tests .start {
+  display:block;
+  width:200px;
+  height:45px;
+  padding:0;
+  margin:0 auto;
+  line-height:45px;
+  text-align:center;
+  color:#fff;
+  font-size:24px;
+  font-weight:700;
+  background:#000821;
+  cursor:pointer;
+  -webkit-transition:background 500ms;
+  -moz-transition:background 500ms;
+  -o-transition:background 500ms;
+  transition:background 500ms;
+}
+
+#aIV-tests .start:hover,
+#aIV-tests .start:active {
+  background:#002287;
+}

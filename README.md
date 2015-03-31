@@ -1,20 +1,31 @@
 #Ask, Answer, & Manage Coding Questions
 
+<<<<<<< HEAD
 **Algorithm IV's question manager is a JavaScript app designed to manage practice questions and solutions for learning computer science focused algorithms and data structures, improving programming skillsets, and preparing for technical interviews.**
+=======
+**Algorithm IV's question manager is a javascript app designed to manage practice questions and solutions for learning computer science focused algorithms and data structures, improving programming skillsets, and preparing for technical interviews.**
+
+##A Makeover Is In Progress
+This question manager is in the process of receiving a complete makeover. **[Download  version 1.0.2](https://github.com/imaginate/algorithmIV-question-manager/releases/tag/v1.0.2)** for a debugged and ready copy of this app. Otherwise check out our progress on **[version 1.1.0](https://github.com/imaginate/algorithmIV-question-manager/tree/version1.1.0/tests/pre-compiled-app)**.
+>>>>>>> origin/version1.1.0
 
 ##Directions
-Refer to [Algorithm IV's online documentation](http://www.algorithmIV.com/docs/start) for directions on how to use this app.
+Refer to Algorithm IV [version 1.0.2's online documentation](http://www.algorithmIV.com/docs/start) for directions on how to use this app.
 
 ##Live Example
 You can go to [Algorithm IV's website](http://www.algorithmiv.com/example) to view an example of this app in action.
 
 ##Contributing
-Refer to [CONTRIBUTING.md](https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md) for directions on how to add more to Algorithm IV.
+Refer to [CONTRIBUTING.md](https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md).
 
-##Contact
-Email learn@algorithmiv.com with any questions.
+##Help
+You can either [open an issue](https://github.com/imaginate/algorithmIV-question-manager/issues) on our GitHub repo or email learn@algorithmiv.com.
 
 ###Have Fun Mastering Algorithms!
 
 --
+<<<<<<< HEAD
 ![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-icon.png)
+=======
+![Algorithm IV Logo](http://www.algorithmiv.com/images/aIV-logo.png)
+>>>>>>> origin/version1.1.0
