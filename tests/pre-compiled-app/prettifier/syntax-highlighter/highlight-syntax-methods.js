@@ -105,53 +105,62 @@
        * ---------------------------------------------
        * Private Method (isRegex)
        * ---------------------------------------------
-       * if given index is a regex it returns the end
-       *  index of the regex otherwise it returns 0
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Determines if the given index is a regular expression.
+       * @param {number} i - The line index to check.
+       * @return {number} The last index of the RegExp if RegExp check
+       *   passes or 0 if RegExp check fails.
        * @private
        */
       function isRegex(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.isRegex(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.isRegex() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var end, regexBody;
-        // Set end to start
-        end = i;
+
+        // Debugging vars
+        var msg;
+        highlightSyntax.debug.start('isRegex', i);
+        highlightSyntax.debug.args('isRegex', i, 'number');
+
+        /** @type {number} */
+        var end;
+        /** @type {string} */
+        var regexBody;
+
+        end = i + 1;
+
+        if (orgLine[end] === '/') {
+          return 0;
+        }
+
         // Find regex end index
         while (true) {
-          ++end;
-          // If (line terminates)
-          // Then {return fail}
-          if (end >= lLen) {
+
+          if (end >= lineLen) {
             return 0;
           }
-          // Sanitize the character
+
           sanitizeCharacter(end);
-          // If (escaped character)
-          // Then {skip ahead}
-          if (line[end] === '\\') {
+
+          if (orgLine[end] === '\\') {
             ++end;
             continue;
           }
-          // If (end of regex body)
-          // Then {end loop}
-          if (line[end] === '/') {
+
+          if (orgLine[end] === '/') {
             break;
           }
+
+          ++end;
         }
-        // Save body of potential regex
-        regexBody = line.slice(++i, end).join('');
-        // If (not regex)
-        // Then {set end to fail}
-        end = ( !RegExp(regexBody) ) ? 0 : end;
+
+        regexBody = orgLine.slice(++i, end).join('');
+
+        try {
+          new RegExp(regexBody);
+        }
+        catch (e) {
+          msg = 'new RegExp(regexBody) error= $$';
+          highlightSyntax.debug.state('isRegex', msg, e);
+          end = 0;
+        }
+
         return end;
       }
 
@@ -159,29 +168,17 @@
        * ---------------------------------------------
        * Private Method (sanitizeCharacter)
        * ---------------------------------------------
-       * inserts html entities when needed
-       * param: the current line array index (number)
-       * @type {function(number)}
+       * @desc Inserts html entities when needed.
+       * @param {number} i - The line index to check.
        * @private
        */
       function sanitizeCharacter(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.sanitizeCharacter(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.sanitizeCharacter() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var c;
-        // Save character
-        c = line[i];
-        // If (html entity property exists)
-        // Then {replace the character in the new line with it}
-        if (!!htmlEntity[c]) {
-          newLine[i] = htmlEntity[c];
+
+        highlightSyntax.debug.start('sanitizeCharacter', i);
+        highlightSyntax.debug.args('sanitizeCharacter', i, 'number');
+
+        if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
+          newLine[i] = htmlEntity[ orgLine[i] ];
         };
       }
 
