@@ -35,15 +35,8 @@
       /** @type {{ result: string, lineCount: number }} */
       var result;
 
-      // Standardize all line breaks
-      solution = solution.replace(/\r\n?/g, '\n');
-      // Replace all tabs with spaces
-      solution = solution.replace(/\t/g, '  ');
-      // Trim the anonymous function
-      solution = solution.replace(/^function\s?\(\)\s?\{|\}\;$/g, '');
-
       // Format the solution
-      result = applyFormatting( solution.split('\n') );
+      result = applyFormatting( prepareLines(solution) );
 
       prettify.debug.group('init', 'end');
 

@@ -12,27 +12,6 @@
 
     /**
      * ---------------------------------------------
-     * Private Variable (linePadding)
-     * ---------------------------------------------
-     * @desc The pixel count for the padding of each line.
-     * @const
-     * @type {number}
-     * @private
-     */
-    var linePadding = 20;
-
-    /**
-     * ---------------------------------------------
-     * Private Variable (paddingLevel)
-     * ---------------------------------------------
-     * @desc The current line padding level.
-     * @type {number}
-     * @private
-     */
-    var paddingLevel;
-
-    /**
-     * ---------------------------------------------
      * Private Variable (htmlEntity)
      * ---------------------------------------------
      * @desc The characters to replace with a html entity

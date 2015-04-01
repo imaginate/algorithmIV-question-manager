@@ -1,120 +1,40 @@
     /**
      * ---------------------------------------------
-     * Private Method (setPadding)
+     * Private Method (prepareLines)
      * ---------------------------------------------
-     * saves the line's padding level
-     * param: the first line character (string)
-     * param: the last line character (string)
-     * @type {function(string, string): number}
+     * @desc Standardizes all line breaks, replaces tabs with whitespaces,
+     *   and trims the anonymous function wrapper.
+     * @param {string} solution - The problem's solution to be formatted.
+     * @return {strings}
      * @private
      */
-    function setPadding(first, last) {
-      // Debuggers
-      DEBUG.PrettifyCode.call && console.log(
-        'CALL: PrettifyCode.setPadding(%s, %s)', first, last
-      );
-      DEBUG.PrettifyCode.fail && console.assert(
-        (typeof first === 'string' &&
-         typeof last  === 'string'),
-        'FAIL: PrettifyCode.setPadding() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var padding;
-      // Adjust padding level
-      switch (first) {
-        case '}':
-        case ']':
-        case ')':
-          --paddingLevel;
-      }
-      // Set current padding
-      padding = paddingLevel * linePadding;
-      // Adjust padding level
-      switch (last) {
-        case '{':
-        case '[':
-        case '(':
-        case '?':
-         ++paddingLevel;
-      }
-      return padding;
-    }
+    function prepareLines(solution) {
 
-    /**
-     * ---------------------------------------------
-     * Private Method (prepareLine)
-     * ---------------------------------------------
-     * removes extra spaces, sets the first and last
-        line character, and registers empty lines
-        for the supplied line of code
-     * param: line of code (string)
-     * @type {function(string): {
-            line: string,
-           first: string,
-            last: string,
-         padding: number,
-           empty: boolean
-       }}
-     * @private
-     */
-    function prepareLine(l) {
-      // Debuggers
-      DEBUG.PrettifyCode.call && console.log(
-        'CALL: PrettifyCode.prepareLine()'
-      );
-      DEBUG.PrettifyCode.fail && console.assert(
-        typeof l === 'string',
-        'FAIL: PrettifyCode.prepareLine() ' +
-        'Note: Incorrect argument operand.'
-      );
-      // Declare method variables
-      var i, len, last, line;
-      // Convert line to array
-      l = l.split('');
-      // Save array length
-      len  = l.length;
-      // Save last index
-      last = len - 1;
-      // Set object with all line properties
-      line = {
-           code: '',
-          first: '',
-           last: '',
-        padding:  0,
-          empty: false
-      };
-      // Trim starting whitespace
-      looper1:
-      for(i=0; i<len; i++) {
-        if (l[i] === ' ') {
-          l[i] = '';
-        }
-        else {
-          line.first = l[i];
-          break looper1;
-        }
-        if (i === last) {
-          line.empty = true;
-        }
+      prettify.debug.start('prepareLines', solution);
+      prettify.debug.args('prepareLines', solution, 'string');
+
+      /** @type {string} */
+      var spaces;
+      /** @type {number} */
+      var spaceCount;
+
+      // Standardize all line breaks
+      solution = solution.replace(/\r\n?/g, '\n');
+
+      // Replace all tabs with spaces
+      spaces = '';
+      spaceCount = app.config.prettifier.get('tabLength');
+      while (spaceCount--) {
+        spaces += ' ';
       }
-      // If (line is not empty)
-      // Then {trim end whitespace}
-      if (!line.empty) {
-        looper2:
-        for(i=last; i>=0; i--) {
-          if (l[i] === ' ') {
-            l[i] = '';
-          }
-          else {
-            line.last = l[i];
-            break looper2;
-          }
-        }
+      if (spaces) {
+        solution = solution.replace(/\t/g, '  ');
       }
-      // Save line string
-      line.code = l.join('');
-      return line;
+
+      // Trim the anonymous function
+      solution = solution.replace(/^function\s?\(\)\s?\{|\}\;$/g, '');
+
+      return solution.split('\n');
     }
 
     /**
@@ -122,7 +42,7 @@
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of pre-formatted code lines.
+     * @param {strings} lines - An array of code lines.
      * @return {{
      *   result   : string,
      *   lineCount: number
@@ -141,8 +61,7 @@
       /** @type {} */
       var line;
 
-      paddingLevel = 0;
-      commentOpen  = false;
+      commentOpen = false;
       len = lines.length;
 
       i = -1;
@@ -150,16 +69,74 @@
 
         line = prepareLine(lines[i]);
 
-        // Set line padding and highlight syntax
-        if (!line.empty) {
-          line.padding = setPadding(line.first, line.last);
-          line.code = HighlightSyntax.init(line.code, i);
+        if (line) {
+          line = highlightSyntax(line);
         }
-        lines[i] = '<li style="padding-left:' +
-        line.padding +'px">'+ line.code +'</li>';
+
+        lines[i] = '<li>'+ line +'</li>';
 
         prettify.debug.state('applyFormatting', 'lines[i]= $$', lines[i]);
       }
 
-      return { result: lines.join(''), lineCount: len };
+      return {
+        result   : lines.join(''),
+        lineCount: len
+      };
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (prepareLine)
+     * ---------------------------------------------
+     * @desc Removes whitespaces from line beginning and end.
+     * @param {string} line - The line of code to prepare.
+     * @return {string}
+     * @private
+     */
+    function prepareLine(line) {
+
+      prettify.debug.start('prepareLine', line);
+      prettify.debug.args('prepareLine', line, 'string');
+
+      /** @type {number} */
+      var i;
+      /** @type {number} */
+      var frontTrimCount;
+      /** @type {string} */
+      var trimPart;
+
+      // Trim ending whitespaces
+      if (line) {
+        i = line.length - 1;
+        if (line.charAt(i) === ' ') {
+          --i;
+          while (line.charAt(i) === ' ') {
+            --i;
+          }
+          line = line.substr(0, i);
+        }
+      }
+
+      // Trim beginning whitespaces
+      frontTrimCount = app.config.prettifier.get('trimSpace');
+      if (line && frontTrimCount) {
+
+        trimPart = ( (frontTrimCount < line.length) ?
+          line.substr(0, frontTrimCount) : ''
+        );
+        if (trimPart && !/[^\s]/.test(trimPart)) {
+          // Trim full count
+          line = line.substr(frontTrimCount);
+        }
+        else {
+          // Trim partial count
+          i = 0;
+          while (line.charAt(i) === ' ') {
+            ++i;
+          }
+          line = line.substr(i);
+        }
+      }
+
+      return line;
     }
