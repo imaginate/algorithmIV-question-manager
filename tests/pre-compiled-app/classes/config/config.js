@@ -8,24 +8,6 @@
    */
   var Config = function(config) {
 
-    config = (!!config) ? config : {};
-
-    config.searchSettings = ( (!!config.searchSettings) ?
-      config.searchSettings : {}
-    );
-    config.questionFormat = ( (!!config.questionFormat) ?
-      config.questionFormat : {}
-    );
-    config.prettyCode = ( (!!config.prettyCode) ?
-      config.prettyCode : {}
-    );
-    config.showURL = ( (!!config.showURL) ?
-      config.showURL : {}
-    );
-    config.showLinks = ( (!!config.showLinks) ?
-      config.showLinks : {}
-    );
-
     /**
      * ---------------------------------------------------
      * Public Property (Config.debug)
@@ -89,6 +71,27 @@
      */
     this.links;
 
+
+    // Check the user config settings
+    if (!config || typeof config !== 'object') {
+      config = {};
+    }
+
+    if (!config.searchSettings || typeof config.searchSettings !== 'object') {
+      config.searchSettings = {};
+    }
+    if (!config.questionFormat || typeof config.questionFormat !== 'object') {
+      config.questionFormat = {};
+    }
+    if (!config.prettyCode || typeof config.prettyCode !== 'object') {
+      config.prettyCode = {};
+    }
+    if (!config.showURL || typeof config.showURL !== 'object') {
+      config.showURL = {};
+    }
+    if (!config.showLinks || typeof config.showLinks !== 'object') {
+      config.showLinks = {};
+    }
 
     // Setup the properties
     this.searchBar  = new SearchBarConfig(config.searchSettings);
