@@ -3,7 +3,8 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object} config - The user's prettifier config settings.
+   * @param {Object<string, (string|num)>} config - The user's
+   *   prettifier config settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
@@ -25,13 +26,23 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (PrettyConfig.)
+     * Protected Property (PrettyConfig.trimSpace)
      * -----------------------------------------------
      * @desc .
-     * @type {boolean}
+     * @type {number}
      * @private
      */
-    var _;
+    var trimSpace;
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (PrettyConfig.tabLength)
+     * -----------------------------------------------
+     * @desc .
+     * @type {number}
+     * @private
+     */
+    var tabLength;
 
     /**
      * ----------------------------------------------- 
@@ -48,8 +59,11 @@
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object} */
-      var settings = {};
+      /** @type {numberMap} */
+      var settings = {
+        trimSpace: trimSpace,
+        tabLength: tabLength
+      };
 
       errorMsg = 'Error: The given property does not exist. property= $$';
       this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
@@ -59,8 +73,26 @@
     Object.freeze(this.get);
 
 
-    // Set the properties
-    
+    // Setup the properties
+    trimSpace = 0;
+    tabLength = 2;
+
+    if ( config.hasOwnProperty(trimSpace) ) {
+      if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
+        trimSpace = Math.floor(config.trimSpace);
+      }
+      else if (typeof config.trimSpace === 'string') {
+        trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
+      }
+    }
+    if ( config.hasOwnProperty(tabLength) ) {
+      if (typeof config.tabLength === 'number') {
+        tabLength = config.tabLength;
+      }
+      else if (typeof config.tabLength === 'string') {
+        tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
+      }
+    }
   };
 
   // Ensure constructor is set to this class.
