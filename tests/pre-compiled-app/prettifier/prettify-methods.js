@@ -70,7 +70,7 @@
         line = prepareLine(lines[i]);
 
         if (line) {
-          line = highlightSyntax(line);
+          line = highlightSyntax(line, i);
         }
 
         lines[i] = '<li>'+ line +'</li>';
