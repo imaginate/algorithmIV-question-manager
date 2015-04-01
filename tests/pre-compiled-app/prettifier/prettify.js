@@ -14,17 +14,17 @@
 /* -----------------------------------------------------------------------------
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
-                                        classes/prettifier/prettify-vars.js */
+                                                prettifier/prettify-vars.js */
 
 /* -----------------------------------------------------------------------------
  * | The Prettifier Methods                                                    |
  * v ------------------------------------------------------------------------- v
-                                     classes/prettifier/prettify-methods.js */
+                                             prettifier/prettify-methods.js */
 
 /* -----------------------------------------------------------------------------
- * | The Line Class                                                            |
+ * | The Highlight Syntax Method                                               |
  * v ------------------------------------------------------------------------- v
-                                           classes/prettifier/line-class.js */
+                                             prettifier/highlight-syntax.js */
 
     return function(solution) {
 
