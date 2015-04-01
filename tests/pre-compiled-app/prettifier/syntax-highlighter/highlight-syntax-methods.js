@@ -186,38 +186,27 @@
        * ---------------------------------------------
        * Private Method (skipComment)
        * ---------------------------------------------
-       * moves the index to the end of comment
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Moves the index to the end of comment.
+       * @param {number} i - The starting line index.
+       * @return {number} The comment's end index.
        * @private
        */
       function skipComment(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.skipComment(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.skipComment() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Loop through line starting at index
+
+        highlightSyntax.debug.start('skipComment', i);
+        highlightSyntax.debug.args('skipComment', i, 'number');
+
         while (true) {
           ++i;
-          // If (line terminates)
-          // Then {return index}
-          if (i >= lLen) {
+
+          if (i >= lineLen) {
             return i;
           }
-          // Sanitize the character
+
           sanitizeCharacter(i);
-          // If (comment ends)
-          // Then {return index}
-          if (i !== lLast) {
-            if (line[i] === '*' &&
-                line[i + 1] === '/') {
-              return ++i;
-            }
+
+          if (i !== lastIndex && orgLine[i] === '*' && orgLine[i + 1] === '/') {
+            return ++i;
           }
         }
       }
@@ -226,44 +215,36 @@
        * ---------------------------------------------
        * Private Method (skipString)
        * ---------------------------------------------
-       * moves the index to the end of the string
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Moves the index to the end of the string.
+       * @param {number} i - The starting line index.
+       * @return {number} The string's end index.
        * @private
        */
       function skipString(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.skipString(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.skipString() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var s;
-        // Save string type
-        s = line[i];
-        // Find string end
+
+        highlightSyntax.debug.start('skipString', i);
+        highlightSyntax.debug.args('skipString', i, 'number');
+
+        /** @type {string} */
+        var stringType;
+
+        stringType = orgLine[i];
+
         while (true) {
           ++i;
-          // If (line terminates)
-          // Then {return last index}
-          if (i >= lLen) {
-            return lLast;
+
+          if (i >= lineLen) {
+            return lastIndex;
           }
-          // Sanitize the character
+
           sanitizeCharacter(i);
-          // If (escaped character)
-          // Then {skip ahead}
-          if (line[i] === '\\') {
+
+          if (orgLine[i] === '\\') {
             ++i;
             continue;
           }
-          // If (end of string)
-          // Then {return the index}
-          if (line[i] === s) {
+
+          if (orgLine[i] === stringType) {
             return i;
           }
         }
@@ -273,29 +254,22 @@
        * ---------------------------------------------
        * Private Method (skipSpace)
        * ---------------------------------------------
-       * moves the index to the end of the space sequence
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Moves the index to the end of the sequence of spaces.
+       * @param {number} i - The starting line index.
+       * @return {number} The end index.
        * @private
        */
       function skipSpace(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.skipSpace(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.skipSpace() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Loop through line starting at index
+
+        highlightSyntax.debug.start('skipSpace', i);
+        highlightSyntax.debug.args('skipSpace', i, 'number');
+
         while (true) {
-          // If (next index not space)
-          // Then {return index}
-          if (line[i + 1] !== ' ') {
-            return i;
-          }
           ++i;
+
+          if (orgLine[i] !== ' ') {
+            return --i;
+          }
         }
       }
 
@@ -303,41 +277,36 @@
        * ---------------------------------------------
        * Private Method (skipNumber)
        * ---------------------------------------------
-       * moves the index to the end of the number
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Moves the index to the end of the number.
+       * @param {number} i - The starting line index.
+       * @return {number} The end index.
        * @private
        */
       function skipNumber(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.skipNumber(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.skipNumber() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var start, numbers;
-        // Save first two spots in number sequence
-        start = line[i] + line[i + 1];
-        // Set number reference list
-        numbers = ( (start === '0x' || start === '0X') ?
+
+        highlightSyntax.debug.start('skipNumber', i);
+        highlightSyntax.debug.args('skipNumber', i, 'number');
+
+        /** @type {string} */
+        var hexStart;
+        /** @type {RegExp} */
+        var numberOpts;
+
+        hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
+        numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
           hexNumbers : plainNumbers
         );
+
         while (true) {
-          // If (last index)
-          // Then {return index}
-          if (i === lLast) {
-            return i;
-          }
-          // If (next index not number)
-          // Then {return index}
-          if ( !numbers.test(line[i + 1]) ) {
-            return i;
-          }
           ++i;
+
+          if (i === lineLen) {
+            return lastIndex;
+          }
+
+          if ( !numberOpts.test(orgLine[i]) ) {
+            return --i;
+          }
         }
       }
 
@@ -345,44 +314,41 @@
        * ---------------------------------------------
        * Private Method (skipIdentifier)
        * ---------------------------------------------
-       * moves the index to the end of the identifier
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Moves the index to the end of the identifier.
+       * @param {number} i - The starting line index.
+       * @return {number} The end index.
        * @private
        */
       function skipIdentifier(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.skipIdentifier(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.skipIdentifier() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var iName;
-        // Start string for the identifier name
-        iName = '-';
-        // Find the name
+
+        highlightSyntax.debug.start('skipIdentifier', i);
+        highlightSyntax.debug.args('skipIdentifier', i, 'number');
+
+        /** @type {string} */
+        var name;
+        /** @type {boolean} */
+        var propFollows;
+
+        name = '-' + orgLine[i];
+
         while (true) {
-          // Add character to iName
-          iName += line[i];
-          // If (last index)
-          // Then {return index and name}
-          if (i === lLast) {
-            return { index: i, name: iName };
-          }
-          // If (next index not identifier)
-          // Then {return index and name}
-          if ( !identifiers.test(line[i + 1]) ) {
-            return {
-              index: i,
-               name: iName,
-              props: (line[i + 1] === '.')
-            };
-          }
           ++i;
+
+          if (i === lineLen) {
+            return { index: --i, name: name };
+          }
+
+          if ( identifiers.test(orgLine[i]) ) {
+            name += orgLine[i];
+            continue;
+          }
+
+          propFollows = (orgLine[i] === '.');
+          return {
+            index: --i,
+            name : name,
+            props: propFollows
+          };
         }
       }
 
