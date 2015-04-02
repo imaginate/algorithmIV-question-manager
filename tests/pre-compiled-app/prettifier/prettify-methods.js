@@ -140,3 +140,63 @@
 
       return line;
     }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makeKeywordObj)
+     * ---------------------------------------------
+     * @desc Creates a keyword object.
+     * @param {string} cat - The keyword's category.
+     * @param {string=} href - The keyword's details link.
+     * @param {boolean=} props - Whether the keyword has properties.
+     * @return {Object<string, (string|numberMap)>}
+     * @private
+     */
+    function makeKeywordObj(cat, href, props) {
+
+      // Debugging vars
+      var args;
+      prettify.debug.start('makeKeywordObj', cat, href, props);
+      args = [ 'makeKeywordObj' ];
+      args.push(cat, 'string', href, 'string=', props, 'boolean=');
+      prettify.debug.args(args);
+
+      /** @type {Object<string, (string|numberMap)>} */
+      var obj;
+
+      href = href || '';
+      props = props || false;
+
+      obj = {};
+
+      obj.cat = cat;
+      obj.href = href;
+      obj.props = (props) ? {} : false;
+
+      return Object.freeze(obj);
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makePropObj)
+     * ---------------------------------------------
+     * @desc Creates a keyword property object.
+     * @param {string=} href - The keyword's details link.
+     * @return {stringMap}
+     * @private
+     */
+    function makePropObj(href) {
+
+      prettify.debug.start('makePropObj', href);
+      prettify.debug.args('makePropObj', href, 'string=');
+
+      /** @type {stringMap} */
+      var obj;
+
+      href = href || '';
+
+      obj = {};
+      obj.href = href;
+
+      return Object.freeze(obj);
+    }

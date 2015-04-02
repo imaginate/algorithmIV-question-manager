@@ -14,6 +14,7 @@
         highlightSyntax.debug.args('prepareLine', line, 'string');
 
         orgLine = line.split('');
+        Object.freeze(orgLine);
         newLine = line.split('');
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
@@ -329,13 +330,17 @@
         /** @type {boolean} */
         var propFollows;
 
-        name = '-' + orgLine[i];
+        name = '_' + orgLine[i];
 
         while (true) {
           ++i;
 
           if (i === lineLen) {
-            return { index: --i, name: name };
+            return {
+              endIndex   : --i,
+              name       : name,
+              propFollows: false
+            };
           }
 
           if ( identifiers.test(orgLine[i]) ) {
@@ -345,9 +350,9 @@
 
           propFollows = (orgLine[i] === '.');
           return {
-            index: --i,
-            name : name,
-            props: propFollows
+            endIndex   : --i,
+            name       : name,
+            propFollows: propFollows
           };
         }
       }
@@ -794,7 +799,7 @@
         args.push(i, 'number', extras, 'string=');
         highlightSyntax.debug.args(args);
 
-        /** @type {{ index: number, name: string, props: boolean }} */
+        /** @type {{ index: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
@@ -804,24 +809,24 @@
         identifier = skipIdentifier(i);
 
         // Setup the keyword category and class name
-        if ( keywords.objects.hasOwnProperty(identifier.name) ) {
+        if ( keywords.hasOwnProperty(identifier.name) ) {
 
-          catID = keywords.objects[identifier.name].cat;
-          keyClassName = keywords.categories[catID];
+          catID = keywords[identifier.name].cat;
+          keyClassName = keywordsCategories[catID];
 
           // Special case for the function keyword
-          if (identifier.name === '-function' &&
+          if (identifier.name === '_function' &&
               (orgLine[identifier.index + 1] === '(' ||
                (orgLine[identifier.index + 1] === ' ' &&
                 orgLine[identifier.index + 2] === '('))) {
-            keyClassName = keywords.categories['res'];
+            keyClassName = keywordCategories['res'];
           }
         }
 
         if (!keyClassName && !!extras) {
-          if (keywords.objects[extras].props.hasOwnProperty(identifier.name)) {
-            catID = keywords.objects[extras].cat;
-            keyClassName = keywords.categories[catID];
+          if ( keywords[extras].props.hasOwnProperty(identifier.name) ) {
+            catID = keywords[extras].cat;
+            keyClassName = keywordCategories[catID];
           }
         }
 
@@ -836,11 +841,11 @@
         newLine[i] += '</span>';
 
         // Format the identifier's property (dot notation only)
-        if (!!identifier.props) {
+        if (identifier.propFollows) {
           formatPeriod(++i);
-          extras = ( (!keywords.objects[identifier.name]) ?
-            undefined : (!keywords.objects[identifier.name].props) ?
-              undefined : identifier.name
+          extras = ( ( !keywords.hasOwnProperty(identifier.name) ) ?
+            '' : (!keywords[identifier.name].props) ?
+              '' : identifier.name
           );
           i = formatIdentifier(++i, extras);
         }

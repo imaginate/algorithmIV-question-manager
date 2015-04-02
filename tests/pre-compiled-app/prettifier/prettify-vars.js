@@ -23,6 +23,7 @@
       '<': '&lt;',
       '>': '&gt;'
     };
+    Object.freeze(htmlEntity);
 
     /**
      * ---------------------------------------------
@@ -37,6 +38,7 @@
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
+    Object.freeze(preRegex);
 
     /**
      * ---------------------------------------------
@@ -48,6 +50,7 @@
      * @private
      */
     var regexFlags = /[gimy]/;
+    Object.freeze(regexFlags);
 
     /**
      * ---------------------------------------------
@@ -59,6 +62,7 @@
      * @private
      */
     var plainNumbers = /[0-9\.]/;
+    Object.freeze(plainNumbers);
 
     /**
      * ---------------------------------------------
@@ -70,6 +74,7 @@
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
+    Object.freeze(hexNumbers);
 
     /**
      * ---------------------------------------------
@@ -81,6 +86,7 @@
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
+    Object.freeze(identifierStart);
 
     /**
      * ---------------------------------------------
@@ -92,6 +98,7 @@
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
+    Object.freeze(identifiers);
 
     /**
      * ---------------------------------------------
@@ -112,442 +119,488 @@
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
+    Object.freeze(commentLinks);
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (keywordCategories)
+     * ---------------------------------------------
+     * @desc The keyword categories and their DOM class names.
+     * @const
+     * @type {stringMap}
+     * @private
+     */
+    var keywordCategories = {
+      def: 'defKey', // Defining Keywords
+      res: 'resKey', // Reserved Keywords
+      nat: 'natKey', // Native Objects & Methods
+      val: 'valKey', // Values
+      cli: 'cliKey', // Client Objects & Methods
+      jqu: 'jquKey'  // jQuery Objects
+    };
+    Object.freeze(keywordCategories);
 
     /**
      * ---------------------------------------------
      * Private Variable (keywords)
      * ---------------------------------------------
-     * @desc A hash map of keyword categories and keyword objects/
-     *   methods containing their category and properties.
+     * @desc The available keywords, objects, and methods. Objects
+     *   also include their properties.
      * @const
-     * @type {{
-     *   categories: stringMap,
-     *   objects   : objectMap
-     * }}
+     * @type {objectMap}
      * @private
      */
     var keywords = {
-      categories: {
-        def: 'defKey', // Defining Keywords
-        res: 'resKey', // Reserved Keywords
-        nat: 'natKey', // Native Objects
-        val: 'valKey', // Values
-        cli: 'cliKey', // Client Objects
-        jqu: 'jquKey'  // jQuery Objects
-      },
-      objects: {
-        '-class'   : { cat: 'def', props: null },
-        '-const'   : { cat: 'def', props: null },
-        '-function': { cat: 'def', props: null },
-        '-var'     : { cat: 'def', props: null },
-        '-abstract'    : { cat: 'res', props: null },
-        '-arguments'   : { cat: 'res', props: null },
-        '-boolean'     : { cat: 'res', props: null },
-        '-break'       : { cat: 'res', props: null },
-        '-byte'        : { cat: 'res', props: null },
-        '-case'        : { cat: 'res', props: null },
-        '-catch'       : { cat: 'res', props: null },
-        '-char'        : { cat: 'res', props: null },
-        '-continue'    : { cat: 'res', props: null },
-        '-debugger'    : { cat: 'res', props: null },
-        '-default'     : { cat: 'res', props: null },
-        '-delete'      : { cat: 'res', props: null },
-        '-do'          : { cat: 'res', props: null },
-        '-double'      : { cat: 'res', props: null },
-        '-else'        : { cat: 'res', props: null },
-        '-enum'        : { cat: 'res', props: null },
-        '-export'      : { cat: 'res', props: null },
-        '-extends'     : { cat: 'res', props: null },
-        '-final'       : { cat: 'res', props: null },
-        '-finally'     : { cat: 'res', props: null },
-        '-float'       : { cat: 'res', props: null },
-        '-for'         : { cat: 'res', props: null },
-        '-goto'        : { cat: 'res', props: null },
-        '-if'          : { cat: 'res', props: null },
-        '-implements'  : { cat: 'res', props: null },
-        '-import'      : { cat: 'res', props: null },
-        '-in'          : { cat: 'res', props: null },
-        '-instanceof'  : { cat: 'res', props: null },
-        '-int'         : { cat: 'res', props: null },
-        '-interface'   : { cat: 'res', props: null },
-        '-item'        : { cat: 'res', props: null },
-        '-let'         : { cat: 'res', props: null },
-        '-long'        : { cat: 'res', props: null },
-        '-native'      : { cat: 'res', props: null },
-        '-new'         : { cat: 'res', props: null },
-        '-package'     : { cat: 'res', props: null },
-        '-private'     : { cat: 'res', props: null },
-        '-protected'   : { cat: 'res', props: null },
-        '-public'      : { cat: 'res', props: null },
-        '-return'      : { cat: 'res', props: null },
-        '-short'       : { cat: 'res', props: null },
-        '-static'      : { cat: 'res', props: null },
-        '-super'       : { cat: 'res', props: null },
-        '-switch'      : { cat: 'res', props: null },
-        '-synchronized': { cat: 'res', props: null },
-        '-this'        : { cat: 'res', props: null },
-        '-throw'       : { cat: 'res', props: null },
-        '-throws'      : { cat: 'res', props: null },
-        '-transient'   : { cat: 'res', props: null },
-        '-try'         : { cat: 'res', props: null },
-        '-typeof'      : { cat: 'res', props: null },
-        '-void'        : { cat: 'res', props: null },
-        '-volatile'    : { cat: 'res', props: null },
-        '-while'       : { cat: 'res', props: null },
-        '-with'        : { cat: 'res', props: null },
-        '-yield'       : { cat: 'res', props: null },
-        '-apply'              : { cat: 'nat', props: null },
-        '-Array'              : { cat: 'nat', props: {
-          '-from'   : 1,
-          '-isArray': 1,
-          '-observe': 1,
-          '-of'     : 1
-        } },
-        '-ArrayBuffer'        : { cat: 'nat', props: {
-          '-isView'  : 1,
-          '-transfer': 1
-        } },
-        '-bind'               : { cat: 'nat', props: null },
-        '-Boolean'            : { cat: 'nat', props: null },
-        '-call'               : { cat: 'nat', props: null },
-        '-charAt'             : { cat: 'nat', props: null },
-        '-charCodeAt'         : { cat: 'nat', props: null },
-        '-clearInterval'      : { cat: 'nat', props: null },
-        '-clearTimeout'       : { cat: 'nat', props: null },
-        '-concat'             : { cat: 'nat', props: null },
-        '-constructor'        : { cat: 'nat', props: null },
-        '-DataView'           : { cat: 'nat', props: null },
-        '-Date'               : { cat: 'nat', props: {
-          '-UTC'  : 1,
-          '-now'  : 1,
-          '-parse': 1
-        } },
-        '-decodeURI'          : { cat: 'nat', props: null },
-        '-decodeURIComponent' : { cat: 'nat', props: null },
-        '-encodeURI'          : { cat: 'nat', props: null },
-        '-encodeURIComponent' : { cat: 'nat', props: null },
-        '-Error'              : { cat: 'nat', props: null },
-        '-escape'             : { cat: 'nat', props: null },
-        '-eval'               : { cat: 'nat', props: null },
-        '-EvalError'          : { cat: 'nat', props: null },
-        '-every'              : { cat: 'nat', props: null },
-        '-filter'             : { cat: 'nat', props: null },
-        '-freeze'             : { cat: 'nat', props: null },
-        '-forEach'            : { cat: 'nat', props: null },
-        '-fromCharCode'       : { cat: 'nat', props: null },
-        '-Function'           : { cat: 'nat', props: null },
-        '-Generator'          : { cat: 'nat', props: null },
-        '-GeneratorFunction'  : { cat: 'nat', props: null },
-        '-getDate'            : { cat: 'nat', props: null },
-        '-getDay'             : { cat: 'nat', props: null },
-        '-getFullYear'        : { cat: 'nat', props: null },
-        '-getHours'           : { cat: 'nat', props: null },
-        '-getMilliseconds'    : { cat: 'nat', props: null },
-        '-getMinutes'         : { cat: 'nat', props: null },
-        '-getMonth'           : { cat: 'nat', props: null },
-        '-getSeconds'         : { cat: 'nat', props: null },
-        '-getTime'            : { cat: 'nat', props: null },
-        '-getTimezoneOffset'  : { cat: 'nat', props: null },
-        '-getUTCDate'         : { cat: 'nat', props: null },
-        '-getUTCDay'          : { cat: 'nat', props: null },
-        '-getUTCFullYear'     : { cat: 'nat', props: null },
-        '-getUTCHours'        : { cat: 'nat', props: null },
-        '-getUTCMilliseconds' : { cat: 'nat', props: null },
-        '-getUTCMinutes'      : { cat: 'nat', props: null },
-        '-getUTCMonth'        : { cat: 'nat', props: null },
-        '-getUTCSeconds'      : { cat: 'nat', props: null },
-        '-getYear'            : { cat: 'nat', props: null },
-        '-hasOwnProperty'     : { cat: 'nat', props: null },
-        '-indexOf'            : { cat: 'nat', props: null },
-        '-isFinite'           : { cat: 'nat', props: null },
-        '-isNaN'              : { cat: 'nat', props: null },
-        '-isPrototypeOf'      : { cat: 'nat', props: null },
-        '-join'               : { cat: 'nat', props: null },
-        '-JSON'               : { cat: 'nat', props: {
-          '-parse'    : 1,
-          '-stringify': 1
-        } },
-        '-keys'               : { cat: 'nat', props: null },
-        '-lastIndexOf'        : { cat: 'nat', props: null },
-        '-length'             : { cat: 'nat', props: null },
-        '-map'                : { cat: 'nat', props: null },
-        '-match'              : { cat: 'nat', props: null },
-        '-Math'               : { cat: 'nat', props: {
-          '-abs'   : 1,
-          '-acos'  : 1,
-          '-asin'  : 1,
-          '-atan'  : 1,
-          '-atan2' : 1,
-          '-ceil'  : 1,
-          '-cos'   : 1,
-          '-exp'   : 1,
-          '-floor' : 1,
-          '-log'   : 1,
-          '-max'   : 1,
-          '-min'   : 1,
-          '-pow'   : 1,
-          '-random': 1,
-          '-round' : 1,
-          '-sin'   : 1,
-          '-sqrt'  : 1,
-          '-tan'   : 1
-        } },
-        '-Number'             : { cat: 'nat', props: {
-          '-EPSILON'           : 1,
-          '-isNaN'             : 1,
-          '-isFinite'          : 1,
-          '-isInteger'         : 1,
-          '-isSafeInteger'     : 1,
-          '-MAX_SAFE_INTEGER'  : 1,
-          '-MAX_VALUE'         : 1,
-          '-MIN_SAFE_INTEGER'  : 1,
-          '-MIN_VALUE'         : 1,
-          '-NaN'               : 1,
-          '-NEGATIVE_INFINITY' : 1,
-          '-parseFloat'        : 1,
-          '-parseInt'          : 1,
-          '-POSITIVE_INFINITY' : 1
-        } },
-        '-Object'             : { cat: 'nat', props: {
-          '-assign'                  : 1,
-          '-create'                  : 1,
-          '-defineProperty'          : 1,
-          '-defineProperties'        : 1,
-          '-freeze'                  : 1,
-          '-getOwnPropertyDescriptor': 1,
-          '-getOwnPropertyNames'     : 1,
-          '-getOwnPropertySymbols'   : 1,
-          '-getPrototypeOf'          : 1,
-          '-is'                      : 1,
-          '-isExtensible'            : 1,
-          '-isFrozen'                : 1,
-          '-isSealed'                : 1,
-          '-keys'                    : 1,
-          '-observe'                 : 1,
-          '-preventExtensions'       : 1,
-          '-seal'                    : 1,
-          '-setPrototypeOf'          : 1
-        } },
-        '-parse'              : { cat: 'nat', props: null },
-        '-parseFloat'         : { cat: 'nat', props: null },
-        '-parseInt'           : { cat: 'nat', props: null },
-        '-pop'                : { cat: 'nat', props: null },
-        '-preference'         : { cat: 'nat', props: null },
-        '-print'              : { cat: 'nat', props: null },
-        '-propertyIsEnumerable': { cat: 'nat', props: null },
-        '-prototype'          : { cat: 'nat', props: null },
-        '-push'               : { cat: 'nat', props: null },
-        '-RegExp'             : { cat: 'nat', props: null },
-        '-replace'            : { cat: 'nat', props: null },
-        '-reset'              : { cat: 'nat', props: null },
-        '-resizeBy'           : { cat: 'nat', props: null },
-        '-resizeTo'           : { cat: 'nat', props: null },
-        '-reverse'            : { cat: 'nat', props: null },
-        '-search'             : { cat: 'nat', props: null },
-        '-setDate'            : { cat: 'nat', props: null },
-        '-setFullYear'        : { cat: 'nat', props: null },
-        '-setHours'           : { cat: 'nat', props: null },
-        '-setMilliseconds'    : { cat: 'nat', props: null },
-        '-setInterval'        : { cat: 'nat', props: null },
-        '-setMinutes'         : { cat: 'nat', props: null },
-        '-setMonth'           : { cat: 'nat', props: null },
-        '-setSeconds'         : { cat: 'nat', props: null },
-        '-setTime'            : { cat: 'nat', props: null },
-        '-setTimeout'         : { cat: 'nat', props: null },
-        '-setUTCDate'         : { cat: 'nat', props: null },
-        '-setUTCFullYear'     : { cat: 'nat', props: null },
-        '-setUTCHours'        : { cat: 'nat', props: null },
-        '-setUTCMilliseconds' : { cat: 'nat', props: null },
-        '-setUTCMinutes'      : { cat: 'nat', props: null },
-        '-setUTCMonth'        : { cat: 'nat', props: null },
-        '-setUTCSeconds'      : { cat: 'nat', props: null },
-        '-setYear'            : { cat: 'nat', props: null },
-        '-shift'              : { cat: 'nat', props: null },
-        '-slice'              : { cat: 'nat', props: null },
-        '-some'               : { cat: 'nat', props: null },
-        '-sort'               : { cat: 'nat', props: null },
-        '-splice'             : { cat: 'nat', props: null },
-        '-split'              : { cat: 'nat', props: null },
-        '-String'             : { cat: 'nat', props: {
-          '-fromCharCode' : 1,
-          '-fromCodePoint': 1,
-          '-raw'          : 1
-        } },
-        '-substr'             : { cat: 'nat', props: null },
-        '-substring'          : { cat: 'nat', props: null },
-        '-Symbol'             : { cat: 'nat', props: {
-          '-for'   : 1,
-          '-keyFor': 1
-        } },
-        '-test'               : { cat: 'nat', props: null },
-        '-toGMTString'        : { cat: 'nat', props: null },
-        '-toLocaleString'     : { cat: 'nat', props: null },
-        '-toLowerCase'        : { cat: 'nat', props: null },
-        '-toSource'           : { cat: 'nat', props: null },
-        '-toString'           : { cat: 'nat', props: null },
-        '-toUpperCase'        : { cat: 'nat', props: null },
-        '-toUTCString'        : { cat: 'nat', props: null },
-        '-TypedArray'         : { cat: 'nat', props: {
-          '-BYTES_PER_ELEMENT': 1,
-          '-from'             : 1,
-          '-name'             : 1,
-          '-of'               : 1
-        } },
-        '-unescape'           : { cat: 'nat', props: null },
-        '-unshift'            : { cat: 'nat', props: null },
-        '-unwatch'            : { cat: 'nat', props: null },
-        '-UTC'                : { cat: 'nat', props: null },
-        '-valueOf'            : { cat: 'nat', props: null },
-        '-watch'              : { cat: 'nat', props: null },
-        '-write'              : { cat: 'nat', props: null },
-        '-writeln'            : { cat: 'nat', props: null },
-        '-false'    : { cat: 'val', props: null },
-        '-Infinity' : { cat: 'val', props: null },
-        '-Nan'      : { cat: 'val', props: null },
-        '-null'     : { cat: 'val', props: null },
-        '-true'     : { cat: 'val', props: null },
-        '-undefined': { cat: 'val', props: null },
-        '-alert'                 : { cat: 'cli', props: null },
-        '-anchor'                : { cat: 'cli', props: null },
-        '-anchors'               : { cat: 'cli', props: null },
-        '-appendChild'           : { cat: 'cli', props: null },
-        '-area'                  : { cat: 'cli', props: null },
-        '-assign'                : { cat: 'cli', props: null },
-        '-back'                  : { cat: 'cli', props: null },
-        '-big'                   : { cat: 'cli', props: null },
-        '-blink'                 : { cat: 'cli', props: null },
-        '-blur'                  : { cat: 'cli', props: null },
-        '-body'                  : { cat: 'cli', props: null },
-        '-bold'                  : { cat: 'cli', props: null },
-        '-button'                : { cat: 'cli', props: null },
-        '-byteToString'          : { cat: 'cli', props: null },
-        '-captureEvents'         : { cat: 'cli', props: null },
-        '-checkbox'              : { cat: 'cli', props: null },
-        '-className'             : { cat: 'cli', props: null },
-        '-click'                 : { cat: 'cli', props: null },
-        '-clientHeight'          : { cat: 'cli', props: null },
-        '-clientInformation'     : { cat: 'cli', props: null },
-        '-clientWidth'           : { cat: 'cli', props: null },
-        '-close'                 : { cat: 'cli', props: null },
-        '-closed'                : { cat: 'cli', props: null },
-        '-confirm'               : { cat: 'cli', props: null },
-        '-console'               : { cat: 'cli', props: {
-          '-assert'        : 1,
-          '-group'         : 1,
-          '-groupCollapsed': 1,
-          '-groupEnd'      : 1,
-          '-log'           : 1,
-          '-trace'         : 1
-        } },
-        '-createElement'         : { cat: 'cli', props: null },
-        '-crypto'                : { cat: 'cli', props: null },
-        '-defaultStatus'         : { cat: 'cli', props: null },
-        '-disableExternalCapture': { cat: 'cli', props: null },
-        '-document'              : { cat: 'cli', props: null },
-        '-element'               : { cat: 'cli', props: null },
-        '-elements'              : { cat: 'cli', props: null },
-        '-embed'                 : { cat: 'cli', props: null },
-        '-embeds'                : { cat: 'cli', props: null },
-        '-enableExternalCapture' : { cat: 'cli', props: null },
-        '-event'                 : { cat: 'cli', props: null },
-        '-fileUpload'            : { cat: 'cli', props: null },
-        '-find'                  : { cat: 'cli', props: null },
-        '-fixed'                 : { cat: 'cli', props: null },
-        '-focus'                 : { cat: 'cli', props: null },
-        '-fontcolor'             : { cat: 'cli', props: null },
-        '-fontsize'              : { cat: 'cli', props: null },
-        '-form'                  : { cat: 'cli', props: null },
-        '-forms'                 : { cat: 'cli', props: null },
-        '-forward'               : { cat: 'cli', props: null },
-        '-frame'                 : { cat: 'cli', props: null },
-        '-frames'                : { cat: 'cli', props: null },
-        '-frameRate'             : { cat: 'cli', props: null },
-        '-getComputedStyle'      : { cat: 'cli', props: null },
-        '-getElementById'        : { cat: 'cli', props: null },
-        '-getElementsByClassName': { cat: 'cli', props: null },
-        '-getElementsByTagName'  : { cat: 'cli', props: null },
-        '-getOptionValueCount'   : { cat: 'cli', props: null },
-        '-getOptionValue'        : { cat: 'cli', props: null },
-        '-getPropertyValue'      : { cat: 'cli', props: null },
-        '-getSelection'          : { cat: 'cli', props: null },
-        '-go'                    : { cat: 'cli', props: null },
-        '-handleEvent'           : { cat: 'cli', props: null },
-        '-hidden'                : { cat: 'cli', props: null },
-        '-history'               : { cat: 'cli', props: null },
-        '-home'                  : { cat: 'cli', props: null },
-        '-id'                    : { cat: 'cli', props: null },
-        '-image'                 : { cat: 'cli', props: null },
-        '-ImageData'             : { cat: 'cli', props: {
-          '-data'  : 1,
-          '-height': 1,
-          '-width' : 1
-        } },
-        '-images'                : { cat: 'cli', props: null },
-        '-innerHeight'           : { cat: 'cli', props: null },
-        '-innerHTML'             : { cat: 'cli', props: null },
-        '-innerWidth'            : { cat: 'cli', props: null },
-        '-italics'               : { cat: 'cli', props: null },
-        '-javaEnabled'           : { cat: 'cli', props: null },
-        '-layer'                 : { cat: 'cli', props: null },
-        '-layers'                : { cat: 'cli', props: null },
-        '-link'                  : { cat: 'cli', props: null },
-        '-location'              : { cat: 'cli', props: null },
-        '-mimeTypes'             : { cat: 'cli', props: null },
-        '-moveAbove'             : { cat: 'cli', props: null },
-        '-moveBelow'             : { cat: 'cli', props: null },
-        '-moveBy'                : { cat: 'cli', props: null },
-        '-moveTo'                : { cat: 'cli', props: null },
-        '-moveToAbsolute'        : { cat: 'cli', props: null },
-        '-navigate'              : { cat: 'cli', props: null },
-        '-navigator'             : { cat: 'cli', props: null },
-        '-offscreenBuffering'    : { cat: 'cli', props: null },
-        '-offsetHeight'          : { cat: 'cli', props: null },
-        '-offsetWidth'           : { cat: 'cli', props: null },
-        '-open'                  : { cat: 'cli', props: null },
-        '-opener'                : { cat: 'cli', props: null },
-        '-options'               : { cat: 'cli', props: null },
-        '-outerHeight'           : { cat: 'cli', props: null },
-        '-outerWidth'            : { cat: 'cli', props: null },
-        '-packages'              : { cat: 'cli', props: null },
-        '-pageXOffset'           : { cat: 'cli', props: null },
-        '-pageYOffset'           : { cat: 'cli', props: null },
-        '-parent'                : { cat: 'cli', props: null },
-        '-password'              : { cat: 'cli', props: null },
-        '-pkcs11'                : { cat: 'cli', props: null },
-        '-plugins'               : { cat: 'cli', props: null },
-        '-prompt'                : { cat: 'cli', props: null },
-        '-propertyIsEnum'        : { cat: 'cli', props: null },
-        '-radio'                 : { cat: 'cli', props: null },
-        '-refresh'               : { cat: 'cli', props: null },
-        '-releaseEvents'         : { cat: 'cli', props: null },
-        '-reload'                : { cat: 'cli', props: null },
-        '-removeChild'           : { cat: 'cli', props: null },
-        '-routeEvent'            : { cat: 'cli', props: null },
-        '-screen'                : { cat: 'cli', props: null },
-        '-screenX'               : { cat: 'cli', props: null },
-        '-screenY'               : { cat: 'cli', props: null },
-        '-scroll'                : { cat: 'cli', props: null },
-        '-scrollBy'              : { cat: 'cli', props: null },
-        '-scrollTo'              : { cat: 'cli', props: null },
-        '-secure'                : { cat: 'cli', props: null },
-        '-select'                : { cat: 'cli', props: null },
-        '-self'                  : { cat: 'cli', props: null },
-        '-small'                 : { cat: 'cli', props: null },
-        '-status'                : { cat: 'cli', props: null },
-        '-stop'                  : { cat: 'cli', props: null },
-        '-strike'                : { cat: 'cli', props: null },
-        '-style'                 : { cat: 'cli', props: null },
-        '-submit'                : { cat: 'cli', props: null },
-        '-sup'                   : { cat: 'cli', props: null },
-        '-taint'                 : { cat: 'cli', props: null },
-        '-taintEnabled'          : { cat: 'cli', props: null },
-        '-text'                  : { cat: 'cli', props: null },
-        '-textContent'           : { cat: 'cli', props: null },
-        '-textarea'              : { cat: 'cli', props: null },
-        '-top'                   : { cat: 'cli', props: null },
-        '-untaint'               : { cat: 'cli', props: null },
-        '-window'                : { cat: 'cli', props: null },
-        '-$'     : { cat: 'jqu', props: null },
-        '-jQuery': { cat: 'jqu', props: null }
-      }
+
+      // Defining Keywords
+      _class   : makeKeywordObj('def', ''),
+      _const   : makeKeywordObj('def', ''),
+      _function: makeKeywordObj('def', ''),
+      _var     : makeKeywordObj('def', ''),
+
+      // Reserved Keywords
+      _abstract    : makeKeywordObj('res', ''),
+      _arguments   : makeKeywordObj('res', ''),
+      _boolean     : makeKeywordObj('res', ''),
+      _break       : makeKeywordObj('res', ''),
+      _byte        : makeKeywordObj('res', ''),
+      _case        : makeKeywordObj('res', ''),
+      _catch       : makeKeywordObj('res', ''),
+      _char        : makeKeywordObj('res', ''),
+      _continue    : makeKeywordObj('res', ''),
+      _debugger    : makeKeywordObj('res', ''),
+      _default     : makeKeywordObj('res', ''),
+      _delete      : makeKeywordObj('res', ''),
+      _do          : makeKeywordObj('res', ''),
+      _double      : makeKeywordObj('res', ''),
+      _else        : makeKeywordObj('res', ''),
+      _enum        : makeKeywordObj('res', ''),
+      _export      : makeKeywordObj('res', ''),
+      _extends     : makeKeywordObj('res', ''),
+      _final       : makeKeywordObj('res', ''),
+      _finally     : makeKeywordObj('res', ''),
+      _float       : makeKeywordObj('res', ''),
+      _for         : makeKeywordObj('res', ''),
+      _goto        : makeKeywordObj('res', ''),
+      _if          : makeKeywordObj('res', ''),
+      _implements  : makeKeywordObj('res', ''),
+      _import      : makeKeywordObj('res', ''),
+      _in          : makeKeywordObj('res', ''),
+      _instanceof  : makeKeywordObj('res', ''),
+      _int         : makeKeywordObj('res', ''),
+      _interface   : makeKeywordObj('res', ''),
+      _item        : makeKeywordObj('res', ''),
+      _let         : makeKeywordObj('res', ''),
+      _long        : makeKeywordObj('res', ''),
+      _native      : makeKeywordObj('res', ''),
+      _new         : makeKeywordObj('res', ''),
+      _package     : makeKeywordObj('res', ''),
+      _private     : makeKeywordObj('res', ''),
+      _protected   : makeKeywordObj('res', ''),
+      _public      : makeKeywordObj('res', ''),
+      _return      : makeKeywordObj('res', ''),
+      _short       : makeKeywordObj('res', ''),
+      _static      : makeKeywordObj('res', ''),
+      _super       : makeKeywordObj('res', ''),
+      _switch      : makeKeywordObj('res', ''),
+      _synchronized: makeKeywordObj('res', ''),
+      _this        : makeKeywordObj('res', ''),
+      _throw       : makeKeywordObj('res', ''),
+      _throws      : makeKeywordObj('res', ''),
+      _transient   : makeKeywordObj('res', ''),
+      _try         : makeKeywordObj('res', ''),
+      _typeof      : makeKeywordObj('res', ''),
+      _void        : makeKeywordObj('res', ''),
+      _volatile    : makeKeywordObj('res', ''),
+      _while       : makeKeywordObj('res', ''),
+      _with        : makeKeywordObj('res', ''),
+      _yield       : makeKeywordObj('res', ''),
+
+      // Native Objects & Methods
+      _apply               : makeKeywordObj('nat', ''),
+      _Array               : makeKeywordObj('nat', '', true),
+      _ArrayBuffer         : makeKeywordObj('nat', '', true),
+      _bind                : makeKeywordObj('nat', ''),
+      _Boolean             : makeKeywordObj('nat', ''),
+      _call                : makeKeywordObj('nat', ''),
+      _charAt              : makeKeywordObj('nat', ''),
+      _charCodeAt          : makeKeywordObj('nat', ''),
+      _clearInterval       : makeKeywordObj('nat', ''),
+      _clearTimeout        : makeKeywordObj('nat', ''),
+      _concat              : makeKeywordObj('nat', ''),
+      _constructor         : makeKeywordObj('nat', ''),
+      _DataView            : makeKeywordObj('nat', ''),
+      _Date                : makeKeywordObj('nat', '', true),
+      _decodeURI           : makeKeywordObj('nat', ''),
+      _decodeURIComponent  : makeKeywordObj('nat', ''),
+      _encodeURI           : makeKeywordObj('nat', ''),
+      _encodeURIComponent  : makeKeywordObj('nat', ''),
+      _Error               : makeKeywordObj('nat', ''),
+      _escape              : makeKeywordObj('nat', ''),
+      _eval                : makeKeywordObj('nat', ''),
+      _EvalError           : makeKeywordObj('nat', ''),
+      _every               : makeKeywordObj('nat', ''),
+      _filter              : makeKeywordObj('nat', ''),
+      _forEach             : makeKeywordObj('nat', ''),
+      _fromCharCode        : makeKeywordObj('nat', ''),
+      _Function            : makeKeywordObj('nat', ''),
+      _Generator           : makeKeywordObj('nat', ''),
+      _GeneratorFunction   : makeKeywordObj('nat', ''),
+      _getDate             : makeKeywordObj('nat', ''),
+      _getDay              : makeKeywordObj('nat', ''),
+      _getFullYear         : makeKeywordObj('nat', ''),
+      _getHours            : makeKeywordObj('nat', ''),
+      _getMilliseconds     : makeKeywordObj('nat', ''),
+      _getMinutes          : makeKeywordObj('nat', ''),
+      _getMonth            : makeKeywordObj('nat', ''),
+      _getSeconds          : makeKeywordObj('nat', ''),
+      _getTime             : makeKeywordObj('nat', ''),
+      _getTimezoneOffset   : makeKeywordObj('nat', ''),
+      _getUTCDate          : makeKeywordObj('nat', ''),
+      _getUTCDay           : makeKeywordObj('nat', ''),
+      _getUTCFullYear      : makeKeywordObj('nat', ''),
+      _getUTCHours         : makeKeywordObj('nat', ''),
+      _getUTCMilliseconds  : makeKeywordObj('nat', ''),
+      _getUTCMinutes       : makeKeywordObj('nat', ''),
+      _getUTCMonth         : makeKeywordObj('nat', ''),
+      _getUTCSeconds       : makeKeywordObj('nat', ''),
+      _getYear             : makeKeywordObj('nat', ''),
+      _hasOwnProperty      : makeKeywordObj('nat', ''),
+      _indexOf             : makeKeywordObj('nat', ''),
+      _isFinite            : makeKeywordObj('nat', ''),
+      _isNaN               : makeKeywordObj('nat', ''),
+      _isPrototypeOf       : makeKeywordObj('nat', ''),
+      _join                : makeKeywordObj('nat', ''),
+      _JSON                : makeKeywordObj('nat', '', true),
+      _lastIndexOf         : makeKeywordObj('nat', ''),
+      _length              : makeKeywordObj('nat', ''),
+      _map                 : makeKeywordObj('nat', ''),
+      _match               : makeKeywordObj('nat', ''),
+      _Math                : makeKeywordObj('nat', '', true),
+      _Number              : makeKeywordObj('nat', '', true),
+      _Object              : makeKeywordObj('nat', '', true),
+      _parse               : makeKeywordObj('nat', ''),
+      _parseFloat          : makeKeywordObj('nat', ''),
+      _parseInt            : makeKeywordObj('nat', ''),
+      _pop                 : makeKeywordObj('nat', ''),
+      _preference          : makeKeywordObj('nat', ''),
+      _print               : makeKeywordObj('nat', ''),
+      _propertyIsEnumerable: makeKeywordObj('nat', ''),
+      _prototype           : makeKeywordObj('nat', ''),
+      _push                : makeKeywordObj('nat', ''),
+      _RegExp              : makeKeywordObj('nat', ''),
+      _replace             : makeKeywordObj('nat', ''),
+      _reset               : makeKeywordObj('nat', ''),
+      _resizeBy            : makeKeywordObj('nat', ''),
+      _resizeTo            : makeKeywordObj('nat', ''),
+      _reverse             : makeKeywordObj('nat', ''),
+      _search              : makeKeywordObj('nat', ''),
+      _setDate             : makeKeywordObj('nat', ''),
+      _setFullYear         : makeKeywordObj('nat', ''),
+      _setHours            : makeKeywordObj('nat', ''),
+      _setMilliseconds     : makeKeywordObj('nat', ''),
+      _setInterval         : makeKeywordObj('nat', ''),
+      _setMinutes          : makeKeywordObj('nat', ''),
+      _setMonth            : makeKeywordObj('nat', ''),
+      _setSeconds          : makeKeywordObj('nat', ''),
+      _setTime             : makeKeywordObj('nat', ''),
+      _setTimeout          : makeKeywordObj('nat', ''),
+      _setUTCDate          : makeKeywordObj('nat', ''),
+      _setUTCFullYear      : makeKeywordObj('nat', ''),
+      _setUTCHours         : makeKeywordObj('nat', ''),
+      _setUTCMilliseconds  : makeKeywordObj('nat', ''),
+      _setUTCMinutes       : makeKeywordObj('nat', ''),
+      _setUTCMonth         : makeKeywordObj('nat', ''),
+      _setUTCSeconds       : makeKeywordObj('nat', ''),
+      _setYear             : makeKeywordObj('nat', ''),
+      _shift               : makeKeywordObj('nat', ''),
+      _slice               : makeKeywordObj('nat', ''),
+      _some                : makeKeywordObj('nat', ''),
+      _sort                : makeKeywordObj('nat', ''),
+      _splice              : makeKeywordObj('nat', ''),
+      _split               : makeKeywordObj('nat', ''),
+      _String              : makeKeywordObj('nat', '', true),
+      _substr              : makeKeywordObj('nat', ''),
+      _substring           : makeKeywordObj('nat', ''),
+      _Symbol              : makeKeywordObj('nat', '', true),
+      _test                : makeKeywordObj('nat', ''),
+      _toGMTString         : makeKeywordObj('nat', ''),
+      _toLocaleString      : makeKeywordObj('nat', ''),
+      _toLowerCase         : makeKeywordObj('nat', ''),
+      _toSource            : makeKeywordObj('nat', ''),
+      _toString            : makeKeywordObj('nat', ''),
+      _toUpperCase         : makeKeywordObj('nat', ''),
+      _toUTCString         : makeKeywordObj('nat', ''),
+      _TypedArray          : makeKeywordObj('nat', '', true),
+      _unescape            : makeKeywordObj('nat', ''),
+      _unshift             : makeKeywordObj('nat', ''),
+      _unwatch             : makeKeywordObj('nat', ''),
+      _UTC                 : makeKeywordObj('nat', ''),
+      _valueOf             : makeKeywordObj('nat', ''),
+      _watch               : makeKeywordObj('nat', ''),
+      _write               : makeKeywordObj('nat', ''),
+      _writeln             : makeKeywordObj('nat', ''),
+
+      // Values
+      _false    : makeKeywordObj('val', ''),
+      _Infinity : makeKeywordObj('val', ''),
+      _Nan      : makeKeywordObj('val', ''),
+      _null     : makeKeywordObj('val', ''),
+      _true     : makeKeywordObj('val', ''),
+      _undefined: makeKeywordObj('val', ''),
+
+      // Client Objects & Methods
+      _alert                 : makeKeywordObj('cli', ''),
+      _anchor                : makeKeywordObj('cli', ''),
+      _anchors               : makeKeywordObj('cli', ''),
+      _appendChild           : makeKeywordObj('cli', ''),
+      _area                  : makeKeywordObj('cli', ''),
+      _assign                : makeKeywordObj('cli', ''),
+      _back                  : makeKeywordObj('cli', ''),
+      _big                   : makeKeywordObj('cli', ''),
+      _blink                 : makeKeywordObj('cli', ''),
+      _blur                  : makeKeywordObj('cli', ''),
+      _body                  : makeKeywordObj('cli', ''),
+      _bold                  : makeKeywordObj('cli', ''),
+      _button                : makeKeywordObj('cli', ''),
+      _byteToString          : makeKeywordObj('cli', ''),
+      _captureEvents         : makeKeywordObj('cli', ''),
+      _checkbox              : makeKeywordObj('cli', ''),
+      _className             : makeKeywordObj('cli', ''),
+      _click                 : makeKeywordObj('cli', ''),
+      _clientHeight          : makeKeywordObj('cli', ''),
+      _clientInformation     : makeKeywordObj('cli', ''),
+      _clientWidth           : makeKeywordObj('cli', ''),
+      _close                 : makeKeywordObj('cli', ''),
+      _closed                : makeKeywordObj('cli', ''),
+      _confirm               : makeKeywordObj('cli', ''),
+      _console               : makeKeywordObj('cli', ''),
+      _createElement         : makeKeywordObj('cli', ''),
+      _crypto                : makeKeywordObj('cli', ''),
+      _defaultStatus         : makeKeywordObj('cli', ''),
+      _disableExternalCapture: makeKeywordObj('cli', ''),
+      _document              : makeKeywordObj('cli', ''),
+      _element               : makeKeywordObj('cli', ''),
+      _elements              : makeKeywordObj('cli', ''),
+      _embed                 : makeKeywordObj('cli', ''),
+      _embeds                : makeKeywordObj('cli', ''),
+      _enableExternalCapture : makeKeywordObj('cli', ''),
+      _event                 : makeKeywordObj('cli', ''),
+      _fileUpload            : makeKeywordObj('cli', ''),
+      _find                  : makeKeywordObj('cli', ''),
+      _fixed                 : makeKeywordObj('cli', ''),
+      _focus                 : makeKeywordObj('cli', ''),
+      _fontcolor             : makeKeywordObj('cli', ''),
+      _fontsize              : makeKeywordObj('cli', ''),
+      _form                  : makeKeywordObj('cli', ''),
+      _forms                 : makeKeywordObj('cli', ''),
+      _forward               : makeKeywordObj('cli', ''),
+      _frame                 : makeKeywordObj('cli', ''),
+      _frames                : makeKeywordObj('cli', ''),
+      _frameRate             : makeKeywordObj('cli', ''),
+      _getComputedStyle      : makeKeywordObj('cli', ''),
+      _getElementById        : makeKeywordObj('cli', ''),
+      _getElementsByClassName: makeKeywordObj('cli', ''),
+      _getElementsByTagName  : makeKeywordObj('cli', ''),
+      _getOptionValueCount   : makeKeywordObj('cli', ''),
+      _getOptionValue        : makeKeywordObj('cli', ''),
+      _getPropertyValue      : makeKeywordObj('cli', ''),
+      _getSelection          : makeKeywordObj('cli', ''),
+      _go                    : makeKeywordObj('cli', ''),
+      _handleEvent           : makeKeywordObj('cli', ''),
+      _hidden                : makeKeywordObj('cli', ''),
+      _history               : makeKeywordObj('cli', ''),
+      _home                  : makeKeywordObj('cli', ''),
+      _id                    : makeKeywordObj('cli', ''),
+      _image                 : makeKeywordObj('cli', ''),
+      _ImageData             : makeKeywordObj('cli', ''),
+      _images                : makeKeywordObj('cli', ''),
+      _innerHeight           : makeKeywordObj('cli', ''),
+      _innerHTML             : makeKeywordObj('cli', ''),
+      _innerWidth            : makeKeywordObj('cli', ''),
+      _italics               : makeKeywordObj('cli', ''),
+      _javaEnabled           : makeKeywordObj('cli', ''),
+      _layer                 : makeKeywordObj('cli', ''),
+      _layers                : makeKeywordObj('cli', ''),
+      _link                  : makeKeywordObj('cli', ''),
+      _location              : makeKeywordObj('cli', ''),
+      _mimeTypes             : makeKeywordObj('cli', ''),
+      _moveAbove             : makeKeywordObj('cli', ''),
+      _moveBelow             : makeKeywordObj('cli', ''),
+      _moveBy                : makeKeywordObj('cli', ''),
+      _moveTo                : makeKeywordObj('cli', ''),
+      _moveToAbsolute        : makeKeywordObj('cli', ''),
+      _navigate              : makeKeywordObj('cli', ''),
+      _navigator             : makeKeywordObj('cli', ''),
+      _offscreenBuffering    : makeKeywordObj('cli', ''),
+      _offsetHeight          : makeKeywordObj('cli', ''),
+      _offsetWidth           : makeKeywordObj('cli', ''),
+      _open                  : makeKeywordObj('cli', ''),
+      _opener                : makeKeywordObj('cli', ''),
+      _options               : makeKeywordObj('cli', ''),
+      _outerHeight           : makeKeywordObj('cli', ''),
+      _outerWidth            : makeKeywordObj('cli', ''),
+      _packages              : makeKeywordObj('cli', ''),
+      _pageXOffset           : makeKeywordObj('cli', ''),
+      _pageYOffset           : makeKeywordObj('cli', ''),
+      _parent                : makeKeywordObj('cli', ''),
+      _password              : makeKeywordObj('cli', ''),
+      _pkcs11                : makeKeywordObj('cli', ''),
+      _plugins               : makeKeywordObj('cli', ''),
+      _prompt                : makeKeywordObj('cli', ''),
+      _propertyIsEnum        : makeKeywordObj('cli', ''),
+      _radio                 : makeKeywordObj('cli', ''),
+      _refresh               : makeKeywordObj('cli', ''),
+      _releaseEvents         : makeKeywordObj('cli', ''),
+      _reload                : makeKeywordObj('cli', ''),
+      _removeChild           : makeKeywordObj('cli', ''),
+      _routeEvent            : makeKeywordObj('cli', ''),
+      _screen                : makeKeywordObj('cli', ''),
+      _screenX               : makeKeywordObj('cli', ''),
+      _screenY               : makeKeywordObj('cli', ''),
+      _scroll                : makeKeywordObj('cli', ''),
+      _scrollBy              : makeKeywordObj('cli', ''),
+      _scrollTo              : makeKeywordObj('cli', ''),
+      _secure                : makeKeywordObj('cli', ''),
+      _select                : makeKeywordObj('cli', ''),
+      _self                  : makeKeywordObj('cli', ''),
+      _small                 : makeKeywordObj('cli', ''),
+      _status                : makeKeywordObj('cli', ''),
+      _stop                  : makeKeywordObj('cli', ''),
+      _strike                : makeKeywordObj('cli', ''),
+      _style                 : makeKeywordObj('cli', ''),
+      _submit                : makeKeywordObj('cli', ''),
+      _sup                   : makeKeywordObj('cli', ''),
+      _taint                 : makeKeywordObj('cli', ''),
+      _taintEnabled          : makeKeywordObj('cli', ''),
+      _text                  : makeKeywordObj('cli', ''),
+      _textContent           : makeKeywordObj('cli', ''),
+      _textarea              : makeKeywordObj('cli', ''),
+      _top                   : makeKeywordObj('cli', ''),
+      _untaint               : makeKeywordObj('cli', ''),
+      _window                : makeKeywordObj('cli', ''),
+
+      // jQuery Objects
+      _$     : makeKeywordObj('jqu', ''),
+      _jQuery: makeKeywordObj('jqu', '')
     };
+
+    Object.freeze(keywords);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup the keyword properties
+
+    // Array
+    keywords._Array.props._from    = makePropObj('');
+    keywords._Array.props._isArray = makePropObj('');
+    keywords._Array.props._observe = makePropObj('');
+    keywords._Array.props._of      = makePropObj('');
+    Object.freeze(keywords._Array.props);
+
+    // ArrayBuffer
+    keywords._ArrayBuffer.props._isView   = makePropObj('');
+    keywords._ArrayBuffer.props._transfer = makePropObj('');
+    Object.freeze(keywords._ArrayBuffer.props);
+
+    // Date
+    keywords._Date.props._UTC   = makePropObj('');
+    keywords._Date.props._now   = makePropObj('');
+    keywords._Date.props._parse = makePropObj('');
+    Object.freeze(keywords._Date.props);
+
+    // JSON
+    keywords._JSON.props._parse     = makePropObj('');
+    keywords._JSON.props._stringify = makePropObj('');
+    Object.freeze(keywords._JSON.props);
+
+    // Math
+    keywords._Math.props._abs    = makePropObj('');
+    keywords._Math.props._acos   = makePropObj('');
+    keywords._Math.props._asin   = makePropObj('');
+    keywords._Math.props._atan   = makePropObj('');
+    keywords._Math.props._atan2  = makePropObj('');
+    keywords._Math.props._ceil   = makePropObj('');
+    keywords._Math.props._cos    = makePropObj('');
+    keywords._Math.props._exp    = makePropObj('');
+    keywords._Math.props._floor  = makePropObj('');
+    keywords._Math.props._log    = makePropObj('');
+    keywords._Math.props._max    = makePropObj('');
+    keywords._Math.props._min    = makePropObj('');
+    keywords._Math.props._pow    = makePropObj('');
+    keywords._Math.props._random = makePropObj('');
+    keywords._Math.props._round  = makePropObj('');
+    keywords._Math.props._sin    = makePropObj('');
+    keywords._Math.props._sqrt   = makePropObj('');
+    keywords._Math.props._tan    = makePropObj('');
+    Object.freeze(keywords._Math.props);
+
+    // Number
+    keywords._Number.props._EPSILON           = makePropObj('');
+    keywords._Number.props._isNaN             = makePropObj('');
+    keywords._Number.props._isFinite          = makePropObj('');
+    keywords._Number.props._isInteger         = makePropObj('');
+    keywords._Number.props._isSafeInteger     = makePropObj('');
+    keywords._Number.props._MAX_SAFE_INTEGER  = makePropObj('');
+    keywords._Number.props._MAX_VALUE         = makePropObj('');
+    keywords._Number.props._MIN_SAFE_INTEGER  = makePropObj('');
+    keywords._Number.props._MIN_VALUE         = makePropObj('');
+    keywords._Number.props._NaN               = makePropObj('');
+    keywords._Number.props._NEGATIVE_INFINITY = makePropObj('');
+    keywords._Number.props._parseFloat        = makePropObj('');
+    keywords._Number.props._parseInt          = makePropObj('');
+    keywords._Number.props._POSITIVE_INFINITY = makePropObj('');
+    Object.freeze(keywords._Number.props);
+
+    // Object
+    keywords._Object.props._assign                   = makePropObj('');
+    keywords._Object.props._create                   = makePropObj('');
+    keywords._Object.props._defineProperty           = makePropObj('');
+    keywords._Object.props._defineProperties         = makePropObj('');
+    keywords._Object.props._freeze                   = makePropObj('');
+    keywords._Object.props._getOwnPropertyDescriptor = makePropObj('');
+    keywords._Object.props._getOwnPropertyNames      = makePropObj('');
+    keywords._Object.props._getOwnPropertySymbols    = makePropObj('');
+    keywords._Object.props._getPrototypeOf           = makePropObj('');
+    keywords._Object.props._is                       = makePropObj('');
+    keywords._Object.props._isExtensible             = makePropObj('');
+    keywords._Object.props._isFrozen                 = makePropObj('');
+    keywords._Object.props._isSealed                 = makePropObj('');
+    keywords._Object.props._keys                     = makePropObj('');
+    keywords._Object.props._observe                  = makePropObj('');
+    keywords._Object.props._preventExtensions        = makePropObj('');
+    keywords._Object.props._seal                     = makePropObj('');
+    keywords._Object.props._setPrototypeOf           = makePropObj('');
+    Object.freeze(keywords._Object.props);
+
+    // String
+    keywords._String.props._fromCharCode  = makePropObj('');
+    keywords._String.props._fromCodePoint = makePropObj('');
+    keywords._String.props._raw           = makePropObj('');
+    Object.freeze(keywords._String.props);
+
+    // Symbol
+    keywords._Symbol.props._for    = makePropObj('');
+    keywords._Symbol.props._keyFor = makePropObj('');
+    Object.freeze(keywords._Symbol.props);
+
+    // TypedArray
+    keywords._TypedArray.props._BYTES_PER_ELEMENT = makePropObj('');
+    keywords._TypedArray.props._from              = makePropObj('');
+    keywords._TypedArray.props._name              = makePropObj('');
+    keywords._TypedArray.props._of                = makePropObj('');
+    Object.freeze(keywords._TypedArray.props);
+
+    // console
+    keywords._console.props._assert         = makePropObj('');
+    keywords._console.props._group          = makePropObj('');
+    keywords._console.props._groupCollapsed = makePropObj('');
+    keywords._console.props._groupEnd       = makePropObj('');
+    keywords._console.props._log            = makePropObj('');
+    keywords._console.props._trace          = makePropObj('');
+    Object.freeze(keywords._console.props);
+
+    // ImageData
+    keywords._ImageData.props._data   = makePropObj('');
+    keywords._ImageData.props._height = makePropObj('');
+    keywords._ImageData.props._width  = makePropObj('');
+    Object.freeze(keywords._ImageData.props);
