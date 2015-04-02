@@ -32,7 +32,7 @@
       }
 
       // Trim the anonymous function
-      solution = solution.replace(/^function\s?\(\)\s?\{|\}\;$/g, '');
+      solution = solution.replace(/^function\s?\(\)\s?\{\n|\n\}\;$/g, '');
 
       return solution.split('\n');
     }
