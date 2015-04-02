@@ -540,29 +540,23 @@
        * ---------------------------------------------
        * Private Method (formatString)
        * ---------------------------------------------
-       * adds string spans and moves the index to the
-          end of string
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds string spans and moves the index to the
+       *   end of string.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatString(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatString(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatString() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add string span
-        newLine[i] = '<span class="str">' + line[i];
-        // Move index to end of string
+
+        highlightSyntax.debug.start('formatString', i);
+        highlightSyntax.debug.args('formatString', i, 'number');
+
+        newLine[i] = '<span class="str">' + orgLine[i];
+
         i = skipString(i);
-        // Add close span
+
         newLine[i] += '</span>';
-        // Return index
+
         return i;
       }
 
@@ -570,51 +564,48 @@
        * ---------------------------------------------
        * Private Method (formatRegex)
        * ---------------------------------------------
-       * adds regex spans and moves the index to the
-          end of regex
-       * param: the current line array index (number)
-       * param: the last index of regex (number)
-       * @type {function(number): number}
+       * @desc Adds RegExp spans and moves the index to the
+       *   end of RegExp.
+       * @param {number} i - The current line index.
+       * @param {number} end - The last index of the RegExp.
+       * @return {number} The last index.
        * @private
        */
       function formatRegex(i, end) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatRegex(%d, %d)', i, end
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          (typeof i   === 'number' &&
-           typeof end === 'number'),
-          'FAIL: HighlightSyntax.formatRegex() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Declare method variables
-        var usedFlags, c;
-        // Add regex span
+
+        highlightSyntax.debug.start('formatRegex', i, end);
+        highlightSyntax.debug.args('formatRegex', i, 'number', end, 'number');
+
+        /** @type {string} */
+        var usedFlags;
+        /** @type {string} */
+        var character;
+
         newLine[i] = '<span class="rgx">/';
-        // Move index to the closing forward slash
+
         i = end;
-        // Start empty string to contain
-        //  each used regex flags
         usedFlags = '';
-        // Check for regex flags after
-        //  closing forward slash
-        loop:
+
+        // Check for RegExp flags
         while (true) {
-          c = line[i + 1];
-          if (regexFlags.test(c) &&
-              usedFlags.indexOf(c) === -1) {
-            usedFlags += c;
-            ++i;
-            if (usedFlags.length === 4) {
-              break loop;
+          ++i;
+
+          character = orgLine[i];
+
+          if (regexFlags.test(character) &&
+              usedFlags.indexOf(character) === -1) {
+            usedFlags += character;
+            if (usedFlags.length < 4) {
+              continue;
             }
           }
-          break loop;
+
+          --i;
+          break;
         }
-        // Add closing span
+
         newLine[i] += '</span>';
-        // Return index
+
         return i;
       }
 
