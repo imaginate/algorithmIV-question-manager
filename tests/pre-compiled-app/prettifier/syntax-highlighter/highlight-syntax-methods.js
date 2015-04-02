@@ -799,7 +799,7 @@
         args.push(i, 'number', extras, 'string=');
         highlightSyntax.debug.args(args);
 
-        /** @type {{ index: number, name: string, propFollows: boolean }} */
+        /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
@@ -816,9 +816,9 @@
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
-              (orgLine[identifier.index + 1] === '(' ||
-               (orgLine[identifier.index + 1] === ' ' &&
-                orgLine[identifier.index + 2] === '('))) {
+              (orgLine[identifier.endIndex + 1] === '(' ||
+               (orgLine[identifier.endIndex + 1] === ' ' &&
+                orgLine[identifier.endIndex + 2] === '('))) {
             keyClassName = keywordCategories['res'];
           }
         }
@@ -836,7 +836,7 @@
 
         newLine[i] = '<span class="' + keyClassName + '">' + orgLine[i];
 
-        i = identifier.index;
+        i = identifier.endIndex;
 
         newLine[i] += '</span>';
 
