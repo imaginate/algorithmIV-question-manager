@@ -16,7 +16,7 @@
      * ---------------------------------------------
      * @desc The characters to replace with a html entity
      * @const
-     * @type {Object}
+     * @type {stringMap}
      * @private
      */
     var htmlEntity = {
@@ -33,7 +33,7 @@
      *   evaluated for the following possible keywords 'return',
      *   'case', 'typeof', 'instanceof', and 'in'.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
@@ -44,7 +44,7 @@
      * ---------------------------------------------
      * @desc The flags for js regular expressions.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var regexFlags = /[gimy]/;
@@ -55,7 +55,7 @@
      * ---------------------------------------------
      * @desc List of valid plain number characters.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
@@ -66,7 +66,7 @@
      * ---------------------------------------------
      * @desc List of valid hex number characters.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
@@ -77,7 +77,7 @@
      * ---------------------------------------------
      * @desc List of valid starting identifier characters.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
@@ -88,7 +88,7 @@
      * ---------------------------------------------
      * @desc List of valid identifier characters.
      * @const
-     * @type {Object}
+     * @type {RegExp}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
@@ -102,6 +102,16 @@
      * @private
      */
     var commentOpen;
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (commentLinks)
+     * ---------------------------------------------
+     * @desc Valid link syntax within comments.
+     * @type {RegExp}
+     * @private
+     */
+    var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
 
     /**
      * ---------------------------------------------

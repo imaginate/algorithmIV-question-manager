@@ -354,6 +354,79 @@
 
       /**
        * ---------------------------------------------
+       * Private Method (formatCommentLinks)
+       * ---------------------------------------------
+       * @desc Formats links in a comment.
+       * @param {number} start - The line index for the comment start.
+       * @param {number} end - The line index for the comment end.
+       * @private
+       */
+      function formatCommentLinks(start, end) {
+
+        // Debugging vars
+        var args;
+        highlightSyntax.debug.start('formatCommentLinks', start);
+        args = [ 'formatCommentLinks' ];
+        args.push(start, 'number', end, 'number');
+        highlightSyntax.debug.args(args);
+
+        /** @type {string} */
+        var comment;
+        /** @type {number} */
+        var i;
+        /** @type {string} */
+        var href;
+        /** @type {string} */
+        var content;
+
+        comment = orgLine.slice(start, end).join('');
+
+        if ( !commentLinks.test(comment) ) {
+          return;
+        }
+
+        while (true) {
+          i = comment.search(commentLinks);
+
+          if (i === -1) {
+            return;
+          }
+
+          newLine[i] = '';
+          ++i;
+
+          href = '';
+          content = '';
+
+          // Get the content
+          while (orgLine[i] !== ']') {
+            newLine[i] = '';
+            content += orgLine[i];
+            ++i;
+          }
+
+          newLine[i] = '';
+          ++i;
+          newLine[i] = '';
+          ++i;
+
+          // Get the href
+          while (orgLine[i] !== ')') {
+            newLine[i] = '';
+            href += orgLine[i];
+            ++i;
+          }
+
+          // Save the link
+          newLine[i] = '<a href="' + href + '">' + content + '</a>';
+
+          // Remove that link from the comment string
+          comment = comment.substr(i);
+        }
+      }
+
+      /**
+       * ---------------------------------------------
        * Private Method (formatCommentOpen)
        * ---------------------------------------------
        * @desc Opens a comment, adds comment spans, and 
@@ -367,6 +440,11 @@
         highlightSyntax.debug.start('formatCommentOpen', i);
         highlightSyntax.debug.args('formatCommentOpen', i, 'number');
 
+        /** @type {number} */
+        var start;
+
+        start = i;
+
         newLine[i] = '<span class="cmt">/';
         ++i;
         i = (i < lastindex) ? skipComment(i) : ++i;
@@ -377,6 +455,10 @@
         }
 
         newLine[i] += '</span>';
+
+        if ( app.config.prettifier.get('commentLinks') ) {
+          formatCommentLinks(start, i);
+        }
 
         return i;
       }
@@ -415,6 +497,10 @@
 
         newLine[i] += '</span>';
 
+        if ( app.config.prettifier.get('commentLinks') ) {
+          formatCommentLinks(0, i);
+        }
+
         return ++i;
       }
 
@@ -431,6 +517,10 @@
 
         highlightSyntax.debug.start('formatLineComment', i);
         highlightSyntax.debug.args('formatLineComment', i, 'number');
+
+        if ( app.config.prettifier.get('commentLinks') ) {
+          formatCommentLinks(i, lastIndex);
+        }
 
         newLine[i] = '<span class="cmt">/';
         i = lastIndex;
