@@ -852,26 +852,17 @@
        * ---------------------------------------------
        * Private Method (formatMisc)
        * ---------------------------------------------
-       * adds misc spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds misc spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatMisc(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatMisc(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatMisc() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add misc spans
-        newLine[i] = '' +
-        '<span class="msc">' +
-          line[i] +
-        '</span>';
-        // Return index
+
+        highlightSyntax.debug.start('formatMisc', i);
+        highlightSyntax.debug.args('formatMisc', i, 'number');
+
+        newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
+
         return i;
       }
