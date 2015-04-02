@@ -379,6 +379,10 @@
         /** @type {string} */
         var content;
 
+        if (end === lastIndex) {
+          ++end;
+        }
+
         comment = orgLine.slice(start, end).join('');
 
         if ( !commentLinks.test(comment) ) {
@@ -391,6 +395,8 @@
           if (i === -1) {
             return;
           }
+
+          i += start;
 
           newLine[i] = '';
           ++i;
@@ -422,6 +428,7 @@
 
           // Remove that link from the comment string
           comment = comment.substr(i);
+          start = i;
         }
       }
 
