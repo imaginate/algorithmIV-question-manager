@@ -42,7 +42,7 @@
         i = 0;
 
         if (commentOpen) {
-          i = formatCommentClose(i);
+          i = formatCommentStart();
         }
 
         --i;
@@ -356,121 +356,86 @@
        * ---------------------------------------------
        * Private Method (formatCommentOpen)
        * ---------------------------------------------
-       * opens a comment, adds comment spans, and 
-          moves the index to the end of comment
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Opens a comment, adds comment spans, and 
+       *   moves the index to the end of comment.
+       * @param {number} i - The current line index.
+       * @return {number} The comment's end index.
        * @private
        */
       function formatCommentOpen(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatCommentOpen(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatCommentOpen() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add comment span
+
+        highlightSyntax.debug.start('formatCommentOpen', i);
+        highlightSyntax.debug.args('formatCommentOpen', i, 'number');
+
         newLine[i] = '<span class="cmt">/';
-        // Increase index
         ++i;
-        // Move index to end of comment
-        i = (i < lLast) ? skipComment(i) : ++i;
-        // If (comment not closed by line end)
-        if (i >= lLen) {
-          // Set commentOpen to true
+        i = (i < lastindex) ? skipComment(i) : ++i;
+
+        if (i >= lineLen) {
           commentOpen = true;
-          // Move index to last value
-          i = lLast;
+          i = lastIndex;
         }
-        // Add closing span
+
         newLine[i] += '</span>';
-        // Return index
+
         return i;
       }
 
       /**
        * ---------------------------------------------
-       * Private Method (formatCommentClose)
+       * Private Method (formatCommentStart)
        * ---------------------------------------------
-       * adds comment spans and moves the index to the
-          end of the comment for a line inheriting an
-          already open comment (i.e. line began as a
-          comment)
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds comment spans and moves the index to the end
+       *   of the comment for a line inheriting an already open
+       *   comment (i.e. line began as a comment).
+       * @return {number} 
        * @private
        */
-      function formatCommentClose(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatCommentClose(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatCommentClose() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add comment span to line start
-        newLine[i]  = (line[i] === '*') ? ' ' : '';
-        newLine[i] += '<span class="cmt">' + line[i];
-        // If (start is a comment end)
-        // Then {update line and return next index}
-        if (line[0] === '*' && line[1] === '/') {
-          // Set commentOpen to false
+      function formatCommentStart() {
+
+        highlightSyntax.debug.start('formatCommentStart');
+
+        /** @type {number} */
+        var i;
+
+        newLine[0] = '<span class="cmt">' + orgLine[0];
+
+        if (orgLine[0] === '*' && orgLine[1] === '/') {
           commentOpen = false;
-          // Add closing span
           newLine[1] += '</span>';
-          // Return next index
           return 3;
         }
-        // Move index to comment end
-        i = skipComment(i);
-        // If (index exists)
-        if (i < lLen) {
-          // Set commentOpen to false
-          commentOpen = false;
-          // Add closing span
-          newLine[i] += '</span>';
-          // Move index to next value
-          ++i;
+
+        i = skipComment(0);
+        commentOpen = (i < lastIndex) ? false : true;
+
+        if (i > lastIndex) {
+          i = lastIndex;
         }
-        else {
-          // Add closing span to line end
-          newLine[lLast] += '</span>';
-        }
-        // Return next index
-        return i;
+
+        newLine[i] += '</span>';
+
+        return ++i;
       }
 
       /**
        * ---------------------------------------------
        * Private Method (formatLineComment)
        * ---------------------------------------------
-       * adds comment spans and moves index to line end
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds comment spans and moves index to line end.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatLineComment(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatLineComment(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatLineComment() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add comment span
+
+        highlightSyntax.debug.start('formatLineComment', i);
+        highlightSyntax.debug.args('formatLineComment', i, 'number');
+
         newLine[i] = '<span class="cmt">/';
-        // Moves index to line end
-        i = lLast;
-        // Add closing span
+        i = lastIndex;
         newLine[i] += '</span>';
-        // Return index
+
         return i;
       }
 
