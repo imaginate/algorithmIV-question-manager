@@ -613,28 +613,22 @@
        * ---------------------------------------------
        * Private Method (formatSpace)
        * ---------------------------------------------
-       * adds space spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds space spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatSpace(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatSpace(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatSpace() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add space span
+
+        highlightSyntax.debug.start('formatSpace', i);
+        highlightSyntax.debug.args('formatSpace', i, 'number');
+
         newLine[i] = '<span class="spc"> ';
-        // Move index to end of space sequence
+
         i = skipSpace(i);
-        // Add close span
+
         newLine[i] += '</span>';
-        // Return index
+
         return i;
       }
 
@@ -642,27 +636,18 @@
        * ---------------------------------------------
        * Private Method (formatBracket)
        * ---------------------------------------------
-       * adds bracket spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds bracket spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatBracket(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatBracket(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatBracket() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add bracket spans
-        newLine[i] = '' +
-        '<span class="brc">' +
-          line[i] +
-        '</span>';
-        // Return index
+
+        highlightSyntax.debug.start('formatBracket', i);
+        highlightSyntax.debug.args('formatBracket', i, 'number');
+
+        newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
+
         return i;
       }
 
@@ -670,29 +655,20 @@
        * ---------------------------------------------
        * Private Method (formatOperator)
        * ---------------------------------------------
-       * adds operator spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds operator spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatOperator(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatOperator(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatOperator() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Sanitize the character
+
+        highlightSyntax.debug.start('formatOperator', i);
+        highlightSyntax.debug.args('formatOperator', i, 'number');
+
         sanitizeCharacter(i);
-        // Add operator spans
-        newLine[i] = '' +
-        '<span class="opr">' +
-          newLine[i] +
-        '</span>';
-        // Return index
+
+        newLine[i] = '<span class="opr">' + newLine[i] + '</span>';
+
         return i;
       }
 
@@ -700,24 +676,18 @@
        * ---------------------------------------------
        * Private Method (formatComma)
        * ---------------------------------------------
-       * adds comma spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds comma spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatComma(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatComma(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatComma() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add comma spans
+
+        highlightSyntax.debug.start('formatComma', i);
+        highlightSyntax.debug.args('formatComma', i, 'number');
+
         newLine[i] = '<span class="cmm">,</span>';
-        // Return index
+
         return i;
       }
 
@@ -725,24 +695,18 @@
        * ---------------------------------------------
        * Private Method (formatSemicolon)
        * ---------------------------------------------
-       * adds semicolon spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds semicolon spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatSemicolon(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatSemicolon(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatSemicolon() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add semicolon spans
+
+        highlightSyntax.debug.start('formatSemicolon', i);
+        highlightSyntax.debug.args('formatSemicolon', i, 'number');
+
         newLine[i] = '<span class="smc">;</span>';
-        // Return index
+
         return i;
       }
 
@@ -750,24 +714,18 @@
        * ---------------------------------------------
        * Private Method (formatColon)
        * ---------------------------------------------
-       * adds colon spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds colon spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatColon(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatColon(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatColon() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add colon spans
+
+        highlightSyntax.debug.start('formatColon', i);
+        highlightSyntax.debug.args('formatColon', i, 'number');
+
         newLine[i] = '<span class="cln">:</span>';
-        // Return index
+
         return i;
       }
 
@@ -775,24 +733,18 @@
        * ---------------------------------------------
        * Private Method (formatPeriod)
        * ---------------------------------------------
-       * adds period spans
-       * param: the current line array index (number)
-       * @type {function(number): number}
+       * @desc Adds period spans.
+       * @param {number} i - The current line index.
+       * @return {number} The last index.
        * @private
        */
       function formatPeriod(i) {
-        // Debuggers
-        DEBUG.HighlightSyntax.call && console.log(
-          'CALL: HighlightSyntax.formatPeriod(%d)', i
-        );
-        DEBUG.HighlightSyntax.fail && console.assert(
-          typeof i === 'number',
-          'FAIL: HighlightSyntax.formatPeriod() ' +
-          'Note: Incorrect argument operand.'
-        );
-        // Add period spans
+
+        highlightSyntax.debug.start('formatPeriod', i);
+        highlightSyntax.debug.args('formatPeriod', i, 'number');
+
         newLine[i] = '<span class="per">.</span>';
-        // Return index
+
         return i;
       }
 
