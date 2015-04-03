@@ -44,9 +44,9 @@
 
 
 /* -----------------------------------------------------------------------------
- * | The Initiation                                                            |
+ * | The Question Manager App Initialization                                   |
  * v ------------------------------------------------------------------------- v
-                                      example/pre-compiled-settings/init.js */
-
+                                                                            */
+  aIV.app(settings);
 
 })();
