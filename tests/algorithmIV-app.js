@@ -2458,8 +2458,8 @@
     if (!config.questionFormat || typeof config.questionFormat !== 'object') {
       config.questionFormat = {};
     }
-    if (!config.prettyCode || typeof config.prettyCode !== 'object') {
-      config.prettyCode = {};
+    if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
+      config.prettifyFormat = {};
     }
     if (!config.showURL || typeof config.showURL !== 'object') {
       if (!!config.showUrl && typeof config.showUrl === 'object') {
@@ -2476,7 +2476,7 @@
     // Setup the properties
     this.searchBar  = new SearchBarConfig(config.searchSettings);
     this.questions  = new QuestionsConfig(config.questionFormat);
-    this.prettifier = new PrettyConfig(config.prettyCode);
+    this.prettifier = new PrettyConfig(config.prettifyFormat);
     this.url        = new UrlConfig(config.showURL);
     this.links      = new LinksConfig(config.showLinks);
 
