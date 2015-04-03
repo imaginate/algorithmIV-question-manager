@@ -4,30 +4,38 @@
    * -----------------------------------------------------
    * @desc An object containing the formatted details of a question.
    * @param {Object} question - The pre-formatted details of the question.
-   * @param {Object<string, boolean>} config - The needed format config.
+   * @param {booleanMap} config - The settings for question formatting.
+   * @param {Sources} sources - The app's sources.
+   * @param {Categories} categories - The app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config) {
+  var QuestionFormat = function(question, config, sources, categories) {
 
-    /**
-     * @type {PrettyCode}
-     * @private
-     */
+    /** @type {{ result: string, lineCount: number }} */
     var code;
 
     /**
      * ---------------------------------------------------
-     * Private Property (QuestionFormat.debug)
+     * Public Property (QuestionFormat.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the QuestionFormat class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('QuestionFormat') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'QuestionFormat',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.group('init', 'coll', 'id= $$, question= $$', question.id, question);
-      this.debug.start('init', question, config);
-      this.debug.args('init', question, 'object', config, 'object');
-    }
+    // Debugging vars
+    var args;
+    args = [ 'init', 'coll' ];
+    args.push('id= $$, question= $$', question.id, question);
+    this.debug.group(args);
+    this.debug.start('init', question, config, sources, categories);
+    args = [ 'init' ];
+    args.push(question, 'object', config, 'booleanMap');
+    args.push(sources, 'object', categories, 'object');
+    this.debug.args(args);
 
     /**
      * ----------------------------------------------- 
@@ -100,42 +108,36 @@
 
     /**
      * ----------------------------------------------- 
-     * Protected Property (QuestionFormat.links)
-     * -----------------------------------------------
-     * @desc This question's links.
-     * @type {links}
-     * @private
-     */
-    var links;
-
-    /**
-     * ----------------------------------------------- 
      * Public Method (QuestionFormat.get)
      * -----------------------------------------------
      * @desc Gets info for a question.
-     * @param {string} part - The name of the part to get.
-     * @return {*}
+     * @param {string} prop - The name of the property to get.
+     * @return {val}
      */
     this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, val>} */
       var details = {
         id      : id,
         source  : source,
         complete: complete,
         mainCat : mainCat,
         subCat  : subCat,
-        solution: solution,
-        links   : links
+        solution: solution
       };
 
-      result = (details[part] !== undefined) ? details[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
+
+      return details[prop];
     };
+    Object.freeze(this.get);
 
-
-    // Set the formats
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';
@@ -147,8 +149,8 @@
     }
 
     // Format the source
-    source = ( (app.sources.len && config.source && question.source) ?
-      app.sources.get('question.source').get('name') : ''
+    source = ( (sources.len && config.source && question.source) ?
+      sources.get(question.source, 'name') : ''
     );
 
     // Format the completion status
@@ -158,27 +160,33 @@
     );
 
     // Format the categories
-    mainCat = {};
-    subCat  = {};
-    if (app.categories.len && config.category) {
+    mainCat = {
+      h3   : {},
+      names: {}
+    };
+    subCat = {
+      h3   : {},
+      names: {}
+    };
+    if (categories.len && config.category) {
 
+      // Format the main category
       if (question.mainCat.length) {
-        // Set main category header
-        mainCat.h3 = 'Main ' +
-        ( (question.mainCat.length > 1) ? 'Categories:' : 'Category:' );
-        // Set main category names
-        mainCat.names = question.mainCat.map(function(/** string */ id) {
-          return app.categories.get(id).get('name');
+        mainCat.h3 = ( (question.mainCat.length > 1) ?
+          'Main Categories:' : 'Main Category:'
+        );
+        mainCat.names = question.mainCat.map(function(/** string */ catID) {
+          return categories.get(catID, 'name');
         });
       }
 
+      // Format the sub category
       if (config.subCat && question.subCat.length) {
-        // Set sub category header
-        subCat.h3 = 'Sub ' +
-        ( (question.subCat.length > 1) ? 'Categories:' : 'Category:' );
-        // Set sub category names
-        subCat.names = question.subCat.map(function(/** string */ id) {
-          return app.categories.get(id).get('name');
+        subCat.h3 = ( (question.subCat.length > 1) ?
+          'Sub Categories:' : 'Sub Category:'
+        );
+        subCat.names = question.subCat.map(function(/** string */ catID) {
+          return categories.get(catID, 'name');
         });
       }
     }
@@ -186,29 +194,13 @@
     // Format the solution
     solution = {};
     if (question.solution) {
-
-      code = new PrettyCode(question.solution);
-
-      solution.code = String(code.result);
-      solution.height = code.lineCount * app.elems.code.li.height;
-      solution.height += app.elems.code.ol.height;
-    }
-
-    // Format the links
-    links = [];
-    if (config.links && question.links.length) {
-
-      question.links.forEach(function(/** string */ data) {
-        if (typeof data.name === 'string' &&
-            typeof data.href === 'string' &&
-            /(^http\:\/\/)|(^https\:\/\/)/.test(data.href)) {
-          links.push(data);
-        }
-      });
+      code = prettify(question.solution);
+      solution.code = code.result;
+      solution.height = code.lineCount;
     }
 
 
-    DEBUG && this.debug.group('init', 'end');
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
