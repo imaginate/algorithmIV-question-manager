@@ -10,23 +10,24 @@
    */
   var Question = function(question, id, outputConfig) {
 
-    var that = this;
-
     /**
      * ---------------------------------------------------
-     * Private Property (Question.debug)
+     * Public Property (Question.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the Question class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('Question') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'Question',
+      turnOnDebuggers: 'args fail'
+    });
 
+    // Debugging vars
     var args;
-    if (DEBUG) {
-      this.debug.start('init', question, id, outputConfig);
-      args = [ 'init' ];
-      args.push(question, 'object', id, 'number', outputConfig, 'boolean');
-      this.debug.args(args);
-    }
+    this.debug.start('init', question, id, outputConfig);
+    args = [ 'init' ];
+    args.push(question, 'object', id, 'number', outputConfig, 'boolean');
+    this.debug.args(args);
 
     /**
      * ----------------------------------------------- 
@@ -133,9 +134,9 @@
      * Public Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
-     * @type {?QuestionFormat}
+     * @type {QuestionFormat}
      */
-    this.format = null;
+    this.format;
 
     /**
      * ----------------------------------------------- 
@@ -144,20 +145,24 @@
      * @desc The question element.
      * @type {elem}
      */
-    this.elem = new QuestionElem(id);
+    this.elem;
 
     /**
      * ----------------------------------------------- 
      * Public Method (Question.get)
      * -----------------------------------------------
      * @desc Gets info for a question.
-     * @param {string} part - The name of the part to get.
-     * @return {*}
+     * @param {string} prop - The name of the property to get.
+     * @return {val}
      */
     this.get = function(part) {
-      /** @private */
-      var result;
-      /** @private */
+
+      // Debugging vars
+      var errorMsg;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, val>} */
       var details = {
         id      : id,
         url     : url,
@@ -173,48 +178,58 @@
         elem    : elem
       };
 
-      result = (details[part] !== undefined) ? details[part] : null;
-      return result;
+      errorMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', values.hasOwnProperty(prop), errorMsg, prop);
+
+      return details[prop];
     };
+    Object.freeze(this.get);
 
 
-    // Set the properties
+    // Setup the question's element
+    this.elem = new QuestionElem(id);
+    Object.freeze(this.elem);
 
+    // Setup the protected properties
     url = '';
-    if (typeof question.url === 'string' && question.url) {
+    if (!!question.url && typeof question.url === 'string') {
       url = question.url.toLowerCase();
       url = url.replace(/[^0-9a-z\-\s]/g, '');
       url = url.replace(/\s/g, '-');
     }
 
-    complete = (question.complete === true);
+    complete = (!!question.complete && question.complete === true);
 
-    source = ( (typeof question.source === 'string' && question.source) ?
+    source = ( (!!question.source && typeof question.source === 'string') ?
       question.source : ''
     );
 
-    mainCat = ( (Array.isArray(question.mainCat) && question.mainCat.length) ?
-      question.mainCat.slice(0) : []
+    mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
+      [] : (question.mainCat.length) ?
+        question.mainCat.slice(0) : []
     );
 
-    subCat = ( (Array.isArray(question.subCat) && question.subCat.length) ?
-      question.subCat.slice(0) : []
+    subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
+      [] : (question.subCat.length) ?
+        question.subCat.slice(0) : []
     );
 
-    links = ( (Array.isArray(question.links) && question.links.length) ?
-      question.links.slice(0) : []
+    links = ( (!question.links || !checkType(question.links, 'objects')) ?
+      [] : (question.links.length) ?
+        question.links.slice(0) : []
     );
 
-    problem = ( (typeof question.problem === 'string' && question.problem) ?
+    problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
     );
 
-    descr = ( (typeof question.descr === 'string' && question.descr) ?
+    descr = ( (!!question.descr && typeof question.descr === 'string') ?
       question.descr : ''
     );
 
-    solution = output = '';
-    if (typeof question.solution === 'function') {
+    solution = '';
+    output = '';
+    if (!!question.solution && typeof question.solution === 'function') {
 
       solution = String(question.solution);
 
@@ -228,7 +243,7 @@
           args.push(id, errorMsg);
           this.debug.fail(args);
 
-          output = '';
+          output = 'The solution returned an error.';
         }
       }
     }
