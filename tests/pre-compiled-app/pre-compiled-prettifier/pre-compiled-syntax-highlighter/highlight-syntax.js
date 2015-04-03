@@ -14,12 +14,12 @@
 /* -----------------------------------------------------------------------------
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
-                     prettifier/syntax-highlighter/highlight-syntax-vars.js */
+                                                   highlight-syntax-vars.js */
 
 /* -----------------------------------------------------------------------------
  * | The Syntax Highlighter Methods                                            |
  * v ------------------------------------------------------------------------- v
-                  prettifier/syntax-highlighter/highlight-syntax-methods.js */
+                                                highlight-syntax-methods.js */
 
       return function(line, i) {
 
