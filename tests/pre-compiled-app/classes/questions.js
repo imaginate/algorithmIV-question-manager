@@ -4,11 +4,12 @@
    * -----------------------------------------------------
    * @desc The questions for this app.
    * @param {objects} questions - The user's questions.
-   * @param {boolean} outputConfig - The config setting for formatting
-   *   the output of a question's solution.
+   * @param {booleanMap} config - The settings for question formatting.
+   * @param {Sources} sources - The app's sources.
+   * @param {Categories} categories - The app's categories.
    * @constructor
    */
-  var Questions = function(questions, outputConfig) {
+  var Questions = function(questions, config, sources, categories) {
 
     /** @type {number} */
     var i;
@@ -31,16 +32,23 @@
       turnOnDebuggers: 'args fail'
     });
 
-    this.debug.group('init', 'coll', 'questions= $$', questions);
-    this.debug.start('init', questions, outputConfig);
-    this.debug.args('init', questions, 'objects', outputConfig, 'boolean');
+    // Debugging vars
+    var args;
+    args = [ 'init', 'coll' ];
+    args.push('questions= $$, config= $$', questions, config);
+    this.debug.group(args);
+    this.debug.start('init', questions, config, sources, categories);
+    args = [ 'init' ];
+    args.push(questions, 'objects', config, 'booleanMap');
+    args.push(sources, 'object', categories, 'object');
+    this.debug.args(args);
 
     /**
      * ----------------------------------------------- 
      * Protected Property (Questions.data)
      * -----------------------------------------------
      * @desc The hash map of question objects (key= url).
-     * @type {?Object<string, question>}
+     * @type {Object<string, Question>}
      */
     var data;
 
@@ -58,7 +66,7 @@
      * Public Method (Questions.list)
      * -----------------------------------------------
      * @desc The array of question objects.
-     * @return {?questions}
+     * @return {questions}
      */
     this.list;
 
@@ -179,7 +187,7 @@
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[id] = new Question(question[i], id, outputConfig);
+      this.list[id] = new Question(question[i], id, config, sources, categories);
       Object.freeze(this.list[id]);
     }
 
@@ -206,39 +214,33 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (Questions.prototype.setFormats)
+   * Public Method (Questions.prototype.addIdsToSearch)
    * -----------------------------------------------------
    * @desc Sets the format for all of the questions.
-   * @type {function()}
+   * @type {function}
    */
-  Questions.prototype.setFormats = function() {
+  Questions.prototype.addIdsToSearch = function() {
 
-    this.debug.start('setFormats');
+    this.debug.start('addIdsToSearch');
 
-    /** @type {Object<string, boolean>} */
+    /** @type {booleanMap} */
     var config;
     /** @type {number} */
     var len;
     /** @type {number} */
     var i;
-    /** @type {Question} */
-    var question;
 
     config = {
-      id      : app.config.questions.get('id'),
-      complete: app.config.questions.get('complete'),
-      source  : app.config.questions.get('source'),
-      category: app.config.questions.get('category'),
-      subCat  : app.config.questions.get('subCat'),
-      links   : app.config.questions.get('links')
+      stage   : app.config.searchBar.get('stage'),
+      source  : app.config.searchBar.get('source'),
+      category: app.config.searchBar.get('category'),
+      subCat  : app.config.searchBar.get('subCat')
     };
-    len = this.len + 1;
 
+    len = this.len + 1;
     i = 0;
     while (++i < len) {
-      question = this.get(i);
-      question.setFormat(config);
-      question.addToSearch(config);
+      this.get(i).addToSearch(config);
     }
   };
 

@@ -5,10 +5,12 @@
    * @desc An object containing the details of a question.
    * @param {Object} question - The details of a new question.
    * @param {number} id - The id for the question.
-   * @param {boolean} outputConfig - The config settings for output.
+   * @param {booleanMap} config - The settings for question formatting.
+   * @param {Sources} sources - The app's sources.
+   * @param {Categories} categories - The app's categories.
    * @constructor
    */
-  var Question = function(question, id, outputConfig) {
+  var Question = function(question, id, config, sources, categories) {
 
     /**
      * ---------------------------------------------------
@@ -24,9 +26,10 @@
 
     // Debugging vars
     var args;
-    this.debug.start('init', question, id, outputConfig);
+    this.debug.start('init', question, id, config, sources, categories);
     args = [ 'init' ];
-    args.push(question, 'object', id, 'number', outputConfig, 'boolean');
+    args.push(question, 'object', id, 'number', config, 'booleanMap');
+    args.push(sources, 'object', categories, 'object');
     this.debug.args(args);
 
     /**
@@ -203,21 +206,42 @@
     source = ( (!!question.source && typeof question.source === 'string') ?
       question.source : ''
     );
+    if ( !sources.get(source, 'name') ) {
+      source = '';
+    }
 
     mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
       [] : (question.mainCat.length) ?
         question.mainCat.slice(0) : []
     );
+    mainCat.forEach(function(/** string */ catID, /** number */ i) {
+      if ( !categories.get(catID, 'name') ) {
+        mainCat.splice(i, 1);
+      }
+    });
+    Object.freeze(mainCat);
 
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
-      [] : (question.subCat.length) ?
+      [] : (mainCat.length && question.subCat.length) ?
         question.subCat.slice(0) : []
     );
+    subCat.forEach(function(/** string */ catID, /** number */ i) {
+      if ( !categories.get(catID, 'name') ) {
+        subCat.splice(i, 1);
+      }
+    });
+    Object.freeze(subCat);
 
     links = ( (!question.links || !checkType(question.links, 'objects')) ?
       [] : (question.links.length) ?
         question.links.slice(0) : []
     );
+    links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
+      if (!linkObj.name || !linkObj.href) {
+        links.splice(i, 1);
+      }
+    });
+    Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
@@ -233,7 +257,7 @@
 
       solution = String(question.solution);
 
-      if (outputConfig) {
+      if (config.output) {
         try {
           output = String( question.solution() );
         }
@@ -247,6 +271,17 @@
         }
       }
     }
+
+    // Setup the question format
+    this.format = new QuestionFormat({
+      id      : id,
+      complete: complete,
+      source  : source,
+      mainCat : mainCat,
+      subCat  : subCat,
+      links   : links,
+      solution: solution
+    }, config, sources, categories);
   };
 
   // Ensure constructor is set to this class.
@@ -254,70 +289,33 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (Question.prototype.setFormat)
-   * -----------------------------------------------------
-   * @desc Sets the format for the question.
-   * @param {Object<string, boolean>} config - The needed format config.
-   */
-  Question.prototype.setFormat = function(config) {
-
-    DEBUG && this.debug.start('setFormat');
-
-    this.format = new QuestionFormat({
-      id      : this.get('id'),
-      complete: this.get('complete'),
-      source  : this.get('source'),
-      mainCat : this.get('mainCat'),
-      subCat  : this.get('subCat'),
-      links   : this.get('links'),
-      solution: this.get('solution')
-    }, config);
-  };
-
-  /**
-   * -----------------------------------------------------
    * Public Method (Question.prototype.addToSearch)
    * -----------------------------------------------------
    * @desc Adds the question id to its matching search properties.
-   * @param {Object<string, boolean>} config - The needed format config.
+   * @param {booleanMap} config - The needed format config.
    */
   Question.prototype.addToSearch = function(config) {
 
-    DEBUG && this.debug.start('addToSearch');
+    this.debug.start('addToSearch');
 
-    /**
-     * @type {number}
-     * @private
-     */
+    /** @type {number} */
     var id;
-    /**
-     * @type {boolean}
-     * @private
-     */
+    /** @type {boolean} */
     var complete;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var source;
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var mainCat;
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var subCat;
 
-    id = this.get('id');
+    id       = this.get('id');
     complete = this.get('complete');
-    source = this.get('source');
-    mainCat = this.get('mainCat');
-    subCat = this.get('subCat');
+    source   = this.get('source');
+    mainCat  = this.get('mainCat');
+    subCat   = this.get('subCat');
 
-    if (config.complete) {
+    if (config.stage) {
 
       if (complete) {
         app.searchBar.ques.stage['com'].push(id);
@@ -349,10 +347,11 @@
    * Public Method (Question.prototype.addElemContent)
    * -----------------------------------------------------
    * @desc Adds the formatted content to the question element.
+   * @type {function}
    */
   Question.prototype.addElemContent = function() {
 
-    DEBUG && this.debug.start('addElemContent');
+    this.debug.start('addElemContent');
 
     this.elem.addContent({
       id      : this.format.get('id'),
