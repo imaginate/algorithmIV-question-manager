@@ -3,7 +3,7 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|num)>} config - The user's
+   * @param {Object<string, (string|num|boolean)>} config - The user's
    *   prettifier config settings.
    * @constructor
    */

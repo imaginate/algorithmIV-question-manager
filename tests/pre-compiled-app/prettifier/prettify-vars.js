@@ -12,9 +12,19 @@
 
     /**
      * ---------------------------------------------
+     * Private Variable (config)
+     * ---------------------------------------------
+     * @desc The config settings.
+     * @type {Object<string, (number|boolean)>}
+     * @private
+     */
+    var config;
+
+    /**
+     * ---------------------------------------------
      * Private Variable (htmlEntity)
      * ---------------------------------------------
-     * @desc The characters to replace with a html entity
+     * @desc The characters to replace with a html entity.
      * @const
      * @type {stringMap}
      * @private

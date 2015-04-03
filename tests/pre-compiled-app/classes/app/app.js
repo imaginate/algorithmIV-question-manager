@@ -135,11 +135,18 @@
     Object.freeze(this.categories);
 
     tmpConfig = {
+      trimSpace   : this.config.prettifier.get('trimSpace'),
+      tabLength   : this.config.prettifier.get('tabLength'),
+      commentLinks: this.config.prettifier.get('commentLinks')
+    };
+    prettify.setConfig(tmpConfig);
+
+    tmpConfig = {
       stage   : this.config.searchBar.get('stage'),
       source  : this.config.searchBar.get('source'),
       category: this.config.searchBar.get('category'),
       subCat  : this.config.searchBar.get('subCat')
-    }
+    };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
 
     tmpConfig = {
@@ -150,7 +157,7 @@
       subCat  : this.config.questions.get('subCat'),
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
-    }
+    };
     this.questions = new Questions(questions, tmpConfig, this.sources, this.categories);
 
     Object.freeze(this.searchBar);

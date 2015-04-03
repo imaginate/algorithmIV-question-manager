@@ -468,7 +468,7 @@
 
         newLine[i] += '</span>';
 
-        if ( app.config.prettifier.get('commentLinks') ) {
+        if (config.commentLinks) {
           formatCommentLinks(start, i);
         }
 
@@ -509,7 +509,7 @@
 
         newLine[i] += '</span>';
 
-        if ( app.config.prettifier.get('commentLinks') ) {
+        if (config.commentLinks) {
           formatCommentLinks(0, i);
         }
 
@@ -530,7 +530,7 @@
         highlightSyntax.debug.start('formatLineComment', i);
         highlightSyntax.debug.args('formatLineComment', i, 'number');
 
-        if ( app.config.prettifier.get('commentLinks') ) {
+        if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
         }
 

@@ -1,5 +1,23 @@
     /**
      * ---------------------------------------------
+     * Public Method (prettify.setConfig)
+     * ---------------------------------------------
+     * @desc Sets the config settings for the prettifier.
+     * @param {Object<string, (number|boolean)>} newConfig - The config
+     *   settings for the prettifier.
+     * @private
+     */
+    prettify.setConfig = function(newConfig) {
+
+      prettify.debug.start('setConfig', newConfig);
+      prettify.debug.args('setConfig', newConfig, 'object');
+
+      config = newConfig;
+      Object.freeze(config);
+    }
+
+    /**
+     * ---------------------------------------------
      * Private Method (prepareLines)
      * ---------------------------------------------
      * @desc Standardizes all line breaks, replaces tabs with whitespaces,
@@ -23,7 +41,7 @@
 
       // Replace all tabs with spaces
       spaces = '';
-      spaceCount = app.config.prettifier.get('tabLength');
+      spaceCount = config.tabLength;
       while (spaceCount--) {
         spaces += ' ';
       }
@@ -118,7 +136,7 @@
       }
 
       // Trim beginning whitespaces
-      frontTrimCount = app.config.prettifier.get('trimSpace');
+      frontTrimCount = config.trimSpace;
       if (line && frontTrimCount) {
 
         trimPart = ( (frontTrimCount < line.length) ?
