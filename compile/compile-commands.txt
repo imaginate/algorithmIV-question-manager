@@ -104,7 +104,14 @@ tests/algorithmIV-tests.js |    |
 ## UNIX Commands
 cd tests/pre-compiled-tests
 sed \
-  ##
+  -e "/public-api.js/ r public-api.js" \
+  -e "/external-api.js/ r external-api.js" \
+  -e "/module-vars.js/ r module-vars.js" \
+  -e "/module-methods.js/ r module-methods.js" \
+  -e "/app.js/ r classes/app.js" \
+  -e "/tests.js/ r classes/tests.js" \
+  -e "/test-data.js/ r classes/test-data.js" \
+  -e "/elems.js/ r classes/elems.js" <skeleton.js>algorithmIV-tests-temp.js
 cd ..
 cp -u pre-compiled-tests/algorithmIV-tests-temp.js algorithmIV-tests.js
 rm -f pre-compiled-tests/algorithmIV-tests-temp.js
@@ -112,7 +119,14 @@ rm -f pre-compiled-tests/algorithmIV-tests-temp.js
 ## MS-DOS Commands
 cd tests\pre-compiled-tests
 sed ^
-  ##
+  -e "/public-api.js/ r public-api.js" ^
+  -e "/external-api.js/ r external-api.js" ^
+  -e "/module-vars.js/ r module-vars.js" ^
+  -e "/module-methods.js/ r module-methods.js" ^
+  -e "/app.js/ r classes\app.js" ^
+  -e "/tests.js/ r classes\tests.js" ^
+  -e "/test-data.js/ r classes\test-data.js" ^
+  -e "/elems.js/ r classes\elems.js" <skeleton.js>algorithmIV-tests-temp.js
 cd ..
 copy /y pre-compiled-tests\algorithmIV-tests-temp.js algorithmIV-tests.js
 del /f pre-compiled-tests\algorithmIV-tests-temp.js
