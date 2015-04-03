@@ -2462,7 +2462,12 @@
       config.prettyCode = {};
     }
     if (!config.showURL || typeof config.showURL !== 'object') {
-      config.showURL = {};
+      if (!!config.showUrl && typeof config.showUrl === 'object') {
+        config.showURL = config.showUrl;
+      }
+      else {
+        config.showURL = {};
+      }
     }
     if (!config.showLinks || typeof config.showLinks !== 'object') {
       config.showLinks = {};
