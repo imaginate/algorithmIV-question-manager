@@ -8,9 +8,13 @@
    * @param {booleanMap} config - The settings for question formatting.
    * @param {Sources} sources - The app's sources.
    * @param {Categories} categories - The app's categories.
+   * @param {RegExp} anonTrim - Identifies anonymous wrappers.
    * @constructor
    */
-  var Question = function(question, id, config, sources, categories) {
+  var Question = function(question, id, config, sources, categories, anonTrim) {
+
+    /** @type {RegExp} */
+    var http;
 
     /**
      * ---------------------------------------------------
@@ -26,10 +30,12 @@
 
     // Debugging vars
     var args;
-    this.debug.start('init', question, id, config, sources, categories);
-    args = [ 'init' ];
-    args.push(question, 'object', id, 'number', config, 'booleanMap');
-    args.push(sources, 'object', categories, 'object');
+    args = [ 'init', question, id, config, sources, categories ];
+    args.push(anonTrim);
+    this.debug.start(args);
+    args = [ 'init', question, 'object', id, 'number' ];
+    args.push(config, 'booleanMap', sources, 'object');
+    args.push(categories, 'object', anonTrim, 'object');
     this.debug.args(args);
 
     /**
@@ -182,7 +188,7 @@
       };
 
       errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', values.hasOwnProperty(prop), errorMsg, prop);
+      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
 
       return details[prop];
     };
@@ -232,15 +238,21 @@
     });
     Object.freeze(subCat);
 
-    links = ( (!question.links || !checkType(question.links, 'objects')) ?
-      [] : (question.links.length) ?
-        question.links.slice(0) : []
+    links = ( (!config.links || !question.links ||
+               !checkType(question.links, 'objects') ||
+               !question.links.length) ?
+      [] : question.links.slice(0)
     );
-    links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
-      if (!linkObj.name || !linkObj.href) {
-        links.splice(i, 1);
-      }
-    });
+    if (links.length) {
+      http = /^https?\:\/\//;
+      links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
+        if (!linkObj.name || !linkObj.href ||
+            !checkTypes([ linkObj.name, linkObj.href ], 'string') ||
+            !http.test(data.href)) {
+          links.splice(i, 1);
+        }
+      });
+    }
     Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
@@ -257,7 +269,11 @@
 
       solution = String(question.solution);
 
-      if (config.output) {
+      if (solution) {
+        solution = solution.replace(anonTrim, '');
+      }
+
+      if (solution && config.output) {
         try {
           output = String( question.solution() );
         }
@@ -279,7 +295,6 @@
       source  : source,
       mainCat : mainCat,
       subCat  : subCat,
-      links   : links,
       solution: solution
     }, config, sources, categories);
   };
@@ -363,15 +378,15 @@
       },
       mainCat : {
         ids  : this.get('mainCat'),
-        h3   : this.format.get('mainCat').h3 || null,
-        names: this.format.get('mainCat').names  || null
+        h3   : this.format.get('mainCat').h3,
+        names: this.format.get('mainCat').names
       },
       subCat  : {
         ids  : this.get('subCat'),
-        h3   : this.format.get('subCat').h3 || null,
-        names: this.format.get('subCat').names  || null
+        h3   : this.format.get('subCat').h3,
+        names: this.format.get('subCat').names
       },
-      links   : this.format.get('links'),
+      links   : this.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
       solution: this.format.get('solution'),
