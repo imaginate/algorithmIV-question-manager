@@ -585,25 +585,14 @@
      */
     function appendProblem(problem, descr) {
 
-      if (DEBUG) {
-        that.debug.start('appendProblem', problem, descr);
-        that.debug.args('appendProblem', problem, 'string', descr, 'string');
-      }
+      this.debug.start('appendProblem', problem, descr);
+      this.debug.args('appendProblem', problem, 'string', descr, 'string');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
 
       div = document.createElement('div');
@@ -612,14 +601,13 @@
 
       div.className = 'problem';
 
-      if (problem) {
-        h3.textContent = 'Problem:';
-        p.innerHTML  = problem;
+      if (testTextContent) {
+        h3.textContent = (problem) ? 'Problem:' : 'Description:';
       }
       else {
-        h3.textContent = 'Description:';
-        p.innerHTML  = descr;
+        h3.innerHTML = (problem) ? 'Problem:' : 'Description:';
       }
+      p.innerHTML = (problem) ? problem : descr;
 
       div.appendChild(h3);
       div.appendChild(p);
@@ -637,50 +625,24 @@
      */
     function appendSolution(solution) {
 
-      if (DEBUG) {
-        that.debug.start('appendSolution', solution);
-        that.debug.args('appendSolution', solution, 'object');
-      }
+      this.debug.start('appendSolution', solution);
+      this.debug.args('appendSolution', solution, 'object');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var contain;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var pre;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var code;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var ol;
-      /**
-       * @type {number}
-       * @private
-       */
+      /** @type {number} */
       var overflow;
-      /**
-       * @type {number}
-       * @private
-       */
+      /** @type {number} */
       var scrollbar;
 
       contain  = document.createElement('div');
@@ -695,7 +657,12 @@
 
       ol.innerHTML = solution.code;
 
-      h3.textContent = 'Solution:';
+      if (testTextContent) {
+        h3.textContent = 'Solution:';
+      }
+      else {
+        h3.innerHTML = 'Solution:';
+      }
 
       solution.height = solution.height * app.elems.code.li.height;
       solution.height += app.elems.code.ol.height;
@@ -736,45 +703,22 @@
      */
     function appendCodeExt(div, overflow) {
 
-      if (DEBUG) {
-        that.debug.start('appendCodeExt', div, overflow);
-        that.debug.args('appendCodeExt', div, 'elem', overflow, 'number');
-      }
+      this.debug.start('appendCodeExt', div, overflow);
+      this.debug.args('appendCodeExt', div, 'elem', overflow, 'number');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var ext;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extClose;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extOpen;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extBG;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extHov;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extHovC;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var extHovO;
 
       ext      = document.createElement('div');
@@ -793,9 +737,16 @@
       extHovC.className  = 'closeExt';
       extHovO.className  = 'openExt';
 
-      extOpen.textContent = 'open';
-      extHovC.textContent = 'Close Extended Code View';
-      extHovO.textContent = 'Extend Code View';  
+      if (testTextContent) {
+        extOpen.textContent = 'open';
+        extHovC.textContent = 'Close Extended Code View';
+        extHovO.textContent = 'Extend Code View';
+      }
+      else {
+        extOpen.innerHTML = 'open';
+        extHovC.innerHTML = 'Close Extended Code View';
+        extHovO.innerHTML = 'Extend Code View';
+      }
 
       extOpen.onmouseover = function() {
         ext.style.opacity = '1';
@@ -807,19 +758,16 @@
 
       extOpen.onclick = function() {
 
-        DEBUG && that.debug.start('extCodeView');
+        events.debug.start('extCodeView');
 
-        /**
-         * @type {number}
-         * @private
-         */
+        /** @type {number} */
         var newWidth;
 
         newWidth = String(code.style.width);
         newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
         newWidth = Number(newWidth);
 
-        if (extOpen.textContent === 'close') {
+        if (extOpen.innerHTML === 'close') {
 
           extClose.style.opacity = '0.0';
 
@@ -831,13 +779,18 @@
           setTimeout(function() {
             extOpen.style.opacity = '0.8';
             setTimeout(function() {
-              extOpen.textContent = 'open';
+              if (testTextContent) {
+                extOpen.textContent = 'open';
+              }
+              else {
+                extOpen.innerHTML = 'open';
+              }
               extHovC.style.display = 'none';
               extHovO.style.display = 'block';
             }, 600);
           }, 400);
         }
-        else if (extOpen.textContent === 'open') {
+        else if (extOpen.innerHTML === 'open') {
 
           extOpen.style.opacity = '0.0';
 
@@ -849,7 +802,12 @@
           setTimeout(function() {
             extClose.style.opacity = '0.8';
             setTimeout(function() {
-              extOpen.textContent = 'close';
+              if (testTextContent) {
+                extOpen.textContent = 'close';
+              }
+              else {
+                extOpen.innerHTML = 'close';
+              }
               extHovO.style.display = 'none';
               extHovC.style.display = 'block';
             }, 600);
@@ -877,25 +835,14 @@
      */
     function appendOutput(output) {
 
-      if (DEBUG) {
-        that.debug.start('appendOutput', output);
-        that.debug.args('appendOutput', output, 'string');
-      }
+      this.debug.start('appendOutput', output);
+      this.debug.args('appendOutput', output, 'string');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
 
       div = document.createElement('div');
@@ -904,7 +851,12 @@
 
       div.className = 'output';
 
-      h3.textContent = 'Output:';
+      if (testTextContent) {
+        h3.textContent = 'Output:';
+      }
+      else {
+        h3.innerHTML = 'Output:';
+      }
 
       p.innerHTML    = output;
 
@@ -924,25 +876,14 @@
      */
     function appendLinks(links) {
 
-      if (DEBUG) {
-        that.debug.start('appendOutput', links);
-        that.debug.args('appendOutput', links, 'objects');
-      }
+      this.debug.start('appendOutput', links);
+      this.debug.args('appendOutput', links, 'objects');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
 
       div = document.createElement('div');
@@ -951,22 +892,29 @@
 
       div.className = 'links';
 
-      h3.textContent = 'Links:';
+      if (testTextContent) {
+        h3.textContent = 'Links:';
+      }
+      else {
+        h3.innerHTML = 'Links:';
+      }
 
       div.appendChild(h3);
       div.appendChild(p);
 
-      links.forEach(function(/** Object */ l) {
-        /**
-         * @type {elem}
-         * @private
-         */
+      links.forEach(function(/** Object */ linkObj) {
+        /** @type {elem} */
         var a;
 
         a = document.createElement('a');
-        a.href = l.href;
+        a.href = linkObj.href;
         a.target = '_blank';
-        a.textContent = l.name;
+        if (testTextContent) {
+          a.textContent = linkObj.name;
+        }
+        else {
+          a.innerHTML = linkObj.name;
+        }
         p.appendChild(a);
       });
 
