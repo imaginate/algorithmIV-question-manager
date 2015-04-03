@@ -10,16 +10,18 @@
 
     /**
      * ---------------------------------------------------
-     * Private Property (QuestionElem.debug)
+     * Public Property (QuestionElem.debug)
      * ---------------------------------------------------
-     * @type {?Debug}
+     * @desc The Debug instance for the QuestionElem class.
+     * @type {Debug}
      */
-    this.debug = (DEBUG) ? new Debug('QuestionElem') : null;
+    this.debug = aIV.debug({
+      classTitle     : 'QuestionElem',
+      turnOnDebuggers: 'args fail'
+    });
 
-    if (DEBUG) {
-      this.debug.start('init', id);
-      this.debug.args('init', id, 'number');
-    }
+    this.debug.start('init', id);
+    this.debug.args('init', id, 'number');
 
     /**
      * ----------------------------------------------- 
@@ -28,7 +30,7 @@
      * @desc The question's root element.
      * @type {elem}
      */
-    this.root = null;
+    this.root;
 
     /**
      * ----------------------------------------------- 
@@ -37,7 +39,7 @@
      * @desc The question's div.info element.
      * @type {elem}
      */
-    this.info = null;
+    this.info;
 
 
     // Setup the elements
@@ -70,13 +72,13 @@
    *   },
    *   mainCat : {
    *     ids  : strings,
-   *     h3   : string,
-   *     names: strings
+   *     h3   : ?string,
+   *     names: ?strings
    *   },
    *   subCat  : {
    *     ids  : strings,
-   *     h3   : string,
-   *     names: strings
+   *     h3   : ?string,
+   *     names: ?strings
    *   },
    *   links   : links,
    *   problem : string,
@@ -90,51 +92,53 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    var that = this;
-
-    if (DEBUG) {
-      this.debug.start('addContent', question);
-      this.debug.args('addContent', question, 'object');
-    }
+    this.debug.start('addContent', question);
+    this.debug.args('addContent', question, 'object');
 
     /** @type {elem} */
-    var root = this.root;
+    var root;
     /** @type {elem} */
-    var info = this.info;
+    var info;
+    /** @type {boolean} */
+    var testTextContent;
+
+    root = this.root;
+    info = this.info;
+    testTextContent = !!document.body.textContent;
 
     // Append all the sections of the question
     // Note: See the below private helper methods for more details
 
     if (question.id) {
-      appendID(question.id, question.url);
+      appendID.call(this, question.id, question.url);
     }
 
     if (question.source.name) {
-      appendSource(question.source);
+      appendSource.call(this, question.source);
     }
 
     if (question.complete) {
-      appendComplete(question.complete);
+      appendComplete.call(this, question.complete);
     }
 
-    if (!!question.mainCat.h3 || !!question.subCat.h3) {
-      appendCategory(question.mainCat, question.subCat);
+    if (question.mainCat.h3 || question.subCat.h3) {
+      appendCategory.call(this, question.mainCat, question.subCat);
     }
 
     if (question.problem || question.descr) {
-      appendProblem(question.problem, question.descr);
+      appendProblem.call(this, question.problem, question.descr);
     }
 
     if (question.solution) {
-      appendSolution(question.solution);
+      appendSolution.call(this, question.solution);
     }
 
     if (question.output) {
-      appendOutput(question.output);
+      appendOutput.call(this, question.output);
     }
 
     if (question.links.length) {
-      appendLinks(question.links);
+      appendLinks.call(this, question.links);
     }
 
 
@@ -143,45 +147,28 @@
      * Private Method (appendID)
      * ---------------------------------------------
      * @desc Appends the question id.
+     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
      * @private
      */
     function appendID(id, url) {
 
-      if (DEBUG) {
-        that.debug.start('appendID', id, url);
-        that.debug.args('appendID', id, 'string', url, 'string');
-      }
+      this.debug.start('appendID', id, url);
+      this.debug.args('appendID', id, 'string', url, 'string');
 
-      /**
-       * @type {boolean}
-       * @private
-       */
+      /** @type {boolean} */
       var config;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var a;
 
-      config = (app.config.get('showLinks') &&
-                app.config.searchBar.links.get('id'));
+      config = app.config.links.get('id');
 
       div = document.createElement('div');
       h3  = document.createElement('h3');
@@ -189,32 +176,50 @@
 
       div.className = 'idContain';
 
-      h3.textContent = 'Question:';
-      p.textContent = id;
+      if (testTextContent) {
+        h3.textContent = 'Question:';
+        if (!config) {
+          p.textContent = id;
+        }
+      }
+      else {
+        h3.innerHTML = 'Question:';
+        if (!config) {
+          p.innerHTML = id;
+        }
+      }
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
 
+      // Add the anchor link
       if (config) {
 
-        p.textContent = '';
-
-        url = url || Number(id);
+        if (!url) {
+          url = Number(id);
+        }
 
         a = document.createElement('a');
         a.href = '/id/' + url;
-        // ADD URL LOGIC HERE ******
-        //a.href = app.url + '/id/' + url;
-        // TO HERE *****************
-        a.textContent = id;
+        if (testTextContent) {
+          a.textContent = id;
+        }
+        else {
+          a.innerHTML = id;
+        }
         a.onclick = function() {
-          DEBUG && debug.group('QuestionElem.id.onclick', 'coll', 'id= $$', id);
+
+          events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
+          events.debug.start('questionID.onclick');
 
           app.moveDisplay(id);
-          // ADD URL LOGIC HERE ******
+          if ( app.config.url.get('id') ) {
+            // ADD URL LOGIC HERE
+          }
 
-          DEBUG && debug.group('QuestionElem.id.onclick', 'end');
+          events.debug.group('questionID.onclick', 'end');
+
           return false;
         };
 
@@ -227,44 +232,28 @@
      * Private Method (appendSource)
      * ---------------------------------------------
      * @desc Appends the question's source.
-     * @param {Object} source - The id and name of the source.
+     * @param {stringMap} source - The id and name of the source.
      * @private
      */
     function appendSource(source) {
 
-      if (DEBUG) {
-        that.debug.start('appendSource', source);
-        that.debug.args('appendSource', source, 'object');
-      }
+      this.debug.start('appendSource', source);
+      this.debug.args('appendSource', source, 'stringMap');
 
-      /**
-       * @type {boolean}
-       * @private
-       */
+      /** @type {boolean} */
       var config;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {string} */
+      var url;
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var a;
 
-      config = (app.config.get('showLinks') &&
-                app.config.searchBar.links.get('source'));
+      config = app.config.links.get('source');
 
       div = document.createElement('div');
       h3  = document.createElement('h3');
@@ -272,36 +261,51 @@
 
       div.className = 'source';
 
-      h3.textContent = 'Source:';
-      p.textContent  = source.name;
+      if (testTextContent) {
+        h3.textContent = 'Source:';
+        if (!config) {
+          p.textContent = source.name;
+        }
+      }
+      else {
+        h3.innerHTML = 'Source:';
+        if (!config) {
+          p.innerHTML = source.name;
+        }
+      }
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
 
+      // Format the anchor link
       if (config) {
 
-        p.textContent = '';
+        url = app.categories.get(source.id, 'url');
 
         a = document.createElement('a');
-        a.href = 'javascript: void(0);';
+        a.href = 'source/' + url;
         a.className = 'dark';
-        a.textContent = source.name;
+        if (testTextContent) {
+          a.textContent = source.name;
+        }
+        else {
+          a.innerHTML = source.name;
+        }
         a.onclick = function() {
+
+          events.debug.start('source.onclick');
+
           if (app.searchBar.vals.source != source.id) {
-            // Debugging
-            var args;
-            if (DEBUG) {
-              args = [ 'QuestionElem.source.onclick' ];
-              args.push('coll', 'source= $$', source);
-              debug.group(args);
-            }
+
+            events.debug.group('source.onclick', 'coll', 'source= $$', source);
 
             app.searchBar.vals.source = source.id;
             app.updateDisplay();
 
-            DEBUG && debug.group('QuestionElem.source.onclick', 'end');
+            events.debug.group('source.onclick', 'end');
           }
+
           return false;
         };
 
@@ -319,25 +323,14 @@
      */
     function appendComplete(complete) {
 
-      if (DEBUG) {
-        that.debug.start('appendComplete', complete);
-        that.debug.args('appendComplete', complete, 'string');
-      }
+      this.debug.start('appendComplete', complete);
+      this.debug.args('appendComplete', complete, 'string');
 
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var div;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var h3;
-      /**
-       * @type {elem}
-       * @private
-       */
+      /** @type {elem} */
       var p;
 
       div = document.createElement('div');
@@ -346,8 +339,14 @@
 
       div.className = 'stage';
 
-      h3.textContent = 'Completed:';
-      p.textContent  = complete;
+      if (testTextContent) {
+        h3.textContent = 'Completed:';
+        p.textContent  = complete;
+      }
+      else {
+        h3.innerHTML = 'Completed:';
+        p.innerHTML = complete;
+      }
 
       info.appendChild(div);
       div.appendChild(h3);
@@ -359,16 +358,15 @@
      * Private Method (appendCategory)
      * ---------------------------------------------
      * @desc Appends the question's categories.
+     * @todo Add url parsing logic.
      * @param {Object} main - The question's main categories.
      * @param {Object} sub - The question's sub categories.
      * @private
      */
     function appendCategory(main, sub) {
 
-      if (DEBUG) {
-        that.debug.start('appendCategory', main, sub);
-        that.debug.args('appendCategory', main, 'object', sub, 'object');
-      }
+      this.debug.start('appendCategory', main, sub);
+      this.debug.args('appendCategory', main, 'object', sub, 'object');
 
       /**
        * @type {boolean}
@@ -448,9 +446,6 @@
             a = document.createElement('a');
             url = app.categories.get(main.ids[i]).get('url');
             a.href = '/category/' + url;
-            // ADD URL LOGIC HERE ******
-            //a.href = app.url + '/category/' + url;
-            // TO HERE *****************
             a.className = 'dark';
             a.textContent = main.names[i];
             a.onclick = function() {
@@ -466,6 +461,8 @@
                 app.searchBar.vals.mainCat = main.ids[i];
                 app.searchBar.updateSubCatOpts();
                 app.updateDisplay();
+
+                /* -- ADD URL LOGIC HERE -- */
 
                 DEBUG && debug.group('QuestionElem.mainCat.onclick', 'end');
               }
@@ -520,9 +517,6 @@
             a = document.createElement('a');
             url = app.categories.get(sub.ids[i]).get('url');
             a.href = '/category/' + subParent.url + '/' + url;
-            // ADD URL LOGIC HERE ******
-            //a.href = app.url + '/category/' + subParent.url + '/' + url;
-            // TO HERE *****************
             a.className = 'dark';
             a.textContent = sub.names[i];
             a.onclick = function() {
@@ -545,6 +539,8 @@
                 else {
                   app.searchBar.vals.subCat = sub.ids[i];
                 }
+
+                /* -- ADD URL LOGIC HERE -- */
 
                 // Finish the display update
                 app.updateDisplay();
@@ -686,6 +682,8 @@
 
       h3.textContent = 'Solution:';
 
+      solution.height = solution.height * app.elems.code.li.height;
+      solution.height += app.elems.code.ol.height;
       div.style.height = solution.height + 'px';
 
       contain.appendChild(h3);
