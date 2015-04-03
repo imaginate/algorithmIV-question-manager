@@ -20,8 +20,7 @@
      * ---------------------------------------------
      * Private Method (prepareLines)
      * ---------------------------------------------
-     * @desc Standardizes all line breaks, replaces tabs with whitespaces,
-     *   and trims the anonymous function wrapper.
+     * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
      * @return {strings}
      * @private
@@ -48,9 +47,6 @@
       if (spaces) {
         solution = solution.replace(/\t/g, '  ');
       }
-
-      // Trim the anonymous function
-      solution = solution.replace(/^function\s?\(\)\s?\{\n|\n\}\;$/g, '');
 
       return solution.split('\n');
     }
