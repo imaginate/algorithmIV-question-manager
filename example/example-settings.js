@@ -16,7 +16,7 @@
    *   [Algorithm IV's online documentation]{@link algorithmiv.com/docs/start}.
    * @type {Object}
    */
-  settings = {};
+  var settings = {};
 
 
 /* -----------------------------------------------------------------------------
