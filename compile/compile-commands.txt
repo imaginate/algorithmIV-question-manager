@@ -117,6 +117,34 @@ cd ..
 copy /y pre-compiled-tests\algorithmIV-tests-temp.js algorithmIV-tests.js
 del /f pre-compiled-tests\algorithmIV-tests-temp.js
 
+----------------------------------------------------------------
+COMPILE EXAMPLE             |
+--------------------------- |    |
+File:                       |    |
+example/example-settings.js |    |
+-----------------------------    v
+
+## UNIX Commands
+cd example/pre-compiled-settings
+sed \
+  -e "/configuration.js/ r configuration.js" \
+  -e "/sources.js/ r sources.js" \
+  -e "/categories.js/ r categories.js" \
+  -e "/questions.js/ r questions.js" <skeleton.js> example-settings-temp.js
+cd ..
+cp -u pre-compiled-settings/example-settings-temp.js example-settings.js
+rm -f pre-compiled-settings/example-settings-temp.js
+
+## MS-DOS Commands
+cd example\pre-compiled-settings
+sed ^
+  -e "/configuration.js/ r configuration.js" ^
+  -e "/sources.js/ r sources.js" ^
+  -e "/categories.js/ r categories.js" ^
+  -e "/questions.js/ r questions.js" <skeleton.js> example-settings-temp.js
+cd ..
+copy /y pre-compiled-settings\example-settings-temp.js example-settings.js
+del /f pre-compiled-settings\example-settings-temp.js
 
 ----------------------------------------------------------------
 COMPILE SRC             |
