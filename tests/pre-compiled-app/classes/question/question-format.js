@@ -73,8 +73,8 @@
      * -----------------------------------------------
      * @desc This question's main categories.
      * @type {{
-     *   h3   : string,
-     *   names: strings
+     *   h3   : ?string,
+     *   names: ?strings
      * }}
      * @private
      */
@@ -86,8 +86,8 @@
      * -----------------------------------------------
      * @desc This question's sub categories.
      * @type {{
-     *   h3   : string,
-     *   names: strings
+     *   h3   : ?string,
+     *   names: ?strings
      * }}
      * @private
      */
@@ -161,12 +161,12 @@
 
     // Format the categories
     mainCat = {
-      h3   : {},
-      names: {}
+      h3   : null,
+      names: null
     };
     subCat = {
-      h3   : {},
-      names: {}
+      h3   : null,
+      names: null
     };
     if (categories.len && config.category) {
 
@@ -198,6 +198,10 @@
       solution.code = code.result;
       solution.height = code.lineCount;
     }
+
+    Object.freeze(mainCat);
+    Object.freeze(subCat);
+    Object.freeze(solution);
 
 
     this.debug.group('init', 'end');
