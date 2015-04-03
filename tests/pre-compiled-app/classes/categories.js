@@ -65,7 +65,7 @@
      *   state it here.
      * @return {(Category|string|nums)}
      */
-    this.get = function(id) {
+    this.get = function(id, prop) {
 
       // Debugging vars
       var errorMsg;

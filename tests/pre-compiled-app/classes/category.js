@@ -53,7 +53,7 @@
      * @param {string} prop - The name of the detail to get.
      * @return {(string|nums)}
      */
-    this.get = function() {
+    this.get = function(prop) {
 
       // Debugging vars
       var errorMsg;

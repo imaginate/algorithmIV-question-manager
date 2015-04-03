@@ -48,10 +48,10 @@
      * Public Method (Source.get)
      * -----------------------------------------------
      * @desc Gets a detail for the source.
-     * @param {string} part - The name of the detail to get.
+     * @param {string} prop - The name of the property to get.
      * @return {(string|nums)}
      */
-    this.get = function() {
+    this.get = function(prop) {
 
       // Debugging vars
       var errorMsg;
