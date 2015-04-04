@@ -415,7 +415,6 @@
     names.push(name);
 
     // Add the remaining keys and their names in order
-    ++i;
     while (i--) {
       id   = ids[i];
       name = data[id].toLowerCase();
