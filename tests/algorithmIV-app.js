@@ -5066,6 +5066,7 @@
 
     // Debugging vars
     var args;
+    this.debug.group('init', 'coll', 'questionID= $$', id);
     args = [ 'init', question, id, config, sources, categories ];
     args.push(anonTrim);
     this.debug.start(args);
@@ -5333,6 +5334,9 @@
       subCat  : subCat,
       solution: solution
     }, config, sources, categories);
+
+
+    this.debug.group('init', 'end');
   };
 
   // Ensure constructor is set to this class.
