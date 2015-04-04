@@ -11,6 +11,23 @@
    */
   var prettify = (function() {
 
+    var prettify = function(solution) {
+
+      prettify.debug.group('init', 'coll', 'solution= $$', solution);
+      prettify.debug.start('init', solution);
+      prettify.debug.args('init', solution, 'string');
+
+      /** @type {{ result: string, lineCount: number }} */
+      var result;
+
+      // Format the solution
+      result = applyFormatting( prepareLines(solution) );
+
+      prettify.debug.group('init', 'end');
+
+      return result;
+    };
+
 /* -----------------------------------------------------------------------------
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
@@ -22,12 +39,10 @@
      * @desc The Debug instance for the prettifier.
      * @type {Debug}
      */
-    var prettify = {
-      debug: aIV.debug({
-        classTitle     : 'prettify',
-        turnOnDebuggers: 'args fail'
-      })
-    };
+    prettify.debug = aIV.debug({
+      classTitle     : 'prettify',
+      turnOnDebuggers: 'args fail'
+    });
 
     /**
      * ---------------------------------------------
@@ -1876,20 +1891,5 @@
       };
     })();
 
-    return function(solution) {
-
-      prettify.debug.group('init', 'coll', 'solution= $$', solution);
-      prettify.debug.start('init', solution);
-      prettify.debug.args('init', solution, 'string');
-
-      /** @type {{ result: string, lineCount: number }} */
-      var result;
-
-      // Format the solution
-      result = applyFormatting( prepareLines(solution) );
-
-      prettify.debug.group('init', 'end');
-
-      return result;
-    };
+    return prettify;
   })();
