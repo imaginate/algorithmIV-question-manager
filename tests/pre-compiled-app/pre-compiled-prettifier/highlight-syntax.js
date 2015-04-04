@@ -455,7 +455,7 @@
         /** @type {boolean} */
         var propFollows;
 
-        name = '_' + orgLine[i];
+        name = '_' + orgLine[i] + '_';
 
         while (true) {
           ++i;
@@ -940,7 +940,7 @@
           keyClassName = keywordsCategories[catID];
 
           // Special case for the function keyword
-          if (identifier.name === '_function' &&
+          if (identifier.name === '_function_' &&
               (orgLine[identifier.endIndex + 1] === '(' ||
                (orgLine[identifier.endIndex + 1] === ' ' &&
                 orgLine[identifier.endIndex + 2] === '('))) {
