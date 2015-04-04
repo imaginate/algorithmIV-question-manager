@@ -73,7 +73,7 @@
     // Debugging vars
     var errorMsg, failCheck;
     debug.start('checkType', val, type);
-    debug.args('checkType', types, 'string');
+    debug.args('checkType', type, 'string');
     // Error message for checking the type value of each input
     errorMsg = 'Error: A given type was the wrong value. The incorrect ';
     errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
@@ -97,7 +97,7 @@
 
       cleanType = type.replace(/\!|\=/g, '');
 
-      failCheck = !regexps.types.all.test(cleanType);
+      failCheck = regexps.types.all.test(cleanType);
       debug.fail('checkType', failCheck, errorMsg, type);
 
       // Handle undefined val
@@ -257,7 +257,7 @@
 
         cleanType = type.replace(/\!|\=/g, '');
 
-        failCheck = !regexps.types.all.test(cleanType);
+        failCheck = regexps.types.all.test(cleanType);
         debug.fail('checkType', failCheck, errorMsg, type);
 
         // Handle undefined val
