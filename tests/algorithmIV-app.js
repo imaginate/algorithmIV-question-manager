@@ -3765,7 +3765,7 @@
         subIds = null;
         if (!!categories.sub[id]) {
           subIds = Object.keys(categories.sub[id]);
-          if (subIds.length) {
+          if (subIds && subIds.length) {
             subIds = sortKeys(subIds, categories.sub[id]);
           }
         }
@@ -3775,7 +3775,7 @@
         Object.freeze(data[id]);
 
         // Add the sub categories to the hash map
-        if (subIds.length) {
+        if (subIds && subIds.length) {
           subIds.forEach(function(/** string */ subId) {
             data[id] = new Category(categories.sub[id][subId]);
             Object.freeze(data[id]);
