@@ -4743,7 +4743,7 @@
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[id] = new Question(question[i], id, config, sources, categories, anonTrim);
+      this.list[id] = new Question(questions[i], id, config, sources, categories, anonTrim);
       Object.freeze(this.list[id]);
     }
 
