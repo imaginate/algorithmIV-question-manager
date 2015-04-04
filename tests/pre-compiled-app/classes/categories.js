@@ -102,6 +102,7 @@
     // Setup the properties
     this.ids = Object.keys(categories.main);
     this.len = this.ids.length;
+    data = {};
 
     if (this.len) {
 
@@ -135,6 +136,7 @@
     }
 
     Object.freeze(this.ids);
+    Object.freeze(data);
 
 
     this.debug.group('init', 'end');
