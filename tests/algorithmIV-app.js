@@ -756,6 +756,11 @@
      * @type {num}
      * @private
      */
+    var i;
+    /**
+     * @type {num}
+     * @private
+     */
     var len;
     /**
      * @type {num}
