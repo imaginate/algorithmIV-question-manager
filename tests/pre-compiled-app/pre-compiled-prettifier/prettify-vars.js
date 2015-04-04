@@ -5,10 +5,12 @@
      * @desc The Debug instance for the prettifier.
      * @type {Debug}
      */
-    prettify.debug = aIV.debug({
-      classTitle     : 'prettify',
-      turnOnDebuggers: 'args fail'
-    });
+    var prettify = {
+      debug: aIV.debug({
+        classTitle     : 'prettify',
+        turnOnDebuggers: 'args fail'
+      })
+    };
 
     /**
      * ---------------------------------------------

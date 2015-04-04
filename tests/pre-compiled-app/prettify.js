@@ -22,10 +22,12 @@
      * @desc The Debug instance for the prettifier.
      * @type {Debug}
      */
-    prettify.debug = aIV.debug({
-      classTitle     : 'prettify',
-      turnOnDebuggers: 'args fail'
-    });
+    var prettify = {
+      debug: aIV.debug({
+        classTitle     : 'prettify',
+        turnOnDebuggers: 'args fail'
+      })
+    };
 
     /**
      * ---------------------------------------------
@@ -881,10 +883,12 @@
        * @desc The Debug instance for the syntax highlighter.
        * @type {Debug}
        */
-      highlightSyntax.debug = aIV.debug({
-        classTitle     : 'highlightSyntax',
-        turnOnDebuggers: 'args fail'
-      });
+      var highlightSyntax = {
+        debug: aIV.debug({
+          classTitle     : 'highlightSyntax',
+          turnOnDebuggers: 'args fail'
+        })
+      };
 
       /**
        * ---------------------------------------------
