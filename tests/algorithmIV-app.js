@@ -4120,7 +4120,7 @@
 
         // Add the sub categories names and ids
         subs = mainCat.get('subs');
-        if (subs.length) {
+        if (subs && subs.length) {
           this.ids.subCat[id] = subs.slice(0).unshift('all');
           this.opts.subCat[id] = [];
           subs.forEach(function(/** string */ id) {
