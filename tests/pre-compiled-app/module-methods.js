@@ -213,8 +213,8 @@
 
     // Debugging vars
     var errorMsg, failCheck;
-    debug.start('checkType', vals, types);
-    debug.args('checkType', vals, 'array', types, 'string|strings');
+    debug.start('checkTypes', vals, types);
+    debug.args('checkTypes', vals, 'array', types, 'string|strings');
 
     /**
      * @type {val}
@@ -231,7 +231,7 @@
     errorMsg = 'Error: The length of the arguments to be checked ';
     errorMsg += 'were not the same. vals= $$, types= $$';
     failCheck = (vals.length !== types.length);
-    debug.fail('checkType', failCheck, errorMsg, vals, types);
+    debug.fail('checkTypes', failCheck, errorMsg, vals, types);
 
     // Error message for checking the type value of each input
     errorMsg = 'Error: A given type was the wrong value. The incorrect ';
@@ -258,7 +258,7 @@
         cleanType = type.replace(/\!|\=/g, '');
 
         failCheck = regexps.types.all.test(cleanType);
-        debug.fail('checkType', failCheck, errorMsg, type);
+        debug.fail('checkTypes', failCheck, errorMsg, type);
 
         // Handle undefined val
         if (val === undefined) {
