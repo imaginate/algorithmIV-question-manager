@@ -32,10 +32,19 @@
    */
   App.prototype.runTests = function() {
 
+    /** @type {Object} */
+    var body;
+
+    body = document.body;
+
     this.elems.ui.style.opacity = '0';
 
     setTimeout(function() {
-      document.body.removeChild(app.elems.root);
+      // Remove the body's children
+      while (body.firstChild) {
+        body.removeChild(body.firstChild);
+      }
+      aIV.debug.setConfig({ turnOnDebuggers: 'args fail' });
       Tests.runApp();
     }, 500);
   };
