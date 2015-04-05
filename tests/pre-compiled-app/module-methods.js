@@ -230,7 +230,7 @@
 
     errorMsg = 'Error: The length of the arguments to be checked ';
     errorMsg += 'were not the same. vals= $$, types= $$';
-    failCheck = (vals.length !== types.length);
+    failCheck = (vals.length === types.length);
     debug.fail('checkTypes', failCheck, errorMsg, vals, types);
 
     // Error message for checking the type value of each input
