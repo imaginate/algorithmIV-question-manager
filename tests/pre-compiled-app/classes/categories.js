@@ -75,7 +75,10 @@
       errorMsg = 'Error: The given category does not exist. catID= $$';
       this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
 
-      return (!!prop) ? data[id].get(prop) : data[id];
+      return ( ( !data.hasOwnProperty(id) ) ?
+        false : (!!prop) ?
+          data[id].get(prop) : data[id]
+      );
     };
     Object.freeze(this.get);
 
@@ -110,26 +113,26 @@
       this.ids = sortKeys(this.ids, categories.main);
 
       // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
+      this.ids.forEach(function(/** string */ mainId) {
 
         // Save and sort the sub category ids if they exist
         subIds = null;
-        if (!!categories.sub[id]) {
-          subIds = Object.keys(categories.sub[id]);
+        if ( categories.sub.hasOwnProperty(mainId) ) {
+          subIds = Object.keys(categories.sub[ mainId ]);
           if (subIds && subIds.length) {
-            subIds = sortKeys(subIds, categories.sub[id]);
+            subIds = sortKeys(subIds, categories.sub[ mainId ]);
           }
         }
 
         // Add main category to the hash map
-        data[id] = new Category(categories.main[id], subIds);
-        Object.freeze(data[id]);
+        data[ mainId ] = new Category(categories.main[ mainId ], subIds);
+        Object.freeze(data[ mainId ]);
 
         // Add the sub categories to the hash map
         if (subIds && subIds.length) {
           subIds.forEach(function(/** string */ subId) {
-            data[id] = new Category(categories.sub[id][subId]);
-            Object.freeze(data[id]);
+            data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
+            Object.freeze(data[ subId ]);
           });
         } 
       });

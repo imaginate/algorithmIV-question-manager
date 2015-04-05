@@ -67,9 +67,7 @@
         ids : function() {
           return Object.freeze( ids.slice(0) );
         },
-        subs: function() {
-          return (subs) ? Object.freeze( subs.slice(0) ) : null;
-        }
+        subs: function() { return subs; }
       };
 
       errorMsg = 'Error: The given property does not exist. property= $$';
@@ -109,7 +107,7 @@
       url = url.replace(/\s/g, '-');
     }
     ids = [];
-    subs = subs || null;
+    subs = (!!subs) ? Object.freeze(subs) : null;
   };
 
   // Ensure constructor is set to this class.

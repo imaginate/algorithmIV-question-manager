@@ -229,7 +229,7 @@
     Object.freeze(mainCat);
 
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
-      [] : (mainCat.length && question.subCat.length) ?
+      [] : (question.subCat.length) ?
         question.subCat.slice(0) : []
     );
     subCat.forEach(function(/** string */ catID, /** number */ i) {
