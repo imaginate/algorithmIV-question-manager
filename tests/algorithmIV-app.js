@@ -885,8 +885,10 @@
 
     return function(str) {
 
+      debug.group('trimFunctionWrapper', 'coll');
       debug.start('trimFunctionWrapper', str);
       debug.args('trimFunctionWrapper', str, 'string');
+      debug.group('trimFunctionWrapper', 'end');
 
       return str.replace(anonTrim, '');
     };
