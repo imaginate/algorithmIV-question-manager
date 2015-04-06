@@ -277,6 +277,23 @@
 
 
 /* -----------------------------------------------------------------------------
+ * | The Resources                                                             |
+ * v ------------------------------------------------------------------------- v
+                                 example/pre-compiled-settings/resources.js */
+  /**
+   * -----------------------------------------------
+   * The Resources
+   * -----------------------------------------------
+   * @desc An object property of settings that contains all of the JSON
+   *   resources that are made available for use in the questions via the
+   *   public method aIV.app.getResource(resourceName). For more details see the
+   *   [online documentation for resources]{@link algorithmiv.com/docs/resources}.
+   * @type {(string|Array<string>)}
+   */
+  settings.resources = 'words';
+
+
+/* -----------------------------------------------------------------------------
  * | The Questions                                                             |
  * v ------------------------------------------------------------------------- v
                                  example/pre-compiled-settings/questions.js */
@@ -1189,7 +1206,13 @@
      *  - See [Copyright Details](http://cfajohnson.com/wordfinder/UKACD17.shtml)
      */
 
-    // A hash map of letter to English words
+    /**
+     * A hash map of letter to English words.
+     * @type {Object<string, Array<string>>}
+     * @example
+     * var words = { 'letter': [ 'word', ... ], ... };
+     */
+    var words;
     // An array of all the string's letters and an
     //   indicator of how many duplicates exist
     // A trie of words with a max length of 4
@@ -1198,16 +1221,14 @@
     // The input string
     // The arborescence of the string's characters
     // The resulting possible words from the string
-    var words, letters, wordTrie, string, graph, results;
+    var letters, wordTrie, string, graph, results;
 
     // Setup variables
-    words = {
-      // 'letter': [ 'word', ...]
-    };
+    words = Object.freeze( aIV.app.getResource('words') );
     letters = {
       list: [],
       dupl: 0
-    }
+    };
     wordTrie = {
       // 'current word part': {
       //   isWord: true||false,
@@ -1221,23 +1242,6 @@
       kids: []
     };
     results = [];
-
-    // Download the json dictionary
-    function makeAjaxCall() {
-      // Contains the ajax call
-      var http;
-
-      http = new XMLHttpRequest();
-      http.onreadystatechange = function() {
-        // If (ajax finished)
-        if (http.readyState === 4 && http.status === 200) {
-          // Sanitize and set the words list
-          words = JSON.parse(http.responseText);
-        }
-      };
-      http.open('GET', 'resources/words.json', false);
-      http.send();
-    }
 
     // Removes string's duplicate letters
     function setLetters() {
@@ -1450,11 +1454,8 @@
       backtrack(graph);
     }
 
-    // Download dictionary, create trie of words,
-    //   create arborescence of input string
-    //   characters, find the possible words, and
-    //   return the results
-    makeAjaxCall();
+    // Create a trie of the words, create an arborescence of the input string
+    //   characters, find the possible words, and return the results
     setLetters();
     createWordTrie();
     createGraph();

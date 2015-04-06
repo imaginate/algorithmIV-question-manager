@@ -142,9 +142,10 @@ example/example-settings.js |    |
 cd example/pre-compiled-settings
 sed \
   -e "/configuration.js/ r configuration.js" \
-  -e "/sources.js/ r sources.js" \
+  -e "/\/sources.js/ r sources.js" \
   -e "/categories.js/ r categories.js" \
-  -e "/questions.js/ r questions.js" <skeleton.js> example-settings-temp.js
+  -e "/questions.js/ r questions.js" \
+  -e "/resources.js/ r resources.js" <skeleton.js> example-settings-temp.js
 cd ..
 cp -u pre-compiled-settings/example-settings-temp.js example-settings.js
 rm -f pre-compiled-settings/example-settings-temp.js
@@ -153,9 +154,10 @@ rm -f pre-compiled-settings/example-settings-temp.js
 cd example\pre-compiled-settings
 sed ^
   -e "/configuration.js/ r configuration.js" ^
-  -e "/sources.js/ r sources.js" ^
+  -e "/\/sources.js/ r sources.js" ^
   -e "/categories.js/ r categories.js" ^
-  -e "/questions.js/ r questions.js" <skeleton.js> example-settings-temp.js
+  -e "/questions.js/ r questions.js" ^
+  -e "/resources.js/ r resources.js" <skeleton.js> example-settings-temp.js
 cd ..
 copy /y pre-compiled-settings\example-settings-temp.js example-settings.js
 del /f pre-compiled-settings\example-settings-temp.js
