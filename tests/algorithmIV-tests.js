@@ -3345,7 +3345,7 @@
     setTimeout(function() {
       // Remove the body's children
       while (document.body.firstChild) {
-        document.body.removeChild(body.firstChild);
+        document.body.removeChild(document.body.firstChild);
       }
       aIV.debug.setConfig({ turnOnDebuggers: 'args fail' });
       Tests.runApp();
