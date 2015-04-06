@@ -6667,10 +6667,7 @@
      * @desc The Debug instance for the prettifier.
      * @type {Debug}
      */
-    prettify.debug = aIV.debug({
-      classTitle     : 'prettify',
-      turnOnDebuggers: 'args fail'
-    });
+    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------
@@ -6811,6 +6808,8 @@
       jqu: 'jquKey'  // jQuery Objects
     };
     Object.freeze(keywordCategories);
+
+    prettify.debug.group('makeKeywordObjects', 'coll');
 
     /**
      * ---------------------------------------------
@@ -7276,6 +7275,8 @@
     keywords._ImageData.props._height = makePropObj('');
     keywords._ImageData.props._width  = makePropObj('');
     Object.freeze(keywords._ImageData.props);
+
+    prettify.debug.group('makeKeywordObjects', 'end');
 
 /* -----------------------------------------------------------------------------
  * | The Prettifier Methods                                                    |
