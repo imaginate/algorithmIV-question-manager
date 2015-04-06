@@ -7535,6 +7535,23 @@
      */
     var highlightSyntax = (function() {
 
+      var highlightSyntax = function(line, i) {
+
+        // Debugging vars
+        var msg;
+        msg = 'lineNumber= $$';
+        highlightSyntax.debug.group('init', 'coll', msg, i);
+        highlightSyntax.debug.start('init', line, i);
+        highlightSyntax.debug.args('init', line, 'string', i, 'number');
+
+        prepareLine(line);
+        formatLine();
+
+        highlightSyntax.debug.group('init', 'end');
+
+        return newLine.join('');
+      };
+
 /* -----------------------------------------------------------------------------
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
@@ -7546,12 +7563,7 @@
        * @desc The Debug instance for the syntax highlighter.
        * @type {Debug}
        */
-      var highlightSyntax = {
-        debug: aIV.debug({
-          classTitle     : 'highlightSyntax',
-          turnOnDebuggers: 'args fail'
-        })
-      };
+      highlightSyntax.debug = aIV.debug('highlightSyntax');
 
       /**
        * ---------------------------------------------
@@ -7697,8 +7709,8 @@
 
         --i;
         while (++i < lineLen) {
-          format = ( ( router.hasOwnProperty(orgline[i]) ) ?
-            router[ orgline[i] ] : identifierStart.test(orgline[i]) ?
+          format = ( ( router.hasOwnProperty(orgLine[i]) ) ?
+            router[ orgLine[i] ] : identifierStart.test(orgLine[i]) ?
               formatIdentifier : formatMisc
           );
           i = format(i);
@@ -8521,22 +8533,7 @@
         return i;
       }
 
-      return function(line, i) {
-
-        // Debugging vars
-        var msg;
-        msg = 'lineNumber= $$';
-        highlightSyntax.debug.group('init', 'coll', msg, i);
-        highlightSyntax.debug.start('init', line, i);
-        highlightSyntax.debug.args('init', line, 'string', i, 'number');
-
-        prepareLine(line);
-        formatLine();
-
-        highlightSyntax.debug.group('init', 'end');
-
-        return newLine.join('');
-      };
+      return highlightSyntax;
     })();
 
     return prettify;

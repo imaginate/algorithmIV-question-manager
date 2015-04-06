@@ -11,17 +11,7 @@
      */
     var highlightSyntax = (function() {
 
-/* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Vars                                               |
- * v ------------------------------------------------------------------------- v
-                                                   highlight-syntax-vars.js */
-
-/* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Methods                                            |
- * v ------------------------------------------------------------------------- v
-                                                highlight-syntax-methods.js */
-
-      return function(line, i) {
+      var highlightSyntax = function(line, i) {
 
         // Debugging vars
         var msg;
@@ -37,4 +27,16 @@
 
         return newLine.join('');
       };
+
+/* -----------------------------------------------------------------------------
+ * | The Syntax Highlighter Vars                                               |
+ * v ------------------------------------------------------------------------- v
+                                                   highlight-syntax-vars.js */
+
+/* -----------------------------------------------------------------------------
+ * | The Syntax Highlighter Methods                                            |
+ * v ------------------------------------------------------------------------- v
+                                                highlight-syntax-methods.js */
+
+      return highlightSyntax;
     })();

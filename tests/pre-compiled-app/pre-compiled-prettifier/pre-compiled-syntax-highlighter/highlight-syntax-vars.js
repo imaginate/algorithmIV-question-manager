@@ -5,12 +5,7 @@
        * @desc The Debug instance for the syntax highlighter.
        * @type {Debug}
        */
-      var highlightSyntax = {
-        debug: aIV.debug({
-          classTitle     : 'highlightSyntax',
-          turnOnDebuggers: 'args fail'
-        })
-      };
+      highlightSyntax.debug = aIV.debug('highlightSyntax');
 
       /**
        * ---------------------------------------------

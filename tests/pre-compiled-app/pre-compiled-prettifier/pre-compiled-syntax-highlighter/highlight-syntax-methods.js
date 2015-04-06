@@ -48,8 +48,8 @@
 
         --i;
         while (++i < lineLen) {
-          format = ( ( router.hasOwnProperty(orgline[i]) ) ?
-            router[ orgline[i] ] : identifierStart.test(orgline[i]) ?
+          format = ( ( router.hasOwnProperty(orgLine[i]) ) ?
+            router[ orgLine[i] ] : identifierStart.test(orgLine[i]) ?
               formatIdentifier : formatMisc
           );
           i = format(i);
