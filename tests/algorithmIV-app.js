@@ -174,7 +174,7 @@
     _initialized = true;
 
     // Check the settings arg
-    if (!settings || !checkType(settings, 'objectMap')) {
+    if (!settings || !checkType(settings, 'object')) {
       settings = {};
     }
 
