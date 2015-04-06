@@ -3340,17 +3340,12 @@
    */
   App.prototype.runTests = function() {
 
-    /** @type {Object} */
-    var body;
-
-    body = document.body;
-
     this.elems.ui.style.opacity = '0';
 
     setTimeout(function() {
       // Remove the body's children
-      while (body.firstChild) {
-        body.removeChild(body.firstChild);
+      while (document.body.firstChild) {
+        document.body.removeChild(body.firstChild);
       }
       aIV.debug.setConfig({ turnOnDebuggers: 'args fail' });
       Tests.runApp();
