@@ -13,7 +13,12 @@
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes the aIV question management app.
-   * @param {?Object} settings - The app's settings.
+   * @param {objectMap} settings - The app's settings.
+   * @param {objectMap=} settings.config - The app's configuration.
+   * @param {stringMap=} settings.sources - The app's sources.
+   * @param {(objectMap|stringMap)=} settings.categories - The app's categories.
+   * @param {objects} settings.questions - The app's questions.
+   * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
   aIV.app = core.init;
