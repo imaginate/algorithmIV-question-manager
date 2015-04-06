@@ -5,10 +5,7 @@
    * @desc The Debug instance for the module's public methods.
    * @type {Debug}
    */
-  var debug = aIV.debug({
-    classTitle     : 'module',
-    turnOnDebuggers: 'args fail'
-  });
+  var debug = aIV.debug('module');
 
   /**
    * ----------------------------------------------- 
@@ -17,12 +14,7 @@
    * @desc The Debug instance for the app's DOM events.
    * @type {{ debug: Debug }}
    */
-  var events = {
-    debug: aIV.debug({
-      classTitle     : 'Events',
-      turnOnDebuggers: 'args fail'
-    })
-  };
+  var events = { debug: aIV.debug('Events') };
 
   /**
    * ----------------------------------------------- 
@@ -31,12 +23,16 @@
    * @desc The Debug instance for the app's polyfilled methods.
    * @type {{ debug: Debug }}
    */
-  var polyfill = {
-    debug: aIV.debug({
-      classTitle     : 'polyfill',
-      turnOnDebuggers: 'args fail'
-    })
-  };
+  var polyfill = { debug: aIV.debug('polyfill') };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Variable (resources)
+   * -----------------------------------------------
+   * @desc The resources for the app.
+   * @type {Object}
+   */
+  var resources = {};
 
   /**
    * ----------------------------------------------- 
