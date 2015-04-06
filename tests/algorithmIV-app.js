@@ -70,7 +70,12 @@
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes the aIV question management app.
-   * @param {?Object} settings - The app's settings.
+   * @param {objectMap} settings - The app's settings.
+   * @param {objectMap=} settings.config - The app's configuration.
+   * @param {stringMap=} settings.sources - The app's sources.
+   * @param {(objectMap|stringMap)=} settings.categories - The app's categories.
+   * @param {objects} settings.questions - The app's questions.
+   * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
   aIV.app = core.init;
@@ -120,6 +125,11 @@
     debug.fail('init', (!_initialized), errorMsg);
 
     /**
+     * @type {?(string|strings)}
+     * @private
+     */
+    var resourceList;
+    /**
      * @type {?objectMap}
      * @private
      */
@@ -139,88 +149,157 @@
      * @private
      */
     var questions;
+    /**
+     * @type {function}
+     * @private
+     */
+    var setup;
+    /**
+     * @type {function}
+     * @private
+     */
+    var callback;
+    /**
+     * @type {number}
+     * @private
+     */
+    var i;
 
     // Check if app has been initialized
-    if (!_initialized) {
+    if (_initialized) {
+      return;
+    }
 
-      // Save the init of this app to prevent second init
-      _initialized = true;
+    // Save the init of this app to prevent second init
+    _initialized = true;
 
-      // Check the settings arg
-      if (!settings || !checkType(settings, 'objectMap')) {
-        settings = {};
-      }
+    // Check the settings arg
+    if (!settings || !checkType(settings, 'objectMap')) {
+      settings = {};
+    }
 
-      // Setup the app arguments
-      config = ( ( settings.hasOwnProperty('config') ) ?
-        settings.config : ( settings.hasOwnProperty('configuration') ) ?
-          settings.configuration : null
-      );
-      sources = ( ( settings.hasOwnProperty('sources') ) ?
-        settings.sources : ( settings.hasOwnProperty('source') ) ?
-          settings.source : null
-      );
-      categories = ( ( settings.hasOwnProperty('categories') ) ?
-        settings.categories : ( settings.hasOwnProperty('category') ) ?
-          settings.category : null
-      );
-      questions = ( ( settings.hasOwnProperty('questions') ) ?
-        settings.questions : ( settings.hasOwnProperty('question') ) ?
-          settings.question : null
-      );
+    // Setup the app arguments
+    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
+      settings.resources : null
+    );
+    config = ( ( settings.hasOwnProperty('config') ) ?
+      settings.config : ( settings.hasOwnProperty('configuration') ) ?
+        settings.configuration : null
+    );
+    sources = ( ( settings.hasOwnProperty('sources') ) ?
+      settings.sources : ( settings.hasOwnProperty('source') ) ?
+        settings.source : null
+    );
+    categories = ( ( settings.hasOwnProperty('categories') ) ?
+      settings.categories : ( settings.hasOwnProperty('category') ) ?
+        settings.category : null
+    );
+    questions = ( ( settings.hasOwnProperty('questions') ) ?
+      settings.questions : ( settings.hasOwnProperty('question') ) ?
+        settings.question : null
+    );
 
-      failCheck = checkType(config, 'objectMap');
-      errorMsg = 'Error: The given config property was an ';
-      errorMsg += 'incorrect data type. config= $$';
-      debug.fail('init', failCheck, errorMsg, config);
+    failCheck = checkType(resourceList, 'string|strings');
+    errorMsg = 'Error: The given resources property was an ';
+    errorMsg += 'incorrect data type. resources= $$';
+    debug.fail('init', failCheck, errorMsg, resourceList);
 
-      failCheck = checkType(sources, 'stringMap');
-      errorMsg = 'Error: The given sources property was an ';
-      errorMsg += 'incorrect data type. sources= $$';
-      debug.fail('init', failCheck, errorMsg, sources);
+    failCheck = checkType(config, 'objectMap');
+    errorMsg = 'Error: The given config property was an ';
+    errorMsg += 'incorrect data type. config= $$';
+    debug.fail('init', failCheck, errorMsg, config);
 
-      failCheck = checkType(categories, 'stringMap|objectMap');
-      errorMsg = 'Error: The given categories property was an ';
-      errorMsg += 'incorrect data type. categories= $$';
-      debug.fail('init', failCheck, errorMsg, categories);
+    failCheck = checkType(sources, 'stringMap');
+    errorMsg = 'Error: The given sources property was an ';
+    errorMsg += 'incorrect data type. sources= $$';
+    debug.fail('init', failCheck, errorMsg, sources);
 
-      errorMsg = 'Error: No questions were provided.';
-      debug.fail('init', (!!questions), errorMsg);
+    failCheck = checkType(categories, 'stringMap|objectMap');
+    errorMsg = 'Error: The given categories property was an ';
+    errorMsg += 'incorrect data type. categories= $$';
+    debug.fail('init', failCheck, errorMsg, categories);
 
-      if (questions) {
-        failCheck = (checkType(questions, 'objects') && !!questions.length);
-        errorMsg = 'Error: The given questions property was an ';
-        errorMsg += 'incorrect data type. questions= $$';
-        debug.fail('init', failCheck, errorMsg, questions);
-      }
+    errorMsg = 'Error: No questions were provided.';
+    debug.fail('init', (!!questions), errorMsg);
 
-      // Check the types of the arguments
-      if ( !checkType(config, 'objectMap') ) {
-        config = null;
-      }
-      if ( !checkType(sources, 'stringMap') ) {
-        sources = null;
-      }
-      if ( !checkType(categories, 'stringMap|objectMap') ) {
-        categories = null;
-      }
-      if ( checkType(questions, 'objects') ) {
-        if (!questions.length) {
-          questions = null;
-        }
-      }
-      else {
+    if (questions) {
+      failCheck = (checkType(questions, 'objects') && !!questions.length);
+      errorMsg = 'Error: The given questions property was an ';
+      errorMsg += 'incorrect data type. questions= $$';
+      debug.fail('init', failCheck, errorMsg, questions);
+    }
+
+    // Check the types of the arguments
+    if ( !checkType(resourceList, 'string|strings') ) {
+      resourceList = null;
+    }
+    if ( !checkType(config, 'objectMap') ) {
+      config = null;
+    }
+    if ( !checkType(sources, 'stringMap') ) {
+      sources = null;
+    }
+    if ( !checkType(categories, 'stringMap|objectMap') ) {
+      categories = null;
+    }
+    if ( checkType(questions, 'objects') ) {
+      if (!questions.length) {
         questions = null;
       }
+    }
+    else {
+      questions = null;
+    }
 
-      // Setup and freeze the app
+    // Setup and start the app
+    setup = function() {
+      Object.freeze(resources);
       app = new App(config, sources, categories, questions);
       Object.freeze(app);
-
-      // Start the app
       document.addEventListener('DOMContentLoaded', app.setupDisplay);
+    };
+
+    // Save the resources
+    if (resourceList) {
+
+      if (typeof resourceList === 'string') {
+        getResource(resourceList, setup);
+        return;
+      }
+
+      callback = setup;
+      i = resourceList.length;
+      while (--i) {
+        callback = function() {
+          getResource(resourceList[i], callback);
+        };
+      }
+      getResource(resourceList[0], callback);
+      return;
     }
+
+    setup();
   };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (_return.init.getResource)
+   * -----------------------------------------------------
+   * @desc Makes the app's resources publically available.
+   * @param {string=} prop - The specific resource to retrieve.
+   * @return {val} Either the entire resources object or one of its properties.
+   */
+  _return.init.getResource = function(prop) {
+
+    debug.start('init.getResource', prop);
+    debug.args('init.getResource', prop, 'string=');
+
+    return (!!prop) ? resources[ prop ] : resources;
+  }
+
+  Object.freeze(_return);
+  Object.freeze(_return.init);
+  Object.freeze(_return.init.getResource);
 
 
 /* -----------------------------------------------------------------------------
@@ -234,10 +313,7 @@
    * @desc The Debug instance for the module's public methods.
    * @type {Debug}
    */
-  var debug = aIV.debug({
-    classTitle     : 'module',
-    turnOnDebuggers: 'args fail'
-  });
+  var debug = aIV.debug('module');
 
   /**
    * ----------------------------------------------- 
@@ -246,12 +322,7 @@
    * @desc The Debug instance for the app's DOM events.
    * @type {{ debug: Debug }}
    */
-  var events = {
-    debug: aIV.debug({
-      classTitle     : 'Events',
-      turnOnDebuggers: 'args fail'
-    })
-  };
+  var events = { debug: aIV.debug('Events') };
 
   /**
    * ----------------------------------------------- 
@@ -260,12 +331,16 @@
    * @desc The Debug instance for the app's polyfilled methods.
    * @type {{ debug: Debug }}
    */
-  var polyfill = {
-    debug: aIV.debug({
-      classTitle     : 'polyfill',
-      turnOnDebuggers: 'args fail'
-    })
-  };
+  var polyfill = { debug: aIV.debug('polyfill') };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Variable (resources)
+   * -----------------------------------------------
+   * @desc The resources for the app.
+   * @type {Object}
+   */
+  var resources = {};
 
   /**
    * ----------------------------------------------- 
@@ -371,6 +446,46 @@
  * | The Public Methods for the Module                                         |
  * v ------------------------------------------------------------------------- v
                                                           module-methods.js */
+  /**
+   * ---------------------------------------------
+   * Public Method (getResource)
+   * ---------------------------------------------
+   * @desc Completes AJAX calls for downloading resources, parses
+   *   and saves the JSON file, and calls the callback function.
+   * @param {string} jsonFile - The JSON file to download.
+   * @param {function} callback - The callback function.
+   */
+  function getResource(jsonFile, callback) {
+
+    debug.start('getResource', jsonFile, callback);
+    debug.args('getResource', jsonFile, 'string', callback, 'function');
+
+    /** @type {XMLHttpRequest} */
+    var http;
+    /** @type {string} */
+    var msg;
+
+    http = new XMLHttpRequest();
+    http.onreadystatechange = function() {
+      if (http.readyState === 4) {
+        if (http.status === 200) {
+          resources[ jsonFile ] = JSON.parse(http.responseText);
+        }
+        else {
+          msg = 'Your resource - resources/' + jsonFile + '.json - ';
+          msg += 'failed to load. Please ensure your resources folder ';
+          msg += 'is in the same directory as algorithmIV-app.js. ';
+          msg += 'XMLHttpRequest.statusText= ' + http.statusText;
+          console.error(msg);
+        }
+        callback();
+      }
+    };
+    jsonFile = 'resources/' + jsonFile + '.json';
+    http.open('GET', jsonFile, true);
+    http.send();
+  }
+
   /**
    * ---------------------------------------------
    * Public Method (getID)
