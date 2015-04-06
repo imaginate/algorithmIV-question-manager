@@ -61,35 +61,40 @@
       // Save the init of this app to prevent second init
       _initialized = true;
 
+      // Check the settings arg
+      if (!settings || !checkType(settings, 'objectMap')) {
+        settings = {};
+      }
+
       // Setup the app arguments
-      config = ( (!!settings.config) ?
-        settings.config : (!!settings.configuration) ?
+      config = ( ( settings.hasOwnProperty('config') ) ?
+        settings.config : ( settings.hasOwnProperty('configuration') ) ?
           settings.configuration : null
       );
-      sources = ( (!!settings.sources) ?
-        settings.sources : (!!settings.source) ?
+      sources = ( ( settings.hasOwnProperty('sources') ) ?
+        settings.sources : ( settings.hasOwnProperty('source') ) ?
           settings.source : null
       );
-      categories = ( (!!settings.categories) ?
-        settings.categories : (!!settings.category) ?
+      categories = ( ( settings.hasOwnProperty('categories') ) ?
+        settings.categories : ( settings.hasOwnProperty('category') ) ?
           settings.category : null
       );
-      questions = ( (!!settings.questions) ?
-        settings.questions : (!!settings.question) ?
+      questions = ( ( settings.hasOwnProperty('questions') ) ?
+        settings.questions : ( settings.hasOwnProperty('question') ) ?
           settings.question : null
       );
 
-      failCheck = (!config || typeof config === 'object');
+      failCheck = checkType(config, 'objectMap');
       errorMsg = 'Error: The given config property was an ';
       errorMsg += 'incorrect data type. config= $$';
       debug.fail('init', failCheck, errorMsg, config);
 
-      failCheck = (!sources || typeof sources === 'object');
+      failCheck = checkType(sources, 'stringMap');
       errorMsg = 'Error: The given sources property was an ';
       errorMsg += 'incorrect data type. sources= $$';
       debug.fail('init', failCheck, errorMsg, sources);
 
-      failCheck = (!categories || typeof categories === 'object');
+      failCheck = checkType(categories, 'stringMap|objectMap');
       errorMsg = 'Error: The given categories property was an ';
       errorMsg += 'incorrect data type. categories= $$';
       debug.fail('init', failCheck, errorMsg, categories);
@@ -105,19 +110,22 @@
       }
 
       // Check the types of the arguments
-      if (config && typeof config !== 'object') {
+      if ( !checkType(config, 'objectMap') ) {
         config = null;
       }
-      if (sources && typeof sources !== 'object') {
+      if ( !checkType(sources, 'stringMap') ) {
         sources = null;
       }
-      if (categories && typeof categories !== 'object') {
+      if ( !checkType(categories, 'stringMap|objectMap') ) {
         categories = null;
       }
-      if (questions) {
-        if (!checkType(questions, 'objects') || !questions.length) {
+      if ( checkType(questions, 'objects') ) {
+        if (!questions.length) {
           questions = null;
         }
+      }
+      else {
+        questions = null;
       }
 
       // Setup and freeze the app
