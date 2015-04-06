@@ -19,8 +19,6 @@
     var len;
     /** @type {string} */
     var url;
-    /** @type {RegExp} */
-    var anonTrim;
 
     /**
      * ---------------------------------------------------
@@ -185,12 +183,11 @@
     }
 
     // Add the questions
-    anonTrim = /^function\s?\(\)\s?\{\r?\n?|\r?\n?\}\;$/g;
     --len;
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[id] = new Question(questions[i], id, config, sources, categories, anonTrim);
+      this.list[id] = new Question(questions[i], id, config, sources, categories);
       Object.freeze(this.list[id]);
     }
 

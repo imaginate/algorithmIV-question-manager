@@ -8,13 +8,9 @@
    * @param {booleanMap} config - The settings for question formatting.
    * @param {Sources} sources - The app's sources.
    * @param {Categories} categories - The app's categories.
-   * @param {RegExp} anonTrim - Identifies anonymous wrappers.
    * @constructor
    */
-  var Question = function(question, id, config, sources, categories, anonTrim) {
-
-    /** @type {RegExp} */
-    var http;
+  var Question = function(question, id, config, sources, categories) {
 
     /**
      * ---------------------------------------------------
@@ -245,11 +241,10 @@
       [] : question.links.slice(0)
     );
     if (links.length) {
-      http = /^https?\:\/\//;
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
             !checkTypes([ linkObj.name, linkObj.href ], 'string') ||
-            !http.test(data.href)) {
+            !isLink(linkObj.href)) {
           links.splice(i, 1);
         }
       });
@@ -271,7 +266,7 @@
       solution = String(question.solution);
 
       if (solution) {
-        solution = solution.replace(anonTrim, '');
+        solution = trimFunctionWrapper(solution);
       }
 
       if (solution && config.output) {

@@ -860,6 +860,54 @@
     return arr.join('');
   }
 
+  /**
+   * ---------------------------------------------------
+   * Public Method (trimFunctionWrapper)
+   * ---------------------------------------------------
+   * @desc A helper method that removes a wrapper function from a string.
+   * @param {string} str - The original string.
+   * @return {string} The trimmed string.
+   */
+  var trimFunctionWrapper = (function() {
+
+    /** @type{RegExp} */
+    var anonTrim;
+
+    anonTrim = /^function\s?\(\)\s?\{\r?\n?|\r?\n?\}\;$/g;
+
+    return function(str) {
+
+      debug.start('trimFunctionWrapper', str);
+      debug.args('trimFunctionWrapper', str, 'string');
+
+      return str.replace(anonTrim, '');
+    };
+  })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (isLink)
+   * ---------------------------------------------------
+   * @desc A helper method that checks if a string is a link.
+   * @param {string} str - The string to check.
+   * @return {boolean} The evaluation result.
+   */
+  var isLink = (function() {
+
+    /** @type{RegExp} */
+    var http;
+
+    http = /^https?\:\/\//;
+
+    return function(str) {
+
+      debug.start('isLink', str);
+      debug.args('isLink', str, 'string');
+
+      return http.test(str);
+    };
+  })();
+
 
 /* -----------------------------------------------------------------------------
  * | The App Class                                                             |
@@ -4573,8 +4621,6 @@
     var len;
     /** @type {string} */
     var url;
-    /** @type {RegExp} */
-    var anonTrim;
 
     /**
      * ---------------------------------------------------
@@ -4739,12 +4785,11 @@
     }
 
     // Add the questions
-    anonTrim = /^function\s?\(\)\s?\{\r?\n?|\r?\n?\}\;$/g;
     --len;
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[id] = new Question(questions[i], id, config, sources, categories, anonTrim);
+      this.list[id] = new Question(questions[i], id, config, sources, categories);
       Object.freeze(this.list[id]);
     }
 
@@ -5045,13 +5090,9 @@
    * @param {booleanMap} config - The settings for question formatting.
    * @param {Sources} sources - The app's sources.
    * @param {Categories} categories - The app's categories.
-   * @param {RegExp} anonTrim - Identifies anonymous wrappers.
    * @constructor
    */
-  var Question = function(question, id, config, sources, categories, anonTrim) {
-
-    /** @type {RegExp} */
-    var http;
+  var Question = function(question, id, config, sources, categories) {
 
     /**
      * ---------------------------------------------------
@@ -5282,11 +5323,10 @@
       [] : question.links.slice(0)
     );
     if (links.length) {
-      http = /^https?\:\/\//;
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
             !checkTypes([ linkObj.name, linkObj.href ], 'string') ||
-            !http.test(data.href)) {
+            !isLink(linkObj.href)) {
           links.splice(i, 1);
         }
       });
@@ -5308,7 +5348,7 @@
       solution = String(question.solution);
 
       if (solution) {
-        solution = solution.replace(anonTrim, '');
+        solution = trimFunctionWrapper(solution);
       }
 
       if (solution && config.output) {

@@ -494,3 +494,51 @@
 
     return arr.join('');
   }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (trimFunctionWrapper)
+   * ---------------------------------------------------
+   * @desc A helper method that removes a wrapper function from a string.
+   * @param {string} str - The original string.
+   * @return {string} The trimmed string.
+   */
+  var trimFunctionWrapper = (function() {
+
+    /** @type{RegExp} */
+    var anonTrim;
+
+    anonTrim = /^function\s?\(\)\s?\{\r?\n?|\r?\n?\}\;$/g;
+
+    return function(str) {
+
+      debug.start('trimFunctionWrapper', str);
+      debug.args('trimFunctionWrapper', str, 'string');
+
+      return str.replace(anonTrim, '');
+    };
+  })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (isLink)
+   * ---------------------------------------------------
+   * @desc A helper method that checks if a string is a link.
+   * @param {string} str - The string to check.
+   * @return {boolean} The evaluation result.
+   */
+  var isLink = (function() {
+
+    /** @type{RegExp} */
+    var http;
+
+    http = /^https?\:\/\//;
+
+    return function(str) {
+
+      debug.start('isLink', str);
+      debug.args('isLink', str, 'string');
+
+      return http.test(str);
+    };
+  })();
