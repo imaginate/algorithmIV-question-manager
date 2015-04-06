@@ -263,8 +263,7 @@
         callback();
       }
     };
-    jsonFile = 'resources/' + jsonFile + '.json';
-    http.open('GET', jsonFile, true);
+    http.open('GET', 'resources/' + jsonFile + '.json', true);
     http.send();
   }
 
@@ -8754,12 +8753,9 @@
    */
   _init.getResource = function(prop) {
 
-    // Debugging vars
-    var stateVar;
     debug.start('init.getResource', prop);
     debug.args('init.getResource', prop, 'string=');
-    stateVar = (!!prop) ? resources[ prop ] : resources;
-    debug.state('init.getResource', 'return= $$', stateVar);
+    debug.state('init.getResource', 'resources= $$', resources);
 
     return (!!prop) ? resources[ prop ] : resources;
   }

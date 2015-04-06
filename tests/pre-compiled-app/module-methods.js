@@ -34,8 +34,7 @@
         callback();
       }
     };
-    jsonFile = 'resources/' + jsonFile + '.json';
-    http.open('GET', jsonFile, true);
+    http.open('GET', 'resources/' + jsonFile + '.json', true);
     http.send();
   }
 
