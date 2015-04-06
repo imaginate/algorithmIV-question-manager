@@ -44,10 +44,9 @@
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
  * @typedef {Object<string, strings>} stringsMap
- * @typedef {{ init: function(?Object) }} initApp
  */
 
-(function(/** Window */ window, /** initApp */ core) {
+(function(/** Window */ window, /** function(Object) */ core) {
   "use strict";
 
 
@@ -70,7 +69,7 @@
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes the aIV question management app.
-   * @param {objectMap} settings - The app's settings.
+   * @param {Object} settings - The app's settings.
    * @param {objectMap=} settings.config - The app's configuration.
    * @param {stringMap=} settings.sources - The app's sources.
    * @param {(objectMap|stringMap)=} settings.categories - The app's categories.
@@ -78,228 +77,10 @@
    * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
-  aIV.app = core.init;
+  aIV.app = core;
 
 })(window, (function(/** Window */ window, /** Document */ document) {
   "use strict"; 
-
-
-/* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
-  /**
-   * -----------------------------------------------------
-   * Private Variable (_return)
-   * -----------------------------------------------------
-   * @desc Holds the public methods for the core module.
-   * @typedef {initApp}
-   * @struct
-   */
-  var _return = {};
-
-  /**
-   * -----------------------------------------------------
-   * Private Variable (_initialized)
-   * -----------------------------------------------------
-   * @desc Indicates whether the app has been initialized.
-   * @type {boolean}
-   * @private
-   */
-  var _initialized = false;
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (_return.init)
-   * -----------------------------------------------------
-   * @desc Initializes the app.
-   * @param {?objectMap} settings - The app's settings.
-   */
-  _return.init = function(settings) {
-
-    // Debugging vars
-    var errorMsg, failCheck;
-    debug.start('init', settings);
-    debug.args('init', settings, 'object');
-    errorMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!_initialized), errorMsg);
-
-    /**
-     * @type {?(string|strings)}
-     * @private
-     */
-    var resourceList;
-    /**
-     * @type {?objectMap}
-     * @private
-     */
-    var config;
-    /**
-     * @type {?stringMap}
-     * @private
-     */
-    var sources;
-    /**
-     * @type {?(objectMap|stringMap)}
-     * @private
-     */
-    var categories;
-    /**
-     * @type {?objects}
-     * @private
-     */
-    var questions;
-    /**
-     * @type {function}
-     * @private
-     */
-    var setup;
-    /**
-     * @type {function}
-     * @private
-     */
-    var callback;
-    /**
-     * @type {number}
-     * @private
-     */
-    var i;
-
-    // Check if app has been initialized
-    if (_initialized) {
-      return;
-    }
-
-    // Save the init of this app to prevent second init
-    _initialized = true;
-
-    // Check the settings arg
-    if (!settings || !checkType(settings, 'object')) {
-      settings = {};
-    }
-
-    // Setup the app arguments
-    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
-      settings.resources : null
-    );
-    config = ( ( settings.hasOwnProperty('config') ) ?
-      settings.config : ( settings.hasOwnProperty('configuration') ) ?
-        settings.configuration : null
-    );
-    sources = ( ( settings.hasOwnProperty('sources') ) ?
-      settings.sources : ( settings.hasOwnProperty('source') ) ?
-        settings.source : null
-    );
-    categories = ( ( settings.hasOwnProperty('categories') ) ?
-      settings.categories : ( settings.hasOwnProperty('category') ) ?
-        settings.category : null
-    );
-    questions = ( ( settings.hasOwnProperty('questions') ) ?
-      settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : null
-    );
-
-    failCheck = checkType(resourceList, 'string|strings');
-    errorMsg = 'Error: The given resources property was an ';
-    errorMsg += 'incorrect data type. resources= $$';
-    debug.fail('init', failCheck, errorMsg, resourceList);
-
-    failCheck = checkType(config, 'objectMap');
-    errorMsg = 'Error: The given config property was an ';
-    errorMsg += 'incorrect data type. config= $$';
-    debug.fail('init', failCheck, errorMsg, config);
-
-    failCheck = checkType(sources, 'stringMap');
-    errorMsg = 'Error: The given sources property was an ';
-    errorMsg += 'incorrect data type. sources= $$';
-    debug.fail('init', failCheck, errorMsg, sources);
-
-    failCheck = checkType(categories, 'stringMap|objectMap');
-    errorMsg = 'Error: The given categories property was an ';
-    errorMsg += 'incorrect data type. categories= $$';
-    debug.fail('init', failCheck, errorMsg, categories);
-
-    errorMsg = 'Error: No questions were provided.';
-    debug.fail('init', (!!questions), errorMsg);
-
-    if (questions) {
-      failCheck = (checkType(questions, 'objects') && !!questions.length);
-      errorMsg = 'Error: The given questions property was an ';
-      errorMsg += 'incorrect data type. questions= $$';
-      debug.fail('init', failCheck, errorMsg, questions);
-    }
-
-    // Check the types of the arguments
-    if ( !checkType(resourceList, 'string|strings') ) {
-      resourceList = null;
-    }
-    if ( !checkType(config, 'objectMap') ) {
-      config = null;
-    }
-    if ( !checkType(sources, 'stringMap') ) {
-      sources = null;
-    }
-    if ( !checkType(categories, 'stringMap|objectMap') ) {
-      categories = null;
-    }
-    if ( checkType(questions, 'objects') ) {
-      if (!questions.length) {
-        questions = null;
-      }
-    }
-    else {
-      questions = null;
-    }
-
-    // Setup and start the app
-    setup = function() {
-      Object.freeze(resources);
-      app = new App(config, sources, categories, questions);
-      Object.freeze(app);
-      document.addEventListener('DOMContentLoaded', app.setupDisplay);
-    };
-
-    // Save the resources
-    if (resourceList) {
-
-      if (typeof resourceList === 'string') {
-        getResource(resourceList, setup);
-        return;
-      }
-
-      callback = setup;
-      i = resourceList.length;
-      while (--i) {
-        callback = function() {
-          getResource(resourceList[i], callback);
-        };
-      }
-      getResource(resourceList[0], callback);
-      return;
-    }
-
-    setup();
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (_return.init.getResource)
-   * -----------------------------------------------------
-   * @desc Makes the app's resources publically available.
-   * @param {string=} prop - The specific resource to retrieve.
-   * @return {val} Either the entire resources object or one of its properties.
-   */
-  _return.init.getResource = function(prop) {
-
-    debug.start('init.getResource', prop);
-    debug.args('init.getResource', prop, 'string=');
-
-    return (!!prop) ? resources[ prop ] : resources;
-  }
-
-  Object.freeze(_return);
-  Object.freeze(_return.init);
-  Object.freeze(_return.init.getResource);
 
 
 /* -----------------------------------------------------------------------------
@@ -470,6 +251,7 @@
       if (http.readyState === 4) {
         if (http.status === 200) {
           resources[ jsonFile ] = JSON.parse(http.responseText);
+          debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
           msg = 'Your resource - resources/' + jsonFile + '.json - ';
@@ -8776,9 +8558,220 @@
 
 
 /* -----------------------------------------------------------------------------
+ * | The External API for the Module                                           |
+ * v ------------------------------------------------------------------------- v
+                                                            external-api.js */
+  /**
+   * -----------------------------------------------------
+   * Private Variable (_initialized)
+   * -----------------------------------------------------
+   * @desc Indicates whether the app has been initialized.
+   * @type {boolean}
+   * @private
+   */
+  var _initialized = false;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (_init)
+   * -----------------------------------------------------
+   * @desc Initializes the app.
+   * @param {Object} settings - The app's settings.
+   */
+  var _init = function(settings) {
+
+    // Debugging vars
+    var errorMsg, failCheck;
+    debug.start('init', settings);
+    debug.args('init', settings, 'object');
+    errorMsg = 'Error: A second attempt to init this app occurred.';
+    debug.fail('init', (!_initialized), errorMsg);
+
+    /**
+     * @type {?(string|strings)}
+     * @private
+     */
+    var resourceList;
+    /**
+     * @type {?objectMap}
+     * @private
+     */
+    var config;
+    /**
+     * @type {?stringMap}
+     * @private
+     */
+    var sources;
+    /**
+     * @type {?(objectMap|stringMap)}
+     * @private
+     */
+    var categories;
+    /**
+     * @type {?objects}
+     * @private
+     */
+    var questions;
+    /**
+     * @type {function}
+     * @private
+     */
+    var setup;
+    /**
+     * @type {function}
+     * @private
+     */
+    var callback;
+    /**
+     * @type {number}
+     * @private
+     */
+    var i;
+
+    // Check if app has been initialized
+    if (_initialized) {
+      return;
+    }
+
+    // Save the init of this app to prevent second init
+    _initialized = true;
+
+    // Check the settings arg
+    if (!settings || !checkType(settings, 'object')) {
+      settings = {};
+    }
+
+    // Setup the app arguments
+    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
+      settings.resources : null
+    );
+    config = ( ( settings.hasOwnProperty('config') ) ?
+      settings.config : ( settings.hasOwnProperty('configuration') ) ?
+        settings.configuration : null
+    );
+    sources = ( ( settings.hasOwnProperty('sources') ) ?
+      settings.sources : ( settings.hasOwnProperty('source') ) ?
+        settings.source : null
+    );
+    categories = ( ( settings.hasOwnProperty('categories') ) ?
+      settings.categories : ( settings.hasOwnProperty('category') ) ?
+        settings.category : null
+    );
+    questions = ( ( settings.hasOwnProperty('questions') ) ?
+      settings.questions : ( settings.hasOwnProperty('question') ) ?
+        settings.question : null
+    );
+
+    failCheck = checkType(resourceList, 'string|strings');
+    errorMsg = 'Error: The given resources property was an ';
+    errorMsg += 'incorrect data type. resources= $$';
+    debug.fail('init', failCheck, errorMsg, resourceList);
+
+    failCheck = checkType(config, 'objectMap');
+    errorMsg = 'Error: The given config property was an ';
+    errorMsg += 'incorrect data type. config= $$';
+    debug.fail('init', failCheck, errorMsg, config);
+
+    failCheck = checkType(sources, 'stringMap');
+    errorMsg = 'Error: The given sources property was an ';
+    errorMsg += 'incorrect data type. sources= $$';
+    debug.fail('init', failCheck, errorMsg, sources);
+
+    failCheck = checkType(categories, 'stringMap|objectMap');
+    errorMsg = 'Error: The given categories property was an ';
+    errorMsg += 'incorrect data type. categories= $$';
+    debug.fail('init', failCheck, errorMsg, categories);
+
+    errorMsg = 'Error: No questions were provided.';
+    debug.fail('init', (!!questions), errorMsg);
+
+    if (questions) {
+      failCheck = (checkType(questions, 'objects') && !!questions.length);
+      errorMsg = 'Error: The given questions property was an ';
+      errorMsg += 'incorrect data type. questions= $$';
+      debug.fail('init', failCheck, errorMsg, questions);
+    }
+
+    // Check the types of the arguments
+    if ( !checkType(resourceList, 'string|strings') ) {
+      resourceList = null;
+    }
+    if ( !checkType(config, 'objectMap') ) {
+      config = null;
+    }
+    if ( !checkType(sources, 'stringMap') ) {
+      sources = null;
+    }
+    if ( !checkType(categories, 'stringMap|objectMap') ) {
+      categories = null;
+    }
+    if ( checkType(questions, 'objects') ) {
+      if (!questions.length) {
+        questions = null;
+      }
+    }
+    else {
+      questions = null;
+    }
+
+    // Setup and start the app
+    setup = function() {
+      Object.freeze(resources);
+      app = new App(config, sources, categories, questions);
+      Object.freeze(app);
+      document.addEventListener('DOMContentLoaded', app.setupDisplay);
+    };
+
+    // Save the resources
+    if (resourceList) {
+
+      if (typeof resourceList === 'string') {
+        getResource(resourceList, setup);
+        return;
+      }
+
+      callback = setup;
+      i = resourceList.length;
+      while (--i) {
+        callback = function() {
+          getResource(resourceList[i], callback);
+        };
+      }
+      getResource(resourceList[0], callback);
+      return;
+    }
+
+    setup();
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (_init.getResource)
+   * -----------------------------------------------------
+   * @desc Makes the app's resources publically available.
+   * @param {string=} prop - The specific resource to retrieve.
+   * @return {val} Either the entire resources object or one of its properties.
+   */
+  _init.getResource = function(prop) {
+
+    // Debugging vars
+    var stateVar;
+    debug.start('init.getResource', prop);
+    debug.args('init.getResource', prop, 'string=');
+    stateVar = (!!prop) ? resources[ prop ] : resources;
+    debug.state('init.getResource', 'return= $$', stateVar);
+
+    return (!!prop) ? resources[ prop ] : resources;
+  }
+
+  Object.freeze(_init);
+  Object.freeze(_init.getResource);
+
+
+/* -----------------------------------------------------------------------------
  * | End of module                                                             |
  * v ------------------------------------------------------------------------- v
                                                                             */
-  return _return;
+  return _init;
 
 })(window, document));

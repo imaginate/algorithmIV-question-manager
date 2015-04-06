@@ -1,15 +1,5 @@
   /**
    * -----------------------------------------------------
-   * Private Variable (_return)
-   * -----------------------------------------------------
-   * @desc Holds the public methods for the core module.
-   * @typedef {initApp}
-   * @struct
-   */
-  var _return = {};
-
-  /**
-   * -----------------------------------------------------
    * Private Variable (_initialized)
    * -----------------------------------------------------
    * @desc Indicates whether the app has been initialized.
@@ -20,12 +10,12 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (_return.init)
+   * Public Method (_init)
    * -----------------------------------------------------
    * @desc Initializes the app.
-   * @param {?objectMap} settings - The app's settings.
+   * @param {Object} settings - The app's settings.
    */
-  _return.init = function(settings) {
+  var _init = function(settings) {
 
     // Debugging vars
     var errorMsg, failCheck;
@@ -193,20 +183,23 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (_return.init.getResource)
+   * Public Method (_init.getResource)
    * -----------------------------------------------------
    * @desc Makes the app's resources publically available.
    * @param {string=} prop - The specific resource to retrieve.
    * @return {val} Either the entire resources object or one of its properties.
    */
-  _return.init.getResource = function(prop) {
+  _init.getResource = function(prop) {
 
+    // Debugging vars
+    var stateVar;
     debug.start('init.getResource', prop);
     debug.args('init.getResource', prop, 'string=');
+    stateVar = (!!prop) ? resources[ prop ] : resources;
+    debug.state('init.getResource', 'return= $$', stateVar);
 
     return (!!prop) ? resources[ prop ] : resources;
   }
 
-  Object.freeze(_return);
-  Object.freeze(_return.init);
-  Object.freeze(_return.init.getResource);
+  Object.freeze(_init);
+  Object.freeze(_init.getResource);

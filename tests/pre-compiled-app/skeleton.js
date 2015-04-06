@@ -44,10 +44,9 @@
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
  * @typedef {Object<string, strings>} stringsMap
- * @typedef {{ init: function(?Object) }} initApp
  */
 
-(function(/** Window */ window, /** initApp */ core) {
+(function(/** Window */ window, /** function(Object) */ core) {
   "use strict";
 
 
@@ -58,12 +57,6 @@
 
 })(window, (function(/** Window */ window, /** Document */ document) {
   "use strict"; 
-
-
-/* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
 
 
 /* -----------------------------------------------------------------------------
@@ -211,9 +204,15 @@
 
 
 /* -----------------------------------------------------------------------------
+ * | The External API for the Module                                           |
+ * v ------------------------------------------------------------------------- v
+                                                            external-api.js */
+
+
+/* -----------------------------------------------------------------------------
  * | End of module                                                             |
  * v ------------------------------------------------------------------------- v
                                                                             */
-  return _return;
+  return _init;
 
 })(window, document));

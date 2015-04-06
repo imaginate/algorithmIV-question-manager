@@ -22,6 +22,7 @@
       if (http.readyState === 4) {
         if (http.status === 200) {
           resources[ jsonFile ] = JSON.parse(http.responseText);
+          debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
           msg = 'Your resource - resources/' + jsonFile + '.json - ';
