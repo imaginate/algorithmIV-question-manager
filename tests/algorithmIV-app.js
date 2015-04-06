@@ -6648,7 +6648,7 @@
 
     var prettify = function(solution) {
 
-      prettify.debug.group('init', 'coll', 'solution= $$', solution);
+      prettify.debug.group('init', 'coll');
       prettify.debug.start('init', solution);
       prettify.debug.args('init', solution, 'string');
 
