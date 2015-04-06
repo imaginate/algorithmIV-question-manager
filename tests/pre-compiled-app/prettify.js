@@ -1477,7 +1477,7 @@
 
         newLine[i] = '<span class="cmt">/';
         ++i;
-        i = (i < lastindex) ? skipComment(i) : ++i;
+        i = (i < lastIndex) ? skipComment(i) : ++i;
 
         if (i >= lineLen) {
           commentOpen = true;
@@ -1830,7 +1830,7 @@
         if ( keywords.hasOwnProperty(identifier.name) ) {
 
           catID = keywords[identifier.name].cat;
-          keyClassName = keywordsCategories[catID];
+          keyClassName = keywordCategories[catID];
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
