@@ -27,12 +27,9 @@
     // Debugging vars
     var args;
     this.debug.group('init', 'coll', 'questionID= $$', id);
-    args = [ 'init', question, id, config, sources, categories ];
-    args.push(anonTrim);
-    this.debug.start(args);
-    args = [ 'init', question, 'object', id, 'number' ];
-    args.push(config, 'booleanMap', sources, 'object');
-    args.push(categories, 'object', anonTrim, 'object');
+    this.debug.start('init', question, id, config, sources, categories);
+    args = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
+    args.push(sources, 'object', categories, 'object');
     this.debug.args(args);
 
     /**
