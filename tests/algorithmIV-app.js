@@ -887,8 +887,8 @@
 
       debug.group('trimFunctionWrapper', 'coll');
       debug.start('trimFunctionWrapper', str);
-      debug.args('trimFunctionWrapper', str, 'string');
       debug.group('trimFunctionWrapper', 'end');
+      debug.args('trimFunctionWrapper', str, 'string');
 
       return str.replace(anonTrim, '');
     };
@@ -6649,7 +6649,9 @@
     var prettify = function(solution) {
 
       prettify.debug.group('init', 'coll');
+      prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('init', solution);
+      prettify.debug.group('init', 'end');
       prettify.debug.args('init', solution, 'string');
 
       /** @type {{ result: string, lineCount: number }} */
@@ -7318,7 +7320,9 @@
      */
     function prepareLines(solution) {
 
+      prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('prepareLines', solution);
+      prettify.debug.group('init', 'end');
       prettify.debug.args('prepareLines', solution, 'string');
 
       /** @type {string} */

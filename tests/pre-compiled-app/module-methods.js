@@ -514,8 +514,8 @@
 
       debug.group('trimFunctionWrapper', 'coll');
       debug.start('trimFunctionWrapper', str);
-      debug.args('trimFunctionWrapper', str, 'string');
       debug.group('trimFunctionWrapper', 'end');
+      debug.args('trimFunctionWrapper', str, 'string');
 
       return str.replace(anonTrim, '');
     };

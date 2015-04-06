@@ -27,7 +27,9 @@
      */
     function prepareLines(solution) {
 
+      prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('prepareLines', solution);
+      prettify.debug.group('init', 'end');
       prettify.debug.args('prepareLines', solution, 'string');
 
       /** @type {string} */
