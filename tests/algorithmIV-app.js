@@ -879,9 +879,12 @@
   var trimFunctionWrapper = (function() {
 
     /** @type{RegExp} */
-    var anonTrim;
+    var funcCheck;
+    /** @type{RegExp} */
+    var endCheck;
 
-    anonTrim = /^function\s?\(\)\s?\{\r?\n?|\r?\n?\}\;$/g;
+    funcCheck = /^function[\s\w]*\(\)\s?\{\s*\r?\n?/;
+    endCheck = /\r?\n?\s*\}\;$/;
 
     return function(str) {
 
@@ -890,7 +893,12 @@
       debug.group('trimFunctionWrapper', 'end');
       debug.args('trimFunctionWrapper', str, 'string');
 
-      return str.replace(anonTrim, '');
+      if (funcCheck.test(str) && endCheck.test(str)) {
+        str = str.replace(funcCheck, '');
+        str = str.replace(endCheck, '');
+      }
+
+      return str;
     };
   })();
 
