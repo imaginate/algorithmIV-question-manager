@@ -617,7 +617,7 @@
           node = graph.edges[ edges[i] ];
           graph.verti[vertex].edges.push(node);
         }
-      }
+      };
 
       // Add vertices to graph
       v = 10;
@@ -626,8 +626,8 @@
       }
 
       // Add edges to graph
-      e = 16;
-      while (e--) {
+      e = -1;
+      while (++e < 16) {
 
         // Set weight and starbucks
         weight = 5;
@@ -780,17 +780,18 @@
         // Remove current node from path
         path.nodes.pop();
         path.values.pop();
-      }
+      };
 
-          // Set path to empty
-          path = {
-            nodes : [],
-            values: [],
-            string: ''
-          };
-          // Find the paths
-          buildPaths(graph.verti[start], 0, false);
-        }
+      // Set path to empty
+      path = {
+        nodes : [],
+        values: [],
+        string: ''
+      };
+
+      // Find the paths
+      buildPaths(graph.verti[start], 0, false);
+    }
 
     // Calculates the probability of passing a Starbucks
     function calcProbability() {
