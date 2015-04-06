@@ -1,5 +1,45 @@
   /**
    * ---------------------------------------------
+   * Public Method (getResource)
+   * ---------------------------------------------
+   * @desc Completes AJAX calls for downloading resources, parses
+   *   and saves the JSON file, and calls the callback function.
+   * @param {string} jsonFile - The JSON file to download.
+   * @param {function} callback - The callback function.
+   */
+  function getResource(jsonFile, callback) {
+
+    debug.start('getResource', jsonFile, callback);
+    debug.args('getResource', jsonFile, 'string', callback, 'function');
+
+    /** @type {XMLHttpRequest} */
+    var http;
+    /** @type {string} */
+    var msg;
+
+    http = new XMLHttpRequest();
+    http.onreadystatechange = function() {
+      if (http.readyState === 4) {
+        if (http.status === 200) {
+          resources[ jsonFile ] = JSON.parse(http.responseText);
+        }
+        else {
+          msg = 'Your resource - resources/' + jsonFile + '.json - ';
+          msg += 'failed to load. Please ensure your resources folder ';
+          msg += 'is in the same directory as algorithmIV-app.js. ';
+          msg += 'XMLHttpRequest.statusText= ' + http.statusText;
+          console.error(msg);
+        }
+        callback();
+      }
+    };
+    jsonFile = 'resources/' + jsonFile + '.json';
+    http.open('GET', jsonFile, true);
+    http.send();
+  }
+
+  /**
+   * ---------------------------------------------
    * Public Method (getID)
    * ---------------------------------------------
    * @desc A shortcut for getElementById.
