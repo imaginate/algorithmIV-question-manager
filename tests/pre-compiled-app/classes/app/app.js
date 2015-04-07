@@ -210,9 +210,9 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
-      this.elems.hold.display = 'none';
+      this.elems.hold.style.display = 'none';
       flip = (this.searchBar.vals.order === 'desc');
-      this.updateDisplay({ flip: flip });
+      this.updateDisplay({ flip: flip, oldView: 'all' });
     }
     else {
       this.elems.appendError();
