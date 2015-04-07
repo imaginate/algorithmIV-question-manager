@@ -221,6 +221,7 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
+    this.debug.group('addIdsToSearch', 'coll');
     this.debug.start('addIdsToSearch');
 
     /** @type {booleanMap} */
@@ -242,6 +243,8 @@
     while (++i < len) {
       this.get(i).addToSearch(config);
     }
+
+    this.debug.group('addIdsToSearch', 'end');
   };
 
   /**

@@ -4723,6 +4723,7 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
+    this.debug.group('addIdsToSearch', 'coll');
     this.debug.start('addIdsToSearch');
 
     /** @type {booleanMap} */
@@ -4744,6 +4745,8 @@
     while (++i < len) {
       this.get(i).addToSearch(config);
     }
+
+    this.debug.group('addIdsToSearch', 'end');
   };
 
   /**
@@ -6239,6 +6242,8 @@
       var overflow;
       /** @type {number} */
       var scrollbar;
+      /** @type {number} */
+      var height;
 
       contain  = document.createElement('div');
       h3       = document.createElement('h3');
@@ -6259,9 +6264,9 @@
         h3.innerHTML = 'Solution:';
       }
 
-      solution.height = solution.height * app.elems.code.li.height;
-      solution.height += app.elems.code.ol.height;
-      div.style.height = solution.height + 'px';
+      height = solution.height * app.elems.code.li.height;
+      height += app.elems.code.ol.height;
+      div.style.height = height + 'px';
 
       contain.appendChild(h3);
       contain.appendChild(div);
