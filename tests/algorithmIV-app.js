@@ -3379,10 +3379,7 @@
      * @desc The Debug instance for the Sources class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Sources',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Sources');
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
     this.debug.start('init', sources);
@@ -3892,10 +3889,7 @@
      * @desc The Debug instance for the SearchBar class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'SearchBar',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('SearchBar');
 
     // Debugging vars
     var msg, args;
@@ -4030,10 +4024,12 @@
       view   : [ 'one','ten','all' ],
       order  : [ 'asc','desc' ],
       stage  : [ 'all','com','inc' ],
-      source : sources.ids.slice(0).unshift('all'),
-      mainCat: categories.ids.slice(0).unshift('all'),
+      source : sources.ids.slice(0),
+      mainCat: categories.ids.slice(0),
       subCat : {}
     };
+    this.ids.source.unshift('all');
+    this.ids.mainCat.unshift('all');
     this.opts = {
       view   : [],
       order  : [],
@@ -4045,33 +4041,38 @@
       }
     };
 
+    this.debug.state('init', 'sources.ids= $$', sources.ids);
+    this.debug.state('init', 'this.ids= $$', this.ids);
+    this.debug.state('init', 'this.ids.source= $$', this.ids.source);
+
     // Add the source names
     if (sources.len) {
-      sources.ids.forEach(function(/** string */ id) {
-        this.names.source[id] = sources.get(id, 'name');
+      sources.ids.forEach(function(/** string */ sourceId) {
+        this.names.source[ sourceId ] = sources.get(sourceId, 'name');
       }, this);
     }
 
     // Add category names and ids
     if (categories.len) {
 
-      categories.ids.forEach(function(/** string */ id) {
+      categories.ids.forEach(function(/** string */ mainId) {
         /** @type {Category} */
         var mainCat;
         /** @type {strings} */
         var subs;
 
         // Add the main category names
-        mainCat = categories.get(id);
-        this.names.mainCat[id] = mainCat.get('name');
+        mainCat = categories.get(mainId);
+        this.names.mainCat[ mainId ] = mainCat.get('name');
 
         // Add the sub categories names and ids
         subs = mainCat.get('subs');
         if (subs && subs.length) {
-          this.ids.subCat[id] = subs.slice(0).unshift('all');
-          this.opts.subCat[id] = [];
-          subs.forEach(function(/** string */ id) {
-            this.names.subCat[id] = categories.get(id, 'name');
+          this.ids.subCat[ mainId ] = subs.slice(0);
+          this.ids.subCat[ mainId ].unshift('all');
+          this.opts.subCat[ mainId ] = [];
+          subs.forEach(function(/** string */ subId) {
+            this.names.subCat[ subId ] = categories.get(subId, 'name');
           }, this);
         }
       }, this);
@@ -4366,6 +4367,7 @@
 
     // Set source search options
     if (this.elems.source) {
+      this.debug.state('setOptElems', 'this.ids.source= $$', this.ids.source);
       this.ids.source.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
