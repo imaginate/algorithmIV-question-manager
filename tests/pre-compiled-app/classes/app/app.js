@@ -122,7 +122,8 @@
     // Setup the properties
     this.flags   = new AppFlags(!!questions);
     this.elems   = new AppElems();
-    this.vals    = new AppVals();
+    len = (!!questions) ? questions.length : 0;
+    this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);

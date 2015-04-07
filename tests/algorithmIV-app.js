@@ -951,7 +951,8 @@
     // Setup the properties
     this.flags   = new AppFlags(!!questions);
     this.elems   = new AppElems();
-    this.vals    = new AppVals();
+    len = (!!questions) ? questions.length : 0;
+    this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
@@ -2085,9 +2086,13 @@
    * Public Class (AppVals)
    * -----------------------------------------------------
    * @desc The app's current values.
+   * @param {number} quesLen - The number of questions for the app.
    * @constructor
    */
-  var AppVals = function() {
+  var AppVals = function(quesLen) {
+
+    /** @type {number} */
+    var i;
 
     /**
      * ---------------------------------------------------
@@ -2096,12 +2101,10 @@
      * @desc The Debug instance for the AppVals class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'AppVals',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('AppVals');
 
     this.debug.start('init');
+    this.debug.args('init', quesLen, 'number');
 
     /**
      * ----------------------------------------------- 
@@ -2310,9 +2313,14 @@
 
 
     // Setup the properties
-    ids = [];
-    len = 0;
+    ids = new Array(quesLen);
+    len = quesLen;
     index = 0;
+
+    i = quesLen;
+    while (i--) {
+      ids[i] = i + 1;
+    }
   };
 
   // Ensure constructor is set to this class.
