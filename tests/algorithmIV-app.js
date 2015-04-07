@@ -779,8 +779,8 @@
     /** @type{RegExp} */
     var endCheck;
 
-    funcCheck = /^function[\s\w]*\(\)\s?\{\s*\r?\n?/;
-    endCheck = /\r?\n?\s*\}\;$/;
+    funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
+    endCheck = /[\r\n]{1,2}\s*\}\;?$/;
 
     return function(str) {
 
