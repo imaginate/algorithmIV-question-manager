@@ -130,6 +130,7 @@ h1 {
   position:relative;
   top:auto;
   left:auto;
+  z-index:400;
   display:none;
   height:78px;
   padding:0;
@@ -264,6 +265,8 @@ h1 {
  * ------------------------------- */
 
 #aIV-questions {
+  position:relative;
+  z-index:500;
   display:block;
   width:100%;
   padding:0;
