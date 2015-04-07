@@ -756,6 +756,15 @@ h1 {
 #aIV code .cmt { font-weight:500 }
 #aIV code .smc { font-weight:500 }
 
+#aIV code .cmt a {
+  color:inherit;
+  font-weight:600;
+}
+#aIV code .cmt a:active,
+#aIV code .cmt a:hover {
+  text-decoration:none;
+}
+
 /* ------------------------------- *
  * New Section:
  * ------------------------------- *
