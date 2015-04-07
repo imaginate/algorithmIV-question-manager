@@ -361,6 +361,7 @@
    */
   Question.prototype.addElemContent = function() {
 
+    this.debug.group('addElemContent', 'coll', 'questionID= $$', this.get('id'));
     this.debug.start('addElemContent');
 
     this.elem.addContent({
@@ -387,4 +388,6 @@
       solution: this.format.get('solution'),
       output  : this.get('output')
     });
+
+    this.debug.group('addElemContent', 'end');
   };
