@@ -114,7 +114,7 @@
      * @param {string} prop - The name of the property to get.
      * @return {val}
      */
-    this.get = function(part) {
+    this.get = function(prop) {
 
       // Debugging vars
       var errorMsg;

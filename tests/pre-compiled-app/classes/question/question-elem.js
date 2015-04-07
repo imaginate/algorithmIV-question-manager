@@ -507,16 +507,16 @@
           while (++i < len) {
 
             // Set the subCatParent
-            app.categories.some(function(/** string */ id) {
+            app.categories.ids.some(function(/** string */ catId) {
               /** @private */
               var category;
               /** @private */
               var subs;
 
-              category = app.categories.get(id);
+              category = app.categories.get(catId);
               subs = category.get('subs');
               if (subs && subs.indexOf(sub.ids[i]) !== -1) {
-                subCatParent.id   = id;
+                subCatParent.id   = catId;
                 subCatParent.url  = category.get('url');
                 subCatParent.name = category.get('name');
                 return true;
