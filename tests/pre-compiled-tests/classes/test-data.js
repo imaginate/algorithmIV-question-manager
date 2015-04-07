@@ -133,7 +133,7 @@
    * }}
    */
   settings.config.prettifyFormat = {
-    trimSpace   : 0,
+    trimSpace   : 4,
     tabLength   : 2,
     commentLinks: true
   };
