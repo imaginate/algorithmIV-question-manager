@@ -1384,20 +1384,20 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      this.elems.nav.style.display = ( (this.vals.get('len') > 1) ?
+      app.elems.nav.style.display = ( (app.vals.get('len') > 1) ?
         'block' : 'none'
       );
 
       // Hide the old questions
-      this.questions.hideElems(ids, oldIndex, oldView);
+      app.questions.hideElems(ids, oldIndex, oldView);
 
       // Show the new questions
-      this.questions.showElems(ids, newIndex);
+      app.questions.showElems(ids, newIndex);
 
       // Show the question's main element
-      this.elems.main.style.opacity = '1';
+      app.elems.main.style.opacity = '1';
         
-      this.debug.group('moveDisplay', 'end');
+      app.debug.group('moveDisplay', 'end');
     }, 520);
   };
 
