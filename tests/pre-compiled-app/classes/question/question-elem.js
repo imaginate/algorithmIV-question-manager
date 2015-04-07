@@ -15,10 +15,7 @@
      * @desc The Debug instance for the QuestionElem class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'QuestionElem',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('QuestionElem');
 
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
@@ -92,6 +89,7 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
+    this.debug.group('addContent', 'coll', 'questionID= $$', Number(question.id));
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
@@ -140,6 +138,9 @@
     if (question.links.length) {
       appendLinks.call(this, question.links);
     }
+
+
+    this.debug.group('addContent', 'end');
 
 
     /**
@@ -644,6 +645,8 @@
       var overflow;
       /** @type {number} */
       var scrollbar;
+      /** @type {number} */
+      var height;
 
       contain  = document.createElement('div');
       h3       = document.createElement('h3');
@@ -664,9 +667,9 @@
         h3.innerHTML = 'Solution:';
       }
 
-      solution.height = solution.height * app.elems.code.li.height;
-      solution.height += app.elems.code.ol.height;
-      div.style.height = solution.height + 'px';
+      height = solution.height * app.elems.code.li.height;
+      height += app.elems.code.ol.height;
+      div.style.height = height + 'px';
 
       contain.appendChild(h3);
       contain.appendChild(div);
@@ -680,7 +683,7 @@
 
       if (overflow) {
 
-        appendCodeExt(div, overflow);
+        appendCodeExt.call(this, div, overflow);
 
         scrollbar = app.elems.scrl.height;
         if (scrollbar) {

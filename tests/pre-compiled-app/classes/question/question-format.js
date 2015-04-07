@@ -21,10 +21,7 @@
      * @desc The Debug instance for the QuestionFormat class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'QuestionFormat',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('QuestionFormat');
 
     // Debugging vars
     var args;

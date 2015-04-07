@@ -27,14 +27,11 @@
      * @desc The Debug instance for the Questions class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Questions',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Questions');
 
     // Debugging vars
     var args;
-    args = [ 'init', 'coll' ];
+    args = [ 'init', 'open' ];
     args.push('questions= $$, config= $$', questions, config);
     this.debug.group(args);
     this.debug.start('init', questions, config, sources, categories);
@@ -256,6 +253,7 @@
    */
   Questions.prototype.appendElems = function() {
 
+    this.debug.group('appendElems', 'open');
     this.debug.start('appendElems');
 
     /** @type {number} */
@@ -273,6 +271,8 @@
       app.elems.ques.appendChild(question.elem.root);
       question.addElemContent();
     }
+
+    this.debug.group('appendElems', 'end');
   };
 
   /**

@@ -4529,14 +4529,11 @@
      * @desc The Debug instance for the Questions class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Questions',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Questions');
 
     // Debugging vars
     var args;
-    args = [ 'init', 'coll' ];
+    args = [ 'init', 'open' ];
     args.push('questions= $$, config= $$', questions, config);
     this.debug.group(args);
     this.debug.start('init', questions, config, sources, categories);
@@ -4758,6 +4755,7 @@
    */
   Questions.prototype.appendElems = function() {
 
+    this.debug.group('appendElems', 'open');
     this.debug.start('appendElems');
 
     /** @type {number} */
@@ -4775,6 +4773,8 @@
       app.elems.ques.appendChild(question.elem.root);
       question.addElemContent();
     }
+
+    this.debug.group('appendElems', 'end');
   };
 
   /**
@@ -5402,10 +5402,7 @@
      * @desc The Debug instance for the QuestionFormat class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'QuestionFormat',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('QuestionFormat');
 
     // Debugging vars
     var args;
@@ -5613,10 +5610,7 @@
      * @desc The Debug instance for the QuestionElem class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'QuestionElem',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('QuestionElem');
 
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
@@ -5690,6 +5684,7 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
+    this.debug.group('addContent', 'coll', 'questionID= $$', Number(question.id));
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
@@ -5738,6 +5733,9 @@
     if (question.links.length) {
       appendLinks.call(this, question.links);
     }
+
+
+    this.debug.group('addContent', 'end');
 
 
     /**
@@ -6280,7 +6278,7 @@
 
       if (overflow) {
 
-        appendCodeExt(div, overflow);
+        appendCodeExt.call(this, div, overflow);
 
         scrollbar = app.elems.scrl.height;
         if (scrollbar) {
