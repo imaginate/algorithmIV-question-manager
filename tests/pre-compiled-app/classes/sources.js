@@ -15,10 +15,7 @@
      * @desc The Debug instance for the Sources class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Sources',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Sources');
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
     this.debug.start('init', sources);
