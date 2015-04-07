@@ -15,10 +15,7 @@
      * @desc The Debug instance for the UrlConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'UrlConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('UrlConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -76,10 +73,10 @@
     id       = false;
     category = false;
 
-    if (config.hasOwnProperty(id) && config.id === true) {
+    if (config.hasOwnProperty('id') && config.id === true) {
       id = true;
     }
-    if (config.hasOwnProperty(category) && config.category === true) {
+    if (config.hasOwnProperty('category') && config.category === true) {
       category = true;
     }
   };

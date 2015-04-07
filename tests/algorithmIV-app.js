@@ -2473,10 +2473,7 @@
      * @desc The Debug instance for the SearchBarConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'SearchBarConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('SearchBarConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -2567,16 +2564,16 @@
     category = true;
     subCat   = true;
 
-    if (config.hasOwnProperty(stage) && config.stage === false) {
+    if (config.hasOwnProperty('stage') && config.stage === false) {
       stage = false;
     }
-    if (config.hasOwnProperty(source) && config.source === false) {
+    if (config.hasOwnProperty('source') && config.source === false) {
       source = false;
     }
-    if (config.hasOwnProperty(category) && config.category === false) {
+    if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
-    if (config.hasOwnProperty(subCat) && config.subCat === false) {
+    if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
 
@@ -2863,10 +2860,7 @@
      * @desc The Debug instance for the QuestionsConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'QuestionsConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('QuestionsConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -3008,31 +3002,31 @@
     descr    = false;
     output   = true;
 
-    if (config.hasOwnProperty(id) && config.id === false) {
+    if (config.hasOwnProperty('id') && config.id === false) {
       id = false;
     }
-    if (config.hasOwnProperty(complete) && config.complete === false) {
+    if (config.hasOwnProperty('complete') && config.complete === false) {
       complete = false;
     }
-    if (config.hasOwnProperty(source) && config.source === false) {
+    if (config.hasOwnProperty('source') && config.source === false) {
       source = false;
     }
-    if (config.hasOwnProperty(category) && config.category === false) {
+    if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
-    if (config.hasOwnProperty(subCat) && config.subCat === false) {
+    if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
-    if (config.hasOwnProperty(links) && config.links === false) {
+    if (config.hasOwnProperty('links') && config.links === false) {
       links = false;
     }
-    if (config.hasOwnProperty(problem) && config.problem === false) {
+    if (config.hasOwnProperty('problem') && config.problem === false) {
       problem = false;
     }
-    if (config.hasOwnProperty(descr) && config.descr === true) {
+    if (config.hasOwnProperty('descr') && config.descr === true) {
       descr = true;
     }
-    if (config.hasOwnProperty(output) && config.output === false) {
+    if (config.hasOwnProperty('output') && config.output === false) {
       output = false;
     }
   };
@@ -3063,10 +3057,7 @@
      * @desc The Debug instance for the PrettyConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'PrettyConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('PrettyConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -3116,7 +3107,7 @@
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {numberMap} */
+      /** @type {Object<string, (number|boolean)>} */
       var settings = {
         trimSpace   : trimSpace,
         tabLength   : tabLength,
@@ -3136,7 +3127,7 @@
     tabLength = 2;
     commentLinks = false;
 
-    if ( config.hasOwnProperty(trimSpace) ) {
+    if ( config.hasOwnProperty('trimSpace') ) {
       if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
         trimSpace = Math.floor(config.trimSpace);
       }
@@ -3144,7 +3135,7 @@
         trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
       }
     }
-    if ( config.hasOwnProperty(tabLength) ) {
+    if ( config.hasOwnProperty('tabLength') ) {
       if (typeof config.tabLength === 'number') {
         tabLength = config.tabLength;
       }
@@ -3152,7 +3143,7 @@
         tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
       }
     }
-    if (config.hasOwnProperty(commentLinks) && config.commentLinks === true) {
+    if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
       commentLinks = true;
     }
   };
@@ -3182,10 +3173,7 @@
      * @desc The Debug instance for the UrlConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'UrlConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('UrlConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -3243,10 +3231,10 @@
     id       = false;
     category = false;
 
-    if (config.hasOwnProperty(id) && config.id === true) {
+    if (config.hasOwnProperty('id') && config.id === true) {
       id = true;
     }
-    if (config.hasOwnProperty(category) && config.category === true) {
+    if (config.hasOwnProperty('category') && config.category === true) {
       category = true;
     }
   };
@@ -3278,10 +3266,7 @@
      * @desc The Debug instance for the LinksConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'LinksConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('LinksConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -3351,13 +3336,13 @@
     source   = false;
     category = true;
 
-    if (config.hasOwnProperty(id) && config.id === false) {
+    if (config.hasOwnProperty('id') && config.id === false) {
       id = false;
     }
-    if (config.hasOwnProperty(source) && config.source === true) {
+    if (config.hasOwnProperty('source') && config.source === true) {
       source = true;
     }
-    if (config.hasOwnProperty(category) && config.category === false) {
+    if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
   };

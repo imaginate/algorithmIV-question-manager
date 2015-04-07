@@ -17,10 +17,7 @@
      * @desc The Debug instance for the LinksConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'LinksConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('LinksConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -90,13 +87,13 @@
     source   = false;
     category = true;
 
-    if (config.hasOwnProperty(id) && config.id === false) {
+    if (config.hasOwnProperty('id') && config.id === false) {
       id = false;
     }
-    if (config.hasOwnProperty(source) && config.source === true) {
+    if (config.hasOwnProperty('source') && config.source === true) {
       source = true;
     }
-    if (config.hasOwnProperty(category) && config.category === false) {
+    if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
   };

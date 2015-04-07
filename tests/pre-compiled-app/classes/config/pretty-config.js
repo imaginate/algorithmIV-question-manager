@@ -16,10 +16,7 @@
      * @desc The Debug instance for the PrettyConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'PrettyConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('PrettyConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -69,7 +66,7 @@
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {numberMap} */
+      /** @type {Object<string, (number|boolean)>} */
       var settings = {
         trimSpace   : trimSpace,
         tabLength   : tabLength,
@@ -89,7 +86,7 @@
     tabLength = 2;
     commentLinks = false;
 
-    if ( config.hasOwnProperty(trimSpace) ) {
+    if ( config.hasOwnProperty('trimSpace') ) {
       if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
         trimSpace = Math.floor(config.trimSpace);
       }
@@ -97,7 +94,7 @@
         trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
       }
     }
-    if ( config.hasOwnProperty(tabLength) ) {
+    if ( config.hasOwnProperty('tabLength') ) {
       if (typeof config.tabLength === 'number') {
         tabLength = config.tabLength;
       }
@@ -105,7 +102,7 @@
         tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
       }
     }
-    if (config.hasOwnProperty(commentLinks) && config.commentLinks === true) {
+    if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
       commentLinks = true;
     }
   };

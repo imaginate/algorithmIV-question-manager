@@ -15,10 +15,7 @@
      * @desc The Debug instance for the SearchBarConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'SearchBarConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('SearchBarConfig');
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
@@ -109,16 +106,16 @@
     category = true;
     subCat   = true;
 
-    if (config.hasOwnProperty(stage) && config.stage === false) {
+    if (config.hasOwnProperty('stage') && config.stage === false) {
       stage = false;
     }
-    if (config.hasOwnProperty(source) && config.source === false) {
+    if (config.hasOwnProperty('source') && config.source === false) {
       source = false;
     }
-    if (config.hasOwnProperty(category) && config.category === false) {
+    if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
-    if (config.hasOwnProperty(subCat) && config.subCat === false) {
+    if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
 
