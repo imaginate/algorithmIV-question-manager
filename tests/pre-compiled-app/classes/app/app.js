@@ -211,7 +211,7 @@
       this.questions.appendElems();
       this.elems.hold.display = 'none';
       flip = (this.searchBar.vals.order === 'desc');
-      this.updateDisplay(flip);
+      this.updateDisplay({ flip: flip });
     }
     else {
       this.elems.appendError();
@@ -313,31 +313,31 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      view = this.searchBar.vals.view;
-      this.elems.nav.style.display = ( (view === 'all') ?
-        'none' : (view === 'ten' && this.vals.get('len') > 10) ?
-          'block' : (view === 'one' && this.vals.get('len') > 1) ?
+      view = app.searchBar.vals.view;
+      app.elems.nav.style.display = ( (view === 'all') ?
+        'none' : (view === 'ten' && app.vals.get('len') > 10) ?
+          'block' : (view === 'one' && app.vals.get('len') > 1) ?
             'block' : 'none'
       );
 
       // Check if the questions order should be flipped
       if (!!settings.flip) {
-        this.questions.reverseElems();
+        app.questions.reverseElems();
       }
 
       // Hide the old questions
       if (!!settings.oldView) {
         view = settings.oldView;
       }
-      this.questions.hideElems(oldIds, oldIndex, view);
+      app.questions.hideElems(oldIds, oldIndex, view);
 
       // Show the new questions
-      this.questions.showElems(newIds, newIndex);
+      app.questions.showElems(newIds, newIndex);
 
       // Show the question's main element
-      this.elems.main.style.opacity = '1';
+      app.elems.main.style.opacity = '1';
         
-      this.debug.group('updateDisplay', 'end');
+      app.debug.group('updateDisplay', 'end');
     }, 520);
   };
 
