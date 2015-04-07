@@ -469,6 +469,7 @@
             };
 
             p.appendChild(a);
+            p.innerHTML += ', ';
           }
         }
       }
@@ -568,6 +569,7 @@
             };
 
             p.appendChild(a);
+            p.innerHTML += ', ';
           }
         }
       }
