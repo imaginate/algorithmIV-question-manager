@@ -401,7 +401,12 @@
             return;
           }
 
-          i += start;
+          i += start + 1;
+
+          args = [ 'formatCommentLinks' ];
+          args.push('i= $$, start= $$, newLine[i]= $$');
+          args.push(i, start, newLine[i]);
+          highlightSyntax.debug.state(args);
 
           newLine[i] = '';
           ++i;
@@ -429,7 +434,7 @@
           }
 
           // Save the link
-          newLine[i] = '<a href="' + href + '">' + content + '</a>';
+          newLine[i] = '<a href="' + href + '" target="_blank">' + content + '</a>';
 
           // Remove that link from the comment string
           comment = comment.substr(i);
