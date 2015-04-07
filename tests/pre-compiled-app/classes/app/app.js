@@ -200,8 +200,6 @@
      */
     var flip;
 
-    // Prepare and show the full app
-    this.elems.appendMain();
     if ( this.flags.get('initArgs') ) {
       this.elems.appendNav();
       this.elems.setScrollbarHeight();

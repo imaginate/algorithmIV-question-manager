@@ -1029,8 +1029,6 @@
      */
     var flip;
 
-    // Prepare and show the full app
-    this.elems.appendMain();
     if ( this.flags.get('initArgs') ) {
       this.elems.appendNav();
       this.elems.setScrollbarHeight();
@@ -1653,7 +1651,6 @@
     // Setup the scrollbar element details
     this.scrl = {};
     this.scrl.height = 0;
-    Object.freeze(this.scrl);
 
     // Setup the code element details
     this.code = {};
@@ -1663,26 +1660,6 @@
     this.code.li.height = 0;
 
     Object.freeze(this.code);
-    Object.freeze(this.code.ol);
-    Object.freeze(this.code.li);
-
-
-    this.debug.group('init', 'end');
-  };
-
-  // Ensure constructor is set to this class.
-  AppElems.prototype.constructor = AppElems;
-
-  /**
-   * -----------------------------------------------
-   * Public Method (AppElems.prototype.appendMain)
-   * -----------------------------------------------
-   * @desc Creates and appends the main html elements.
-   * @type {function()}
-   */
-  AppElems.prototype.appendMain = function() {
-
-    this.debug.start('appendMain');
 
     this.root.appendChild(this.sel);
     this.root.appendChild(this.main);
@@ -1692,7 +1669,13 @@
     this.ques.appendChild(this.none);
 
     document.body.appendChild(this.root);
+
+
+    this.debug.group('init', 'end');
   };
+
+  // Ensure constructor is set to this class.
+  AppElems.prototype.constructor = AppElems;
 
   /**
    * -----------------------------------------------
@@ -1811,6 +1794,7 @@
     document.body.appendChild(div);
 
     this.scrl.height = div.offsetWidth - div.clientWidth;
+    Object.freeze(this.scrl);
 
     document.body.removeChild(div);
   };
@@ -8718,7 +8702,7 @@
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
       Object.freeze(app);
-      document.addEventListener('DOMContentLoaded', app.setupDisplay);
+      app.setupDisplay();
     };
 
     // Save the resources
@@ -8730,11 +8714,22 @@
       }
 
       callback = setup;
+      console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = function() {
-          getResource(resourceList[i], callback);
-        };
+        callback = (function() {
+          /** @type {function} */
+          var _callback;
+          /** @type {number} */
+          var _i;
+
+          _callback = callback;
+          _i = i;
+          
+          return function() {
+            getResource(resourceList[_i], _callback);
+          };
+        })();
       }
       getResource(resourceList[0], callback);
       return;

@@ -139,7 +139,6 @@
     // Setup the scrollbar element details
     this.scrl = {};
     this.scrl.height = 0;
-    Object.freeze(this.scrl);
 
     // Setup the code element details
     this.code = {};
@@ -149,26 +148,6 @@
     this.code.li.height = 0;
 
     Object.freeze(this.code);
-    Object.freeze(this.code.ol);
-    Object.freeze(this.code.li);
-
-
-    this.debug.group('init', 'end');
-  };
-
-  // Ensure constructor is set to this class.
-  AppElems.prototype.constructor = AppElems;
-
-  /**
-   * -----------------------------------------------
-   * Public Method (AppElems.prototype.appendMain)
-   * -----------------------------------------------
-   * @desc Creates and appends the main html elements.
-   * @type {function()}
-   */
-  AppElems.prototype.appendMain = function() {
-
-    this.debug.start('appendMain');
 
     this.root.appendChild(this.sel);
     this.root.appendChild(this.main);
@@ -178,7 +157,13 @@
     this.ques.appendChild(this.none);
 
     document.body.appendChild(this.root);
+
+
+    this.debug.group('init', 'end');
   };
+
+  // Ensure constructor is set to this class.
+  AppElems.prototype.constructor = AppElems;
 
   /**
    * -----------------------------------------------
@@ -297,6 +282,7 @@
     document.body.appendChild(div);
 
     this.scrl.height = div.offsetWidth - div.clientWidth;
+    Object.freeze(this.scrl);
 
     document.body.removeChild(div);
   };

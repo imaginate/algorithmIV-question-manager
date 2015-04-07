@@ -156,7 +156,7 @@
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
       Object.freeze(app);
-      document.addEventListener('DOMContentLoaded', app.setupDisplay);
+      app.setupDisplay();
     };
 
     // Save the resources
@@ -168,11 +168,22 @@
       }
 
       callback = setup;
+      console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = function() {
-          getResource(resourceList[i], callback);
-        };
+        callback = (function() {
+          /** @type {function} */
+          var _callback;
+          /** @type {number} */
+          var _i;
+
+          _callback = callback;
+          _i = i;
+          
+          return function() {
+            getResource(resourceList[_i], _callback);
+          };
+        })();
       }
       getResource(resourceList[0], callback);
       return;
