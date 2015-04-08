@@ -1032,8 +1032,6 @@
 
     if ( this.flags.get('initArgs') ) {
       this.elems.appendNav();
-      this.elems.setScrollbarHeight();
-      this.elems.setCodeListHeight();
       this.searchBar.setMainElems();
       this.searchBar.setOptElems();
       this.searchBar.appendElems();
@@ -1520,6 +1518,15 @@
    */
   var AppElems = function() {
 
+    /** @type {elem} */
+    var elem;
+    /** @type {elem} */
+    var code;
+    /** @type {elem} */
+    var ol;
+    /** @type {elem} */
+    var li;
+
     /**
      * ---------------------------------------------------
      * Public Property (AppElems.debug)
@@ -1527,10 +1534,7 @@
      * @desc The Debug instance for the AppElems class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'AppElems',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('AppElems');
 
     this.debug.group('init', 'coll');
     this.debug.start('init');
@@ -1623,7 +1627,7 @@
     this.code;
 
 
-    // Setup the elements
+    // Setup the app's elements
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
@@ -1649,19 +1653,50 @@
 
     this.hold.src = 'images/loading.gif';
 
-    // Setup the scrollbar element details
+    // Setup the scrollbar details
+    elem = document.createElement('div');
+    elem.className = 'aIV-scrollbar';
+    document.body.appendChild(elem);
+
     this.scrl = {};
-    this.scrl.height = 0;
+    this.scrl.height = elem.offsetWidth - elem.clientWidth;
+    Object.freeze(this.scrl);
+
+    this.debug.state('init', 'this.scrl.height= $$', this.scrl.height);
+
+    document.body.removeChild(elem);
 
     // Setup the code element details
+    elem = document.createElement('pre');
+    code = document.createElement('code');
+    ol   = document.createElement('ol');
+    li   = document.createElement('li');
+
+    elem.style.opacity = '0';
+
+    li.innerHTML = 'test';
+
+    elem.appendChild(code);
+    code.appendChild(ol);
+    ol.appendChild(li);
+
+    this.root.appendChild(elem);
+
     this.code = {};
     this.code.ol = {};
     this.code.li = {};
-    this.code.ol.height = 0;
-    this.code.li.height = 0;
+    this.code.ol.height = ol.offsetHeight - li.offsetHeight;
+    this.code.li.height = li.offsetHeight;
+
+    this.debug.state('init', 'this.code= $$', this.code);
+
+    this.root.removeChild(elem);
 
     Object.freeze(this.code);
+    Object.freeze(this.code.ol);
+    Object.freeze(this.code.li);
 
+    // Append the app elements to their parents
     this.root.appendChild(this.sel);
     this.root.appendChild(this.main);
     this.main.appendChild(this.nav);
@@ -1771,86 +1806,6 @@
 
     this.nav.appendChild(prev);
     this.nav.appendChild(next);
-  };
-
-  /**
-   * ------------------------------------------------------
-   * Public Method (AppElems.prototype.setScrollbarHeight)
-   * ------------------------------------------------------
-   * @desc Saves the width of the browser's scrollbar.
-   * @type {function()}
-   */
-  AppElems.prototype.setScrollbarHeight = function() {
-
-    this.debug.start('setScrollbarHeight');
-
-    /**
-     * @type {elem}
-     * @private
-     */
-    var div;
-
-    div = document.createElement('div');
-    div.className = 'aIV-scrollbar';
-    document.body.appendChild(div);
-
-    this.scrl.height = div.offsetWidth - div.clientWidth;
-    Object.freeze(this.scrl);
-
-    document.body.removeChild(div);
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (AppElems.prototype.setCodeListHeight)
-   * -----------------------------------------------------
-   * @desc Saves the height for list and list items in code elements.
-   * @type {function()}
-   */
-  AppElems.prototype.setCodeListHeight = function() {
-
-    this.debug.start('setCodeListHeight');
-
-    /**
-     * @type {elem}
-     * @private
-     */
-    var pre;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var code;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var ol;
-    /**
-     * @type {elem}
-     * @private
-     */
-    var li;
-
-    pre  = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-    li   = document.createElement('li');
-
-    pre.style.opacity = '0';
-
-    li.textContent = 'test';
-
-    pre.appendChild(code);
-    code.appendChild(ol);
-    ol.appendChild(li);
-
-    this.root.appendChild(pre);
-
-    this.code.ol.height = ol.offsetHeight - li.offsetHeight;
-    this.code.li.height = li.offsetHeight;
-
-    this.root.removeChild(pre);
   };
 
   /**
@@ -5473,8 +5428,8 @@
      * -----------------------------------------------
      * @desc This question's solution.
      * @type {{
-     *   code  : string,
-     *   height: number
+     *   prettyCode: string,
+     *   lineCount : number
      * }}
      * @private
      */
@@ -5569,8 +5524,8 @@
     solution = {};
     if (question.solution) {
       code = prettify(question.solution);
-      solution.code = code.result;
-      solution.height = code.lineCount;
+      solution.prettyCode = code.result;
+      solution.lineCount = code.lineCount;
     }
 
     Object.freeze(mainCat);
@@ -5672,8 +5627,8 @@
    *   problem : string,
    *   descr   : string,
    *   solution: {
-   *     code  : string,
-   *     height: number
+   *     prettyCode: string,
+   *     lineCount : number
    *   },
    *   output  : string
    * }} question - The formatted question details.
@@ -5718,7 +5673,7 @@
       appendProblem.call(this, question.problem, question.descr);
     }
 
-    if (question.solution) {
+    if ( question.solution.hasOwnProperty('prettyCode') ) {
       appendSolution.call(this, question.solution);
     }
 
@@ -6251,7 +6206,7 @@
       contain.className = 'solution';
       div.className     = 'preContain';
 
-      ol.innerHTML = solution.code;
+      ol.innerHTML = solution.prettyCode;
 
       if (testTextContent) {
         h3.textContent = 'Solution:';
@@ -6260,7 +6215,7 @@
         h3.innerHTML = 'Solution:';
       }
 
-      height = solution.height * app.elems.code.li.height;
+      height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
       div.style.height = height + 'px';
 

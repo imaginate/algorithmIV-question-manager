@@ -203,8 +203,6 @@
 
     if ( this.flags.get('initArgs') ) {
       this.elems.appendNav();
-      this.elems.setScrollbarHeight();
-      this.elems.setCodeListHeight();
       this.searchBar.setMainElems();
       this.searchBar.setOptElems();
       this.searchBar.appendElems();
