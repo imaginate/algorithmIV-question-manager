@@ -96,8 +96,8 @@
      * -----------------------------------------------
      * @desc This question's solution.
      * @type {{
-     *   code  : string,
-     *   height: number
+     *   prettyCode: string,
+     *   lineCount : number
      * }}
      * @private
      */
@@ -192,8 +192,8 @@
     solution = {};
     if (question.solution) {
       code = prettify(question.solution);
-      solution.code = code.result;
-      solution.height = code.lineCount;
+      solution.prettyCode = code.result;
+      solution.lineCount = code.lineCount;
     }
 
     Object.freeze(mainCat);

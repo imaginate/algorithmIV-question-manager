@@ -81,8 +81,8 @@
    *   problem : string,
    *   descr   : string,
    *   solution: {
-   *     code  : string,
-   *     height: number
+   *     prettyCode: string,
+   *     lineCount : number
    *   },
    *   output  : string
    * }} question - The formatted question details.
@@ -127,7 +127,7 @@
       appendProblem.call(this, question.problem, question.descr);
     }
 
-    if (question.solution) {
+    if ( question.solution.hasOwnProperty('prettyCode') ) {
       appendSolution.call(this, question.solution);
     }
 
@@ -660,7 +660,7 @@
       contain.className = 'solution';
       div.className     = 'preContain';
 
-      ol.innerHTML = solution.code;
+      ol.innerHTML = solution.prettyCode;
 
       if (testTextContent) {
         h3.textContent = 'Solution:';
@@ -669,7 +669,7 @@
         h3.innerHTML = 'Solution:';
       }
 
-      height = solution.height * app.elems.code.li.height;
+      height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
       div.style.height = height + 'px';
 
