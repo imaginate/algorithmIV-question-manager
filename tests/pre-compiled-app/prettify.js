@@ -899,8 +899,8 @@
 
       var highlightSyntax = function(line) {
 
-        highlightSyntax.debug.start('init', line, i);
-        highlightSyntax.debug.args('init', line, 'string', i, 'number');
+        highlightSyntax.debug.start('init', line);
+        highlightSyntax.debug.args('init', line, 'string');
 
         prepareLine(line);
         formatLine();
