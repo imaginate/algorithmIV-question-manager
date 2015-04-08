@@ -858,10 +858,7 @@
      * @desc The Debug instance for the App class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'App',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('App');
 
     // Debugging vars
     var args, msg;
@@ -1040,7 +1037,7 @@
       this.questions.addCodeExts();
       this.elems.hold.style.display = 'none';
       flip = (this.searchBar.vals.order === 'desc');
-      this.updateDisplay({ flip: flip, oldView: 'all' });
+      this.updateDisplay({ flip: flip, oldView: 'one' });
     }
     else {
       this.elems.appendError();
@@ -4759,7 +4756,7 @@
     i = 0;
     while (++i < len) {
       this.debug.group('addCodeExts', 'coll', 'questionID= $$', i);
-      this.get(i).elem.addCodeExt;
+      this.get(i).elem.addCodeExt();
       this.debug.group('addCodeExts', 'end');
     }
 

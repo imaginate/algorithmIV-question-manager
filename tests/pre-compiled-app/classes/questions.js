@@ -298,7 +298,7 @@
     i = 0;
     while (++i < len) {
       this.debug.group('addCodeExts', 'coll', 'questionID= $$', i);
-      this.get(i).elem.addCodeExt;
+      this.get(i).elem.addCodeExt();
       this.debug.group('addCodeExts', 'end');
     }
 
