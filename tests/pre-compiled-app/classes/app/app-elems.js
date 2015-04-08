@@ -25,6 +25,8 @@
      */
     this.debug = aIV.debug('AppElems');
 
+    // Debugging vars
+    var debugCheck, debugMsg;
     this.debug.group('init', 'coll');
     this.debug.start('init');
 
@@ -111,7 +113,6 @@
      *   li: { height: number }
      * }}
      * @struct
-     
      */
     this.code;
 
@@ -142,6 +143,16 @@
 
     this.hold.src = 'images/loading.gif';
 
+    // Append the app's elements to their parents
+    this.root.appendChild(this.sel);
+    this.root.appendChild(this.main);
+    this.main.appendChild(this.nav);
+    this.main.appendChild(this.ques);
+    this.ques.appendChild(this.hold);
+    this.ques.appendChild(this.none);
+
+    document.body.appendChild(this.root);
+
     // Setup the scrollbar details
     elem = document.createElement('div');
     elem.className = 'aIV-scrollbar';
@@ -154,16 +165,6 @@
     this.debug.state('init', 'this.scrl.height= $$', this.scrl.height);
 
     document.body.removeChild(elem);
-
-    // Append the app elements to their parents
-    this.root.appendChild(this.sel);
-    this.root.appendChild(this.main);
-    this.main.appendChild(this.nav);
-    this.main.appendChild(this.ques);
-    this.ques.appendChild(this.hold);
-    this.ques.appendChild(this.none);
-
-    document.body.appendChild(this.root);
 
     // Setup the code element details
     elem = document.createElement('pre');
@@ -187,7 +188,11 @@
     this.code.ol.height = ol.offsetHeight - li.offsetHeight;
     this.code.li.height = li.offsetHeight;
 
-    this.debug.state('init', 'this.code= $$', this.code);
+    debugMsg = 'this.code.ol.height= $$, this.code.li.height= $$';
+    this.debug.state('init', debugMsg, this.code.ol.height, this.code.li.height);
+    debugCheck = (this.code.ol.height > 0 && this.code.li.height > 0);
+    debugMsg = 'The code list or list item\'s height failed to compute.';
+    this.debug.fail('init', debugCheck, debugMsg);
 
     this.root.removeChild(elem);
 
