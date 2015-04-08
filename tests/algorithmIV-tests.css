@@ -68,6 +68,14 @@
   font-weight:400;
 }
 
+#aIV-tests a {
+  color:inherit;
+}
+#aIV-tests a:active,
+#aIV-tests a:hover {
+  text-decoration:none;
+}
+
 /* ------------------------------- *
  * New Section:
  * ------------------------------- *
