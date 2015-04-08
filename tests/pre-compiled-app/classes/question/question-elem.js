@@ -38,6 +38,33 @@
      */
     this.info;
 
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.solution)
+     * -----------------------------------------------
+     * @desc The question's div.solution element.
+     * @type {elem}
+     */
+    this.solution;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.pre)
+     * -----------------------------------------------
+     * @desc The question's div.preContain element.
+     * @type {elem}
+     */
+    this.pre;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.code)
+     * -----------------------------------------------
+     * @desc The question's code element.
+     * @type {elem}
+     */
+    this.code;
+
 
     // Setup the elements
     this.root = document.createElement('section');
@@ -89,7 +116,7 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    this.debug.group('addContent', 'coll', 'questionID= $$', Number(question.id));
+    this.debug.group('addContent', 'coll', 'questionID= $$', question.id);
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
@@ -636,7 +663,7 @@
       /** @type {elem} */
       var h3;
       /** @type {elem} */
-      var div;
+      var preDiv;
       /** @type {elem} */
       var pre;
       /** @type {elem} */
@@ -644,21 +671,17 @@
       /** @type {elem} */
       var ol;
       /** @type {number} */
-      var overflow;
-      /** @type {number} */
-      var scrollbar;
-      /** @type {number} */
       var height;
 
       contain  = document.createElement('div');
       h3       = document.createElement('h3');
-      div      = document.createElement('div');
+      preDiv   = document.createElement('div');
       pre      = document.createElement('pre');
       code     = document.createElement('code');
       ol       = document.createElement('ol');
 
       contain.className = 'solution';
-      div.className     = 'preContain';
+      preDiv.className     = 'preContain';
 
       ol.innerHTML = solution.prettyCode;
 
@@ -671,163 +694,19 @@
 
       height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
-      div.style.height = height + 'px';
+      preDiv.style.height = height + 'px';
 
       contain.appendChild(h3);
-      contain.appendChild(div);
-      div.appendChild(pre);
+      contain.appendChild(preDiv);
+      preDiv.appendChild(pre);
       pre.appendChild(code);
       code.appendChild(ol);
 
       root.appendChild(contain);
 
-      overflow = code.scrollWidth - code.clientWidth;
-
-      if (overflow) {
-
-        appendCodeExt.call(this, div, overflow);
-
-        scrollbar = app.elems.scrl.height;
-        if (scrollbar) {
-          contain.style.padding = '0 0 ' + scrollbar + 'px';
-        }
-      }
-
-      root.style.display = 'none';
-      root.style.opacity = '1';
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (appendCodeExt)
-     * ---------------------------------------------
-     * @desc Appends the code view extender for the question's solution.
-     * @param {elem} div - The div container for the code.
-     * @param {number} overflow - The number of pixels to extend the code view by.
-     * @private
-     */
-    function appendCodeExt(div, overflow) {
-
-      this.debug.start('appendCodeExt', div, overflow);
-      this.debug.args('appendCodeExt', div, 'elem', overflow, 'number');
-
-      /** @type {elem} */
-      var ext;
-      /** @type {elem} */
-      var extClose;
-      /** @type {elem} */
-      var extOpen;
-      /** @type {elem} */
-      var extBG;
-      /** @type {elem} */
-      var extHov;
-      /** @type {elem} */
-      var extHovC;
-      /** @type {elem} */
-      var extHovO;
-
-      ext      = document.createElement('div');
-      extClose = document.createElement('div');
-      extOpen  = document.createElement('div');
-      extBG    = document.createElement('div');
-      extHov   = document.createElement('div');
-      extHovC  = document.createElement('span');
-      extHovO  = document.createElement('span');
-
-      ext.className      = 'extContain';
-      extClose.className = 'extCloseArrow';
-      extOpen.className  = 'extOpenArrow';
-      extBG.className    = 'extBG';
-      extHov.className   = 'extHover';
-      extHovC.className  = 'closeExt';
-      extHovO.className  = 'openExt';
-
-      if (testTextContent) {
-        extOpen.textContent = 'open';
-        extHovC.textContent = 'Close Extended Code View';
-        extHovO.textContent = 'Extend Code View';
-      }
-      else {
-        extOpen.innerHTML = 'open';
-        extHovC.innerHTML = 'Close Extended Code View';
-        extHovO.innerHTML = 'Extend Code View';
-      }
-
-      extOpen.onmouseover = function() {
-        ext.style.opacity = '1';
-      };
-
-      extOpen.onmouseout = function() {
-        ext.style.opacity = '0';
-      };
-
-      extOpen.onclick = function() {
-
-        events.debug.start('extCodeView');
-
-        /** @type {number} */
-        var newWidth;
-
-        newWidth = String(code.style.width);
-        newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
-        newWidth = Number(newWidth);
-
-        if (extOpen.innerHTML === 'close') {
-
-          extClose.style.opacity = '0.0';
-
-          ext.style.right = '-4px';
-
-          newWidth -= overflow;
-          code.style.width = newWidth + 'px';
-
-          setTimeout(function() {
-            extOpen.style.opacity = '0.8';
-            setTimeout(function() {
-              if (testTextContent) {
-                extOpen.textContent = 'open';
-              }
-              else {
-                extOpen.innerHTML = 'open';
-              }
-              extHovC.style.display = 'none';
-              extHovO.style.display = 'block';
-            }, 600);
-          }, 400);
-        }
-        else if (extOpen.innerHTML === 'open') {
-
-          extOpen.style.opacity = '0.0';
-
-          ext.style.right = '-' + (4 + overflow) + 'px';
-
-          newWidth += overflow;
-          code.style.width = newWidth + 'px';
-
-          setTimeout(function() {
-            extClose.style.opacity = '0.8';
-            setTimeout(function() {
-              if (testTextContent) {
-                extOpen.textContent = 'close';
-              }
-              else {
-                extOpen.innerHTML = 'close';
-              }
-              extHovO.style.display = 'none';
-              extHovC.style.display = 'block';
-            }, 600);
-          }, 400);
-        }
-      };
-
-      ext.appendChild(extClose);
-      ext.appendChild(extOpen);
-      ext.appendChild(extBG);
-      extHov.appendChild(extHovC);
-      extHov.appendChild(extHovO);
-
-      div.appendChild(ext);
-      div.appendChild(extHov);
+      this.solution = contain;
+      this.pre = preDiv;
+      this.code = code;
     }
 
     /**
@@ -881,8 +760,8 @@
      */
     function appendLinks(links) {
 
-      this.debug.start('appendOutput', links);
-      this.debug.args('appendOutput', links, 'objects');
+      this.debug.start('appendLinks', links);
+      this.debug.args('appendLinks', links, 'objects');
 
       /** @type {elem} */
       var div;
@@ -925,4 +804,154 @@
 
       root.appendChild(div);
     }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (QuestionElem.prototype.addCodeExt)
+   * -----------------------------------------------------
+   * @desc If overflow occurs in a code element it enables the auto
+   *   extend button for the question.
+   * @type {function}
+   */
+  QuestionElem.prototype.addCodeExt = function() {
+
+    this.debug.start('addCodeExt');
+
+    /** @type {number} */
+    var overflow;
+    /** @type {number} */
+    var scrollbar;
+    /** @type {elem} */
+    var code;
+    /** @type {elem} */
+    var ext;
+    /** @type {elem} */
+    var extClose;
+    /** @type {elem} */
+    var extOpen;
+    /** @type {elem} */
+    var extBG;
+    /** @type {elem} */
+    var extHov;
+    /** @type {elem} */
+    var extHovC;
+    /** @type {elem} */
+    var extHovO;
+    /** @type {boolean} */
+    var testTextContent;
+
+    code = this.code;
+
+    overflow = code.scrollWidth - code.clientWidth;
+    this.debug.state('addCodeExt', 'overflow= $$', overflow);
+
+    if (overflow < 1) {
+      this.root.style.display = 'none';
+      this.root.style.opacity = '1';
+      return;
+    }
+
+    scrollbar = app.elems.scrl.height;
+    this.debug.state('addCodeExt', 'scrollbar= $$', scrollbar);
+    if (scrollbar > 0) {
+      this.solution.style.paddingBottom = scrollbar + 'px';
+    }
+
+    testTextContent = !!document.body.textContent;
+
+    ext      = document.createElement('div');
+    extClose = document.createElement('div');
+    extOpen  = document.createElement('div');
+    extBG    = document.createElement('div');
+    extHov   = document.createElement('div');
+    extHovC  = document.createElement('span');
+    extHovO  = document.createElement('span');
+
+    ext.className      = 'extContain';
+    extClose.className = 'extCloseArrow';
+    extOpen.className  = 'extOpenArrow';
+    extBG.className    = 'extBG';
+    extHov.className   = 'extHover';
+    extHovC.className  = 'closeExt';
+    extHovO.className  = 'openExt';
+
+    if (testTextContent) {
+      extOpen.textContent = 'open';
+      extHovC.textContent = 'Close Extended Code View';
+      extHovO.textContent = 'Extend Code View';
+    }
+    else {
+      extOpen.innerHTML = 'open';
+      extHovC.innerHTML = 'Close Extended Code View';
+      extHovO.innerHTML = 'Extend Code View';
+    }
+
+    extOpen.onmouseover = function() {
+      ext.style.opacity = '1';
+    };
+
+    extOpen.onmouseout = function() {
+      ext.style.opacity = '0';
+    };
+
+    extOpen.onclick = function() {
+      events.debug.start('extCodeView');
+
+      /** @type {number} */
+      var newWidth;
+
+      newWidth = String(code.style.width);
+      newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
+      newWidth = Number(newWidth);
+
+      if (extOpen.innerHTML === 'close') {
+
+        extClose.style.opacity = '0.0';
+
+        ext.style.right = '-4px';
+
+        newWidth -= overflow;
+        code.style.width = newWidth + 'px';
+
+        setTimeout(function() {
+          extOpen.style.opacity = '0.8';
+          setTimeout(function() {
+            extOpen.innerHTML = 'open';
+            extHovC.style.display = 'none';
+            extHovO.style.display = 'block';
+          }, 600);
+        }, 400);
+      }
+      else if (extOpen.innerHTML === 'open') {
+
+        extOpen.style.opacity = '0.0';
+
+        ext.style.right = '-' + (4 + overflow) + 'px';
+
+        newWidth += overflow;
+        code.style.width = newWidth + 'px';
+
+        setTimeout(function() {
+          extClose.style.opacity = '0.8';
+          setTimeout(function() {
+            extOpen.innerHTML = 'close';
+            extHovO.style.display = 'none';
+            extHovC.style.display = 'block';
+          }, 600);
+        }, 400);
+      }
+    };
+
+    ext.appendChild(extClose);
+    ext.appendChild(extOpen);
+    ext.appendChild(extBG);
+    extHov.appendChild(extHovC);
+    extHov.appendChild(extHovO);
+
+    this.pre.appendChild(ext);
+    this.pre.appendChild(extHov);
+
+    this.root.style.display = 'none';
+    this.root.style.opacity = '1';
   };

@@ -277,6 +277,36 @@
 
   /**
    * -----------------------------------------------------
+   * Public Method (Questions.prototype.addCodeExts)
+   * -----------------------------------------------------
+   * @desc If overflow occurs in a question's code element it enables
+   *   the auto extend button for the question.
+   * @type {function}
+   */
+  Questions.prototype.addCodeExts = function() {
+
+    this.debug.group('addCodeExts', 'open');
+    this.debug.start('addCodeExts');
+
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
+
+    len = this.len + 1;
+
+    i = 0;
+    while (++i < len) {
+      this.debug.group('addCodeExts', 'coll', 'questionID= $$', i);
+      this.get(i).elem.addCodeExt;
+      this.debug.group('addCodeExts', 'end');
+    }
+
+    this.debug.group('addCodeExts', 'end');
+  };
+
+  /**
+   * -----------------------------------------------------
    * Public Method (Questions.prototype.reverseElems)
    * -----------------------------------------------------
    * @desc Appends each question's element to #aIV-questions in the direction

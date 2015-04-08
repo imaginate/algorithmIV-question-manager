@@ -1037,6 +1037,7 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
+      this.questions.addCodeExts();
       this.elems.hold.style.display = 'none';
       flip = (this.searchBar.vals.order === 'desc');
       this.updateDisplay({ flip: flip, oldView: 'all' });
@@ -4490,15 +4491,15 @@
     this.debug = aIV.debug('Questions');
 
     // Debugging vars
-    var args;
-    args = [ 'init', 'open' ];
-    args.push('questions= $$, config= $$', questions, config);
-    this.debug.group(args);
+    var debugArgs;
+    debugArgs = [ 'init', 'open' ];
+    debugArgs.push('questions= $$, config= $$', questions, config);
+    this.debug.group(debugArgs);
     this.debug.start('init', questions, config, sources, categories);
-    args = [ 'init' ];
-    args.push(questions, 'objects', config, 'booleanMap');
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
+    debugArgs = [ 'init' ];
+    debugArgs.push(questions, 'objects', config, 'booleanMap');
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
 
     /**
      * ----------------------------------------------- 
@@ -4538,24 +4539,24 @@
     this.get = function(id) {
 
       // Debugging vars
-      var errorMsg, failCheck;
+      var debugMsg, debugCheck;
       this.debug.start('get', id);
       this.debug.args('get', id, 'number|string');
 
-      errorMsg = 'Error: This question id does not exist. id= $$';
-      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('get', failCheck, errorMsg, id);
+      debugMsg = 'Error: This question id does not exist. id= $$';
+      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('get', debugCheck, debugMsg, id);
 
       /** @type {Question} */
       var question;
 
       question = (typeof id === 'number') ? this.list[id] : data[id];
 
-      if (failCheck) {
-        errorMsg = 'Error: This question id was not an instanceof ';
-        errorMsg += 'Question. id= $$';
-        failCheck = (question instanceof Question);
-        this.debug.fail('get', failCheck, errorMsg, id);
+      if (debugCheck) {
+        debugMsg = 'Error: This question id was not an instanceof ';
+        debugMsg += 'Question. id= $$';
+        debugCheck = (question instanceof Question);
+        this.debug.fail('get', debugCheck, debugMsg, id);
       }
 
       return question;
@@ -4578,24 +4579,24 @@
     this.setStyle = function(id, type, val) {
 
       // Debugging vars
-      var args, errorMsg, failCheck;
+      var debugArgs, debugMsg, debugCheck;
       this.debug.start('setStyle', id, type, val);
 
-      args = [ 'setStyle' ];
-      args.push(id, '!number|string', type, '!string|stringMap');
-      args.push(val, '!string|number=');
-      this.debug.args(args);
+      debugArgs = [ 'setStyle' ];
+      debugArgs.push(id, '!number|string', type, '!string|stringMap');
+      debugArgs.push(val, '!string|number=');
+      this.debug.args(debugArgs);
 
-      errorMsg = 'Error: An invalid question id was provided. id= $$';
-      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('setStyle', failCheck, errorMsg, id);
+      debugMsg = 'Error: An invalid question id was provided. id= $$';
+      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('setStyle', debugCheck, debugMsg, id);
 
       if (typeof type === 'string') {
-        errorMsg = 'Error: A third param (val) is required when the given type ';
-        errorMsg += 'is a string. It should be a string or number. val= $$';
-        args = [ 'setStyle' ];
-        args.push(checkType(val, 'string|number'), errorMsg, val);
-        this.debug.fail(args);
+        debugMsg = 'Error: A third param (val) is required when the given type ';
+        debugMsg += 'is a string. It should be a string or number. val= $$';
+        debugArgs = [ 'setStyle' ];
+        debugArgs.push(checkType(val, 'string|number'), debugMsg, val);
+        this.debug.fail(debugArgs);
       }
 
       // Handle one type change
@@ -4737,6 +4738,36 @@
 
   /**
    * -----------------------------------------------------
+   * Public Method (Questions.prototype.addCodeExts)
+   * -----------------------------------------------------
+   * @desc If overflow occurs in a question's code element it enables
+   *   the auto extend button for the question.
+   * @type {function}
+   */
+  Questions.prototype.addCodeExts = function() {
+
+    this.debug.group('addCodeExts', 'open');
+    this.debug.start('addCodeExts');
+
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
+
+    len = this.len + 1;
+
+    i = 0;
+    while (++i < len) {
+      this.debug.group('addCodeExts', 'coll', 'questionID= $$', i);
+      this.get(i).elem.addCodeExt;
+      this.debug.group('addCodeExts', 'end');
+    }
+
+    this.debug.group('addCodeExts', 'end');
+  };
+
+  /**
+   * -----------------------------------------------------
    * Public Method (Questions.prototype.reverseElems)
    * -----------------------------------------------------
    * @desc Appends each question's element to #aIV-questions in the direction
@@ -4801,11 +4832,11 @@
   Questions.prototype.hideElems = function(ids, index, view) {
 
     // Debugging vars
-    var args, errorMsg;
+    var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
-    args = [ 'hideElems' ];
-    args.push(ids, 'numbers', index, 'number', view, 'string=');
-    this.debug.args(args);
+    debugArgs = [ 'hideElems' ];
+    debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
+    this.debug.args(debugArgs);
 
     /**
      * @type {num}
@@ -4830,12 +4861,12 @@
       return;
     }
 
-    errorMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('hideElems', (!!ids && !!ids.length), errorMsg, ids);
-    errorMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    args = [ 'hideElems' ];
-    args.push((index > -1 && index < ids.length), errorMsg, ids, index);
-    this.debug.fail(args);
+    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
+    this.debug.fail('hideElems', (!!ids && !!ids.length), debugMsg, ids);
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugArgs = [ 'hideElems' ];
+    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
+    this.debug.fail(debugArgs);
 
     view = view || app.searchBar.vals.view;
 
@@ -4869,7 +4900,7 @@
   Questions.prototype.showElems = function(ids, index) {
 
     // Debugging vars
-    var args, errorMsg;
+    var debugArgs, debugMsg;
     this.debug.start('showElems', ids, index);
     this.debug.args('showElems', ids, 'numbers', index, 'number');
 
@@ -4904,12 +4935,12 @@
       return;
     }
 
-    errorMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('showElems', (!!ids && !!ids.length), errorMsg, ids);
-    errorMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    args = [ 'showElems' ];
-    args.push((index > -1 && index < ids.length), errorMsg, ids, index);
-    this.debug.fail(args);
+    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
+    this.debug.fail('showElems', (!!ids && !!ids.length), debugMsg, ids);
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugArgs = [ 'showElems' ];
+    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
+    this.debug.fail(debugArgs);
 
     view = app.searchBar.vals.view;
 
@@ -5594,6 +5625,33 @@
      */
     this.info;
 
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.solution)
+     * -----------------------------------------------
+     * @desc The question's div.solution element.
+     * @type {elem}
+     */
+    this.solution;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.pre)
+     * -----------------------------------------------
+     * @desc The question's div.preContain element.
+     * @type {elem}
+     */
+    this.pre;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (QuestionElem.code)
+     * -----------------------------------------------
+     * @desc The question's code element.
+     * @type {elem}
+     */
+    this.code;
+
 
     // Setup the elements
     this.root = document.createElement('section');
@@ -5645,7 +5703,7 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    this.debug.group('addContent', 'coll', 'questionID= $$', Number(question.id));
+    this.debug.group('addContent', 'coll', 'questionID= $$', question.id);
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
@@ -6192,7 +6250,7 @@
       /** @type {elem} */
       var h3;
       /** @type {elem} */
-      var div;
+      var preDiv;
       /** @type {elem} */
       var pre;
       /** @type {elem} */
@@ -6200,21 +6258,17 @@
       /** @type {elem} */
       var ol;
       /** @type {number} */
-      var overflow;
-      /** @type {number} */
-      var scrollbar;
-      /** @type {number} */
       var height;
 
       contain  = document.createElement('div');
       h3       = document.createElement('h3');
-      div      = document.createElement('div');
+      preDiv   = document.createElement('div');
       pre      = document.createElement('pre');
       code     = document.createElement('code');
       ol       = document.createElement('ol');
 
       contain.className = 'solution';
-      div.className     = 'preContain';
+      preDiv.className     = 'preContain';
 
       ol.innerHTML = solution.prettyCode;
 
@@ -6227,163 +6281,19 @@
 
       height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
-      div.style.height = height + 'px';
+      preDiv.style.height = height + 'px';
 
       contain.appendChild(h3);
-      contain.appendChild(div);
-      div.appendChild(pre);
+      contain.appendChild(preDiv);
+      preDiv.appendChild(pre);
       pre.appendChild(code);
       code.appendChild(ol);
 
       root.appendChild(contain);
 
-      overflow = code.scrollWidth - code.clientWidth;
-
-      if (overflow) {
-
-        appendCodeExt.call(this, div, overflow);
-
-        scrollbar = app.elems.scrl.height;
-        if (scrollbar) {
-          contain.style.padding = '0 0 ' + scrollbar + 'px';
-        }
-      }
-
-      root.style.display = 'none';
-      root.style.opacity = '1';
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (appendCodeExt)
-     * ---------------------------------------------
-     * @desc Appends the code view extender for the question's solution.
-     * @param {elem} div - The div container for the code.
-     * @param {number} overflow - The number of pixels to extend the code view by.
-     * @private
-     */
-    function appendCodeExt(div, overflow) {
-
-      this.debug.start('appendCodeExt', div, overflow);
-      this.debug.args('appendCodeExt', div, 'elem', overflow, 'number');
-
-      /** @type {elem} */
-      var ext;
-      /** @type {elem} */
-      var extClose;
-      /** @type {elem} */
-      var extOpen;
-      /** @type {elem} */
-      var extBG;
-      /** @type {elem} */
-      var extHov;
-      /** @type {elem} */
-      var extHovC;
-      /** @type {elem} */
-      var extHovO;
-
-      ext      = document.createElement('div');
-      extClose = document.createElement('div');
-      extOpen  = document.createElement('div');
-      extBG    = document.createElement('div');
-      extHov   = document.createElement('div');
-      extHovC  = document.createElement('span');
-      extHovO  = document.createElement('span');
-
-      ext.className      = 'extContain';
-      extClose.className = 'extCloseArrow';
-      extOpen.className  = 'extOpenArrow';
-      extBG.className    = 'extBG';
-      extHov.className   = 'extHover';
-      extHovC.className  = 'closeExt';
-      extHovO.className  = 'openExt';
-
-      if (testTextContent) {
-        extOpen.textContent = 'open';
-        extHovC.textContent = 'Close Extended Code View';
-        extHovO.textContent = 'Extend Code View';
-      }
-      else {
-        extOpen.innerHTML = 'open';
-        extHovC.innerHTML = 'Close Extended Code View';
-        extHovO.innerHTML = 'Extend Code View';
-      }
-
-      extOpen.onmouseover = function() {
-        ext.style.opacity = '1';
-      };
-
-      extOpen.onmouseout = function() {
-        ext.style.opacity = '0';
-      };
-
-      extOpen.onclick = function() {
-
-        events.debug.start('extCodeView');
-
-        /** @type {number} */
-        var newWidth;
-
-        newWidth = String(code.style.width);
-        newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
-        newWidth = Number(newWidth);
-
-        if (extOpen.innerHTML === 'close') {
-
-          extClose.style.opacity = '0.0';
-
-          ext.style.right = '-4px';
-
-          newWidth -= overflow;
-          code.style.width = newWidth + 'px';
-
-          setTimeout(function() {
-            extOpen.style.opacity = '0.8';
-            setTimeout(function() {
-              if (testTextContent) {
-                extOpen.textContent = 'open';
-              }
-              else {
-                extOpen.innerHTML = 'open';
-              }
-              extHovC.style.display = 'none';
-              extHovO.style.display = 'block';
-            }, 600);
-          }, 400);
-        }
-        else if (extOpen.innerHTML === 'open') {
-
-          extOpen.style.opacity = '0.0';
-
-          ext.style.right = '-' + (4 + overflow) + 'px';
-
-          newWidth += overflow;
-          code.style.width = newWidth + 'px';
-
-          setTimeout(function() {
-            extClose.style.opacity = '0.8';
-            setTimeout(function() {
-              if (testTextContent) {
-                extOpen.textContent = 'close';
-              }
-              else {
-                extOpen.innerHTML = 'close';
-              }
-              extHovO.style.display = 'none';
-              extHovC.style.display = 'block';
-            }, 600);
-          }, 400);
-        }
-      };
-
-      ext.appendChild(extClose);
-      ext.appendChild(extOpen);
-      ext.appendChild(extBG);
-      extHov.appendChild(extHovC);
-      extHov.appendChild(extHovO);
-
-      div.appendChild(ext);
-      div.appendChild(extHov);
+      this.solution = contain;
+      this.pre = preDiv;
+      this.code = code;
     }
 
     /**
@@ -6437,8 +6347,8 @@
      */
     function appendLinks(links) {
 
-      this.debug.start('appendOutput', links);
-      this.debug.args('appendOutput', links, 'objects');
+      this.debug.start('appendLinks', links);
+      this.debug.args('appendLinks', links, 'objects');
 
       /** @type {elem} */
       var div;
@@ -6481,6 +6391,156 @@
 
       root.appendChild(div);
     }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (QuestionElem.prototype.addCodeExt)
+   * -----------------------------------------------------
+   * @desc If overflow occurs in a code element it enables the auto
+   *   extend button for the question.
+   * @type {function}
+   */
+  QuestionElem.prototype.addCodeExt = function() {
+
+    this.debug.start('addCodeExt');
+
+    /** @type {number} */
+    var overflow;
+    /** @type {number} */
+    var scrollbar;
+    /** @type {elem} */
+    var code;
+    /** @type {elem} */
+    var ext;
+    /** @type {elem} */
+    var extClose;
+    /** @type {elem} */
+    var extOpen;
+    /** @type {elem} */
+    var extBG;
+    /** @type {elem} */
+    var extHov;
+    /** @type {elem} */
+    var extHovC;
+    /** @type {elem} */
+    var extHovO;
+    /** @type {boolean} */
+    var testTextContent;
+
+    code = this.code;
+
+    overflow = code.scrollWidth - code.clientWidth;
+    this.debug.state('addCodeExt', 'overflow= $$', overflow);
+
+    if (overflow < 1) {
+      this.root.style.display = 'none';
+      this.root.style.opacity = '1';
+      return;
+    }
+
+    scrollbar = app.elems.scrl.height;
+    this.debug.state('addCodeExt', 'scrollbar= $$', scrollbar);
+    if (scrollbar > 0) {
+      this.solution.style.paddingBottom = scrollbar + 'px';
+    }
+
+    testTextContent = !!document.body.textContent;
+
+    ext      = document.createElement('div');
+    extClose = document.createElement('div');
+    extOpen  = document.createElement('div');
+    extBG    = document.createElement('div');
+    extHov   = document.createElement('div');
+    extHovC  = document.createElement('span');
+    extHovO  = document.createElement('span');
+
+    ext.className      = 'extContain';
+    extClose.className = 'extCloseArrow';
+    extOpen.className  = 'extOpenArrow';
+    extBG.className    = 'extBG';
+    extHov.className   = 'extHover';
+    extHovC.className  = 'closeExt';
+    extHovO.className  = 'openExt';
+
+    if (testTextContent) {
+      extOpen.textContent = 'open';
+      extHovC.textContent = 'Close Extended Code View';
+      extHovO.textContent = 'Extend Code View';
+    }
+    else {
+      extOpen.innerHTML = 'open';
+      extHovC.innerHTML = 'Close Extended Code View';
+      extHovO.innerHTML = 'Extend Code View';
+    }
+
+    extOpen.onmouseover = function() {
+      ext.style.opacity = '1';
+    };
+
+    extOpen.onmouseout = function() {
+      ext.style.opacity = '0';
+    };
+
+    extOpen.onclick = function() {
+      events.debug.start('extCodeView');
+
+      /** @type {number} */
+      var newWidth;
+
+      newWidth = String(code.style.width);
+      newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
+      newWidth = Number(newWidth);
+
+      if (extOpen.innerHTML === 'close') {
+
+        extClose.style.opacity = '0.0';
+
+        ext.style.right = '-4px';
+
+        newWidth -= overflow;
+        code.style.width = newWidth + 'px';
+
+        setTimeout(function() {
+          extOpen.style.opacity = '0.8';
+          setTimeout(function() {
+            extOpen.innerHTML = 'open';
+            extHovC.style.display = 'none';
+            extHovO.style.display = 'block';
+          }, 600);
+        }, 400);
+      }
+      else if (extOpen.innerHTML === 'open') {
+
+        extOpen.style.opacity = '0.0';
+
+        ext.style.right = '-' + (4 + overflow) + 'px';
+
+        newWidth += overflow;
+        code.style.width = newWidth + 'px';
+
+        setTimeout(function() {
+          extClose.style.opacity = '0.8';
+          setTimeout(function() {
+            extOpen.innerHTML = 'close';
+            extHovO.style.display = 'none';
+            extHovC.style.display = 'block';
+          }, 600);
+        }, 400);
+      }
+    };
+
+    ext.appendChild(extClose);
+    ext.appendChild(extOpen);
+    ext.appendChild(extBG);
+    extHov.appendChild(extHovC);
+    extHov.appendChild(extHovO);
+
+    this.pre.appendChild(ext);
+    this.pre.appendChild(extHov);
+
+    this.root.style.display = 'none';
+    this.root.style.opacity = '1';
   };
 
 
