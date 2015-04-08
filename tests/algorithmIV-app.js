@@ -5978,8 +5978,6 @@
      * Private Method (appendCategory)
      * ---------------------------------------------
      * @desc Appends the question's categories.
-     * @todo Add url parsing logic and remove need for using
-     *   indexOf to find the subCatParent.
      * @param {Object} main - The question's main categories.
      * @param {Object} sub - The question's sub categories.
      * @private
@@ -5989,14 +5987,58 @@
       this.debug.start('appendCategory', main, sub);
       this.debug.args('appendCategory', main, 'object', sub, 'object');
 
-      /** @type {boolean} */
-      var config;
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {elem} */
       var contain;
       /** @type {elem} */
-      var div;
+      var mainDiv;
+      /** @type {elem} */
+      var subDiv;
+
+      contain = document.createElement('div');
+      contain.className = 'category';
+
+      // Add the main categories
+      if (main.h3) {
+
+        mainDiv = document.createElement('div');
+        mainDiv.className = 'mainCategory';
+
+        appendMainCategories.call(this, main, mainDiv);
+
+        contain.appendChild(mainDiv);
+      }
+
+      // Add the sub categories
+      if (sub.h3) {
+
+        subDiv = document.createElement('div');
+        subDiv.className = 'subCategory';
+
+        appendSubCategories.call(this, sub, subDiv);
+
+        contain.appendChild(subDiv);
+      }
+
+      root.appendChild(contain);
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (appendMainCategories)
+     * ---------------------------------------------
+     * @desc Appends the question's main categories.
+     * @param {Object} main - The question's main categories.
+     * @param {elem} div - The DOM container for the main categories.
+     * @private
+     */
+    function appendMainCategories(main, div) {
+
+      var debugMsg;
+      this.debug.start('appendMainCategories', main, div);
+      this.debug.args('appendMainCategories', main, 'object', div, 'elem');
+
+      /** @type {boolean} */
+      var config;
       /** @type {elem} */
       var h3;
       /** @type {elem} */
@@ -6005,191 +6047,254 @@
       var i;
       /** @type {number} */
       var len;
+      /** @type {number} */
+      var last;
+      /** @type {elem} */
+      var a;
+
+      config = app.config.links.get('category');
+
+      h3 = document.createElement('h3');
+      p  = document.createElement('p');
+
+      if (testTextContent) {
+        h3.textContent = main.h3;
+        if (!config) {
+          p.textContent = main.names.join(', ');
+        }
+      }
+      else {
+        h3.innerHTML = main.h3;
+        if (!config) {
+          p.innerHTML = main.names.join(', ');
+        }
+      }
+
+      div.appendChild(h3);
+      div.appendChild(p);
+
+      // Add each main category's anchor tag
+      if (config) {
+        debugMsg = 'p= $$, a= $$, a.onclick= $$';
+        len = main.ids.length;
+        last = len - 1;
+        i = -1;
+        while (++i < len) {
+          a = makeMainCatLink.call(this, main.ids[i], main.names[i]);
+          p.appendChild(a);
+          if (i !== last) {
+            p.innerHTML += ',&nbsp;&nbsp;';
+          }
+          this.debug.state('appendMainCategories', debugMsg, p, a, a.onclick);
+        }
+      }
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (appendSubCategories)
+     * ---------------------------------------------
+     * @desc Appends the question's sub categories.
+     * @param {Object} sub - The question's sub categories.
+     * @param {elem} div - The DOM container for the sub categories.
+     * @private
+     */
+    function appendSubCategories(sub, div) {
+
+      var debugMsg;
+      this.debug.start('appendSubCategories', sub, div);
+      this.debug.args('appendSubCategories', sub, 'object', div, 'elem');
+
+      /** @type {boolean} */
+      var config;
+      /** @type {elem} */
+      var h3;
+      /** @type {elem} */
+      var p;
+      /** @type {number} */
+      var i;
+      /** @type {number} */
+      var len;
+      /** @type {number} */
+      var last;
+      /** @type {elem} */
+      var a;
+
+      config = app.config.links.get('category');
+
+      h3 = document.createElement('h3');
+      p  = document.createElement('p');
+
+      if (testTextContent) {
+        h3.textContent = sub.h3;
+        if (!config) {
+          p.textContent = sub.names.join(', ');
+        }
+      }
+      else {
+        h3.innerHTML = sub.h3;
+        if (!config) {
+          p.innerHTML = sub.names.join(', ');
+        }
+      }
+
+      div.appendChild(h3);
+      div.appendChild(p);
+
+      // Add each sub category's anchor tag
+      if (config) {
+        debugMsg = 'p= $$, a= $$, a.onclick= $$';
+        len = sub.ids.length;
+        last = len - 1;
+        i = -1;
+        while (++i < len) {
+          a = makeSubCatLink.call(this, sub.ids[i], sub.names[i]);
+          p.appendChild(a);
+          if (i !== last) {
+            p.innerHTML += ',&nbsp;&nbsp;';
+          }
+          this.debug.state('appendSubCategories', debugMsg, p, a, a.onclick);
+        }
+      }
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makeMainCatLink)
+     * ---------------------------------------------
+     * @desc Creates a main category link.
+     * @todo Add url parsing logic.
+     * @param {string} id - The main category's id.
+     * @param {string} name - The main category's name.
+     * @return {elem} The anchor link.
+     * @private
+     */
+    function makeMainCatLink(id, name) {
+
+      this.debug.start('makeMainCatLink', id, name);
+      this.debug.args('makeMainCatLink', id, 'string', name, 'string');
+
+      /** @type {boolean} */
+      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
       var a;
-      /** @type {stringMap} */
-      var subCatParent;
 
-      config = app.config.links.get('category');
+      urlConfig = app.config.url.get('category');
+      url = app.categories.get(id, 'url');
+
+      a = document.createElement('a');
+      a.href = 'category/' + url;
+      a.className = 'dark';
+      a.innerHTML = name;
+      a.onclick = function() {
+        events.debug.start('mainCat.onclick', id);
+
+        if (app.searchBar.vals.mainCat != id) {
+          events.debug.group('mainCat.onclick', 'coll', 'mainCat= $$', id);
+
+          app.searchBar.vals.mainCat = id;
+          app.searchBar.updateSubCatOpts();
+          app.updateDisplay();
+
+          if (urlConfig) {
+            // ADD URL LOGIC HERE
+          }
+
+          events.debug.group('mainCat.onclick', 'end');
+        }
+
+        return false;
+      };
+
+      return a;
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makeSubCatLink)
+     * ---------------------------------------------
+     * @desc Creates a sub category link.
+     * @todo Add url parsing logic and remove the use of
+     *   indexOf to find the sub category's parent.
+     * @param {string} id - The sub category's id.
+     * @param {string} name - The sub category's name.
+     * @return {elem} The anchor link.
+     * @private
+     */
+    function makeSubCatLink(id, name) {
+
+      this.debug.start('makeSubCatLink', id, name);
+      this.debug.args('makeSubCatLink', id, 'string', name, 'string');
+
+      /** @type {boolean} */
+      var urlConfig;
+      /** @type {string} */
+      var url;
+      /** @type {elem} */
+      var a;
+      /** @type {string} */
+      var parentId;
+      /** @type {string} */
+      var parentUrl;
+
       urlConfig = app.config.url.get('category');
 
-      contain = document.createElement('div');
-      contain.className = 'category';
+      // Set the sub category's parent id and url
+      app.categories.ids.some(function(/** string */ catId) {
+        /** @private */
+        var category;
+        /** @private */
+        var subs;
 
-      if (main.h3) {
-        div = document.createElement('div');
-        h3  = document.createElement('h3');
-        p   = document.createElement('p');
-
-        div.className  = 'mainCategory';
-
-        if (testTextContent) {
-          h3.textContent = main.h3;
-          if (!config) {
-            p.textContent = main.names.join(',');
-          }
-        }
-        else {
-          h3.innerHTML = main.h3;
-          if (!config) {
-            p.innerHTML = main.names.join(',');
-          }
+        category = app.categories.get(catId);
+        subs = category.get('subs');
+        if (subs && subs.indexOf(id) !== -1) {
+          parentId  = catId;
+          parentUrl = category.get('url');
+          return true;
         }
 
-        div.appendChild(h3);
-        div.appendChild(p);
+        return false;
+      });
 
-        contain.appendChild(div);
+      url = app.categories.get(id, 'url');
 
-        if (config) {
+      a = document.createElement('a');
+      a.href = 'category/' + parentUrl + '/' + url;
+      a.className = 'dark';
+      a.innerHTML = name;
+      a.onclick = function() {
+        events.debug.start('subCat.onclick', id);
 
-          // Add each main category's anchor tag
-          len = main.ids.length;
-          i = -1;
-          while (++i < len) {
+        if (app.searchBar.vals.subCat != id) {
+          events.debug.group('subCat.onclick', 'coll', 'subCat= $$', id);
 
-            url = app.categories.get(main.ids[i], 'url');
-
-            a = document.createElement('a');
-            a.href = 'category/' + url;
-            a.className = 'dark';
-            if (testTextContent) {
-              a.textContent = main.names[i];
-            }
-            else {
-              a.innerHTML = main.names[i];
-            }
-            a.onclick = function() {
-
-              events.debug.start('mainCat.onclick', mainCat);
-
-              if (app.searchBar.vals.mainCat != main.ids[i]) {
-
-                events.debug.group('mainCat.onclick', 'coll', 'mainCat= $$', mainCat);
-
-                app.searchBar.vals.mainCat = main.ids[i];
-                app.searchBar.updateSubCatOpts();
-                app.updateDisplay();
-
-                if (urlConfig) {
-                  // ADD URL LOGIC HERE
-                }
-
-                events.debug.group('mainCat.onclick', 'end');
-              }
-
-              return false;
-            };
-
-            p.appendChild(a);
-            p.innerHTML += ', ';
+          // Check the main category and update the values and options
+          if (app.searchBar.vals.mainCat !== 'all' ||
+              app.searchBar.vals.mainCat !== parentId) {
+            app.searchBar.vals.mainCat = 'all';
+            app.searchBar.updateSubCatOpts(id);
           }
-        }
-      }
-
-      if (sub.h3) {
-        div = document.createElement('div');
-        h3  = document.createElement('h3');
-        p   = document.createElement('p');
-
-        div.className  = 'subCategory';
-
-        if (testTextContent) {
-          h3.textContent = sub.h3;
-          if (!config) {
-            p.textContent = sub.names.join(',');
+          else {
+            app.searchBar.vals.subCat = id;
           }
-        }
-        else {
-          h3.innerHTML = sub.h3;
-          if (!config) {
-            p.innerHTML = sub.names.join(',');
+
+          if (urlConfig) {
+            // ADD URL LOGIC HERE
           }
+
+          // Finish the display update
+          app.updateDisplay();
+
+          events.debug.group('subCat.onclick', 'end');
         }
 
-        div.appendChild(h3);
-        div.appendChild(p);
+        return false;
+      };
 
-        contain.appendChild(div);
-
-        if (config) {
-
-          subCatParent = {};
-
-          // Add the each sub category's anchor tag
-          len = sub.ids.length;
-          i = -1;
-          while (++i < len) {
-
-            // Set the subCatParent
-            app.categories.ids.some(function(/** string */ catId) {
-              /** @private */
-              var category;
-              /** @private */
-              var subs;
-
-              category = app.categories.get(catId);
-              subs = category.get('subs');
-              if (subs && subs.indexOf(sub.ids[i]) !== -1) {
-                subCatParent.id   = catId;
-                subCatParent.url  = category.get('url');
-                subCatParent.name = category.get('name');
-                return true;
-              }
-              return false;
-            });
-
-            url = app.categories.get(sub.ids[i], 'url');
-
-            a = document.createElement('a');
-            a.href = 'category/' + subCatParent.url + '/' + url;
-            a.className = 'dark';
-            if (testTextContent) {
-              a.textContent = sub.names[i];
-            }
-            else {
-              a.innerHTML = sub.names[i];
-            }
-            a.onclick = function() {
-
-              events.debug.start('subCat.onclick', subCat);
-
-              if (app.searchBar.vals.subCat != sub.ids[i]) {
-
-                events.debug.group('subCat.onclick', 'coll', 'subCat= $$', subCat);
-
-                // Check the main category and update the values and options
-                if (app.searchBar.vals.mainCat !== 'all' ||
-                    app.searchBar.vals.mainCat !== subCatParent.id) {
-                  app.searchBar.vals.mainCat = 'all';
-                  app.searchBar.updateSubCatOpts(sub.ids[i]);
-                }
-                else {
-                  app.searchBar.vals.subCat = sub.ids[i];
-                }
-
-                if (urlConfig) {
-                  // ADD URL LOGIC HERE
-                }
-
-                // Finish the display update
-                app.updateDisplay();
-
-                events.debug.group('subCat.onclick', 'end');
-              }
-
-              return false;
-            };
-
-            p.appendChild(a);
-            p.innerHTML += ', ';
-          }
-        }
-      }
-
-      root.appendChild(contain);
+      return a;
     }
 
     /**
