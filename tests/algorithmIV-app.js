@@ -5723,7 +5723,7 @@
     // Note: See the below private helper methods for more details
 
     if (question.id) {
-      appendID.call(this, question.id, question.url);
+      appendId.call(this, question.id, question.url);
     }
 
     if (question.source.name) {
@@ -5760,7 +5760,7 @@
 
     /**
      * ---------------------------------------------
-     * Private Method (appendID)
+     * Private Method (appendId)
      * ---------------------------------------------
      * @desc Appends the question id.
      * @todo Add url parsing logic.
@@ -5768,10 +5768,11 @@
      * @param {string} url - The question id url.
      * @private
      */
-    function appendID(id, url) {
+    function appendId(id, url) {
 
-      this.debug.start('appendID', id, url);
-      this.debug.args('appendID', id, 'string', url, 'string');
+      var debugMsg;
+      this.debug.start('appendId', id, url);
+      this.debug.args('appendId', id, 'string', url, 'string');
 
       /** @type {boolean} */
       var config;
@@ -5783,8 +5784,6 @@
       var p;
       /** @type {elem} */
       var a;
-      /** @type {boolean} */
-      var urlConfig;
 
       config = app.config.links.get('id');
 
@@ -5807,44 +5806,65 @@
         }
       }
 
+      // Add the anchor link
+      if (config) {
+        a = makeIdLink.call(this, id, url);
+        p.appendChild(a);
+        debugMsg = 'p= $$, a= $$, a.onclick= $$';
+        this.debug.state('appendId', debugMsg, p, a, a.onclick);
+      }
+
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+    }
 
-      // Add the anchor link
-      if (config) {
+    /**
+     * ---------------------------------------------
+     * Private Method (makeIdLink)
+     * ---------------------------------------------
+     * @desc Creates an anchor element for the question id.
+     * @todo Add url parsing logic.
+     * @param {string} id - The question id.
+     * @param {string} url - The question id url.
+     * @return {elem} The anchor element.
+     * @private
+     */
+    function makeIdLink(id, url) {
 
-        if (!url) {
-          url = Number(id);
-        }
-        urlConfig = app.config.url.get('id');
+      this.debug.start('makeIdLink', id, url);
+      this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-        a = document.createElement('a');
-        a.href = 'id/' + url;
-        if (testTextContent) {
-          a.textContent = id;
-        }
-        else {
-          a.innerHTML = id;
-        }
-        a.onclick = function() {
+      /** @type {boolean} */
+      var urlConfig;
+      /** @type {elem} */
+      var a;
 
-          events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
-          events.debug.start('questionID.onclick', id);
+      urlConfig = app.config.url.get('id');
 
-          app.moveDisplay(id);
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-          events.debug.group('questionID.onclick', 'end');
-
-          return false;
-        };
-
-        p.appendChild(a);
+      if (!url) {
+        url = Number(id);
       }
+
+      a = document.createElement('a');
+      a.href = 'id/' + url;
+      a.innerHTML = id;
+      a.onclick = function() {
+        events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
+        events.debug.start('questionID.onclick', id);
+
+        app.moveDisplay(id);
+
+        if (urlConfig) {
+          // ADD URL LOGIC HERE
+        }
+
+        events.debug.group('questionID.onclick', 'end');
+
+        return false;
+      };
+
+      return a;
     }
 
     /**
@@ -5857,13 +5877,12 @@
      */
     function appendSource(source) {
 
+      var debugMsg;
       this.debug.start('appendSource', source);
       this.debug.args('appendSource', source, 'stringMap');
 
       /** @type {boolean} */
       var config;
-      /** @type {string} */
-      var url;
       /** @type {elem} */
       var div;
       /** @type {elem} */
@@ -5898,39 +5917,57 @@
       div.appendChild(h3);
       div.appendChild(p);
 
-      // Format the anchor link
+      // Add the anchor link
       if (config) {
-
-        url = app.sources.get(source.id, 'url');
-
-        a = document.createElement('a');
-        a.href = 'source/' + url;
-        a.className = 'dark';
-        if (testTextContent) {
-          a.textContent = source.name;
-        }
-        else {
-          a.innerHTML = source.name;
-        }
-        a.onclick = function() {
-
-          events.debug.start('source.onclick', source.id);
-
-          if (app.searchBar.vals.source != source.id) {
-
-            events.debug.group('source.onclick', 'coll', 'source= $$', source);
-
-            app.searchBar.vals.source = source.id;
-            app.updateDisplay();
-
-            events.debug.group('source.onclick', 'end');
-          }
-
-          return false;
-        };
-
+        a = makeSourceLink.call(this, source.id, source.name);
         p.appendChild(a);
+        debugMsg = 'p= $$, a= $$, a.onclick= $$';
+        this.debug.state('appendSource', debugMsg, p, a, a.onclick);
       }
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makeSourceLink)
+     * ---------------------------------------------
+     * @desc Creates an anchor element for the question's source.
+     * @param {string} id - The source's id.
+     * @param {string} name - The source's name.
+     * @return {elem} The anchor element.
+     * @private
+     */
+    function makeSourceLink(id, name) {
+
+      this.debug.start('makeSourceLink', id, name);
+      this.debug.args('makeSourceLink', id, 'string', name, 'string');
+
+      /** @type {string} */
+      var url;
+      /** @type {elem} */
+      var a;
+
+      url = app.sources.get(id, 'url');
+
+      a = document.createElement('a');
+      a.href = 'source/' + url;
+      a.className = 'dark';
+      a.innerHTML = name;
+      a.onclick = function() {
+        events.debug.start('source.onclick', id);
+
+        if (app.searchBar.vals.source != id) {
+          events.debug.group('source.onclick', 'coll', 'sourceID= $$', id);
+
+          app.searchBar.vals.source = id;
+          app.updateDisplay();
+
+          events.debug.group('source.onclick', 'end');
+        }
+
+        return false;
+      };
+
+      return a;
     }
 
     /**
