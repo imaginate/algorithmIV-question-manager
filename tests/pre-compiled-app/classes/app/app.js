@@ -202,7 +202,7 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
-      renderTime = this.questions.len * 25;
+      renderTime = this.questions.len * 30;
       this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
       setTimeout(function() {
         /** @type {boolean} */
