@@ -1058,13 +1058,13 @@
         /** @type {function} */
         var format;
 
-        i = 0;
+        i = -1;
 
         if (commentOpen) {
           i = formatCommentStart();
         }
 
-        --i;
+        // Format the line (add the spans)
         while (++i < lineLen) {
           format = ( ( router.hasOwnProperty(orgLine[i]) ) ?
             router[ orgLine[i] ] : identifierStart.test(orgLine[i]) ?
@@ -1224,7 +1224,7 @@
 
           sanitizeCharacter(i);
 
-          if (i !== lastIndex && orgLine[i] === '*' && orgLine[i + 1] === '/') {
+          if (orgLine[i] === '*' && i !== lastIndex && orgLine[i + 1] === '/') {
             return ++i;
           }
         }
@@ -1388,7 +1388,7 @@
 
         // Debugging vars
         var args;
-        highlightSyntax.debug.start('formatCommentLinks', start);
+        highlightSyntax.debug.start('formatCommentLinks', start, end);
         args = [ 'formatCommentLinks' ];
         args.push(start, 'number', end, 'number');
         highlightSyntax.debug.args(args);
@@ -1524,7 +1524,7 @@
         }
 
         i = skipComment(0);
-        commentOpen = (i < lastIndex) ? false : true;
+        commentOpen = (i < lineLen) ? false : true;
 
         if (i > lastIndex) {
           i = lastIndex;
@@ -1536,7 +1536,7 @@
           formatCommentLinks(0, i);
         }
 
-        return ++i;
+        return i;
       }
 
       /**
