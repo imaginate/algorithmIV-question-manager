@@ -190,7 +190,6 @@
 
     // Setup the question's element
     this.elem = new QuestionElem(id);
-    Object.freeze(this.elem);
 
     // Setup the protected properties
     url = '';
