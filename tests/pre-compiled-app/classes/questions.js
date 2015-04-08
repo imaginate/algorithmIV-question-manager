@@ -30,15 +30,15 @@
     this.debug = aIV.debug('Questions');
 
     // Debugging vars
-    var args;
-    args = [ 'init', 'open' ];
-    args.push('questions= $$, config= $$', questions, config);
-    this.debug.group(args);
+    var debugArgs;
+    debugArgs = [ 'init', 'open' ];
+    debugArgs.push('questions= $$, config= $$', questions, config);
+    this.debug.group(debugArgs);
     this.debug.start('init', questions, config, sources, categories);
-    args = [ 'init' ];
-    args.push(questions, 'objects', config, 'booleanMap');
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
+    debugArgs = [ 'init' ];
+    debugArgs.push(questions, 'objects', config, 'booleanMap');
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
 
     /**
      * ----------------------------------------------- 
@@ -78,24 +78,24 @@
     this.get = function(id) {
 
       // Debugging vars
-      var errorMsg, failCheck;
+      var debugMsg, debugCheck;
       this.debug.start('get', id);
       this.debug.args('get', id, 'number|string');
 
-      errorMsg = 'Error: This question id does not exist. id= $$';
-      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('get', failCheck, errorMsg, id);
+      debugMsg = 'Error: This question id does not exist. id= $$';
+      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('get', debugCheck, debugMsg, id);
 
       /** @type {Question} */
       var question;
 
       question = (typeof id === 'number') ? this.list[id] : data[id];
 
-      if (failCheck) {
-        errorMsg = 'Error: This question id was not an instanceof ';
-        errorMsg += 'Question. id= $$';
-        failCheck = (question instanceof Question);
-        this.debug.fail('get', failCheck, errorMsg, id);
+      if (debugCheck) {
+        debugMsg = 'Error: This question id was not an instanceof ';
+        debugMsg += 'Question. id= $$';
+        debugCheck = (question instanceof Question);
+        this.debug.fail('get', debugCheck, debugMsg, id);
       }
 
       return question;
@@ -118,24 +118,24 @@
     this.setStyle = function(id, type, val) {
 
       // Debugging vars
-      var args, errorMsg, failCheck;
+      var debugArgs, debugMsg, debugCheck;
       this.debug.start('setStyle', id, type, val);
 
-      args = [ 'setStyle' ];
-      args.push(id, '!number|string', type, '!string|stringMap');
-      args.push(val, '!string|number=');
-      this.debug.args(args);
+      debugArgs = [ 'setStyle' ];
+      debugArgs.push(id, '!number|string', type, '!string|stringMap');
+      debugArgs.push(val, '!string|number=');
+      this.debug.args(debugArgs);
 
-      errorMsg = 'Error: An invalid question id was provided. id= $$';
-      failCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('setStyle', failCheck, errorMsg, id);
+      debugMsg = 'Error: An invalid question id was provided. id= $$';
+      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
+      this.debug.fail('setStyle', debugCheck, debugMsg, id);
 
       if (typeof type === 'string') {
-        errorMsg = 'Error: A third param (val) is required when the given type ';
-        errorMsg += 'is a string. It should be a string or number. val= $$';
-        args = [ 'setStyle' ];
-        args.push(checkType(val, 'string|number'), errorMsg, val);
-        this.debug.fail(args);
+        debugMsg = 'Error: A third param (val) is required when the given type ';
+        debugMsg += 'is a string. It should be a string or number. val= $$';
+        debugArgs = [ 'setStyle' ];
+        debugArgs.push(checkType(val, 'string|number'), debugMsg, val);
+        this.debug.fail(debugArgs);
       }
 
       // Handle one type change
@@ -341,11 +341,11 @@
   Questions.prototype.hideElems = function(ids, index, view) {
 
     // Debugging vars
-    var args, errorMsg;
+    var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
-    args = [ 'hideElems' ];
-    args.push(ids, 'numbers', index, 'number', view, 'string=');
-    this.debug.args(args);
+    debugArgs = [ 'hideElems' ];
+    debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
+    this.debug.args(debugArgs);
 
     /**
      * @type {num}
@@ -370,12 +370,12 @@
       return;
     }
 
-    errorMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('hideElems', (!!ids && !!ids.length), errorMsg, ids);
-    errorMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    args = [ 'hideElems' ];
-    args.push((index > -1 && index < ids.length), errorMsg, ids, index);
-    this.debug.fail(args);
+    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
+    this.debug.fail('hideElems', (!!ids && !!ids.length), debugMsg, ids);
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugArgs = [ 'hideElems' ];
+    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
+    this.debug.fail(debugArgs);
 
     view = view || app.searchBar.vals.view;
 
@@ -409,7 +409,7 @@
   Questions.prototype.showElems = function(ids, index) {
 
     // Debugging vars
-    var args, errorMsg;
+    var debugArgs, debugMsg;
     this.debug.start('showElems', ids, index);
     this.debug.args('showElems', ids, 'numbers', index, 'number');
 
@@ -444,12 +444,12 @@
       return;
     }
 
-    errorMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('showElems', (!!ids && !!ids.length), errorMsg, ids);
-    errorMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    args = [ 'showElems' ];
-    args.push((index > -1 && index < ids.length), errorMsg, ids, index);
-    this.debug.fail(args);
+    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
+    this.debug.fail('showElems', (!!ids && !!ids.length), debugMsg, ids);
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugArgs = [ 'showElems' ];
+    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
+    this.debug.fail(debugArgs);
 
     view = app.searchBar.vals.view;
 
