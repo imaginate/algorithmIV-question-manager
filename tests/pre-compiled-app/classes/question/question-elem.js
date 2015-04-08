@@ -816,6 +816,7 @@
    */
   QuestionElem.prototype.addCodeExt = function() {
 
+    var debugMsg, debugArgs;
     this.debug.start('addCodeExt');
 
     /** @type {number} */
@@ -844,7 +845,10 @@
     code = this.code;
 
     overflow = code.scrollWidth - code.clientWidth;
-    this.debug.state('addCodeExt', 'overflow= $$', overflow);
+    debugMsg = 'this.code= $$, scrollWidth= $$, clientWidth= $$, overflow= $$';
+    debugArgs = [ 'addCodeExt', debugMsg, code, code.scrollWidth ];
+    debugArgs.push(code.clientWidth, overflow);
+    this.debug.state(debugArgs);
 
     if (overflow < 1) {
       this.root.style.display = 'none';

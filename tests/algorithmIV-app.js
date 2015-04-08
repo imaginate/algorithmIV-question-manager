@@ -1018,14 +1018,11 @@
    */
   App.prototype.setupDisplay = function() {
 
-   this.debug.group('setupDisplay', 'open');
-   this.debug.start('setupDisplay');
+    this.debug.group('setupDisplay', 'open');
+    this.debug.start('setupDisplay');
 
-    /**
-     * @type {boolean}
-     * @private
-     */
-    var flip;
+    /** @type {number} */
+    var renderTime;
 
     if ( this.flags.get('initArgs') ) {
       this.elems.appendNav();
@@ -1034,16 +1031,24 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
-      this.questions.addCodeExts();
-      this.elems.hold.style.display = 'none';
-      flip = (this.searchBar.vals.order === 'desc');
-      this.updateDisplay({ flip: flip, oldView: 'one' });
+      renderTime = this.questions.len * 25;
+      this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
+      setTimeout(function() {
+        /** @type {boolean} */
+        var flip;
+
+        app.questions.addCodeExts();
+        app.elems.hold.style.display = 'none';
+        flip = (app.searchBar.vals.order === 'desc');
+        app.updateDisplay({ flip: flip, oldView: 'one' });
+
+        app.debug.group('setupDisplay', 'end');
+      }, renderTime);
     }
     else {
       this.elems.appendError();
+      this.debug.group('setupDisplay', 'end');
     }
-
-    this.debug.group('setupDisplay', 'end');
   };
 
   /**
@@ -6399,6 +6404,7 @@
    */
   QuestionElem.prototype.addCodeExt = function() {
 
+    var debugMsg, debugArgs;
     this.debug.start('addCodeExt');
 
     /** @type {number} */
@@ -6427,7 +6433,10 @@
     code = this.code;
 
     overflow = code.scrollWidth - code.clientWidth;
-    this.debug.state('addCodeExt', 'overflow= $$', overflow);
+    debugMsg = 'this.code= $$, scrollWidth= $$, clientWidth= $$, overflow= $$';
+    debugArgs = [ 'addCodeExt', debugMsg, code, code.scrollWidth ];
+    debugArgs.push(code.clientWidth, overflow);
+    this.debug.state(debugArgs);
 
     if (overflow < 1) {
       this.root.style.display = 'none';
