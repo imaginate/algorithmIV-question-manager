@@ -725,6 +725,8 @@
      */
     function applyFormatting(lines) {
 
+      // Debugging vars
+      var msg;
       prettify.debug.start('applyFormatting', lines);
       prettify.debug.args('applyFormatting', lines, 'strings');
 
@@ -741,6 +743,9 @@
       i = -1;
       while (++i < len) {
 
+        msg = 'lineNumber= $$';
+        prettify.debug.group('applyFormatting', 'coll', msg, (i + 1));
+
         line = prepareLine(lines[i]);
 
         if (line) {
@@ -749,7 +754,8 @@
 
         lines[i] = '<li>'+ line +'</li>';
 
-        prettify.debug.state('applyFormatting', 'lines[i]= $$', lines[i]);
+        prettify.debug.state('applyFormatting', 'lineOutput= $$', lines[i]);
+        prettify.debug.group('applyFormatting', 'end');
       }
 
       return {
@@ -886,25 +892,18 @@
      * @desc Adds spans around reserved code characters to highlight
      *   specific syntax for a line of code.
      * @param {string} line - The line of code to highlight.
-     * @param {number} i - The current line number for the debug group.
      * @return {string}
      * @private
      */
     var highlightSyntax = (function() {
 
-      var highlightSyntax = function(line, i) {
+      var highlightSyntax = function(line) {
 
-        // Debugging vars
-        var msg;
-        msg = 'lineNumber= $$';
-        highlightSyntax.debug.group('init', 'coll', msg, i);
         highlightSyntax.debug.start('init', line, i);
         highlightSyntax.debug.args('init', line, 'string', i, 'number');
 
         prepareLine(line);
         formatLine();
-
-        highlightSyntax.debug.group('init', 'end');
 
         return newLine.join('');
       };

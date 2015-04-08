@@ -67,6 +67,8 @@
      */
     function applyFormatting(lines) {
 
+      // Debugging vars
+      var msg;
       prettify.debug.start('applyFormatting', lines);
       prettify.debug.args('applyFormatting', lines, 'strings');
 
@@ -83,6 +85,9 @@
       i = -1;
       while (++i < len) {
 
+        msg = 'lineNumber= $$';
+        prettify.debug.group('applyFormatting', 'coll', msg, (i + 1));
+
         line = prepareLine(lines[i]);
 
         if (line) {
@@ -91,7 +96,8 @@
 
         lines[i] = '<li>'+ line +'</li>';
 
-        prettify.debug.state('applyFormatting', 'lines[i]= $$', lines[i]);
+        prettify.debug.state('applyFormatting', 'lineOutput= $$', lines[i]);
+        prettify.debug.group('applyFormatting', 'end');
       }
 
       return {
