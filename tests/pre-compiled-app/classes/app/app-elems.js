@@ -138,7 +138,7 @@
     this.none.className = 'empty';
 
     this.root.innerHTML = '<h1>Algorithm IV</h1>';
-    this.none.textContent = 'No question(s) found.';
+    this.none.innerHTML = 'No question(s) found.';
 
     this.hold.src = 'images/loading.gif';
 
@@ -268,12 +268,17 @@
 
     prev.className = 'prev';
     next.className = 'next';
-    pArrow.className = nArrow.className = 'arrow';
-    pBG.className    = nBG.className    = 'bg';
-    pTitle.className = nTitle.className = 'title';
+    pArrow.className = 'arrow';
+    nArrow.className = 'arrow';
+    pBG.className = 'bg';
+    nBG.className = 'bg';
+    pTitle.className = 'title';
+    nTitle.className = 'title';
 
-    pTitle.textContent = pArrow.textContent = 'Previous';
-    nTitle.textContent = nArrow.textContent = 'Next';
+    pTitle.innerHTML = 'Previous';
+    pArrow.innerHTML = 'Previous';
+    nTitle.innerHTML = 'Next';
+    nArrow.innerHTML = 'Next';
 
     pArrow.onclick = function() {
       events.debug.group('prev.onclick', 'coll');
@@ -495,9 +500,9 @@
     div.className = 'containExample';
 
     // Add the content
-    h2.textContent = 'Initialization Error';
+    h2.innerHTML = 'Initialization Error';
     p.innerHTML    = message;
-    h3.textContent = 'App Init Example';
+    h3.innerHTML = 'App Init Example';
     ol.innerHTML   = example;
 
     // Complete all dynamic formatting
