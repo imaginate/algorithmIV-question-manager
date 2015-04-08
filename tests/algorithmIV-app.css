@@ -614,6 +614,7 @@ h1 {
   position:absolute;
   top:25px;
   right:-4px;
+  z-index:900;
   display:block;
   width:55px;
   height:35px;
@@ -638,7 +639,7 @@ h1 {
 }
 
 #aIV .extBG {
-  z-index:200;
+  z-index:600;
   background:#d8f0fa;
   -webkit-transition:background 1s;
   -moz-transition:background 1s;
@@ -652,7 +653,7 @@ h1 {
 }
 
 #aIV .extCloseArrow {
-  z-index:205;
+  z-index:605;
   background:url(images/ext-close-small.png) no-repeat center center;
   opacity:0;
   -webkit-transition:opacity 1s;
@@ -662,7 +663,7 @@ h1 {
 }
 
 #aIV .extOpenArrow {
-  z-index:210;
+  z-index:610;
   background:url(images/ext-open-small.png) no-repeat center center;
   opacity:0.8;
   -webkit-transition:opacity 1s;
@@ -675,7 +676,7 @@ h1 {
   position:absolute;
   top:-25px;
   right:0;
-  z-index:190;
+  z-index:590;
   display:block;
   width:250px;
   height:20px;
@@ -692,7 +693,7 @@ h1 {
   position:absolute;
   top:0;
   right:0;
-  z-index:195;
+  z-index:595;
   display:block;
   height:20px;
   line-height:20px;

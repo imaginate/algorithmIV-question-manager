@@ -892,22 +892,24 @@
     }
 
     extOpen.onmouseover = function() {
-      ext.style.opacity = '1';
+      extHov.style.opacity = '1';
     };
 
     extOpen.onmouseout = function() {
-      ext.style.opacity = '0';
+      extHov.style.opacity = '0';
     };
 
     extOpen.onclick = function() {
+      events.debug.group('extCodeView', 'coll');
       events.debug.start('extCodeView');
 
       /** @type {number} */
       var newWidth;
+      /** @type {number} */
+      var newRight;
 
-      newWidth = String(code.style.width);
-      newWidth = newWidth.replace(/[^0-9\.\-]/g, '');
-      newWidth = Number(newWidth);
+      newWidth = code.clientWidth;
+      events.debug.state('extCodeView', 'orgWidth= $$', newWidth);
 
       if (extOpen.innerHTML === 'close') {
 
@@ -931,9 +933,12 @@
 
         extOpen.style.opacity = '0.0';
 
-        ext.style.right = '-' + (4 + overflow) + 'px';
+        newRight = overflow + 4;
+        ext.style.right = '-' + newRight + 'px';
+        events.debug.state('extCodeView', 'newRight= $$', newRight);
 
         newWidth += overflow;
+        events.debug.state('extCodeView', 'newWidth= $$', newWidth);
         code.style.width = newWidth + 'px';
 
         setTimeout(function() {
@@ -945,6 +950,7 @@
           }, 600);
         }, 400);
       }
+      events.debug.group('extCodeView', 'end');
     };
 
     ext.appendChild(extClose);
