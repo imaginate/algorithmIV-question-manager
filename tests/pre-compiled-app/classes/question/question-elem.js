@@ -313,7 +313,7 @@
       // Format the anchor link
       if (config) {
 
-        url = app.categories.get(source.id, 'url');
+        url = app.sources.get(source.id, 'url');
 
         a = document.createElement('a');
         a.href = 'source/' + url;
