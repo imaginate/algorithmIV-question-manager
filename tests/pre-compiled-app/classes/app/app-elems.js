@@ -155,6 +155,16 @@
 
     document.body.removeChild(elem);
 
+    // Append the app elements to their parents
+    this.root.appendChild(this.sel);
+    this.root.appendChild(this.main);
+    this.main.appendChild(this.nav);
+    this.main.appendChild(this.ques);
+    this.ques.appendChild(this.hold);
+    this.ques.appendChild(this.none);
+
+    document.body.appendChild(this.root);
+
     // Setup the code element details
     elem = document.createElement('pre');
     code = document.createElement('code');
@@ -184,16 +194,6 @@
     Object.freeze(this.code);
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
-
-    // Append the app elements to their parents
-    this.root.appendChild(this.sel);
-    this.root.appendChild(this.main);
-    this.main.appendChild(this.nav);
-    this.main.appendChild(this.ques);
-    this.ques.appendChild(this.hold);
-    this.ques.appendChild(this.none);
-
-    document.body.appendChild(this.root);
 
 
     this.debug.group('init', 'end');
