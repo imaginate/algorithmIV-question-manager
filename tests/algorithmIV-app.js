@@ -6070,7 +6070,6 @@
      */
     function appendMainCategories(main, div) {
 
-      var debugMsg;
       this.debug.start('appendMainCategories', main, div);
       this.debug.args('appendMainCategories', main, 'object', div, 'elem');
 
@@ -6112,7 +6111,6 @@
 
       // Add each main category's anchor tag
       if (config) {
-        debugMsg = 'p= $$, a= $$, a.onclick= $$';
         len = main.ids.length;
         last = len - 1;
         i = -1;
@@ -6120,10 +6118,10 @@
           a = makeMainCatLink.call(this, main.ids[i], main.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.innerHTML += ',&nbsp;&nbsp;';
+            p.appendChild( makeLinkSpan.call(this) );
           }
-          this.debug.state('appendMainCategories', debugMsg, p, a, a.onclick);
         }
+        this.debug.state('appendMainCategories', 'p= $$', p);
       }
     }
 
@@ -6138,7 +6136,6 @@
      */
     function appendSubCategories(sub, div) {
 
-      var debugMsg;
       this.debug.start('appendSubCategories', sub, div);
       this.debug.args('appendSubCategories', sub, 'object', div, 'elem');
 
@@ -6180,7 +6177,6 @@
 
       // Add each sub category's anchor tag
       if (config) {
-        debugMsg = 'p= $$, a= $$, a.onclick= $$';
         len = sub.ids.length;
         last = len - 1;
         i = -1;
@@ -6188,10 +6184,10 @@
           a = makeSubCatLink.call(this, sub.ids[i], sub.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.innerHTML += ',&nbsp;&nbsp;';
+            p.appendChild( makeLinkSpan.call(this) );
           }
-          this.debug.state('appendSubCategories', debugMsg, p, a, a.onclick);
         }
+        this.debug.state('appendSubCategories', 'p= $$', p);
       }
     }
 
@@ -6200,7 +6196,7 @@
      * Private Method (makeMainCatLink)
      * ---------------------------------------------
      * @desc Creates a main category link.
-     * @todo Add url parsing logic.
+     * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
      * @return {elem} The anchor link.
@@ -6208,6 +6204,7 @@
      */
     function makeMainCatLink(id, name) {
 
+      var debugMsg;
       this.debug.start('makeMainCatLink', id, name);
       this.debug.args('makeMainCatLink', id, 'string', name, 'string');
 
@@ -6245,6 +6242,8 @@
         return false;
       };
 
+      debugMsg = 'a= $$, a.onclick= $$';
+      this.debug.state('makeMainCatLink', debugMsg, a, a.onclick);
       return a;
     }
 
@@ -6262,6 +6261,7 @@
      */
     function makeSubCatLink(id, name) {
 
+      var debugMsg;
       this.debug.start('makeSubCatLink', id, name);
       this.debug.args('makeSubCatLink', id, 'string', name, 'string');
 
@@ -6331,7 +6331,30 @@
         return false;
       };
 
+      debugMsg = 'a= $$, a.onclick= $$';
+      this.debug.state('makeSubCatLink', debugMsg, a, a.onclick);
       return a;
+    }
+
+    /**
+     * ---------------------------------------------
+     * Private Method (makeLinkSpan)
+     * ---------------------------------------------
+     * @desc Creates a span element for spacing between links.
+     * @return {elem} The span element.
+     * @private
+     */
+    function makeLinkSpan() {
+
+      this.debug.start('makeLinkSpan');
+
+      /** @type {elem} */
+      var span;
+
+      span = document.createElement('span');
+      span.innerHTML = ',&nbsp;&nbsp;';
+
+      return span;
     }
 
     /**
@@ -8902,19 +8925,11 @@
       console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = (function() {
-          /** @type {function} */
-          var _callback;
-          /** @type {number} */
-          var _i;
-
-          _callback = callback;
-          _i = i;
-          
+        callback = (function(i, callback) {         
           return function() {
-            getResource(resourceList[_i], _callback);
+            getResource(resourceList[i], callback);
           };
-        })();
+        })(i, callback);
       }
       getResource(resourceList[0], callback);
       return;
