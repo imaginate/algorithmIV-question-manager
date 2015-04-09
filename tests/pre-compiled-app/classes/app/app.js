@@ -22,6 +22,7 @@
     /** @type {number} */
     var len;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (App.debug)
@@ -31,23 +32,22 @@
      */
     this.debug = aIV.debug('App');
 
-    // Debugging vars
-    var args, msg;
-    msg = 'Error: No questions were provided to this app\'s init.';
-    this.debug.fail('init', !!questions, msg);
+    var debugArgs, debugMsg;
+    debugMsg = 'Error: No questions were provided to this app\'s init.';
+    this.debug.fail('init', !!questions, debugMsg);
 
-    msg = 'config= $$, sources= $$, categories= $$, questions= $$';
-    args = [ 'init', 'open', msg ];
-    args.push(config, sources, categories, questions);
-    this.debug.group(args);
+    debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
+    debugArgs = [ 'init', 'open', debugMsg ];
+    debugArgs.push(config, sources, categories, questions);
+    this.debug.group(debugArgs);
 
     this.debug.start('init', config, sources, categories, questions);
 
-    args = [ 'init' ];
-    args.push(config, 'object', sources, 'object');
-    args.push(categories, 'object', questions, 'objects');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(config, 'object', sources, 'object');
+    debugArgs.push(categories, 'object', questions, 'objects');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (App.flags)
@@ -173,7 +173,7 @@
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

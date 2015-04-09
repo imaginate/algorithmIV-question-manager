@@ -9,6 +9,7 @@
    */
   var AppFlags = function(pass) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (AppFlags.debug)
@@ -16,14 +17,11 @@
      * @desc The Debug instance for the AppFlags class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'AppFlags',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('AppFlags');
 
     this.debug.start('init', pass);
     this.debug.args('init', pass, 'boolean');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)
@@ -44,8 +42,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -54,8 +51,8 @@
         initArgs: initArgs
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
 
       return flags[prop];
     };
@@ -71,8 +68,7 @@
      */
     this.set = function(prop, val) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'boolean');
 
@@ -83,8 +79,8 @@
         }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
 
       flags[prop]();
     };

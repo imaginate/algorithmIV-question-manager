@@ -16,6 +16,7 @@
     /** @type {elem} */
     var li;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (AppElems.debug)
@@ -25,11 +26,10 @@
      */
     this.debug = aIV.debug('AppElems');
 
-    // Debugging vars
     var debugCheck, debugMsg;
     this.debug.group('init', 'coll');
     this.debug.start('init');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
@@ -200,7 +200,7 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
