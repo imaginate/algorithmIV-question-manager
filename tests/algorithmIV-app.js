@@ -8906,7 +8906,6 @@
       }
 
       callback = setup;
-      console.log(callback);
       i = resourceList.length;
       while (--i) {
         callback = (function(jsonFile, callback) {         
