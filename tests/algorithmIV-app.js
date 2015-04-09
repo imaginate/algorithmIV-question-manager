@@ -19,7 +19,7 @@
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
- *       [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}
+ *       [See the guideline]{@link https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md}
  *   </li>
  * </ol>
  */
@@ -87,6 +87,7 @@
  * | The Public Variables for the Module                                       |
  * v ------------------------------------------------------------------------- v
                                                              module-vars.js */
+  // $s$
   /**
    * ----------------------------------------------- 
    * Public Variable (debug)
@@ -113,7 +114,7 @@
    * @type {{ debug: Debug }}
    */
   var polyfill = { debug: aIV.debug('polyfill') };
-
+  // $e$
   /**
    * ----------------------------------------------- 
    * Public Variable (resources)
@@ -137,7 +138,7 @@
    * Public Variable (regexps)
    * -----------------------------------------------
    * @desc Regular expressions that are used multiple times
-   *   by the debugger (avoid re-creating multiple times).
+   *   throughout the app.
    * @type {Object<string, Object>}
    */
   var regexps = {};
@@ -339,13 +340,12 @@
    */
   function checkType(val, type) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('checkType', val, type);
     debug.args('checkType', type, 'string');
-    // Error message for checking the type value of each input
-    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
-    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    // Debug message for checking the type value of each input
+    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
+    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
 
     /**
      * @type {strings}
@@ -366,8 +366,8 @@
 
       cleanType = type.replace(/\!|\=/g, '');
 
-      failCheck = regexps.types.all.test(cleanType);
-      debug.fail('checkType', failCheck, errorMsg, type);
+      debugCheck = regexps.types.all.test(cleanType);
+      debug.fail('checkType', debugCheck, debugMsg, type);
 
       // Handle undefined val
       if (val === undefined) {
@@ -480,8 +480,7 @@
    */
   function checkTypes(vals, types) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
     debug.args('checkTypes', vals, 'array', types, 'string|strings');
 
@@ -497,14 +496,14 @@
       });
     }
 
-    errorMsg = 'Error: The length of the arguments to be checked ';
-    errorMsg += 'were not the same. vals= $$, types= $$';
-    failCheck = (vals.length === types.length);
-    debug.fail('checkTypes', failCheck, errorMsg, vals, types);
+    debugMsg = 'Error: The length of the arguments to be checked ';
+    debugMsg += 'were not the same. vals= $$, types= $$';
+    debugCheck = (vals.length === types.length);
+    debug.fail('checkTypes', debugCheck, debugMsg, vals, types);
 
-    // Error message for checking the type value of each input
-    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
-    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    // Debug message for checking the type value of each input
+    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
+    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
 
     return types.every(function(/** string */ _type, /** number */ i) {
       /**
@@ -526,8 +525,8 @@
 
         cleanType = type.replace(/\!|\=/g, '');
 
-        failCheck = regexps.types.all.test(cleanType);
-        debug.fail('checkTypes', failCheck, errorMsg, type);
+        debugCheck = regexps.types.all.test(cleanType);
+        debug.fail('checkTypes', debugCheck, debugMsg, type);
 
         // Handle undefined val
         if (val === undefined) {
@@ -851,6 +850,7 @@
     /** @type {number} */
     var len;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (App.debug)
@@ -860,23 +860,22 @@
      */
     this.debug = aIV.debug('App');
 
-    // Debugging vars
-    var args, msg;
-    msg = 'Error: No questions were provided to this app\'s init.';
-    this.debug.fail('init', !!questions, msg);
+    var debugArgs, debugMsg;
+    debugMsg = 'Error: No questions were provided to this app\'s init.';
+    this.debug.fail('init', !!questions, debugMsg);
 
-    msg = 'config= $$, sources= $$, categories= $$, questions= $$';
-    args = [ 'init', 'open', msg ];
-    args.push(config, sources, categories, questions);
-    this.debug.group(args);
+    debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
+    debugArgs = [ 'init', 'open', debugMsg ];
+    debugArgs.push(config, sources, categories, questions);
+    this.debug.group(debugArgs);
 
     this.debug.start('init', config, sources, categories, questions);
 
-    args = [ 'init' ];
-    args.push(config, 'object', sources, 'object');
-    args.push(categories, 'object', questions, 'objects');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(config, 'object', sources, 'object');
+    debugArgs.push(categories, 'object', questions, 'objects');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (App.flags)
@@ -1002,7 +1001,7 @@
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -1418,6 +1417,7 @@
    */
   var AppFlags = function(pass) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (AppFlags.debug)
@@ -1425,14 +1425,11 @@
      * @desc The Debug instance for the AppFlags class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'AppFlags',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('AppFlags');
 
     this.debug.start('init', pass);
     this.debug.args('init', pass, 'boolean');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)
@@ -1453,8 +1450,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -1463,8 +1459,8 @@
         initArgs: initArgs
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
 
       return flags[prop];
     };
@@ -1480,8 +1476,7 @@
      */
     this.set = function(prop, val) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'boolean');
 
@@ -1492,8 +1487,8 @@
         }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
 
       flags[prop]();
     };
@@ -1530,6 +1525,7 @@
     /** @type {elem} */
     var li;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (AppElems.debug)
@@ -1539,11 +1535,10 @@
      */
     this.debug = aIV.debug('AppElems');
 
-    // Debugging vars
     var debugCheck, debugMsg;
     this.debug.group('init', 'coll');
     this.debug.start('init');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
@@ -1714,7 +1709,7 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -2070,6 +2065,7 @@
     /** @type {number} */
     var i;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (AppVals.debug)
@@ -2081,7 +2077,7 @@
 
     this.debug.start('init');
     this.debug.args('init', quesLen, 'number');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (AppVals.ids)
@@ -2125,8 +2121,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -2137,8 +2132,8 @@
         index: index
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', values.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', values.hasOwnProperty(prop), debugMsg, prop);
 
       return values[prop];
     };
@@ -2199,12 +2194,11 @@
      */
     this.move = function(way) {
 
-      // Debugging vars
-      var errorMsg, failCheck;
+      var debugMsg, debugCheck;
       this.debug.start('move', way);
       this.debug.args('move', way, 'string|number');
-      // Error message for initial value checks
-      errorMsg = 'Error: An incorrect value was given for way. way= $$';
+      // Debug message for initial value checks
+      debugMsg = 'Error: An incorrect value was given for way. way= $$';
 
       /**
        * @type {string}
@@ -2221,14 +2215,15 @@
       if (typeof way === 'string' &&
           way !== 'prev' && way !== 'next') {
         way = way.replace(/[^0-9]/g, '');
-        this.debug.fail('move', !!way, errorMsg, way);
+        this.debug.fail('move', !!way, debugMsg, way);
         way = Number(way);
       }
-
+      // $s$
       if (typeof way !== 'string') {
-        failCheck = (way > 0 && way <= app.questions.len);
-        this.debug.fail('move', failCheck, errorMsg, way);
+        debugCheck = (way > 0 && way <= app.questions.len);
+        this.debug.fail('move', debugCheck, debugMsg, way);
       }
+      // $e$
 
       // Save the value of the current view
       view = app.searchBar.vals.view;
@@ -2238,12 +2233,12 @@
           app.searchBar.vals.view = 'one';
         }
         index = ids.indexOf(way);
-        this.debug.fail('move', (index !== -1), errorMsg, way);
+        this.debug.fail('move', (index !== -1), debugMsg, way);
         return index;
       }
 
-      errorMsg = 'Error: This method should not have been called now. ';
-      errorMsg += 'The nav elements should be hidden.';
+      debugMsg = 'Error: This method should not have been called now. ';
+      debugMsg += 'The nav elements should be hidden.';
 
       // Save the last index
       last = len - 1;
@@ -2251,7 +2246,7 @@
       // The single view actions
       if (view === 'one') {
 
-        this.debug.fail('move', (len > 1), errorMsg);
+        this.debug.fail('move', (len > 1), debugMsg);
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -2266,7 +2261,7 @@
       // The ten view actions
       if (view === 'ten') {
 
-        this.debug.fail('move', (len > 10), errorMsg);
+        this.debug.fail('move', (len > 10), debugMsg);
 
         // Update the last index
         last -= (last % 10);
@@ -2281,9 +2276,9 @@
         return index;
       }
 
-      errorMsg = 'Error: An incorrect view was parsed. ';
-      errorMsg += 'app.searchBar.vals.view= $$';
-      this.debug.fail('move', false, errorMsg, view);
+      debugMsg = 'Error: An incorrect view was parsed. ';
+      debugMsg += 'app.searchBar.vals.view= $$';
+      this.debug.fail('move', false, debugMsg, view);
     };
     Object.freeze(this.move);
 
@@ -2317,6 +2312,7 @@
    */
   var Config = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Config.debug)
@@ -2324,14 +2320,11 @@
      * @desc The Debug instance for the Config class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Config',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Config');
 
     this.debug.group('init', 'coll', 'config= $$', config);
     this.debug.start('init', config);
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (Config.searchBar)
@@ -2420,7 +2413,7 @@
     Object.freeze(this.url);
     Object.freeze(this.links);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -2442,6 +2435,7 @@
    */
   var SearchBarConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (SearchBarConfig.debug)
@@ -2453,7 +2447,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (SearchBarConfig.stage)
@@ -2513,8 +2507,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -2526,8 +2519,8 @@
         subCat  : subCat
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -2574,6 +2567,7 @@
    */
   var DefaultsSearchBarConfig = function() {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (DefaultsSearchBarConfig.debug)
@@ -2581,13 +2575,10 @@
      * @desc The Debug instance for the DefaultsSearchBarConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'DefaultsSearchBarConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('DefaultsSearchBarConfig');
 
     this.debug.start('init');
-
+    // $e$
     /**
      * ---------------------------------------------------
      * Protected Property (DefaultsSearchBarConfig.startID)
@@ -2668,8 +2659,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -2684,8 +2674,8 @@
         subCat : subCat
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -2702,8 +2692,7 @@
      */
     this.set = function(prop, val) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'string|number');
 
@@ -2718,8 +2707,8 @@
         subCat : function() { subCat  = val; }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('set', settings.hasOwnProperty(prop), debugMsg, prop);
 
       settings[prop]();
     };
@@ -2751,13 +2740,12 @@
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
-    // Debugging vars
-    var args;
+    var debugArgs;
     this.debug.start('update', defaults, names, ids, quesLen);
-    args = [ 'update' ];
-    args.push(defaults, 'object', names, 'object');
-    args.push(ids, 'object', quesLen, 'number');
-    this.debug.args(args);
+    debugArgs = [ 'update' ];
+    debugArgs.push(defaults, 'object', names, 'object');
+    debugArgs.push(ids, 'object', quesLen, 'number');
+    this.debug.args(debugArgs);
 
     // Check the user supplied defaults
     if (!defaults || typeof defaults !== 'object') {
@@ -2829,6 +2817,7 @@
    */
   var QuestionsConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (QuestionsConfig.debug)
@@ -2840,7 +2829,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionsConfig.id)
@@ -2941,8 +2930,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -2959,8 +2947,8 @@
         output  : output
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -3026,6 +3014,7 @@
    */
   var PrettyConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (PrettyConfig.debug)
@@ -3037,7 +3026,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (PrettyConfig.trimSpace)
@@ -3078,8 +3067,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -3090,8 +3078,8 @@
         commentLinks: commentLinks
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -3142,6 +3130,7 @@
    */
   var UrlConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (UrlConfig.debug)
@@ -3153,7 +3142,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (UrlConfig.id)
@@ -3184,8 +3173,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -3195,8 +3183,8 @@
         category: category
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -3235,6 +3223,7 @@
    */
   var LinksConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (LinksConfig.debug)
@@ -3246,7 +3235,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (LinksConfig.id)
@@ -3287,8 +3276,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -3299,8 +3287,8 @@
         category: category
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -3341,6 +3329,7 @@
    */
   var Sources = function(sources) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Sources.debug)
@@ -3353,7 +3342,7 @@
     this.debug.group('init', 'coll', 'sources= $$', sources);
     this.debug.start('init', sources);
     this.debug.args('init', sources, 'stringMap');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Sources.data)
@@ -3394,13 +3383,12 @@
      */
     this.get = function(id, prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      errorMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+      debugMsg = 'Error: The given source does not exist. sourceID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
 
       return (!!prop) ? data[id].get(prop) : data[id];
     };
@@ -3431,7 +3419,7 @@
     Object.freeze(this.ids);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -3453,6 +3441,7 @@
    */
   var Source = function(name) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Source.debug)
@@ -3460,14 +3449,11 @@
      * @desc The Debug instance for the Source class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Source',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Source');
 
     this.debug.start('init', name);
     this.debug.args('init', name, 'string');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Source.url)
@@ -3498,8 +3484,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -3512,8 +3497,8 @@
         }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', source.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', source.hasOwnProperty(prop), debugMsg, prop);
 
       return source[prop]();
     };
@@ -3572,6 +3557,7 @@
     /** @type {strings} */
     var subIds;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Categories.debug)
@@ -3579,15 +3565,12 @@
      * @desc The Debug instance for the Categories class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Categories',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Categories');
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
     this.debug.start('init', categories);
     this.debug.args('init', categories, 'objectMap|stringMap');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Categories.data)
@@ -3628,13 +3611,12 @@
      */
     this.get = function(id, prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      errorMsg = 'Error: The given category does not exist. catID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+      debugMsg = 'Error: The given category does not exist. catID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
 
       return ( ( !data.hasOwnProperty(id) ) ?
         false : (!!prop) ?
@@ -3702,7 +3684,7 @@
     Object.freeze(this.ids);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -3726,6 +3708,7 @@
    */
   var Category = function(name, subs) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Category.debug)
@@ -3733,14 +3716,11 @@
      * @desc The Debug instance for the Category class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Category',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Category');
 
     this.debug.start('init', name, subs);
     this.debug.args('init', name, 'string', subs, 'strings=');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Category.url)
@@ -3771,8 +3751,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -3786,8 +3765,8 @@
         subs: function() { return subs; }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', category.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', category.hasOwnProperty(prop), debugMsg, prop);
 
       return category[prop]();
     };
@@ -3851,6 +3830,7 @@
     /** @type {boolean} */
     var pass;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (SearchBar.debug)
@@ -3860,15 +3840,14 @@
      */
     this.debug = aIV.debug('SearchBar');
 
-    // Debugging vars
-    var msg, args;
-    msg = 'config= $$, sources= $$, categories= $$';
-    this.debug.group('init', 'coll', msg, config, sources, categories);
+    var debugMsg, debugArgs;
+    debugMsg = 'config= $$, sources= $$, categories= $$';
+    this.debug.group('init', 'coll', debugMsg, config, sources, categories);
     this.debug.start('init', config, sources, categories);
-    args = [ 'init' ];
-    args.push(config, 'booleanMap', sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (SearchBar.names)
@@ -4093,7 +4072,7 @@
 
     Object.freeze(this.elems);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -4491,6 +4470,7 @@
     /** @type {string} */
     var url;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Questions.debug)
@@ -4510,7 +4490,7 @@
     debugArgs.push(questions, 'objects', config, 'booleanMap');
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Questions.data)
@@ -4548,7 +4528,6 @@
      */
     this.get = function(id) {
 
-      // Debugging vars
       var debugMsg, debugCheck;
       this.debug.start('get', id);
       this.debug.args('get', id, 'number|string');
@@ -4562,13 +4541,14 @@
 
       question = (typeof id === 'number') ? this.list[id] : data[id];
 
+      // $s$
       if (debugCheck) {
         debugMsg = 'Error: This question id was not an instanceof ';
         debugMsg += 'Question. id= $$';
         debugCheck = (question instanceof Question);
         this.debug.fail('get', debugCheck, debugMsg, id);
       }
-
+      // $e$
       return question;
     };
     Object.freeze(this.get);
@@ -4588,7 +4568,7 @@
      */
     this.setStyle = function(id, type, val) {
 
-      // Debugging vars
+      // $s$
       var debugArgs, debugMsg, debugCheck;
       this.debug.start('setStyle', id, type, val);
 
@@ -4608,6 +4588,7 @@
         debugArgs.push(checkType(val, 'string|number'), debugMsg, val);
         this.debug.fail(debugArgs);
       }
+      // $e$
 
       // Handle one type change
       if (typeof type === 'string') {
@@ -4673,7 +4654,7 @@
     Object.freeze(this.list);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -4841,7 +4822,6 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    // Debugging vars
     var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
     debugArgs = [ 'hideElems' ];
@@ -4909,7 +4889,6 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    // Debugging vars
     var debugArgs, debugMsg;
     this.debug.start('showElems', ids, index);
     this.debug.args('showElems', ids, 'numbers', index, 'number');
@@ -4996,6 +4975,7 @@
    */
   var Question = function(question, id, config, sources, categories) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Question.debug)
@@ -5003,19 +4983,15 @@
      * @desc The Debug instance for the Question class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Question',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Question');
 
-    // Debugging vars
-    var args;
+    var debugArgs;
     this.debug.group('init', 'coll', 'questionID= $$', id);
     this.debug.start('init', question, id, config, sources, categories);
-    args = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Question.url)
@@ -5144,8 +5120,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -5164,8 +5139,8 @@
         output  : output
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
 
       return details[prop];
     };
@@ -5253,10 +5228,10 @@
           output = String( question.solution() );
         }
         catch (errorMsg) {
-          args = [ 'init', false ];
-          args.push('The question\'s solution produced an error. questionID= $$, error= $$');
-          args.push(id, errorMsg);
-          this.debug.fail(args);
+          debugArgs = [ 'init', false ];
+          debugArgs.push('The question\'s solution produced an error. questionID= $$, error= $$');
+          debugArgs.push(id, errorMsg);
+          this.debug.fail(debugArgs);
 
           output = 'The solution returned an error.';
         }
@@ -5273,7 +5248,7 @@
       solution: solution
     }, config, sources, categories);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -5396,6 +5371,7 @@
     /** @type {{ result: string, lineCount: number }} */
     var code;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (QuestionFormat.debug)
@@ -5405,17 +5381,16 @@
      */
     this.debug = aIV.debug('QuestionFormat');
 
-    // Debugging vars
-    var args;
-    args = [ 'init', 'coll' ];
-    args.push('id= $$, question= $$', question.id, question);
-    this.debug.group(args);
+    var debugArgs;
+    debugArgs = [ 'init', 'coll' ];
+    debugArgs.push('id= $$, question= $$', question.id, question);
+    this.debug.group(debugArgs);
     this.debug.start('init', question, config, sources, categories);
-    args = [ 'init' ];
-    args.push(question, 'object', config, 'booleanMap');
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(question, 'object', config, 'booleanMap');
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionFormat.id)
@@ -5495,8 +5470,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -5510,8 +5484,8 @@
         solution: solution
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
 
       return details[prop];
     };
@@ -5582,7 +5556,7 @@
     Object.freeze(subCat);
     Object.freeze(solution);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -5604,6 +5578,7 @@
    */
   var QuestionElem = function(id) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (QuestionElem.debug)
@@ -5615,7 +5590,7 @@
 
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
@@ -5762,9 +5737,8 @@
       appendLinks.call(this, question.links);
     }
 
-
+    // Close this debug console group
     this.debug.group('addContent', 'end');
-
 
     /**
      * ---------------------------------------------
@@ -6774,6 +6748,7 @@
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
                                                            prettify-vars.js */
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (prettify.debug)
@@ -6782,7 +6757,7 @@
      * @type {Debug}
      */
     prettify.debug = aIV.debug('prettify');
-
+    // $e$
     /**
      * ---------------------------------------------
      * Private Variable (config)
@@ -7465,8 +7440,7 @@
      */
     function applyFormatting(lines) {
 
-      // Debugging vars
-      var msg;
+      var debugMsg;
       prettify.debug.start('applyFormatting', lines);
       prettify.debug.args('applyFormatting', lines, 'strings');
 
@@ -7483,8 +7457,8 @@
       i = -1;
       while (++i < len) {
 
-        msg = 'lineNumber= $$';
-        prettify.debug.group('applyFormatting', 'coll', msg, (i + 1));
+        debugMsg = 'lineNumber= $$';
+        prettify.debug.group('applyFormatting', 'coll', debugMsg, (i + 1));
 
         line = prepareLine(lines[i]);
 
@@ -7574,12 +7548,11 @@
      */
     function makeKeywordObj(cat, href, props) {
 
-      // Debugging vars
-      var args;
+      var debugArgs;
       prettify.debug.start('makeKeywordObj', cat, href, props);
-      args = [ 'makeKeywordObj' ];
-      args.push(cat, 'string', href, 'string=', props, 'boolean=');
-      prettify.debug.args(args);
+      debugArgs = [ 'makeKeywordObj' ];
+      debugArgs.push(cat, 'string', href, 'string=', props, 'boolean=');
+      prettify.debug.args(debugArgs);
 
       /** @type {Object<string, (string|numberMap)>} */
       var obj;
@@ -7652,6 +7625,7 @@
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
                                                    highlight-syntax-vars.js */
+      // $s$
       /**
        * ---------------------------------------------------
        * Public Property (highlight.debug)
@@ -7660,7 +7634,7 @@
        * @type {Debug}
        */
       highlightSyntax.debug = aIV.debug('highlightSyntax');
-
+      // $e$
       /**
        * ---------------------------------------------
        * Private Variable (newLine)
@@ -7765,8 +7739,7 @@
        */
       function prepareLine(line) {
 
-        // Debugging vars
-        var msg;
+        var debugMsg;
         highlightSyntax.debug.start('prepareLine', line);
         highlightSyntax.debug.args('prepareLine', line, 'string');
 
@@ -7776,8 +7749,8 @@
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
 
-        msg = 'lineLen= $$, lastIndex= $$';
-        highlightSyntax.debug.state('prepareLine', msg, lineLen, lastIndex);
+        debugMsg = 'lineLen= $$, lastIndex= $$';
+        highlightSyntax.debug.state('prepareLine', debugMsg, lineLen, lastIndex);
       }
 
       /**
@@ -7871,8 +7844,7 @@
        */
       function isRegex(i) {
 
-        // Debugging vars
-        var msg;
+        var debugMsg;
         highlightSyntax.debug.start('isRegex', i);
         highlightSyntax.debug.args('isRegex', i, 'number');
 
@@ -7914,8 +7886,8 @@
           new RegExp(regexBody);
         }
         catch (e) {
-          msg = 'new RegExp(regexBody) error= $$';
-          highlightSyntax.debug.state('isRegex', msg, e);
+          debugMsg = 'new RegExp(regexBody) error= $$';
+          highlightSyntax.debug.state('isRegex', debugMsg, e);
           end = 0;
         }
 
@@ -8125,12 +8097,11 @@
        */
       function formatCommentLinks(start, end) {
 
-        // Debugging vars
-        var args;
+        var debugArgs;
         highlightSyntax.debug.start('formatCommentLinks', start, end);
-        args = [ 'formatCommentLinks' ];
-        args.push(start, 'number', end, 'number');
-        highlightSyntax.debug.args(args);
+        debugArgs = [ 'formatCommentLinks' ];
+        debugArgs.push(start, 'number', end, 'number');
+        highlightSyntax.debug.args(debugArgs);
 
         /** @type {string} */
         var comment;
@@ -8160,10 +8131,10 @@
 
           i += start + 1;
 
-          args = [ 'formatCommentLinks' ];
-          args.push('i= $$, start= $$, newLine[i]= $$');
-          args.push(i, start, newLine[i]);
-          highlightSyntax.debug.state(args);
+          debugArgs = [ 'formatCommentLinks' ];
+          debugArgs.push('i= $$, start= $$, newLine[i]= $$');
+          debugArgs.push(i, start, newLine[i]);
+          highlightSyntax.debug.state(debugArgs);
 
           newLine[i] = '';
           ++i;
@@ -8554,12 +8525,11 @@
        */
       function formatIdentifier(i, extras) {
 
-        // Debugging vars
-        var args;
+        var debugArgs;
         highlightSyntax.debug.start('formatIdentifier', i, extras);
-        args = [ 'formatIdentifier' ];
-        args.push(i, 'number', extras, 'string=');
-        highlightSyntax.debug.args(args);
+        debugArgs = [ 'formatIdentifier' ];
+        debugArgs.push(i, 'number', extras, 'string=');
+        highlightSyntax.debug.args(debugArgs);
 
         /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
@@ -8785,12 +8755,11 @@
    */
   var _init = function(settings) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('init', settings);
     debug.args('init', settings, 'object');
-    errorMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!_initialized), errorMsg);
+    debugMsg = 'Error: A second attempt to init this app occurred.';
+    debug.fail('init', (!_initialized), debugMsg);
 
     /**
      * @type {?(string|strings)}
@@ -8866,36 +8835,37 @@
       settings.questions : ( settings.hasOwnProperty('question') ) ?
         settings.question : null
     );
+    // $s$
+    debugCheck = checkType(resourceList, 'string|strings');
+    debugMsg = 'Error: The given resources property was an ';
+    debugMsg += 'incorrect data type. resources= $$';
+    debug.fail('init', debugCheck, debugMsg, resourceList);
 
-    failCheck = checkType(resourceList, 'string|strings');
-    errorMsg = 'Error: The given resources property was an ';
-    errorMsg += 'incorrect data type. resources= $$';
-    debug.fail('init', failCheck, errorMsg, resourceList);
+    debugCheck = checkType(config, 'objectMap');
+    debugMsg = 'Error: The given config property was an ';
+    debugMsg += 'incorrect data type. config= $$';
+    debug.fail('init', debugCheck, debugMsg, config);
 
-    failCheck = checkType(config, 'objectMap');
-    errorMsg = 'Error: The given config property was an ';
-    errorMsg += 'incorrect data type. config= $$';
-    debug.fail('init', failCheck, errorMsg, config);
+    debugCheck = checkType(sources, 'stringMap');
+    debugMsg = 'Error: The given sources property was an ';
+    debugMsg += 'incorrect data type. sources= $$';
+    debug.fail('init', debugCheck, debugMsg, sources);
 
-    failCheck = checkType(sources, 'stringMap');
-    errorMsg = 'Error: The given sources property was an ';
-    errorMsg += 'incorrect data type. sources= $$';
-    debug.fail('init', failCheck, errorMsg, sources);
+    debugCheck = checkType(categories, 'stringMap|objectMap');
+    debugMsg = 'Error: The given categories property was an ';
+    debugMsg += 'incorrect data type. categories= $$';
+    debug.fail('init', debugCheck, debugMsg, categories);
 
-    failCheck = checkType(categories, 'stringMap|objectMap');
-    errorMsg = 'Error: The given categories property was an ';
-    errorMsg += 'incorrect data type. categories= $$';
-    debug.fail('init', failCheck, errorMsg, categories);
-
-    errorMsg = 'Error: No questions were provided.';
-    debug.fail('init', (!!questions), errorMsg);
+    debugMsg = 'Error: No questions were provided.';
+    debug.fail('init', (!!questions), debugMsg);
 
     if (questions) {
-      failCheck = (checkType(questions, 'objects') && !!questions.length);
-      errorMsg = 'Error: The given questions property was an ';
-      errorMsg += 'incorrect data type. questions= $$';
-      debug.fail('init', failCheck, errorMsg, questions);
+      debugCheck = (checkType(questions, 'objects') && !!questions.length);
+      debugMsg = 'Error: The given questions property was an ';
+      debugMsg += 'incorrect data type. questions= $$';
+      debug.fail('init', debugCheck, debugMsg, questions);
     }
+    // $e$
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
@@ -8939,11 +8909,11 @@
       console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = (function(i, callback) {         
+        callback = (function(jsonFile, callback) {         
           return function() {
-            getResource(resourceList[i], callback);
+            getResource(jsonFile, callback);
           };
-        })(i, callback);
+        })(resourceList[i], callback);
       }
       getResource(resourceList[0], callback);
       return;

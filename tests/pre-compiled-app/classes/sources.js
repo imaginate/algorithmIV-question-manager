@@ -8,6 +8,7 @@
    */
   var Sources = function(sources) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Sources.debug)
@@ -20,7 +21,7 @@
     this.debug.group('init', 'coll', 'sources= $$', sources);
     this.debug.start('init', sources);
     this.debug.args('init', sources, 'stringMap');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Sources.data)
@@ -61,13 +62,12 @@
      */
     this.get = function(id, prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      errorMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+      debugMsg = 'Error: The given source does not exist. sourceID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
 
       return (!!prop) ? data[id].get(prop) : data[id];
     };
@@ -98,7 +98,7 @@
     Object.freeze(this.ids);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

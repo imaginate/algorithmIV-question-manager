@@ -11,6 +11,7 @@
     /** @type {strings} */
     var subIds;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Categories.debug)
@@ -18,15 +19,12 @@
      * @desc The Debug instance for the Categories class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Categories',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Categories');
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
     this.debug.start('init', categories);
     this.debug.args('init', categories, 'objectMap|stringMap');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Categories.data)
@@ -67,13 +65,12 @@
      */
     this.get = function(id, prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      errorMsg = 'Error: The given category does not exist. catID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), errorMsg, id);
+      debugMsg = 'Error: The given category does not exist. catID= $$';
+      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
 
       return ( ( !data.hasOwnProperty(id) ) ?
         false : (!!prop) ?
@@ -141,7 +138,7 @@
     Object.freeze(this.ids);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

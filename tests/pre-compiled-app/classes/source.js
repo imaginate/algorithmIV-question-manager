@@ -8,6 +8,7 @@
    */
   var Source = function(name) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Source.debug)
@@ -15,14 +16,11 @@
      * @desc The Debug instance for the Source class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Source',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Source');
 
     this.debug.start('init', name);
     this.debug.args('init', name, 'string');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Source.url)
@@ -53,8 +51,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -67,8 +64,8 @@
         }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', source.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', source.hasOwnProperty(prop), debugMsg, prop);
 
       return source[prop]();
     };

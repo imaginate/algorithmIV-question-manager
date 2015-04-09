@@ -15,6 +15,7 @@
     /** @type {boolean} */
     var pass;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (SearchBar.debug)
@@ -24,15 +25,14 @@
      */
     this.debug = aIV.debug('SearchBar');
 
-    // Debugging vars
-    var msg, args;
-    msg = 'config= $$, sources= $$, categories= $$';
-    this.debug.group('init', 'coll', msg, config, sources, categories);
+    var debugMsg, debugArgs;
+    debugMsg = 'config= $$, sources= $$, categories= $$';
+    this.debug.group('init', 'coll', debugMsg, config, sources, categories);
     this.debug.start('init', config, sources, categories);
-    args = [ 'init' ];
-    args.push(config, 'booleanMap', sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (SearchBar.names)
@@ -257,7 +257,7 @@
 
     Object.freeze(this.elems);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

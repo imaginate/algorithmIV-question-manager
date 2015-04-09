@@ -20,6 +20,7 @@
     /** @type {string} */
     var url;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Questions.debug)
@@ -39,7 +40,7 @@
     debugArgs.push(questions, 'objects', config, 'booleanMap');
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Questions.data)
@@ -77,7 +78,6 @@
      */
     this.get = function(id) {
 
-      // Debugging vars
       var debugMsg, debugCheck;
       this.debug.start('get', id);
       this.debug.args('get', id, 'number|string');
@@ -91,13 +91,14 @@
 
       question = (typeof id === 'number') ? this.list[id] : data[id];
 
+      // $s$
       if (debugCheck) {
         debugMsg = 'Error: This question id was not an instanceof ';
         debugMsg += 'Question. id= $$';
         debugCheck = (question instanceof Question);
         this.debug.fail('get', debugCheck, debugMsg, id);
       }
-
+      // $e$
       return question;
     };
     Object.freeze(this.get);
@@ -117,7 +118,7 @@
      */
     this.setStyle = function(id, type, val) {
 
-      // Debugging vars
+      // $s$
       var debugArgs, debugMsg, debugCheck;
       this.debug.start('setStyle', id, type, val);
 
@@ -137,6 +138,7 @@
         debugArgs.push(checkType(val, 'string|number'), debugMsg, val);
         this.debug.fail(debugArgs);
       }
+      // $e$
 
       // Handle one type change
       if (typeof type === 'string') {
@@ -202,7 +204,7 @@
     Object.freeze(this.list);
     Object.freeze(data);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
@@ -370,7 +372,6 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    // Debugging vars
     var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
     debugArgs = [ 'hideElems' ];
@@ -438,7 +439,6 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    // Debugging vars
     var debugArgs, debugMsg;
     this.debug.start('showElems', ids, index);
     this.debug.args('showElems', ids, 'numbers', index, 'number');

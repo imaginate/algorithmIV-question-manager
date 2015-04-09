@@ -10,6 +10,7 @@
    */
   var Category = function(name, subs) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Category.debug)
@@ -17,14 +18,11 @@
      * @desc The Debug instance for the Category class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Category',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Category');
 
     this.debug.start('init', name, subs);
     this.debug.args('init', name, 'string', subs, 'strings=');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Category.url)
@@ -55,8 +53,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -70,8 +67,8 @@
         subs: function() { return subs; }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', category.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', category.hasOwnProperty(prop), debugMsg, prop);
 
       return category[prop]();
     };
