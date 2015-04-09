@@ -19,7 +19,7 @@
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
- *       [See the guideline]{@link https://github.com/imaginate/algorithmIV/blob/master/CONTRIBUTING.md}
+ *       [See the guideline]{@link https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md}
  *   </li>
  * </ol>
  */
