@@ -142,7 +142,7 @@
     if ( !checkType(categories, 'stringMap|objectMap') ) {
       categories = null;
     }
-    if ( checkType(questions, 'objects') ) {
+    if ( checkType(questions, '!objects') ) {
       if (!questions.length) {
         questions = null;
       }

@@ -9,6 +9,7 @@
  * ------------------------------- *
  * Import Fonts
  * ------------------------------- */
+
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:500,600);
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
@@ -477,18 +478,19 @@ h1 {
 #aIV .initError,
 #aIV .loadError {
   display:block;
-  padding:20px 28px;
+  padding:40px 28px;
   margin:0 0 10px;
   text-align:center;
+  background:#d8f0fa;
 }
 
 #aIV .initError h2,
 #aIV .loadError h2 {
   display:block;
   padding:0;
-  margin:0 auto 5px;
+  margin:0 auto 10px;
   line-height:34px;
-  color:#f00;
+  color:#950613;
   font-size:26px;
   font-weight:700;
 }
@@ -496,28 +498,35 @@ h1 {
 #aIV .initError p,
 #aIV .loadError p {
   display:block;
+  max-width:90%;
   padding:0;
   margin:0 auto;
   line-height:34px;
   color:#192037;
   font-size:24px;
   font-weight:400;
+  text-align:justify;
 }
 
 #aIV .initExample {
   display:block;
-  padding:20px 28px 32px;
+  padding:20px 28px 0;
   margin:10px 0 20px;
   text-align:center;
   font-size:0;
 }
 
+#aIV .initError p span {
+  display:block;
+  margin:5px 0 0;
+}
+
 #aIV .initExample h3 {
   display:block;
   padding:0;
-  margin:0 auto 5px;
+  margin:10px auto;
   line-height:34px;
-  color:#f00;
+  color:#04663d;
   font-size:26px;
   font-weight:700;
 }
@@ -528,6 +537,10 @@ h1 {
   padding:0;
   margin:0 auto;
   font-size:0;
+}
+
+#aIV .containExample code {
+  border:2px solid #b5e1f5;
 }
 
 #aIV .loadError {

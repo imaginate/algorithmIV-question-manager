@@ -395,9 +395,9 @@
       'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
       'will solve your problem or answer your question as quickly as we '    +
       'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
-      'maximize your development skills and projects!&NewLine;'              +
-      'Best,&NewLine;'                                                       +
-      '&ndash; Adam from Algorithm IV';
+      'maximize your development skills and projects!<br />'                 +
+      '<span>Best,<br />'                                                    +
+      '&ndash; Adam from Algorithm IV</span>';
 
     example = '' +
       '<li>' +
@@ -417,35 +417,39 @@
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * settings, add sources, add categories, or add'   +
+        '<span class="cmt"> * settings, add sources, add categories, add'      +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * questions simply add one or all of the matching' +
+        '<span class="cmt"> * resources, or add questions simply add one or'   +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * properties to your empty settings object. Note'  +
+        '<span class="cmt"> * all of the matching properties to your empty'    +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * that the names of your properties must match'    +
+        '<span class="cmt"> * settings object. Note that the names of your'    +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * the correct names for each setting - config,'    +
+        '<span class="cmt"> * properties must match the correct names for'     +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * sources, categories, and questions. You can'     +
+        '<span class="cmt"> * each setting - config, sources, categories,'     +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * get in-depth details about creating a config,'   +
+        '<span class="cmt"> * resources, and questions. You can get in-depth'  +
         '</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="cmt"> * sources, categories, or questions object by'     +
+        '<span class="cmt"> * details about creating a config, sources,'       +
+        '</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="cmt"> * resources, categories, or questions object by'   +
         '</span>' +
       '</li>' +
       '<li>'  +
@@ -458,19 +462,23 @@
         '<span class="cmt"> */</span>' +
       '</li>' +
       '<li>'  +
-        '<span class="idt">settings.config</span> <span class="opr">=</span> ' +
-        '<span class="idt">yourConfig</span><span class="smc">;</span>'        +
+        '<span class="idt">settings.config</span>     <span class="opr">=</sp' +
+        'an> <span class="idt">yourConfig</span><span class="smc">;</span>'    +
       '</li>' +
       '<li>'  +
-        '<span class="idt">settings.sources</span> <span class="opr">=</span>' +
-        ' <span class="idt">yourSources</span><span class="smc">;</span>'      +
+        '<span class="idt">settings.sources</span>    <span class="opr">=</sp' +
+        'an> <span class="idt">yourSources</span><span class="smc">;</span>'   +
       '</li>' +
       '<li>'  +
         '<span class="idt">settings.categories</span> <span class="opr">=</sp' +
         'an> <span class="idt">yourCategories</span><span class="smc">;</span>'+
       '</li>' +
       '<li>'  +
-        '<span class="idt">settings.questions</span> <span class="opr">=</sp'  +
+        '<span class="idt">settings.resources</span>  <span class="opr">=</sp' +
+        'an> <span class="idt">yourResources</span><span class="smc">;</span>' +
+      '</li>' +
+      '<li>'  +
+        '<span class="idt">settings.questions</span>  <span class="opr">=</sp' +
         'an> <span class="idt">yourQuestions</span><span class="smc">;</span>' +
       '</li>' +
       '<li>&nbsp;</li>' +
@@ -481,7 +489,7 @@
         '</span><span class="brc">)</span><span class="smc">;</span>'          +
       '</li>';
 
-    exampleLineCount = 22;
+    exampleLineCount = 24;
 
     divHeight = exampleLineCount * app.elems.code.li.height;
     divHeight += app.elems.code.ol.height;
@@ -506,12 +514,12 @@
 
     // Add the content
     h2.innerHTML = 'Initialization Error';
-    p.innerHTML    = message;
-    h3.innerHTML = 'App Init Example';
-    ol.innerHTML   = example;
+    p.innerHTML  = errorMsg;
+    h3.innerHTML = 'Correct Initialization Example';
+    ol.innerHTML = example;
 
     // Complete all dynamic formatting
-    div.style.height = height + 'px';
+    div.style.height = divHeight + 'px';
 
     // Append initError's children
     errorDiv.appendChild(h2);
