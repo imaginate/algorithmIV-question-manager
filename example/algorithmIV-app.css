@@ -1,8 +1,17 @@
-/* Algorithm IV (v1.0.1) (learn@algorithmiv.com)
+/* Algorithm IV App (v1.1.0) (learn@algorithmiv.com)
  * Section: CSS Style Guide
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
  * The MIT License (algorithmiv.com/docs/license) */
+
+/* ------------------------------- *
+ * New Section:
+ * ------------------------------- *
+ * Import Fonts
+ * ------------------------------- */
+
+@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:500,600);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
 /* ------------------------------- *
  * New Section:
@@ -13,12 +22,12 @@
 body {
   padding:0 0 30px;
   color:#000;
-  font-family:"ff-tisa-sans-web-pro", sans-serif;
+  font-family:"Open Sans", sans-serif;
   font-size:0;
   background:#fff;
 }
 
-#aIV h1 {
+h1 {
   display:block;
   padding:0;
   margin:30px auto 10px;
@@ -69,7 +78,7 @@ body {
   padding:1px 0 1px 1px;
   margin:5px 5px;
   color:#192037;
-  font-family:"ff-tisa-sans-web-pro", sans-serif;
+  font-family:"Open Sans", sans-serif;
   font-size:15px;
   font-weight:700;
   outline:0;
@@ -120,6 +129,7 @@ body {
   position:relative;
   top:auto;
   left:auto;
+  z-index:400;
   display:none;
   height:78px;
   padding:0;
@@ -254,6 +264,8 @@ body {
  * ------------------------------- */
 
 #aIV-questions {
+  position:relative;
+  z-index:500;
   display:block;
   width:100%;
   padding:0;
@@ -295,7 +307,7 @@ body {
 #aIV .question {
   display:block;
   padding:20px 28px 32px;
-  margin:0 0 20px 0;
+  margin:0 0 20px;
   font-size:0;
   opacity:0;
 }
@@ -420,10 +432,32 @@ body {
  * Question Section Extras
  * ------------------------------- */
 
+#aIV .idContain a {
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .idContain a:hover,
+#aIV .idContain a:active {
+  text-decoration:none;
+}
+
+#aIV .hideLink .idContain a {
+  text-decoration:none;
+  cursor:default;
+}
+
 #aIV .links a {
   display:inline-block;
   margin-right:20px;
   line-height:40px;
+  color:#192037;
+  font-weight:400;
+}
+
+#aIV .links a:hover,
+#aIV .links a:active {
+  text-decoration:none;
 }
 
 #aIV img.loader {
@@ -442,18 +476,19 @@ body {
 #aIV .initError,
 #aIV .loadError {
   display:block;
-  padding:20px 28px;
+  padding:40px 28px;
   margin:0 0 10px;
   text-align:center;
+  background:#d8f0fa;
 }
 
 #aIV .initError h2,
 #aIV .loadError h2 {
   display:block;
   padding:0;
-  margin:0 auto 5px;
+  margin:0 auto 10px;
   line-height:34px;
-  color:#f00;
+  color:#950613;
   font-size:26px;
   font-weight:700;
 }
@@ -461,12 +496,49 @@ body {
 #aIV .initError p,
 #aIV .loadError p {
   display:block;
+  max-width:90%;
   padding:0;
   margin:0 auto;
   line-height:34px;
   color:#192037;
   font-size:24px;
   font-weight:400;
+  text-align:justify;
+}
+
+#aIV .initExample {
+  display:block;
+  padding:20px 28px 0;
+  margin:10px 0 20px;
+  text-align:center;
+  font-size:0;
+}
+
+#aIV .initError p span {
+  display:block;
+  margin:5px 0 0;
+}
+
+#aIV .initExample h3 {
+  display:block;
+  padding:0;
+  margin:10px auto;
+  line-height:34px;
+  color:#04663d;
+  font-size:26px;
+  font-weight:700;
+}
+
+#aIV .containExample {
+  position:relative;
+  display:block;
+  padding:0;
+  margin:0 auto;
+  font-size:0;
+}
+
+#aIV .containExample code {
+  border:2px solid #b5e1f5;
 }
 
 #aIV .loadError {
@@ -521,7 +593,7 @@ body {
   margin:0;
   color:#babcc3;
   text-align:left;
-  font-family:"source-code-pro", monospace;
+  font-family:"Source Code Pro", monospace;
   font-size:16px;
   font-weight:500;
   list-style-type:decimal;
@@ -553,7 +625,8 @@ body {
   position:absolute;
   top:25px;
   right:-4px;
-  display:none;
+  z-index:900;
+  display:block;
   width:55px;
   height:35px;
   border-right:solid 2px #d8f0fa;
@@ -577,7 +650,7 @@ body {
 }
 
 #aIV .extBG {
-  z-index:200;
+  z-index:600;
   background:#d8f0fa;
   -webkit-transition:background 1s;
   -moz-transition:background 1s;
@@ -591,7 +664,7 @@ body {
 }
 
 #aIV .extCloseArrow {
-  z-index:205;
+  z-index:605;
   background:url(images/ext-close-small.png) no-repeat center center;
   opacity:0;
   -webkit-transition:opacity 1s;
@@ -601,7 +674,7 @@ body {
 }
 
 #aIV .extOpenArrow {
-  z-index:210;
+  z-index:610;
   background:url(images/ext-open-small.png) no-repeat center center;
   opacity:0.8;
   -webkit-transition:opacity 1s;
@@ -614,7 +687,7 @@ body {
   position:absolute;
   top:-25px;
   right:0;
-  z-index:190;
+  z-index:590;
   display:block;
   width:250px;
   height:20px;
@@ -631,7 +704,7 @@ body {
   position:absolute;
   top:0;
   right:0;
-  z-index:195;
+  z-index:595;
   display:block;
   height:20px;
   line-height:20px;
@@ -694,6 +767,15 @@ body {
 #aIV code span { font-weight:600 }
 #aIV code .cmt { font-weight:500 }
 #aIV code .smc { font-weight:500 }
+
+#aIV code .cmt a {
+  color:inherit;
+  font-weight:600;
+}
+#aIV code .cmt a:active,
+#aIV code .cmt a:hover {
+  text-decoration:none;
+}
 
 /* ------------------------------- *
  * New Section:
