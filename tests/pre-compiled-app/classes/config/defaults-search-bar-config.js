@@ -7,6 +7,7 @@
    */
   var DefaultsSearchBarConfig = function() {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (DefaultsSearchBarConfig.debug)
@@ -14,13 +15,10 @@
      * @desc The Debug instance for the DefaultsSearchBarConfig class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'DefaultsSearchBarConfig',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('DefaultsSearchBarConfig');
 
     this.debug.start('init');
-
+    // $e$
     /**
      * ---------------------------------------------------
      * Protected Property (DefaultsSearchBarConfig.startID)
@@ -101,8 +99,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -117,8 +114,8 @@
         subCat : subCat
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
@@ -135,8 +132,7 @@
      */
     this.set = function(prop, val) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'string|number');
 
@@ -151,8 +147,8 @@
         subCat : function() { subCat  = val; }
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('set', settings.hasOwnProperty(prop), debugMsg, prop);
 
       settings[prop]();
     };
@@ -184,13 +180,12 @@
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
-    // Debugging vars
-    var args;
+    var debugArgs;
     this.debug.start('update', defaults, names, ids, quesLen);
-    args = [ 'update' ];
-    args.push(defaults, 'object', names, 'object');
-    args.push(ids, 'object', quesLen, 'number');
-    this.debug.args(args);
+    debugArgs = [ 'update' ];
+    debugArgs.push(defaults, 'object', names, 'object');
+    debugArgs.push(ids, 'object', quesLen, 'number');
+    this.debug.args(debugArgs);
 
     // Check the user supplied defaults
     if (!defaults || typeof defaults !== 'object') {

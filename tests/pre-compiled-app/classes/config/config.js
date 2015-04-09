@@ -8,6 +8,7 @@
    */
   var Config = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Config.debug)
@@ -15,14 +16,11 @@
      * @desc The Debug instance for the Config class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Config',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Config');
 
     this.debug.group('init', 'coll', 'config= $$', config);
     this.debug.start('init', config);
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (Config.searchBar)
@@ -111,7 +109,7 @@
     Object.freeze(this.url);
     Object.freeze(this.links);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

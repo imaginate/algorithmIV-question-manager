@@ -8,6 +8,7 @@
    */
   var UrlConfig = function(config) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (UrlConfig.debug)
@@ -19,7 +20,7 @@
 
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (UrlConfig.id)
@@ -50,8 +51,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -61,8 +61,8 @@
         category: category
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
 
       return settings[prop];
     };
