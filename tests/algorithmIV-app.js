@@ -5853,6 +5853,7 @@
         events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
         events.debug.start('questionID.onclick', id);
 
+        app.searchBar.elems.view.value = 'one';
         app.moveDisplay(id);
 
         if (urlConfig) {
@@ -5959,6 +5960,7 @@
           events.debug.group('source.onclick', 'coll', 'sourceID= $$', id);
 
           app.searchBar.vals.source = id;
+          app.searchBar.elems.source.value = id;
           app.updateDisplay();
 
           events.debug.group('source.onclick', 'end');
@@ -6229,6 +6231,7 @@
           events.debug.group('mainCat.onclick', 'coll', 'mainCat= $$', id);
 
           app.searchBar.vals.mainCat = id;
+          app.searchBar.elems.mainCat.value = id;
           app.searchBar.updateSubCatOpts();
           app.updateDisplay();
 
@@ -6312,10 +6315,13 @@
           if (app.searchBar.vals.mainCat !== 'all' ||
               app.searchBar.vals.mainCat !== parentId) {
             app.searchBar.vals.mainCat = 'all';
+            app.searchBar.elems.mainCat.value = 'all';
             app.searchBar.updateSubCatOpts(id);
+            app.searchBar.elems.subCat.value = id;
           }
           else {
             app.searchBar.vals.subCat = id;
+            app.searchBar.elems.subCat.value = id;
           }
 
           if (urlConfig) {
