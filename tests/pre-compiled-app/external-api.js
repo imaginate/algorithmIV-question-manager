@@ -97,7 +97,7 @@
       settings.questions : ( settings.hasOwnProperty('question') ) ?
         settings.question : null
     );
-
+    // $s$
     debugCheck = checkType(resourceList, 'string|strings');
     debugMsg = 'Error: The given resources property was an ';
     debugMsg += 'incorrect data type. resources= $$';
@@ -127,6 +127,7 @@
       debugMsg += 'incorrect data type. questions= $$';
       debug.fail('init', debugCheck, debugMsg, questions);
     }
+    // $e$
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
