@@ -8,6 +8,7 @@
    */
   var QuestionElem = function(id) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (QuestionElem.debug)
@@ -19,7 +20,7 @@
 
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
-
+    // $e$
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
@@ -166,9 +167,8 @@
       appendLinks.call(this, question.links);
     }
 
-
+    // Close this debug console group
     this.debug.group('addContent', 'end');
-
 
     /**
      * ---------------------------------------------

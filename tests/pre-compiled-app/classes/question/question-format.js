@@ -14,6 +14,7 @@
     /** @type {{ result: string, lineCount: number }} */
     var code;
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (QuestionFormat.debug)
@@ -23,17 +24,16 @@
      */
     this.debug = aIV.debug('QuestionFormat');
 
-    // Debugging vars
-    var args;
-    args = [ 'init', 'coll' ];
-    args.push('id= $$, question= $$', question.id, question);
-    this.debug.group(args);
+    var debugArgs;
+    debugArgs = [ 'init', 'coll' ];
+    debugArgs.push('id= $$, question= $$', question.id, question);
+    this.debug.group(debugArgs);
     this.debug.start('init', question, config, sources, categories);
-    args = [ 'init' ];
-    args.push(question, 'object', config, 'booleanMap');
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init' ];
+    debugArgs.push(question, 'object', config, 'booleanMap');
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionFormat.id)
@@ -113,8 +113,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -128,8 +127,8 @@
         solution: solution
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
 
       return details[prop];
     };
@@ -200,7 +199,7 @@
     Object.freeze(subCat);
     Object.freeze(solution);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 

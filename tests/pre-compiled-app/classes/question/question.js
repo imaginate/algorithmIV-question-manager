@@ -12,6 +12,7 @@
    */
   var Question = function(question, id, config, sources, categories) {
 
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (Question.debug)
@@ -19,19 +20,15 @@
      * @desc The Debug instance for the Question class.
      * @type {Debug}
      */
-    this.debug = aIV.debug({
-      classTitle     : 'Question',
-      turnOnDebuggers: 'args fail'
-    });
+    this.debug = aIV.debug('Question');
 
-    // Debugging vars
-    var args;
+    var debugArgs;
     this.debug.group('init', 'coll', 'questionID= $$', id);
     this.debug.start('init', question, id, config, sources, categories);
-    args = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
-    args.push(sources, 'object', categories, 'object');
-    this.debug.args(args);
-
+    debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+    // $e$
     /**
      * ----------------------------------------------- 
      * Protected Property (Question.url)
@@ -160,8 +157,7 @@
      */
     this.get = function(prop) {
 
-      // Debugging vars
-      var errorMsg;
+      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -180,8 +176,8 @@
         output  : output
       };
 
-      errorMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), errorMsg, prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
 
       return details[prop];
     };
@@ -269,10 +265,10 @@
           output = String( question.solution() );
         }
         catch (errorMsg) {
-          args = [ 'init', false ];
-          args.push('The question\'s solution produced an error. questionID= $$, error= $$');
-          args.push(id, errorMsg);
-          this.debug.fail(args);
+          debugArgs = [ 'init', false ];
+          debugArgs.push('The question\'s solution produced an error. questionID= $$, error= $$');
+          debugArgs.push(id, errorMsg);
+          this.debug.fail(debugArgs);
 
           output = 'The solution returned an error.';
         }
@@ -289,7 +285,7 @@
       solution: solution
     }, config, sources, categories);
 
-
+    // Close this debug console group
     this.debug.group('init', 'end');
   };
 
