@@ -163,6 +163,271 @@ copy /y pre-compiled-settings\example-settings-temp.js example-settings.js
 del /f pre-compiled-settings\example-settings-temp.js
 
 ----------------------------------------------------------------
+CREATE SRC              |
+----------------------- |    |
+Folder:                 |    |
+src/pre-compiled-parts/ |    |
+-------------------------    v
+
+## UNIX Commands
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax.js>src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-vars.js>src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-vars.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-methods.js>src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-methods.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug\./ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify-vars.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify-vars.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify-methods.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify-methods.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/public-api.js>src/pre-compiled-parts/public-api.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/external-api.js>src/pre-compiled-parts/external-api.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/module-vars.js>src/pre-compiled-parts/module-vars.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/module-methods.js>src/pre-compiled-parts/module-methods.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/app/app.js>src/pre-compiled-parts/classes/app/app.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/app/app-flags.js>src/pre-compiled-parts/classes/app/app-flags.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/app/app-elems.js>src/pre-compiled-parts/classes/app/app-elems.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/app/app-vals.js>src/pre-compiled-parts/classes/app/app-vals.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/config.js>src/pre-compiled-parts/classes/config/config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/search-bar-config.js>src/pre-compiled-parts/classes/config/search-bar-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/defaults-search-bar-config.js>src/pre-compiled-parts/classes/config/defaults-search-bar-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/questions-config.js>src/pre-compiled-parts/classes/config/questions-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/pretty-config.js>src/pre-compiled-parts/classes/config/pretty-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/url-config.js>src/pre-compiled-parts/classes/config/url-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/config/links-config.js>src/pre-compiled-parts/classes/config/links-config.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/question/question.js>src/pre-compiled-parts/classes/question/question.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/question/question-format.js>src/pre-compiled-parts/classes/question/question-format.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/question/question-elem.js>src/pre-compiled-parts/classes/question/question-elem.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/sources.js>src/pre-compiled-parts/classes/sources.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/source.js>src/pre-compiled-parts/classes/source.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/categories.js>src/pre-compiled-parts/classes/categories.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/category.js>src/pre-compiled-parts/classes/category.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/search-bar.js>src/pre-compiled-parts/classes/search-bar.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/classes/questions.js>src/pre-compiled-parts/classes/questions.js
+sed \
+  -e "/\$s\$/,/\$e\$/ d" \
+  -e "/debug/ d" \
+  -e "/Debug/ d" <tests/pre-compiled-app/polyfill-methods.js>src/pre-compiled-parts/polyfill-methods.js
+sed \
+  -e "8 r compile\file-descrip.txt" \
+  -e "7,8 d" <tests/pre-compiled-app/skeleton.js>src/pre-compiled-parts/skeleton.js
+
+## MS-DOS Commands
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax.js>src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-vars.js>src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-vars.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-methods.js>src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-methods.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug\./ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify-vars.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify-vars.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify-methods.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify-methods.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\public-api.js>src\pre-compiled-parts\public-api.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\external-api.js>src\pre-compiled-parts\external-api.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\module-vars.js>src\pre-compiled-parts\module-vars.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\module-methods.js>src\pre-compiled-parts\module-methods.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\app\app.js>src\pre-compiled-parts\classes\app\app.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\app\app-flags.js>src\pre-compiled-parts\classes\app\app-flags.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\app\app-elems.js>src\pre-compiled-parts\classes\app\app-elems.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\app\app-vals.js>src\pre-compiled-parts\classes\app\app-vals.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\config.js>src\pre-compiled-parts\classes\config\config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\search-bar-config.js>src\pre-compiled-parts\classes\config\search-bar-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\defaults-search-bar-config.js>src\pre-compiled-parts\classes\config\defaults-search-bar-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\questions-config.js>src\pre-compiled-parts\classes\config\questions-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\pretty-config.js>src\pre-compiled-parts\classes\config\pretty-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\url-config.js>src\pre-compiled-parts\classes\config\url-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\config\links-config.js>src\pre-compiled-parts\classes\config\links-config.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\question\question.js>src\pre-compiled-parts\classes\question\question.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\question\question-format.js>src\pre-compiled-parts\classes\question\question-format.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\question\question-elem.js>src\pre-compiled-parts\classes\question\question-elem.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\sources.js>src\pre-compiled-parts\classes\sources.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\source.js>src\pre-compiled-parts\classes\source.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\categories.js>src\pre-compiled-parts\classes\categories.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\category.js>src\pre-compiled-parts\classes\category.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\search-bar.js>src\pre-compiled-parts\classes\search-bar.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\classes\questions.js>src\pre-compiled-parts\classes\questions.js
+sed ^
+  -e "/\$s\$/,/\$e\$/ d" ^
+  -e "/debug/ d" ^
+  -e "/Debug/ d" <tests\pre-compiled-app\polyfill-methods.js>src\pre-compiled-parts\polyfill-methods.js
+sed ^
+  -e "8 r compile\file-descrip.txt" ^
+  -e "7,8 d" <tests\pre-compiled-app\skeleton.js>src\pre-compiled-parts\skeleton.js
+
+----------------------------------------------------------------
 COMPILE SRC             |
 ----------------------- |    |
 File:                   |    |
