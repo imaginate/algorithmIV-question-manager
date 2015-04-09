@@ -1,3 +1,4 @@
+    // $s$
     /**
      * ---------------------------------------------------
      * Public Property (prettify.debug)
@@ -6,7 +7,7 @@
      * @type {Debug}
      */
     prettify.debug = aIV.debug('prettify');
-
+    // $e$
     /**
      * ---------------------------------------------
      * Private Variable (config)

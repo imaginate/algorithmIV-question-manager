@@ -8,8 +8,7 @@
        */
       function prepareLine(line) {
 
-        // Debugging vars
-        var msg;
+        var debugMsg;
         highlightSyntax.debug.start('prepareLine', line);
         highlightSyntax.debug.args('prepareLine', line, 'string');
 
@@ -19,8 +18,8 @@
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
 
-        msg = 'lineLen= $$, lastIndex= $$';
-        highlightSyntax.debug.state('prepareLine', msg, lineLen, lastIndex);
+        debugMsg = 'lineLen= $$, lastIndex= $$';
+        highlightSyntax.debug.state('prepareLine', debugMsg, lineLen, lastIndex);
       }
 
       /**
@@ -114,8 +113,7 @@
        */
       function isRegex(i) {
 
-        // Debugging vars
-        var msg;
+        var debugMsg;
         highlightSyntax.debug.start('isRegex', i);
         highlightSyntax.debug.args('isRegex', i, 'number');
 
@@ -157,8 +155,8 @@
           new RegExp(regexBody);
         }
         catch (e) {
-          msg = 'new RegExp(regexBody) error= $$';
-          highlightSyntax.debug.state('isRegex', msg, e);
+          debugMsg = 'new RegExp(regexBody) error= $$';
+          highlightSyntax.debug.state('isRegex', debugMsg, e);
           end = 0;
         }
 
@@ -368,12 +366,11 @@
        */
       function formatCommentLinks(start, end) {
 
-        // Debugging vars
-        var args;
+        var debugArgs;
         highlightSyntax.debug.start('formatCommentLinks', start, end);
-        args = [ 'formatCommentLinks' ];
-        args.push(start, 'number', end, 'number');
-        highlightSyntax.debug.args(args);
+        debugArgs = [ 'formatCommentLinks' ];
+        debugArgs.push(start, 'number', end, 'number');
+        highlightSyntax.debug.args(debugArgs);
 
         /** @type {string} */
         var comment;
@@ -403,10 +400,10 @@
 
           i += start + 1;
 
-          args = [ 'formatCommentLinks' ];
-          args.push('i= $$, start= $$, newLine[i]= $$');
-          args.push(i, start, newLine[i]);
-          highlightSyntax.debug.state(args);
+          debugArgs = [ 'formatCommentLinks' ];
+          debugArgs.push('i= $$, start= $$, newLine[i]= $$');
+          debugArgs.push(i, start, newLine[i]);
+          highlightSyntax.debug.state(debugArgs);
 
           newLine[i] = '';
           ++i;
@@ -797,12 +794,11 @@
        */
       function formatIdentifier(i, extras) {
 
-        // Debugging vars
-        var args;
+        var debugArgs;
         highlightSyntax.debug.start('formatIdentifier', i, extras);
-        args = [ 'formatIdentifier' ];
-        args.push(i, 'number', extras, 'string=');
-        highlightSyntax.debug.args(args);
+        debugArgs = [ 'formatIdentifier' ];
+        debugArgs.push(i, 'number', extras, 'string=');
+        highlightSyntax.debug.args(debugArgs);
 
         /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;

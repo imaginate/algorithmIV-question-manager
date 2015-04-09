@@ -67,8 +67,7 @@
      */
     function applyFormatting(lines) {
 
-      // Debugging vars
-      var msg;
+      var debugMsg;
       prettify.debug.start('applyFormatting', lines);
       prettify.debug.args('applyFormatting', lines, 'strings');
 
@@ -85,8 +84,8 @@
       i = -1;
       while (++i < len) {
 
-        msg = 'lineNumber= $$';
-        prettify.debug.group('applyFormatting', 'coll', msg, (i + 1));
+        debugMsg = 'lineNumber= $$';
+        prettify.debug.group('applyFormatting', 'coll', debugMsg, (i + 1));
 
         line = prepareLine(lines[i]);
 
@@ -176,12 +175,11 @@
      */
     function makeKeywordObj(cat, href, props) {
 
-      // Debugging vars
-      var args;
+      var debugArgs;
       prettify.debug.start('makeKeywordObj', cat, href, props);
-      args = [ 'makeKeywordObj' ];
-      args.push(cat, 'string', href, 'string=', props, 'boolean=');
-      prettify.debug.args(args);
+      debugArgs = [ 'makeKeywordObj' ];
+      debugArgs.push(cat, 'string', href, 'string=', props, 'boolean=');
+      prettify.debug.args(debugArgs);
 
       /** @type {Object<string, (string|numberMap)>} */
       var obj;

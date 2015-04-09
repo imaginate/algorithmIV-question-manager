@@ -110,13 +110,12 @@
    */
   function checkType(val, type) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('checkType', val, type);
     debug.args('checkType', type, 'string');
-    // Error message for checking the type value of each input
-    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
-    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    // Debug message for checking the type value of each input
+    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
+    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
 
     /**
      * @type {strings}
@@ -137,8 +136,8 @@
 
       cleanType = type.replace(/\!|\=/g, '');
 
-      failCheck = regexps.types.all.test(cleanType);
-      debug.fail('checkType', failCheck, errorMsg, type);
+      debugCheck = regexps.types.all.test(cleanType);
+      debug.fail('checkType', debugCheck, debugMsg, type);
 
       // Handle undefined val
       if (val === undefined) {
@@ -251,8 +250,7 @@
    */
   function checkTypes(vals, types) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
     debug.args('checkTypes', vals, 'array', types, 'string|strings');
 
@@ -268,14 +266,14 @@
       });
     }
 
-    errorMsg = 'Error: The length of the arguments to be checked ';
-    errorMsg += 'were not the same. vals= $$, types= $$';
-    failCheck = (vals.length === types.length);
-    debug.fail('checkTypes', failCheck, errorMsg, vals, types);
+    debugMsg = 'Error: The length of the arguments to be checked ';
+    debugMsg += 'were not the same. vals= $$, types= $$';
+    debugCheck = (vals.length === types.length);
+    debug.fail('checkTypes', debugCheck, debugMsg, vals, types);
 
-    // Error message for checking the type value of each input
-    errorMsg = 'Error: A given type was the wrong value. The incorrect ';
-    errorMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    // Debug message for checking the type value of each input
+    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
+    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
 
     return types.every(function(/** string */ _type, /** number */ i) {
       /**
@@ -297,8 +295,8 @@
 
         cleanType = type.replace(/\!|\=/g, '');
 
-        failCheck = regexps.types.all.test(cleanType);
-        debug.fail('checkTypes', failCheck, errorMsg, type);
+        debugCheck = regexps.types.all.test(cleanType);
+        debug.fail('checkTypes', debugCheck, debugMsg, type);
 
         // Handle undefined val
         if (val === undefined) {

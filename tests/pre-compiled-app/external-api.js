@@ -17,12 +17,11 @@
    */
   var _init = function(settings) {
 
-    // Debugging vars
-    var errorMsg, failCheck;
+    var debugMsg, debugCheck;
     debug.start('init', settings);
     debug.args('init', settings, 'object');
-    errorMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!_initialized), errorMsg);
+    debugMsg = 'Error: A second attempt to init this app occurred.';
+    debug.fail('init', (!_initialized), debugMsg);
 
     /**
      * @type {?(string|strings)}
@@ -99,34 +98,34 @@
         settings.question : null
     );
 
-    failCheck = checkType(resourceList, 'string|strings');
-    errorMsg = 'Error: The given resources property was an ';
-    errorMsg += 'incorrect data type. resources= $$';
-    debug.fail('init', failCheck, errorMsg, resourceList);
+    debugCheck = checkType(resourceList, 'string|strings');
+    debugMsg = 'Error: The given resources property was an ';
+    debugMsg += 'incorrect data type. resources= $$';
+    debug.fail('init', debugCheck, debugMsg, resourceList);
 
-    failCheck = checkType(config, 'objectMap');
-    errorMsg = 'Error: The given config property was an ';
-    errorMsg += 'incorrect data type. config= $$';
-    debug.fail('init', failCheck, errorMsg, config);
+    debugCheck = checkType(config, 'objectMap');
+    debugMsg = 'Error: The given config property was an ';
+    debugMsg += 'incorrect data type. config= $$';
+    debug.fail('init', debugCheck, debugMsg, config);
 
-    failCheck = checkType(sources, 'stringMap');
-    errorMsg = 'Error: The given sources property was an ';
-    errorMsg += 'incorrect data type. sources= $$';
-    debug.fail('init', failCheck, errorMsg, sources);
+    debugCheck = checkType(sources, 'stringMap');
+    debugMsg = 'Error: The given sources property was an ';
+    debugMsg += 'incorrect data type. sources= $$';
+    debug.fail('init', debugCheck, debugMsg, sources);
 
-    failCheck = checkType(categories, 'stringMap|objectMap');
-    errorMsg = 'Error: The given categories property was an ';
-    errorMsg += 'incorrect data type. categories= $$';
-    debug.fail('init', failCheck, errorMsg, categories);
+    debugCheck = checkType(categories, 'stringMap|objectMap');
+    debugMsg = 'Error: The given categories property was an ';
+    debugMsg += 'incorrect data type. categories= $$';
+    debug.fail('init', debugCheck, debugMsg, categories);
 
-    errorMsg = 'Error: No questions were provided.';
-    debug.fail('init', (!!questions), errorMsg);
+    debugMsg = 'Error: No questions were provided.';
+    debug.fail('init', (!!questions), debugMsg);
 
     if (questions) {
-      failCheck = (checkType(questions, 'objects') && !!questions.length);
-      errorMsg = 'Error: The given questions property was an ';
-      errorMsg += 'incorrect data type. questions= $$';
-      debug.fail('init', failCheck, errorMsg, questions);
+      debugCheck = (checkType(questions, 'objects') && !!questions.length);
+      debugMsg = 'Error: The given questions property was an ';
+      debugMsg += 'incorrect data type. questions= $$';
+      debug.fail('init', debugCheck, debugMsg, questions);
     }
 
     // Check the types of the arguments
@@ -171,11 +170,11 @@
       console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = (function(i, callback) {         
+        callback = (function(jsonFile, callback) {         
           return function() {
-            getResource(resourceList[i], callback);
+            getResource(jsonFile, callback);
           };
-        })(i, callback);
+        })(resourceList[i], callback);
       }
       getResource(resourceList[0], callback);
       return;

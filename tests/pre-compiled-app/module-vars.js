@@ -1,3 +1,4 @@
+  // $s$
   /**
    * ----------------------------------------------- 
    * Public Variable (debug)
@@ -24,7 +25,7 @@
    * @type {{ debug: Debug }}
    */
   var polyfill = { debug: aIV.debug('polyfill') };
-
+  // $e$
   /**
    * ----------------------------------------------- 
    * Public Variable (resources)
@@ -48,7 +49,7 @@
    * Public Variable (regexps)
    * -----------------------------------------------
    * @desc Regular expressions that are used multiple times
-   *   by the debugger (avoid re-creating multiple times).
+   *   throughout the app.
    * @type {Object<string, Object>}
    */
   var regexps = {};

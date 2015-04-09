@@ -1,3 +1,4 @@
+      // $s$
       /**
        * ---------------------------------------------------
        * Public Property (highlight.debug)
@@ -6,7 +7,7 @@
        * @type {Debug}
        */
       highlightSyntax.debug = aIV.debug('highlightSyntax');
-
+      // $e$
       /**
        * ---------------------------------------------
        * Private Variable (newLine)
