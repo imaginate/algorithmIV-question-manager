@@ -171,19 +171,11 @@
       console.log(callback);
       i = resourceList.length;
       while (--i) {
-        callback = (function() {
-          /** @type {function} */
-          var _callback;
-          /** @type {number} */
-          var _i;
-
-          _callback = callback;
-          _i = i;
-          
+        callback = (function(i, callback) {         
           return function() {
-            getResource(resourceList[_i], _callback);
+            getResource(resourceList[i], callback);
           };
-        })();
+        })(i, callback);
       }
       getResource(resourceList[0], callback);
       return;
