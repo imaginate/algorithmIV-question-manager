@@ -406,7 +406,7 @@
    */
   settings.config.showLinks = {
     id      : true,
-    source  : false,
+    source  : true,
     category: true
   };
 
