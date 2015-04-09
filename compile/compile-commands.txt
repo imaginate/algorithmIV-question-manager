@@ -435,17 +435,83 @@ src/algorithmIV-app.js  |    |
 -------------------------    v
 
 ## UNIX Commands
-cd src/pre-compiled-parts
+cd src/pre-compiled-parts/pre-compiled-prettifier
 sed \
-  ## Sed commands here
+  -e "/highlight-syntax-vars.js/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" \
+  -e "/highlight-syntax-methods.js/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
+cd ..
+  sed \
+  -e "/prettify-vars.js/ r pre-compiled-prettifier/prettify-vars.js" \
+  -e "/prettify-methods.js/ r pre-compiled-prettifier/prettify-methods.js" \
+  -e "/highlight-syntax.js/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
+sed \
+  -e "/public-api.js/ r public-api.js" \
+  -e "/external-api.js/ r external-api.js" \
+  -e "/module-vars.js/ r module-vars.js" \
+  -e "/module-methods.js/ r module-methods.js" \
+  -e "/app.js/ r classes/app/app.js" \
+  -e "/app-flags.js/ r classes/app/app-flags.js" \
+  -e "/app-elems.js/ r classes/app/app-elems.js" \
+  -e "/app-vals.js/ r classes/app/app-vals.js" \
+  -e "/\/config.js/ r classes/config/config.js" \
+  -e "/\/search-bar-config.js/ r classes/config/search-bar-config.js" \
+  -e "/defaults-search-bar-config.js/ r classes/config/defaults-search-bar-config.js" \
+  -e "/questions-config.js/ r classes/config/questions-config.js" \
+  -e "/pretty-config.js/ r classes/config/pretty-config.js" \
+  -e "/url-config.js/ r classes/config/url-config.js" \
+  -e "/links-config.js/ r classes/config/links-config.js" \
+  -e "/sources.js/ r classes/sources.js" \
+  -e "/source.js/ r classes/source.js" \
+  -e "/categories.js/ r classes/categories.js" \
+  -e "/category.js/ r classes/category.js" \
+  -e "/search-bar.js/ r classes/search-bar.js" \
+  -e "/questions.js/ r classes/questions.js" \
+  -e "/question.js/ r classes/question/question.js" \
+  -e "/question-format.js/ r classes/question/question-format.js" \
+  -e "/question-elem.js/ r classes/question/question-elem.js" \
+  -e "/prettify.js/ r prettify.js" \
+  -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 cp -u pre-compiled-parts/algorithmIV-app-temp.js algorithmIV-app.js
 rm -f pre-compiled-parts/algorithmIV-app-temp.js
 
 ## MS-DOS Commands
-cd src\pre-compiled-parts
+cd src\pre-compiled-parts\pre-compiled-prettifier
 sed ^
-  ## Sed commands here
+  -e "/highlight-syntax-vars.js/ r pre-compiled-syntax-highlighter\highlight-syntax-vars.js" ^
+  -e "/highlight-syntax-methods.js/ r pre-compiled-syntax-highlighter\highlight-syntax-methods.js" <pre-compiled-syntax-highlighter\highlight-syntax.js>highlight-syntax.js
+cd ..
+sed ^
+  -e "/prettify-vars.js/ r pre-compiled-prettifier\prettify-vars.js" ^
+  -e "/prettify-methods.js/ r pre-compiled-prettifier\prettify-methods.js" ^
+  -e "/highlight-syntax.js/ r pre-compiled-prettifier\highlight-syntax.js" <pre-compiled-prettifier\prettify.js>prettify.js
+sed ^
+  -e "/public-api.js/ r public-api.js" ^
+  -e "/external-api.js/ r external-api.js" ^
+  -e "/module-vars.js/ r module-vars.js" ^
+  -e "/module-methods.js/ r module-methods.js" ^
+  -e "/app.js/ r classes\app\app.js" ^
+  -e "/app-flags.js/ r classes\app\app-flags.js" ^
+  -e "/app-elems.js/ r classes\app\app-elems.js" ^
+  -e "/app-vals.js/ r classes\app\app-vals.js" ^
+  -e "/\/config.js/ r classes\config\config.js" ^
+  -e "/\/search-bar-config.js/ r classes\config\search-bar-config.js" ^
+  -e "/defaults-search-bar-config.js/ r classes\config\defaults-search-bar-config.js" ^
+  -e "/questions-config.js/ r classes\config\questions-config.js" ^
+  -e "/pretty-config.js/ r classes\config\pretty-config.js" ^
+  -e "/url-config.js/ r classes\config\url-config.js" ^
+  -e "/links-config.js/ r classes\config\links-config.js" ^
+  -e "/sources.js/ r classes\sources.js" ^
+  -e "/source.js/ r classes\source.js" ^
+  -e "/categories.js/ r classes\categories.js" ^
+  -e "/category.js/ r classes\category.js" ^
+  -e "/search-bar.js/ r classes\search-bar.js" ^
+  -e "/questions.js/ r classes\questions.js" ^
+  -e "/question.js/ r classes\question\question.js" ^
+  -e "/question-format.js/ r classes\question\question-format.js" ^
+  -e "/question-elem.js/ r classes\question\question-elem.js" ^
+  -e "/prettify.js/ r prettify.js" ^
+  -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 copy /y pre-compiled-parts\algorithmIV-app-temp.js algorithmIV-app.js
 del /f pre-compiled-parts\algorithmIV-app-temp.js
