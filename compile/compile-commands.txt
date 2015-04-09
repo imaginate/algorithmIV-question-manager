@@ -524,7 +524,7 @@ src/algorithmIV-app.js  |    |
 -------------------------    v
 
 ## UNIX Commands
-sed "3,25 d" <src/algorithmIV-app.js>compile/algorithmIV-app.js
+sed "3,23 d" <src/algorithmIV-app.js>compile/algorithmIV-app.js
 cd compile
 java \
   -jar minifier.jar \
@@ -538,7 +538,7 @@ sed \
 rm -f compile/algorithmIV-app.min.js
 
 ## MS-DOS Commands
-sed "3,25 d" <src\algorithmIV-app.js>compile\algorithmIV-app.js
+sed "3,23 d" <src\algorithmIV-app.js>compile\algorithmIV-app.js
 cd compile
 java ^
   -jar minifier.jar ^
