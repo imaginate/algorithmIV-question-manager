@@ -199,15 +199,20 @@
         mainCat = categories.get(mainId);
         this.names.mainCat[ mainId ] = mainCat.get('name');
 
+        // Add the sub category options
+        this.opts.subCat[ mainId ] = [];
+
         // Add the sub categories names and ids
         subs = mainCat.get('subs');
         if (subs && subs.length) {
           this.ids.subCat[ mainId ] = subs.slice(0);
           this.ids.subCat[ mainId ].unshift('all');
-          this.opts.subCat[ mainId ] = [];
           subs.forEach(function(/** string */ subId) {
             this.names.subCat[ subId ] = categories.get(subId, 'name');
           }, this);
+        }
+        else {
+          this.ids.subCat[ mainId ] = [ 'all' ];
         }
       }, this);
     }
