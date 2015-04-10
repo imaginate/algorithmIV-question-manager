@@ -97,6 +97,7 @@
       settings.questions : ( settings.hasOwnProperty('question') ) ?
         settings.question : null
     );
+
     // $s$
     debugCheck = checkType(resourceList, 'string|strings');
     debugMsg = 'Error: The given resources property was an ';

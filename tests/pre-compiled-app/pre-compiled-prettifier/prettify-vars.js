@@ -8,6 +8,7 @@
      */
     prettify.debug = aIV.debug('prettify');
     // $e$
+
     /**
      * ---------------------------------------------
      * Private Variable (config)

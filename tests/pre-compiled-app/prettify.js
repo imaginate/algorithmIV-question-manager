@@ -44,6 +44,7 @@
      */
     prettify.debug = aIV.debug('prettify');
     // $e$
+
     /**
      * ---------------------------------------------
      * Private Variable (config)
@@ -921,6 +922,7 @@
        */
       highlightSyntax.debug = aIV.debug('highlightSyntax');
       // $e$
+
       /**
        * ---------------------------------------------
        * Private Variable (newLine)

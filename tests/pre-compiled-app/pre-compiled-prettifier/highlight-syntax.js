@@ -35,6 +35,7 @@
        */
       highlightSyntax.debug = aIV.debug('highlightSyntax');
       // $e$
+
       /**
        * ---------------------------------------------
        * Private Variable (newLine)

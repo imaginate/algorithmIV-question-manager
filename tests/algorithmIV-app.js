@@ -114,6 +114,7 @@
    */
   var polyfill = { debug: aIV.debug('polyfill') };
   // $e$
+
   /**
    * ----------------------------------------------- 
    * Public Variable (resources)
@@ -875,6 +876,7 @@
     debugArgs.push(categories, 'object', questions, 'objects');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (App.flags)
@@ -1429,6 +1431,7 @@
     this.debug.start('init', pass);
     this.debug.args('init', pass, 'boolean');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)
@@ -1538,6 +1541,7 @@
     this.debug.group('init', 'coll');
     this.debug.start('init');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
@@ -2077,6 +2081,7 @@
     this.debug.start('init');
     this.debug.args('init', quesLen, 'number');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppVals.ids)
@@ -2217,6 +2222,7 @@
         this.debug.fail('move', !!way, debugMsg, way);
         way = Number(way);
       }
+
       // $s$
       if (typeof way !== 'string') {
         debugCheck = (way > 0 && way <= app.questions.len);
@@ -2324,6 +2330,7 @@
     this.debug.group('init', 'coll', 'config= $$', config);
     this.debug.start('init', config);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (Config.searchBar)
@@ -2447,6 +2454,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (SearchBarConfig.stage)
@@ -2578,6 +2586,7 @@
 
     this.debug.start('init');
     // $e$
+
     /**
      * ---------------------------------------------------
      * Protected Property (DefaultsSearchBarConfig.startID)
@@ -2829,6 +2838,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionsConfig.id)
@@ -3026,6 +3036,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (PrettyConfig.trimSpace)
@@ -3142,6 +3153,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (UrlConfig.id)
@@ -3235,6 +3247,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (LinksConfig.id)
@@ -3342,6 +3355,7 @@
     this.debug.start('init', sources);
     this.debug.args('init', sources, 'stringMap');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Sources.data)
@@ -3453,6 +3467,7 @@
     this.debug.start('init', name);
     this.debug.args('init', name, 'string');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Source.url)
@@ -3570,6 +3585,7 @@
     this.debug.start('init', categories);
     this.debug.args('init', categories, 'objectMap|stringMap');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Categories.data)
@@ -3720,6 +3736,7 @@
     this.debug.start('init', name, subs);
     this.debug.args('init', name, 'string', subs, 'strings=');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Category.url)
@@ -3847,6 +3864,7 @@
     debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (SearchBar.names)
@@ -4479,7 +4497,6 @@
      */
     this.debug = aIV.debug('Questions');
 
-    // Debugging vars
     var debugArgs;
     debugArgs = [ 'init', 'open' ];
     debugArgs.push('questions= $$, config= $$', questions, config);
@@ -4490,6 +4507,7 @@
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Questions.data)
@@ -4548,6 +4566,7 @@
         this.debug.fail('get', debugCheck, debugMsg, id);
       }
       // $e$
+
       return question;
     };
     Object.freeze(this.get);
@@ -4991,6 +5010,7 @@
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Question.url)
@@ -5390,6 +5410,7 @@
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionFormat.id)
@@ -5590,6 +5611,7 @@
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
@@ -6757,6 +6779,7 @@
      */
     prettify.debug = aIV.debug('prettify');
     // $e$
+
     /**
      * ---------------------------------------------
      * Private Variable (config)
@@ -7634,6 +7657,7 @@
        */
       highlightSyntax.debug = aIV.debug('highlightSyntax');
       // $e$
+
       /**
        * ---------------------------------------------
        * Private Variable (newLine)
@@ -8834,6 +8858,7 @@
       settings.questions : ( settings.hasOwnProperty('question') ) ?
         settings.question : null
     );
+
     // $s$
     debugCheck = checkType(resourceList, 'string|strings');
     debugMsg = 'Error: The given resources property was an ';

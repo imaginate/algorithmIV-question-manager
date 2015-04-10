@@ -22,6 +22,7 @@
     this.debug.start('init', pass);
     this.debug.args('init', pass, 'boolean');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)

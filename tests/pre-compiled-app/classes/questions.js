@@ -30,7 +30,6 @@
      */
     this.debug = aIV.debug('Questions');
 
-    // Debugging vars
     var debugArgs;
     debugArgs = [ 'init', 'open' ];
     debugArgs.push('questions= $$, config= $$', questions, config);
@@ -41,6 +40,7 @@
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Questions.data)
@@ -99,6 +99,7 @@
         this.debug.fail('get', debugCheck, debugMsg, id);
       }
       // $e$
+
       return question;
     };
     Object.freeze(this.get);

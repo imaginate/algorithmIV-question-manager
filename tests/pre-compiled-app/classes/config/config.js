@@ -21,6 +21,7 @@
     this.debug.group('init', 'coll', 'config= $$', config);
     this.debug.start('init', config);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (Config.searchBar)

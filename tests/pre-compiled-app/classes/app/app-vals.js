@@ -24,6 +24,7 @@
     this.debug.start('init');
     this.debug.args('init', quesLen, 'number');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppVals.ids)
@@ -164,6 +165,7 @@
         this.debug.fail('move', !!way, debugMsg, way);
         way = Number(way);
       }
+
       // $s$
       if (typeof way !== 'string') {
         debugCheck = (way > 0 && way <= app.questions.len);

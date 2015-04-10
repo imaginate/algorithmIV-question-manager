@@ -33,6 +33,7 @@
     debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (SearchBar.names)

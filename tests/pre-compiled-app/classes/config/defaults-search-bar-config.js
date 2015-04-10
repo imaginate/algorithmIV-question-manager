@@ -19,6 +19,7 @@
 
     this.debug.start('init');
     // $e$
+
     /**
      * ---------------------------------------------------
      * Protected Property (DefaultsSearchBarConfig.startID)

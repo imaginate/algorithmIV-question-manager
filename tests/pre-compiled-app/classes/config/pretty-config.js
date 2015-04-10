@@ -22,6 +22,7 @@
     this.debug.start('init', config);
     this.debug.args('init', config, 'object');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (PrettyConfig.trimSpace)

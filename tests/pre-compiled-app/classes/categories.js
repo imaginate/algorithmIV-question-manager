@@ -25,6 +25,7 @@
     this.debug.start('init', categories);
     this.debug.args('init', categories, 'objectMap|stringMap');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Categories.data)

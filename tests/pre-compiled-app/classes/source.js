@@ -21,6 +21,7 @@
     this.debug.start('init', name);
     this.debug.args('init', name, 'string');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Source.url)

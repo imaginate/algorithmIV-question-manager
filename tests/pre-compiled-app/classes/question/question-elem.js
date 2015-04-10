@@ -21,6 +21,7 @@
     this.debug.start('init', id);
     this.debug.args('init', id, 'number');
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)

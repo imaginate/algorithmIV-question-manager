@@ -48,6 +48,7 @@
     debugArgs.push(categories, 'object', questions, 'objects');
     this.debug.args(debugArgs);
     // $e$
+
     /**
      * ----------------------------------------------- 
      * Public Property (App.flags)
