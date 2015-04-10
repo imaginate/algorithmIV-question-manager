@@ -51,15 +51,12 @@
      */
     this.get = function(id, prop) {
 
-
-
       return ( ( !data.hasOwnProperty(id) ) ?
         false : (!!prop) ?
           data[id].get(prop) : data[id]
       );
     };
     Object.freeze(this.get);
-
 
     // Check the argument data types
     if ( checkType(categories, '!stringMap') ) {

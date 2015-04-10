@@ -209,7 +209,6 @@
    */
   function getResource(jsonFile, callback) {
 
-
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
@@ -245,7 +244,6 @@
    */
   function getID(title) {
 
-
     return document.getElementById(title);
   }
 
@@ -259,7 +257,6 @@
    * @return {elems} References to the elements with the tag.
    */
   function getTag(title, root) {
-
 
     root = root || app.elems.root;
 
@@ -276,7 +273,6 @@
    * @return {elems} References to the elements with the class.
    */
   function getClass(title, root) {
-
 
     root = root || app.elems.root;
 
@@ -301,7 +297,6 @@
    */
   function checkType(val, type) {
 
-
     /**
      * @type {strings}
      * @private
@@ -320,7 +315,6 @@
       var cleanType;
 
       cleanType = type.replace(/\!|\=/g, '');
-
 
       // Handle undefined val
       if (val === undefined) {
@@ -433,7 +427,6 @@
    */
   function checkTypes(vals, types) {
 
-
     /**
      * @type {val}
      * @private
@@ -445,8 +438,6 @@
         return types;
       });
     }
-
-
 
     return types.every(function(/** string */ _type, /** number */ i) {
       /**
@@ -467,7 +458,6 @@
         var cleanType;
 
         cleanType = type.replace(/\!|\=/g, '');
-
 
         // Handle undefined val
         if (val === undefined) {
@@ -573,7 +563,6 @@
    */
   function sortKeys(ids, data) {
 
-
     /**
      * @type {strings}
      * @private
@@ -660,7 +649,6 @@
    */
   function capFirst(str) {
 
-
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
@@ -674,7 +662,6 @@
    * @return {string} The camel case string.
    */
   function camelCase(str) {
-
 
     /**
      * @type {strings}
@@ -718,7 +705,6 @@
 
     return function(str) {
 
-
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
         str = str.replace(endCheck, '');
@@ -744,7 +730,6 @@
     http = /^https?\:\/\//;
 
     return function(str) {
-
 
       return http.test(str);
     };
@@ -918,7 +903,6 @@
    */
   App.prototype.setupDisplay = function() {
 
-
     /** @type {number} */
     var renderTime;
 
@@ -964,7 +948,6 @@
    *   that the index should NOT be changed.
    */
   App.prototype.updateDisplay = function(settings) {
-
 
     /**
      * @type {?nums}
@@ -1071,7 +1054,6 @@
    * @type {function()}
    */
   App.prototype.updateValues = function() {
-
 
     /**
      * @type {nums}
@@ -1235,7 +1217,6 @@
    */
   App.prototype.moveDisplay = function(way) {
 
-
     /**
      * @type {?nums}
      * @private
@@ -1324,12 +1305,10 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var flags = {
         initArgs: initArgs
       };
-
 
       return flags[prop];
     };
@@ -1345,7 +1324,6 @@
      */
     this.set = function(prop, val) {
 
-
       /** @private */
       var flags = {
         initArgs: function () {
@@ -1353,11 +1331,9 @@
         }
       };
 
-
       flags[prop]();
     };
     Object.freeze(this.set);
-
 
     // Setup the properties
     initArgs = pass;
@@ -1475,7 +1451,6 @@
      */
     this.code;
 
-
     // Setup the app's elements
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
@@ -1521,7 +1496,6 @@
     this.scrl.height = elem.offsetWidth - elem.clientWidth;
     Object.freeze(this.scrl);
 
-
     document.body.removeChild(elem);
 
     // Setup the code element details
@@ -1546,7 +1520,6 @@
     this.code.ol.height = ol.offsetHeight - li.offsetHeight;
     this.code.li.height = li.offsetHeight;
 
-
     this.root.removeChild(elem);
 
     Object.freeze(this.code);
@@ -1566,7 +1539,6 @@
    * @type {function()}
    */
   AppElems.prototype.appendNav = function() {
-
 
     /**
      * @type {elem}
@@ -1661,7 +1633,6 @@
    * @type {function()}
    */
   AppElems.prototype.appendError = function() {
-
 
     /**
      * @type {string}
@@ -1944,14 +1915,12 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (num|nums)>} */
       var values = {
         ids  : ids,
         len  : len,
         index: index
       };
-
 
       return values[prop];
     };
@@ -1966,7 +1935,6 @@
      * @param {num=} newIndex - The starting index.
      */
     this.reset = function(newIds, newIndex) {
-
 
       /**
        * @type {num}
@@ -2010,7 +1978,6 @@
      */
     this.move = function(way) {
 
-
       /**
        * @type {string}
        * private
@@ -2040,13 +2007,11 @@
         return index;
       }
 
-
       // Save the last index
       last = len - 1;
 
       // The single view actions
       if (view === 'one') {
-
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -2060,7 +2025,6 @@
 
       // The ten view actions
       if (view === 'ten') {
-
 
         // Update the last index
         last -= (last % 10);
@@ -2077,7 +2041,6 @@
 
     };
     Object.freeze(this.move);
-
 
     // Setup the properties
     ids = new Array(quesLen);
@@ -2155,7 +2118,6 @@
      * @type {LinksConfig}
      */
     this.links;
-
 
     // Check the user config settings
     if (!config || typeof config !== 'object') {
@@ -2275,7 +2237,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         stage   : stage,
@@ -2284,11 +2245,9 @@
         subCat  : subCat
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     stage    = true;
@@ -2410,7 +2369,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (string|number)>} */
       var settings = {
         startID: startID,
@@ -2421,7 +2379,6 @@
         mainCat: mainCat,
         subCat : subCat
       };
-
 
       return settings[prop];
     };
@@ -2438,7 +2395,6 @@
      */
     this.set = function(prop, val) {
 
-
       /** @private */
       var settings = {
         startID: function() { startID = val; },
@@ -2450,11 +2406,9 @@
         subCat : function() { subCat  = val; }
       };
 
-
       settings[prop]();
     };
     Object.freeze(this.set);
-
 
     // Setup the properties
     startID = 0;
@@ -2652,7 +2606,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         id      : id,
@@ -2666,11 +2619,9 @@
         output  : output
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     id       = true;
@@ -2771,7 +2722,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (number|boolean)>} */
       var settings = {
         trimSpace   : trimSpace,
@@ -2779,11 +2729,9 @@
         commentLinks: commentLinks
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     trimSpace = 0;
@@ -2859,18 +2807,15 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         id      : id,
         category: category
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Set the properties
     id       = false;
@@ -2944,7 +2889,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         id      : id,
@@ -2952,11 +2896,9 @@
         category: category
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Set the properties
     id       = true;
@@ -3032,12 +2974,9 @@
      */
     this.get = function(id, prop) {
 
-
-
       return (!!prop) ? data[id].get(prop) : data[id];
     };
     Object.freeze(this.get);
-
 
     // Check the argument data types
     if ( !checkType(sources, '!stringMap') ) {
@@ -3113,7 +3052,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, function>} */
       var source = {
         name: function() { return name; },
@@ -3122,7 +3060,6 @@
           return Object.freeze( ids.slice(0) );
         }
       };
-
 
       return source[prop]();
     };
@@ -3137,13 +3074,11 @@
      */
     this.addId = function(id) {
 
-
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
     Object.freeze(this.addId);
-
 
     // Setup the properties
     if (!name || typeof name !== 'string') {
@@ -3219,15 +3154,12 @@
      */
     this.get = function(id, prop) {
 
-
-
       return ( ( !data.hasOwnProperty(id) ) ?
         false : (!!prop) ?
           data[id].get(prop) : data[id]
       );
     };
     Object.freeze(this.get);
-
 
     // Check the argument data types
     if ( checkType(categories, '!stringMap') ) {
@@ -3339,7 +3271,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, function>} */
       var category = {
         name: function() { return name; },
@@ -3349,7 +3280,6 @@
         },
         subs: function() { return subs; }
       };
-
 
       return category[prop]();
     };
@@ -3364,13 +3294,11 @@
      */
     this.addId = function(id) {
 
-
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
     Object.freeze(this.addId);
-
 
     // Setup the properties
     if (!name || typeof name !== 'string') {
@@ -3504,7 +3432,6 @@
      */
     this.opts;
 
-
     // Setup the names, ids, and opts properties
     this.names = {
       view: {
@@ -3551,7 +3478,6 @@
         'all': []
       }
     };
-
 
     // Add the source names
     if (sources.len) {
@@ -3646,7 +3572,6 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-
     this.vals.view    = defaults.get('view');
     this.vals.order   = defaults.get('order');
     this.vals.stage   = defaults.get('stage');
@@ -3663,7 +3588,6 @@
    * @type {function()}
    */
   SearchBar.prototype.setMainElems = function() {
-
 
     /** @type {boolean} */
     var pass;
@@ -3783,7 +3707,6 @@
    * @type {function()}
    */
   SearchBar.prototype.setOptElems = function() {
-
 
     /**
      * ---------------------------------------------------
@@ -3942,7 +3865,6 @@
    */
   SearchBar.prototype.appendElems = function() {
 
-
     app.elems.sel.appendChild(this.elems.view);
     app.elems.sel.appendChild(this.elems.order);
     this.elems.stage && app.elems.sel.appendChild(this.elems.stage);
@@ -3959,7 +3881,6 @@
    * @param {string=} val - The new value to update subCat to.
    */
   SearchBar.prototype.updateSubCatOpts = function(val) {
-
 
     // Update the select value
     val = val || 'all';
@@ -4041,8 +3962,6 @@
      */
     this.get = function(id) {
 
-
-
       /** @type {Question} */
       var question;
 
@@ -4066,7 +3985,6 @@
      *   this is the new value for the it.
      */
     this.setStyle = function(id, type, val) {
-
 
       // Handle one type change
       if (typeof type === 'string') {
@@ -4092,7 +4010,6 @@
       }, this);
     };
     Object.freeze(this.setStyle);
-
 
     // Check the argument data type
     if (!questions || !checkType(questions, '!objects')) {
@@ -4146,7 +4063,6 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
-
     /** @type {booleanMap} */
     var config;
     /** @type {number} */
@@ -4178,7 +4094,6 @@
    */
   Questions.prototype.appendElems = function() {
 
-
     /** @type {number} */
     var len;
     /** @type {number} */
@@ -4207,7 +4122,6 @@
    */
   Questions.prototype.addCodeExts = function() {
 
-
     /** @type {number} */
     var len;
     /** @type {number} */
@@ -4231,7 +4145,6 @@
    * @type {function()}
    */
   Questions.prototype.reverseElems = function() {
-
 
     /**
      * @type {string}
@@ -4286,7 +4199,6 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-
     /**
      * @type {num}
      * @private
@@ -4309,7 +4221,6 @@
 
       return;
     }
-
 
     view = view || app.searchBar.vals.view;
 
@@ -4342,7 +4253,6 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-
     /**
      * @type {string}
      * @private
@@ -4373,7 +4283,6 @@
 
       return;
     }
-
 
     view = app.searchBar.vals.view;
 
@@ -4547,7 +4456,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, val>} */
       var details = {
         id      : id,
@@ -4563,11 +4471,9 @@
         output  : output
       };
 
-
       return details[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the question's element
     this.elem = new QuestionElem(id);
@@ -4680,7 +4586,6 @@
    */
   Question.prototype.addToSearch = function(config) {
 
-
     /** @type {number} */
     var id;
     /** @type {boolean} */
@@ -4733,7 +4638,6 @@
    * @type {function}
    */
   Question.prototype.addElemContent = function() {
-
 
     this.elem.addContent({
       id      : this.format.get('id'),
@@ -4862,7 +4766,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, val>} */
       var details = {
         id      : id,
@@ -4873,11 +4776,9 @@
         solution: solution
       };
 
-
       return details[prop];
     };
     Object.freeze(this.get);
-
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';
@@ -5008,7 +4909,6 @@
      */
     this.code;
 
-
     // Setup the elements
     this.root = document.createElement('section');
     this.info = document.createElement('div');
@@ -5059,7 +4959,6 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-
     /** @type {elem} */
     var root;
     /** @type {elem} */
@@ -5106,7 +5005,6 @@
       appendLinks.call(this, question.links);
     }
 
-
     /**
      * ---------------------------------------------
      * Private Method (appendId)
@@ -5118,7 +5016,6 @@
      * @private
      */
     function appendId(id, url) {
-
 
       /** @type {boolean} */
       var config;
@@ -5176,7 +5073,6 @@
      */
     function makeIdLink(id, url) {
 
-
       /** @type {boolean} */
       var urlConfig;
       /** @type {elem} */
@@ -5200,7 +5096,6 @@
           // ADD URL LOGIC HERE
         }
 
-
         return false;
       };
 
@@ -5216,7 +5111,6 @@
      * @private
      */
     function appendSource(source) {
-
 
       /** @type {boolean} */
       var config;
@@ -5273,7 +5167,6 @@
      */
     function makeSourceLink(id, name) {
 
-
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -5310,7 +5203,6 @@
      * @private
      */
     function appendComplete(complete) {
-
 
       /** @type {elem} */
       var div;
@@ -5349,7 +5241,6 @@
      * @private
      */
     function appendCategory(main, sub) {
-
 
       /** @type {elem} */
       var contain;
@@ -5396,7 +5287,6 @@
      * @private
      */
     function appendMainCategories(main, div) {
-
 
       /** @type {boolean} */
       var config;
@@ -5459,7 +5349,6 @@
      * @private
      */
     function appendSubCategories(sub, div) {
-
 
       /** @type {boolean} */
       var config;
@@ -5525,7 +5414,6 @@
      */
     function makeMainCatLink(id, name) {
 
-
       /** @type {boolean} */
       var urlConfig;
       /** @type {string} */
@@ -5574,7 +5462,6 @@
      * @private
      */
     function makeSubCatLink(id, name) {
-
 
       /** @type {boolean} */
       var urlConfig;
@@ -5655,7 +5542,6 @@
      */
     function makeLinkSpan() {
 
-
       /** @type {elem} */
       var span;
 
@@ -5675,7 +5561,6 @@
      * @private
      */
     function appendProblem(problem, descr) {
-
 
       /** @type {elem} */
       var div;
@@ -5713,7 +5598,6 @@
      * @private
      */
     function appendSolution(solution) {
-
 
       /** @type {elem} */
       var contain;
@@ -5776,7 +5660,6 @@
      */
     function appendOutput(output) {
 
-
       /** @type {elem} */
       var div;
       /** @type {elem} */
@@ -5814,7 +5697,6 @@
      * @private
      */
     function appendLinks(links) {
-
 
       /** @type {elem} */
       var div;
@@ -5868,7 +5750,6 @@
    * @type {function}
    */
   QuestionElem.prototype.addCodeExt = function() {
-
 
     /** @type {number} */
     var overflow;
@@ -6026,13 +5907,11 @@
 
     var prettify = function(solution) {
 
-
       /** @type {{ result: string, lineCount: number }} */
       var result;
 
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
-
 
       return result;
     };
@@ -6180,7 +6059,6 @@
       jqu: 'jquKey'  // jQuery Objects
     };
     Object.freeze(keywordCategories);
-
 
     /**
      * ---------------------------------------------
@@ -6663,7 +6541,6 @@
      */
     prettify.setConfig = function(newConfig) {
 
-
       config = newConfig;
       Object.freeze(config);
     }
@@ -6678,7 +6555,6 @@
      * @private
      */
     function prepareLines(solution) {
-
 
       /** @type {string} */
       var spaces;
@@ -6715,7 +6591,6 @@
      */
     function applyFormatting(lines) {
 
-
       /** @type {number} */
       var i;
       /** @type {number} */
@@ -6728,7 +6603,6 @@
 
       i = -1;
       while (++i < len) {
-
 
         line = prepareLine(lines[i]);
 
@@ -6756,7 +6630,6 @@
      * @private
      */
     function prepareLine(line) {
-
 
       /** @type {number} */
       var i;
@@ -6814,7 +6687,6 @@
      */
     function makeKeywordObj(cat, href, props) {
 
-
       /** @type {Object<string, (string|numberMap)>} */
       var obj;
 
@@ -6840,7 +6712,6 @@
      * @private
      */
     function makePropObj(href) {
-
 
       /** @type {stringMap} */
       var obj;
@@ -6870,7 +6741,6 @@
     var highlightSyntax = (function() {
 
       var highlightSyntax = function(line) {
-
 
         prepareLine(line);
         formatLine();
@@ -6986,7 +6856,6 @@
        */
       function prepareLine(line) {
 
-
         orgLine = line.split('');
         Object.freeze(orgLine);
         newLine = line.split('');
@@ -7004,7 +6873,6 @@
        * @private
        */
       function formatLine() {
-
 
         /** @type {number} */
         var i;
@@ -7037,7 +6905,6 @@
        * @private
        */
       function handleSlash(i) {
-
 
         /** @type {val} */
         var preceding;
@@ -7082,7 +6949,6 @@
        * @private
        */
       function isRegex(i) {
-
 
         /** @type {number} */
         var end;
@@ -7138,7 +7004,6 @@
        */
       function sanitizeCharacter(i) {
 
-
         if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
@@ -7154,7 +7019,6 @@
        * @private
        */
       function skipComment(i) {
-
 
         while (true) {
           ++i;
@@ -7181,7 +7045,6 @@
        * @private
        */
       function skipString(i) {
-
 
         /** @type {string} */
         var stringType;
@@ -7219,7 +7082,6 @@
        */
       function skipSpace(i) {
 
-
         while (true) {
           ++i;
 
@@ -7239,7 +7101,6 @@
        * @private
        */
       function skipNumber(i) {
-
 
         /** @type {string} */
         var hexStart;
@@ -7274,7 +7135,6 @@
        * @private
        */
       function skipIdentifier(i) {
-
 
         /** @type {string} */
         var name;
@@ -7319,7 +7179,6 @@
        */
       function formatCommentLinks(start, end) {
 
-
         /** @type {string} */
         var comment;
         /** @type {number} */
@@ -7347,7 +7206,6 @@
           }
 
           i += start + 1;
-
 
           newLine[i] = '';
           ++i;
@@ -7395,7 +7253,6 @@
        */
       function formatCommentOpen(i) {
 
-
         /** @type {number} */
         var start;
 
@@ -7430,7 +7287,6 @@
        * @private
        */
       function formatCommentStart() {
-
 
         /** @type {number} */
         var i;
@@ -7470,7 +7326,6 @@
        */
       function formatLineComment(i) {
 
-
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
         }
@@ -7494,7 +7349,6 @@
        */
       function formatString(i) {
 
-
         newLine[i] = '<span class="str">' + orgLine[i];
 
         i = skipString(i);
@@ -7516,7 +7370,6 @@
        * @private
        */
       function formatRegex(i, end) {
-
 
         /** @type {string} */
         var usedFlags;
@@ -7562,7 +7415,6 @@
        */
       function formatSpace(i) {
 
-
         newLine[i] = '<span class="spc"> ';
 
         i = skipSpace(i);
@@ -7583,7 +7435,6 @@
        */
       function formatBracket(i) {
 
-
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
 
         return i;
@@ -7599,7 +7450,6 @@
        * @private
        */
       function formatOperator(i) {
-
 
         sanitizeCharacter(i);
 
@@ -7619,7 +7469,6 @@
        */
       function formatComma(i) {
 
-
         newLine[i] = '<span class="cmm">,</span>';
 
         return i;
@@ -7635,7 +7484,6 @@
        * @private
        */
       function formatSemicolon(i) {
-
 
         newLine[i] = '<span class="smc">;</span>';
 
@@ -7653,7 +7501,6 @@
        */
       function formatColon(i) {
 
-
         newLine[i] = '<span class="cln">:</span>';
 
         return i;
@@ -7669,7 +7516,6 @@
        * @private
        */
       function formatPeriod(i) {
-
 
         newLine[i] = '<span class="per">.</span>';
 
@@ -7687,7 +7533,6 @@
        * @private
        */
       function formatNumber(i) {
-
 
         newLine[i] = '<span class="num">' + orgLine[i];
 
@@ -7712,7 +7557,6 @@
        * @private
        */
       function formatIdentifier(i, extras) {
-
 
         /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
@@ -7779,7 +7623,6 @@
        */
       function formatMisc(i) {
 
-
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
 
         return i;
@@ -7828,7 +7671,6 @@
       ];
 
       return function(obj) {
-
 
         if (typeof obj !== 'object' && typeof obj !== 'function') {
           throw new TypeError('Object.keys only accepts objects.');
@@ -7881,7 +7723,6 @@
      */
     Object.freeze = function(obj) {
 
-
       if (typeof obj !== 'object' && typeof obj !== 'function') {
         throw new TypeError('Object.freeze only accepts objects.');
         return;
@@ -7931,7 +7772,6 @@
    * @param {Object} settings - The app's settings.
    */
   var _init = function(settings) {
-
 
     /**
      * @type {?(string|strings)}
@@ -8071,7 +7911,6 @@
    * @return {val} Either the entire resources object or one of its properties.
    */
   _init.getResource = function(prop) {
-
 
     return (!!prop) ? resources[ prop ] : resources;
   }

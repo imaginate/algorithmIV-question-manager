@@ -108,7 +108,6 @@
      */
     this.opts;
 
-
     // Setup the names, ids, and opts properties
     this.names = {
       view: {
@@ -155,7 +154,6 @@
         'all': []
       }
     };
-
 
     // Add the source names
     if (sources.len) {
@@ -250,7 +248,6 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-
     this.vals.view    = defaults.get('view');
     this.vals.order   = defaults.get('order');
     this.vals.stage   = defaults.get('stage');
@@ -267,7 +264,6 @@
    * @type {function()}
    */
   SearchBar.prototype.setMainElems = function() {
-
 
     /** @type {boolean} */
     var pass;
@@ -387,7 +383,6 @@
    * @type {function()}
    */
   SearchBar.prototype.setOptElems = function() {
-
 
     /**
      * ---------------------------------------------------
@@ -546,7 +541,6 @@
    */
   SearchBar.prototype.appendElems = function() {
 
-
     app.elems.sel.appendChild(this.elems.view);
     app.elems.sel.appendChild(this.elems.order);
     this.elems.stage && app.elems.sel.appendChild(this.elems.stage);
@@ -563,7 +557,6 @@
    * @param {string=} val - The new value to update subCat to.
    */
   SearchBar.prototype.updateSubCatOpts = function(val) {
-
 
     // Update the select value
     val = val || 'all';

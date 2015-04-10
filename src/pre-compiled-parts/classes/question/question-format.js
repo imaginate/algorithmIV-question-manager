@@ -93,7 +93,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, val>} */
       var details = {
         id      : id,
@@ -104,11 +103,9 @@
         solution: solution
       };
 
-
       return details[prop];
     };
     Object.freeze(this.get);
-
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';

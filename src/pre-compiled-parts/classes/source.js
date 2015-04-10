@@ -38,7 +38,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, function>} */
       var source = {
         name: function() { return name; },
@@ -47,7 +46,6 @@
           return Object.freeze( ids.slice(0) );
         }
       };
-
 
       return source[prop]();
     };
@@ -62,13 +60,11 @@
      */
     this.addId = function(id) {
 
-
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
     Object.freeze(this.addId);
-
 
     // Setup the properties
     if (!name || typeof name !== 'string') {

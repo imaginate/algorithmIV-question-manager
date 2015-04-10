@@ -50,7 +50,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         id      : id,
@@ -58,11 +57,9 @@
         category: category
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Set the properties
     id       = true;

@@ -138,7 +138,6 @@
     };
     Object.freeze(keywordCategories);
 
-
     /**
      * ---------------------------------------------
      * Private Variable (keywords)

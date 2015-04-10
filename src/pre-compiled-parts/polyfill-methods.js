@@ -31,7 +31,6 @@
 
       return function(obj) {
 
-
         if (typeof obj !== 'object' && typeof obj !== 'function') {
           throw new TypeError('Object.keys only accepts objects.');
           return;
@@ -82,7 +81,6 @@
      * @return {Object}
      */
     Object.freeze = function(obj) {
-
 
       if (typeof obj !== 'object' && typeof obj !== 'function') {
         throw new TypeError('Object.freeze only accepts objects.');

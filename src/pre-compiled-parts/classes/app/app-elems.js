@@ -102,7 +102,6 @@
      */
     this.code;
 
-
     // Setup the app's elements
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
@@ -148,7 +147,6 @@
     this.scrl.height = elem.offsetWidth - elem.clientWidth;
     Object.freeze(this.scrl);
 
-
     document.body.removeChild(elem);
 
     // Setup the code element details
@@ -173,7 +171,6 @@
     this.code.ol.height = ol.offsetHeight - li.offsetHeight;
     this.code.li.height = li.offsetHeight;
 
-
     this.root.removeChild(elem);
 
     Object.freeze(this.code);
@@ -193,7 +190,6 @@
    * @type {function()}
    */
   AppElems.prototype.appendNav = function() {
-
 
     /**
      * @type {elem}
@@ -288,7 +284,6 @@
    * @type {function()}
    */
   AppElems.prototype.appendError = function() {
-
 
     /**
      * @type {string}

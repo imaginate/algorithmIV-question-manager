@@ -67,7 +67,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         stage   : stage,
@@ -76,11 +75,9 @@
         subCat  : subCat
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     stage    = true;

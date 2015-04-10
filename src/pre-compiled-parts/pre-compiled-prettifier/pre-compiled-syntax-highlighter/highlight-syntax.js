@@ -12,7 +12,6 @@
 
       var highlightSyntax = function(line) {
 
-
         prepareLine(line);
         formatLine();
 

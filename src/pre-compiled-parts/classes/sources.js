@@ -48,12 +48,9 @@
      */
     this.get = function(id, prop) {
 
-
-
       return (!!prop) ? data[id].get(prop) : data[id];
     };
     Object.freeze(this.get);
-
 
     // Check the argument data types
     if ( !checkType(sources, '!stringMap') ) {

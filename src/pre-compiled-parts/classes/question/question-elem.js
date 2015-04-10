@@ -53,7 +53,6 @@
      */
     this.code;
 
-
     // Setup the elements
     this.root = document.createElement('section');
     this.info = document.createElement('div');
@@ -104,7 +103,6 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-
     /** @type {elem} */
     var root;
     /** @type {elem} */
@@ -151,7 +149,6 @@
       appendLinks.call(this, question.links);
     }
 
-
     /**
      * ---------------------------------------------
      * Private Method (appendId)
@@ -163,7 +160,6 @@
      * @private
      */
     function appendId(id, url) {
-
 
       /** @type {boolean} */
       var config;
@@ -221,7 +217,6 @@
      */
     function makeIdLink(id, url) {
 
-
       /** @type {boolean} */
       var urlConfig;
       /** @type {elem} */
@@ -245,7 +240,6 @@
           // ADD URL LOGIC HERE
         }
 
-
         return false;
       };
 
@@ -261,7 +255,6 @@
      * @private
      */
     function appendSource(source) {
-
 
       /** @type {boolean} */
       var config;
@@ -318,7 +311,6 @@
      */
     function makeSourceLink(id, name) {
 
-
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -355,7 +347,6 @@
      * @private
      */
     function appendComplete(complete) {
-
 
       /** @type {elem} */
       var div;
@@ -394,7 +385,6 @@
      * @private
      */
     function appendCategory(main, sub) {
-
 
       /** @type {elem} */
       var contain;
@@ -441,7 +431,6 @@
      * @private
      */
     function appendMainCategories(main, div) {
-
 
       /** @type {boolean} */
       var config;
@@ -504,7 +493,6 @@
      * @private
      */
     function appendSubCategories(sub, div) {
-
 
       /** @type {boolean} */
       var config;
@@ -570,7 +558,6 @@
      */
     function makeMainCatLink(id, name) {
 
-
       /** @type {boolean} */
       var urlConfig;
       /** @type {string} */
@@ -619,7 +606,6 @@
      * @private
      */
     function makeSubCatLink(id, name) {
-
 
       /** @type {boolean} */
       var urlConfig;
@@ -700,7 +686,6 @@
      */
     function makeLinkSpan() {
 
-
       /** @type {elem} */
       var span;
 
@@ -720,7 +705,6 @@
      * @private
      */
     function appendProblem(problem, descr) {
-
 
       /** @type {elem} */
       var div;
@@ -758,7 +742,6 @@
      * @private
      */
     function appendSolution(solution) {
-
 
       /** @type {elem} */
       var contain;
@@ -821,7 +804,6 @@
      */
     function appendOutput(output) {
 
-
       /** @type {elem} */
       var div;
       /** @type {elem} */
@@ -859,7 +841,6 @@
      * @private
      */
     function appendLinks(links) {
-
 
       /** @type {elem} */
       var div;
@@ -913,7 +894,6 @@
    * @type {function}
    */
   QuestionElem.prototype.addCodeExt = function() {
-
 
     /** @type {number} */
     var overflow;

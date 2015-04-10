@@ -9,7 +9,6 @@
    */
   function getResource(jsonFile, callback) {
 
-
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
@@ -45,7 +44,6 @@
    */
   function getID(title) {
 
-
     return document.getElementById(title);
   }
 
@@ -59,7 +57,6 @@
    * @return {elems} References to the elements with the tag.
    */
   function getTag(title, root) {
-
 
     root = root || app.elems.root;
 
@@ -76,7 +73,6 @@
    * @return {elems} References to the elements with the class.
    */
   function getClass(title, root) {
-
 
     root = root || app.elems.root;
 
@@ -101,7 +97,6 @@
    */
   function checkType(val, type) {
 
-
     /**
      * @type {strings}
      * @private
@@ -120,7 +115,6 @@
       var cleanType;
 
       cleanType = type.replace(/\!|\=/g, '');
-
 
       // Handle undefined val
       if (val === undefined) {
@@ -233,7 +227,6 @@
    */
   function checkTypes(vals, types) {
 
-
     /**
      * @type {val}
      * @private
@@ -245,8 +238,6 @@
         return types;
       });
     }
-
-
 
     return types.every(function(/** string */ _type, /** number */ i) {
       /**
@@ -267,7 +258,6 @@
         var cleanType;
 
         cleanType = type.replace(/\!|\=/g, '');
-
 
         // Handle undefined val
         if (val === undefined) {
@@ -373,7 +363,6 @@
    */
   function sortKeys(ids, data) {
 
-
     /**
      * @type {strings}
      * @private
@@ -460,7 +449,6 @@
    */
   function capFirst(str) {
 
-
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
@@ -474,7 +462,6 @@
    * @return {string} The camel case string.
    */
   function camelCase(str) {
-
 
     /**
      * @type {strings}
@@ -518,7 +505,6 @@
 
     return function(str) {
 
-
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
         str = str.replace(endCheck, '');
@@ -544,7 +530,6 @@
     http = /^https?\:\/\//;
 
     return function(str) {
-
 
       return http.test(str);
     };

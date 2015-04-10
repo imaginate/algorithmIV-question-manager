@@ -161,7 +161,6 @@
    */
   App.prototype.setupDisplay = function() {
 
-
     /** @type {number} */
     var renderTime;
 
@@ -207,7 +206,6 @@
    *   that the index should NOT be changed.
    */
   App.prototype.updateDisplay = function(settings) {
-
 
     /**
      * @type {?nums}
@@ -314,7 +312,6 @@
    * @type {function()}
    */
   App.prototype.updateValues = function() {
-
 
     /**
      * @type {nums}
@@ -477,7 +474,6 @@
    *   The options are 'prev', 'next', or a question id.
    */
   App.prototype.moveDisplay = function(way) {
-
 
     /**
      * @type {?nums}

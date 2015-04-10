@@ -8,7 +8,6 @@
        */
       function prepareLine(line) {
 
-
         orgLine = line.split('');
         Object.freeze(orgLine);
         newLine = line.split('');
@@ -26,7 +25,6 @@
        * @private
        */
       function formatLine() {
-
 
         /** @type {number} */
         var i;
@@ -59,7 +57,6 @@
        * @private
        */
       function handleSlash(i) {
-
 
         /** @type {val} */
         var preceding;
@@ -104,7 +101,6 @@
        * @private
        */
       function isRegex(i) {
-
 
         /** @type {number} */
         var end;
@@ -160,7 +156,6 @@
        */
       function sanitizeCharacter(i) {
 
-
         if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
@@ -176,7 +171,6 @@
        * @private
        */
       function skipComment(i) {
-
 
         while (true) {
           ++i;
@@ -203,7 +197,6 @@
        * @private
        */
       function skipString(i) {
-
 
         /** @type {string} */
         var stringType;
@@ -241,7 +234,6 @@
        */
       function skipSpace(i) {
 
-
         while (true) {
           ++i;
 
@@ -261,7 +253,6 @@
        * @private
        */
       function skipNumber(i) {
-
 
         /** @type {string} */
         var hexStart;
@@ -296,7 +287,6 @@
        * @private
        */
       function skipIdentifier(i) {
-
 
         /** @type {string} */
         var name;
@@ -341,7 +331,6 @@
        */
       function formatCommentLinks(start, end) {
 
-
         /** @type {string} */
         var comment;
         /** @type {number} */
@@ -369,7 +358,6 @@
           }
 
           i += start + 1;
-
 
           newLine[i] = '';
           ++i;
@@ -417,7 +405,6 @@
        */
       function formatCommentOpen(i) {
 
-
         /** @type {number} */
         var start;
 
@@ -452,7 +439,6 @@
        * @private
        */
       function formatCommentStart() {
-
 
         /** @type {number} */
         var i;
@@ -492,7 +478,6 @@
        */
       function formatLineComment(i) {
 
-
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
         }
@@ -516,7 +501,6 @@
        */
       function formatString(i) {
 
-
         newLine[i] = '<span class="str">' + orgLine[i];
 
         i = skipString(i);
@@ -538,7 +522,6 @@
        * @private
        */
       function formatRegex(i, end) {
-
 
         /** @type {string} */
         var usedFlags;
@@ -584,7 +567,6 @@
        */
       function formatSpace(i) {
 
-
         newLine[i] = '<span class="spc"> ';
 
         i = skipSpace(i);
@@ -605,7 +587,6 @@
        */
       function formatBracket(i) {
 
-
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
 
         return i;
@@ -621,7 +602,6 @@
        * @private
        */
       function formatOperator(i) {
-
 
         sanitizeCharacter(i);
 
@@ -641,7 +621,6 @@
        */
       function formatComma(i) {
 
-
         newLine[i] = '<span class="cmm">,</span>';
 
         return i;
@@ -657,7 +636,6 @@
        * @private
        */
       function formatSemicolon(i) {
-
 
         newLine[i] = '<span class="smc">;</span>';
 
@@ -675,7 +653,6 @@
        */
       function formatColon(i) {
 
-
         newLine[i] = '<span class="cln">:</span>';
 
         return i;
@@ -691,7 +668,6 @@
        * @private
        */
       function formatPeriod(i) {
-
 
         newLine[i] = '<span class="per">.</span>';
 
@@ -709,7 +685,6 @@
        * @private
        */
       function formatNumber(i) {
-
 
         newLine[i] = '<span class="num">' + orgLine[i];
 
@@ -734,7 +709,6 @@
        * @private
        */
       function formatIdentifier(i, extras) {
-
 
         /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
@@ -800,7 +774,6 @@
        * @private
        */
       function formatMisc(i) {
-
 
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
 

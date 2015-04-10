@@ -57,8 +57,6 @@
      */
     this.get = function(id) {
 
-
-
       /** @type {Question} */
       var question;
 
@@ -82,7 +80,6 @@
      *   this is the new value for the it.
      */
     this.setStyle = function(id, type, val) {
-
 
       // Handle one type change
       if (typeof type === 'string') {
@@ -108,7 +105,6 @@
       }, this);
     };
     Object.freeze(this.setStyle);
-
 
     // Check the argument data type
     if (!questions || !checkType(questions, '!objects')) {
@@ -162,7 +158,6 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
-
     /** @type {booleanMap} */
     var config;
     /** @type {number} */
@@ -194,7 +189,6 @@
    */
   Questions.prototype.appendElems = function() {
 
-
     /** @type {number} */
     var len;
     /** @type {number} */
@@ -223,7 +217,6 @@
    */
   Questions.prototype.addCodeExts = function() {
 
-
     /** @type {number} */
     var len;
     /** @type {number} */
@@ -247,7 +240,6 @@
    * @type {function()}
    */
   Questions.prototype.reverseElems = function() {
-
 
     /**
      * @type {string}
@@ -302,7 +294,6 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-
     /**
      * @type {num}
      * @private
@@ -325,7 +316,6 @@
 
       return;
     }
-
 
     view = view || app.searchBar.vals.view;
 
@@ -358,7 +348,6 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-
     /**
      * @type {string}
      * @private
@@ -389,7 +378,6 @@
 
       return;
     }
-
 
     view = app.searchBar.vals.view;
 

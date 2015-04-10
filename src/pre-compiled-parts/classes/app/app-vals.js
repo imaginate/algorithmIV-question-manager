@@ -54,14 +54,12 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (num|nums)>} */
       var values = {
         ids  : ids,
         len  : len,
         index: index
       };
-
 
       return values[prop];
     };
@@ -76,7 +74,6 @@
      * @param {num=} newIndex - The starting index.
      */
     this.reset = function(newIds, newIndex) {
-
 
       /**
        * @type {num}
@@ -120,7 +117,6 @@
      */
     this.move = function(way) {
 
-
       /**
        * @type {string}
        * private
@@ -150,13 +146,11 @@
         return index;
       }
 
-
       // Save the last index
       last = len - 1;
 
       // The single view actions
       if (view === 'one') {
-
 
         if (way === 'prev') {
           index = (index === 0) ? last : --index;
@@ -170,7 +164,6 @@
 
       // The ten view actions
       if (view === 'ten') {
-
 
         // Update the last index
         last -= (last % 10);
@@ -187,7 +180,6 @@
 
     };
     Object.freeze(this.move);
-
 
     // Setup the properties
     ids = new Array(quesLen);

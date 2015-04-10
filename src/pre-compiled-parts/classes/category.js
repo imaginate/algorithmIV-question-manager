@@ -40,7 +40,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, function>} */
       var category = {
         name: function() { return name; },
@@ -50,7 +49,6 @@
         },
         subs: function() { return subs; }
       };
-
 
       return category[prop]();
     };
@@ -65,13 +63,11 @@
      */
     this.addId = function(id) {
 
-
       if (typeof id === 'number' && id > 0) {
         ids.push(id);
       }
     };
     Object.freeze(this.addId);
-
 
     // Setup the properties
     if (!name || typeof name !== 'string') {

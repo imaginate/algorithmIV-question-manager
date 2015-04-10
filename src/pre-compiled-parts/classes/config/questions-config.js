@@ -108,7 +108,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var settings = {
         id      : id,
@@ -122,11 +121,9 @@
         output  : output
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     id       = true;

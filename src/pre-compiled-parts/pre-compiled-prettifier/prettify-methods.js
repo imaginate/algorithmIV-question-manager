@@ -9,7 +9,6 @@
      */
     prettify.setConfig = function(newConfig) {
 
-
       config = newConfig;
       Object.freeze(config);
     }
@@ -24,7 +23,6 @@
      * @private
      */
     function prepareLines(solution) {
-
 
       /** @type {string} */
       var spaces;
@@ -61,7 +59,6 @@
      */
     function applyFormatting(lines) {
 
-
       /** @type {number} */
       var i;
       /** @type {number} */
@@ -74,7 +71,6 @@
 
       i = -1;
       while (++i < len) {
-
 
         line = prepareLine(lines[i]);
 
@@ -102,7 +98,6 @@
      * @private
      */
     function prepareLine(line) {
-
 
       /** @type {number} */
       var i;
@@ -160,7 +155,6 @@
      */
     function makeKeywordObj(cat, href, props) {
 
-
       /** @type {Object<string, (string|numberMap)>} */
       var obj;
 
@@ -186,7 +180,6 @@
      * @private
      */
     function makePropObj(href) {
-
 
       /** @type {stringMap} */
       var obj;

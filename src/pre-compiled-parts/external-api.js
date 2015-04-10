@@ -17,7 +17,6 @@
    */
   var _init = function(settings) {
 
-
     /**
      * @type {?(string|strings)}
      * @private
@@ -156,7 +155,6 @@
    * @return {val} Either the entire resources object or one of its properties.
    */
   _init.getResource = function(prop) {
-
 
     return (!!prop) ? resources[ prop ] : resources;
   }

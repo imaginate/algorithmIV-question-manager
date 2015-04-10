@@ -140,7 +140,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, val>} */
       var details = {
         id      : id,
@@ -156,11 +155,9 @@
         output  : output
       };
 
-
       return details[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the question's element
     this.elem = new QuestionElem(id);
@@ -273,7 +270,6 @@
    */
   Question.prototype.addToSearch = function(config) {
 
-
     /** @type {number} */
     var id;
     /** @type {boolean} */
@@ -326,7 +322,6 @@
    * @type {function}
    */
   Question.prototype.addElemContent = function() {
-
 
     this.elem.addContent({
       id      : this.format.get('id'),

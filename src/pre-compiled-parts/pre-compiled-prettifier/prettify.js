@@ -13,13 +13,11 @@
 
     var prettify = function(solution) {
 
-
       /** @type {{ result: string, lineCount: number }} */
       var result;
 
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
-
 
       return result;
     };

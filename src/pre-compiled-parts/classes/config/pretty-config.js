@@ -49,7 +49,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (number|boolean)>} */
       var settings = {
         trimSpace   : trimSpace,
@@ -57,11 +56,9 @@
         commentLinks: commentLinks
       };
 
-
       return settings[prop];
     };
     Object.freeze(this.get);
-
 
     // Setup the properties
     trimSpace = 0;

@@ -56,7 +56,6 @@
      */
     this.links;
 
-
     // Check the user config settings
     if (!config || typeof config !== 'object') {
       config = {};

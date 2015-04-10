@@ -29,12 +29,10 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, boolean>} */
       var flags = {
         initArgs: initArgs
       };
-
 
       return flags[prop];
     };
@@ -50,7 +48,6 @@
      */
     this.set = function(prop, val) {
 
-
       /** @private */
       var flags = {
         initArgs: function () {
@@ -58,11 +55,9 @@
         }
       };
 
-
       flags[prop]();
     };
     Object.freeze(this.set);
-
 
     // Setup the properties
     initArgs = pass;

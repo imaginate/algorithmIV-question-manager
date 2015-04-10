@@ -87,7 +87,6 @@
      */
     this.get = function(prop) {
 
-
       /** @type {Object<string, (string|number)>} */
       var settings = {
         startID: startID,
@@ -98,7 +97,6 @@
         mainCat: mainCat,
         subCat : subCat
       };
-
 
       return settings[prop];
     };
@@ -115,7 +113,6 @@
      */
     this.set = function(prop, val) {
 
-
       /** @private */
       var settings = {
         startID: function() { startID = val; },
@@ -127,11 +124,9 @@
         subCat : function() { subCat  = val; }
       };
 
-
       settings[prop]();
     };
     Object.freeze(this.set);
-
 
     // Setup the properties
     startID = 0;
