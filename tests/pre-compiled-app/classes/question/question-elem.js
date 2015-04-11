@@ -258,17 +258,11 @@
       a = document.createElement('a');
       a.href = 'id/' + url;
       a.innerHTML = id;
-      a.onclick = function() {
-        events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
-        events.debug.start('questionID.onclick', id);
-
-        app.searchBar.elems.view.value = 'one';
-        app.moveDisplay(id);
-
-        events.debug.group('questionID.onclick', 'end');
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkId(id);
+        };
+      })(id);
 
       return a;
     }
@@ -358,21 +352,11 @@
       a.href = 'source/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('source.onclick', id);
-
-        if (app.searchBar.vals.source != id) {
-          events.debug.group('source.onclick', 'coll', 'sourceID= $$', id);
-
-          app.searchBar.vals.source = id;
-          app.searchBar.elems.source.value = id;
-          app.updateDisplay();
-
-          events.debug.group('source.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkSource(id);
+        };
+      })(id);
 
       return a;
     }

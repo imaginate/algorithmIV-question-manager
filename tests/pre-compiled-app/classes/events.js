@@ -170,3 +170,52 @@
       this.debug.group('searchSubCat.onchange', 'end');
     }
   };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkId)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question id.
+   * @param {number} id - The question's id to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkId = function(id) {
+
+    this.debug.group('linkId.onclick', 'coll', 'questionID= $$', id);
+    this.debug.start('linkId.onclick', id);
+    this.debug.args('linkId.onclick', id, 'number');
+
+    app.searchBar.elems.view.value = 'one';
+    app.moveDisplay(id);
+
+    this.debug.group('linkId.onclick', 'end');
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSource)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question source.
+   * @param {string} id - The question's source to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkSource = function(id) {
+
+    this.debug.start('linkSource.onclick', id);
+    this.debug.args('linkSource.onclick', id, 'string');
+
+    if (app.searchBar.vals.source != id) {
+
+      this.debug.group('linkSource.onclick', 'coll', 'sourceID= $$', id);
+
+      app.searchBar.vals.source = id;
+      app.searchBar.elems.source.value = id;
+      app.updateDisplay();
+
+      this.debug.group('linkSource.onclick', 'end');
+    }
+
+    return false;
+  };
