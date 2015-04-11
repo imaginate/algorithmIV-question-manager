@@ -349,20 +349,7 @@
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
     this.elems.order.onchange = function(event) {
-
-      if (app.searchBar.vals.order != event.target.value) {
-        events.debug.group('searchBar.order.onchange', 'coll');
-
-        app.searchBar.vals.order = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          flip  : true,
-          index : true
-        });
-
-        events.debug.group('searchBar.order.onchange', 'end');
-      }
+      Events.searchOrder(event.target.value);
     };
 
     // Set stage search element
@@ -370,15 +357,7 @@
       this.elems.stage.id = 'aIV-stage';
       this.elems.stage.className = 'showStage';
       this.elems.stage.onchange = function(event) {
-
-        if (app.searchBar.vals.stage != event.target.value) {
-          events.debug.group('searchBar.stage.onchange', 'coll');
-
-          app.searchBar.vals.stage = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.stage.onchange', 'end');
-        }
+        Events.searchStage(event.target.value);
       };
     }
 
@@ -387,15 +366,7 @@
       this.elems.source.id = 'aIV-source';
       this.elems.source.className = 'showSource';
       this.elems.source.onchange = function(event) {
-
-        if (app.searchBar.vals.source != event.target.value) {
-          events.debug.group('searchBar.source.onchange', 'coll');
-
-          app.searchBar.vals.source = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.source.onchange', 'end');
-        }
+        Events.searchSource(event.target.value);
       };
     }
 
@@ -404,16 +375,7 @@
       this.elems.mainCat.id = 'aIV-mainCat';
       this.elems.mainCat.className = 'showMainCat';
       this.elems.mainCat.onchange = function(event) {
-
-        if (app.searchBar.vals.mainCat != event.target.value) {
-          events.debug.group('searchBar.mainCat.onchange', 'coll');
-
-          app.searchBar.vals.mainCat = event.target.value;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          events.debug.group('searchBar.mainCat.onchange', 'end');
-        }
+        Events.searchMainCat(event.target.value);
       };
     }
 
@@ -422,15 +384,7 @@
       this.elems.subCat.id = 'aIV-subCat';
       this.elems.subCat.className = 'showSubCat';
       this.elems.subCat.onchange = function(event) {
-
-        if (app.searchBar.vals.subCat != event.target.value) {
-          events.debug.group('searchBar.subCat.onchange', 'coll');
-
-          app.searchBar.vals.subCat = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.subCat.onchange', 'end');
-        }
+        Events.searchSubCat(event.target.value);
       };
     }
 
