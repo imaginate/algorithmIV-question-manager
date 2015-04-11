@@ -219,3 +219,73 @@
 
     return false;
   };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkMainCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question main category.
+   * @param {string} id - The question's category to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkMainCat = function(id) {
+
+    this.debug.start('linkMainCat.onclick', id);
+    this.debug.args('linkMainCat.onclick', id, 'string');
+
+    if (app.searchBar.vals.mainCat != id) {
+
+      this.debug.group('linkMainCat.onclick', 'coll', 'mainCatID= $$', id);
+
+      app.searchBar.vals.mainCat = id;
+      app.searchBar.elems.mainCat.value = id;
+      app.searchBar.updateSubCatOpts();
+      app.updateDisplay();
+
+      this.debug.group('linkMainCat.onclick', 'end');
+    }
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSubCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question sub category.
+   * @param {string} id - The question's category to link to.
+   * @param {string} parentId - The sub category's parent category.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkSubCat = function(id, parentId) {
+
+    this.debug.start('linkSubCat.onclick', id, parentId);
+    this.debug.args('linkSubCat.onclick', id, 'string', parentId, 'string');
+
+    if (app.searchBar.vals.subCat != id) {
+
+      this.debug.group('linkSubCat.onclick', 'coll', 'subCatID= $$', id);
+
+      // Check the main category and update the values and options
+      if (app.searchBar.vals.mainCat !== 'all' &&
+          app.searchBar.vals.mainCat !== parentId) {
+        app.searchBar.vals.mainCat = 'all';
+        app.searchBar.elems.mainCat.value = 'all';
+        app.searchBar.updateSubCatOpts(id);
+        app.searchBar.elems.subCat.value = id;
+      }
+      else {
+        app.searchBar.vals.subCat = id;
+        app.searchBar.elems.subCat.value = id;
+      }
+
+      // Finish the display update
+      app.updateDisplay();
+
+      this.debug.group('linkSubCat.onclick', 'end');
+    }
+
+    return false;
+  };
+
+  Object.freeze(Events);

@@ -610,25 +610,15 @@
       a.href = 'category/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('mainCat.onclick', id);
-
-        if (app.searchBar.vals.mainCat != id) {
-          events.debug.group('mainCat.onclick', 'coll', 'mainCat= $$', id);
-
-          app.searchBar.vals.mainCat = id;
-          app.searchBar.elems.mainCat.value = id;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          events.debug.group('mainCat.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkMainCat(id);
+        };
+      })(id);
 
       debugMsg = 'a= $$, a.onclick= $$';
       this.debug.state('makeMainCatLink', debugMsg, a, a.onclick);
+
       return a;
     }
 
@@ -683,36 +673,15 @@
       a.href = 'category/' + parentUrl + '/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('subCat.onclick', id);
-
-        if (app.searchBar.vals.subCat != id) {
-          events.debug.group('subCat.onclick', 'coll', 'subCat= $$', id);
-
-          // Check the main category and update the values and options
-          if (app.searchBar.vals.mainCat !== 'all' ||
-              app.searchBar.vals.mainCat !== parentId) {
-            app.searchBar.vals.mainCat = 'all';
-            app.searchBar.elems.mainCat.value = 'all';
-            app.searchBar.updateSubCatOpts(id);
-            app.searchBar.elems.subCat.value = id;
-          }
-          else {
-            app.searchBar.vals.subCat = id;
-            app.searchBar.elems.subCat.value = id;
-          }
-
-          // Finish the display update
-          app.updateDisplay();
-
-          events.debug.group('subCat.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id, parentId) {
+        return function() {
+          Events.linkSubCat(id, parentId);
+        };
+      })(id, parentId);
 
       debugMsg = 'a= $$, a.onclick= $$';
       this.debug.state('makeSubCatLink', debugMsg, a, a.onclick);
+
       return a;
     }
 
