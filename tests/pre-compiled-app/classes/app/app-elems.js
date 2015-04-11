@@ -287,14 +287,14 @@
     nArrow.innerHTML = 'Next';
 
     pArrow.onclick = function() {
-      events.debug.group('prev.onclick', 'coll');
+      Events.debug.group('prev.onclick', 'coll');
       app.moveDisplay('prev');
-      events.debug.group('prev.onclick', 'end');
+      Events.debug.group('prev.onclick', 'end');
     };
     nArrow.onclick = function() {
-      events.debug.group('next.onclick', 'coll');
+      Events.debug.group('next.onclick', 'coll');
       app.moveDisplay('next');
-      events.debug.group('next.onclick', 'end');
+      Events.debug.group('next.onclick', 'end');
     };
 
     prev.appendChild(pArrow);
