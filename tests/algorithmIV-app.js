@@ -98,15 +98,6 @@
 
   /**
    * ----------------------------------------------- 
-   * Public Variable (events.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's DOM events.
-   * @type {{ debug: Debug }}
-   */
-  var events = { debug: aIV.debug('Events') };
-
-  /**
-   * ----------------------------------------------- 
    * Public Variable (polyfill.debug)
    * -----------------------------------------------
    * @desc The Debug instance for the app's polyfilled methods.
@@ -845,10 +836,12 @@
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {stringsMap} */
+    /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
     var len;
+    /** @type {Object<string, (string|stringMap)>} */
+    var vals;
 
     // $s$
     /**
@@ -945,10 +938,20 @@
      */
     this.questions;
 
-    // Setup the properties
-    this.flags   = new AppFlags(!!questions);
-    this.elems   = new AppElems();
+    /**
+     * ---------------------------------------------------
+     * Public Property (App.isHistory)
+     * ---------------------------------------------------
+     * @type {boolean}
+     */
+    this.isHistory;
+
+    // Save the count of questions for use before questions is setup
     len = (!!questions) ? questions.length : 0;
+
+    // Setup the properties    
+    this.flags   = new AppFlags(!!len);
+    this.elems   = new AppElems();
     this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
@@ -996,11 +999,41 @@
     );
     names = this.searchBar.names;
     ids = this.searchBar.ids.subCat;
-    len = this.questions.len;
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
+
+    // Setup the value of history
+    this.isHistory = true;
+    vals = {
+      ids  : this.vals.get('ids').slice(0),
+      len  : this.vals.get('len'),
+      index: this.vals.get('index')
+    };
+    vals.searchBar = {
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
+    vals = JSON.stringify(vals);
+    try {
+      window.history.replaceState(vals);
+    }
+    catch (e) {
+      this.debug.fail('init', false, 'Oi, an old browser. Just let it die.');
+      this.isHistory = false;
+    }
+
+    // Setup the onpopstate event
+    if (this.isHistory) {
+      window.onpopstate = function(event) {
+        app.setupNewState(event.state);
+      };
+    }
 
     // Close this debug console group
     this.debug.group('init', 'end');
@@ -1798,14 +1831,14 @@
     nArrow.innerHTML = 'Next';
 
     pArrow.onclick = function() {
-      events.debug.group('prev.onclick', 'coll');
+      Events.debug.group('prev.onclick', 'coll');
       app.moveDisplay('prev');
-      events.debug.group('prev.onclick', 'end');
+      Events.debug.group('prev.onclick', 'end');
     };
     nArrow.onclick = function() {
-      events.debug.group('next.onclick', 'coll');
+      Events.debug.group('next.onclick', 'coll');
       app.moveDisplay('next');
-      events.debug.group('next.onclick', 'end');
+      Events.debug.group('next.onclick', 'end');
     };
 
     prev.appendChild(pArrow);
@@ -2363,15 +2396,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.url)
-     * -----------------------------------------------
-     * @desc Whether to create formatted urls for the questions.
-     * @type {UrlConfig}
-     */
-    this.url;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (Config.links)
      * -----------------------------------------------
      * @desc Whether to display search links for each question.
@@ -2394,14 +2418,6 @@
     if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
       config.prettifyFormat = {};
     }
-    if (!config.showURL || typeof config.showURL !== 'object') {
-      if (!!config.showUrl && typeof config.showUrl === 'object') {
-        config.showURL = config.showUrl;
-      }
-      else {
-        config.showURL = {};
-      }
-    }
     if (!config.showLinks || typeof config.showLinks !== 'object') {
       config.showLinks = {};
     }
@@ -2410,13 +2426,11 @@
     this.searchBar  = new SearchBarConfig(config.searchSettings);
     this.questions  = new QuestionsConfig(config.questionFormat);
     this.prettifier = new PrettyConfig(config.prettifyFormat);
-    this.url        = new UrlConfig(config.showURL);
     this.links      = new LinksConfig(config.showLinks);
 
     Object.freeze(this.searchBar);
     Object.freeze(this.questions);
     Object.freeze(this.prettifier);
-    Object.freeze(this.url);
     Object.freeze(this.links);
 
     // Close this debug console group
@@ -3127,98 +3141,6 @@
 
 
 /* -----------------------------------------------------------------------------
- * | The URL Config Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                               classes/config/url-config.js */
-  /**
-   * -----------------------------------------------------
-   * Public Class (UrlConfig)
-   * -----------------------------------------------------
-   * @desc The configuration settings for creating urls for the questions.
-   * @param {Object} config - The user's config settings for url searches.
-   * @constructor
-   */
-  var UrlConfig = function(config) {
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (UrlConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the UrlConfig class.
-     * @type {Debug}
-     */
-    this.debug = aIV.debug('UrlConfig');
-
-    this.debug.start('init', config);
-    this.debug.args('init', config, 'object');
-    // $e$
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (UrlConfig.id)
-     * -----------------------------------------------
-     * @desc Whether to display an id search option in the url.
-     * @type {boolean}
-     * @private
-     */
-    var id;
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (UrlConfig.category)
-     * -----------------------------------------------
-     * @desc Whether to display a category search option in the url.
-     * @type {boolean}
-     * @private
-     */
-    var category;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (UrlConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
-
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        category: category
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Set the properties
-    id       = false;
-    category = false;
-
-    if (config.hasOwnProperty('id') && config.id === true) {
-      id = true;
-    }
-    if (config.hasOwnProperty('category') && config.category === true) {
-      category = true;
-    }
-  };
-
-  // Ensure constructor is set to this class.
-  UrlConfig.prototype.constructor = UrlConfig;
-
-
-/* -----------------------------------------------------------------------------
  * | The Links Config Class                                                    |
  * v ------------------------------------------------------------------------- v
                                              classes/config/links-config.js */
@@ -3921,7 +3843,6 @@
      *   mainCat: string,
      *   subCat : string
      * }}
-     * @dict
      */
     this.vals;
 
@@ -3938,7 +3859,6 @@
      *   mainCat: ?elem,
      *   subCat : ?elem
      * }}
-     * @dict
      */
     this.elems;
 
@@ -4113,12 +4033,47 @@
     this.debug.start('setToDefaults', defaults);
     this.debug.args('setToDefaults', defaults, 'object');
 
-    this.vals.view    = defaults.get('view');
-    this.vals.order   = defaults.get('order');
-    this.vals.stage   = defaults.get('stage');
-    this.vals.source  = defaults.get('source');
-    this.vals.mainCat = defaults.get('mainCat');
-    this.vals.subCat  = defaults.get('subCat');
+    /** @type {string} */
+    var view;
+    /** @type {string} */
+    var order;
+    /** @type {string} */
+    var stage;
+    /** @type {string} */
+    var source;
+    /** @type {string} */
+    var mainCat;
+    /** @type {string} */
+    var subCat;
+
+    view    = defaults.get('view');
+    order   = defaults.get('order');
+    stage   = defaults.get('stage');
+    source  = defaults.get('source');
+    mainCat = defaults.get('mainCat');
+    subCat  = defaults.get('subCat');
+
+    this.vals.view    = view;
+    this.vals.order   = order;
+    this.vals.stage   = stage;
+    this.vals.source  = source;
+    this.vals.mainCat = mainCat;
+    this.vals.subCat  = subCat;
+
+    this.elems.view.value = view;
+    this.elems.order.value = order;
+    if (this.elems.stage) {
+      this.elems.stage.value = stage;
+    }
+    if (this.elems.source) {
+      this.elems.source.value = source;
+    }
+    if (this.elems.mainCat) {
+      this.elems.mainCat.value = mainCat;
+    }
+    if (this.elems.subCat) {
+      this.elems.subCat.value = subCat;
+    }
   };
 
   /**
@@ -4139,62 +4094,23 @@
     // Set view search element
     this.elems.view.id = 'aIV-view';
     this.elems.view.className = 'showView';
-    this.elems.view.value = this.vals.view;
     this.elems.view.onchange = function(event) {
-      /** @type {string} */
-      var oldVal;
-
-      if (app.searchBar.vals.view != event.target.value) {
-        events.debug.group('searchBar.view.onchange', 'coll');
-
-        oldVal = app.searchBar.vals.view;
-        app.searchBar.vals.view = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          oldVal: oldVal
-        });
-
-        events.debug.group('searchBar.view.onchange', 'end');
-      }
+      Events.searchView(event.target.value);
     };
 
     // Set order search element
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
-    this.elems.order.value = this.vals.order;
     this.elems.order.onchange = function(event) {
-
-      if (app.searchBar.vals.order != event.target.value) {
-        events.debug.group('searchBar.order.onchange', 'coll');
-
-        app.searchBar.vals.order = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          flip  : true,
-          index : true
-        });
-
-        events.debug.group('searchBar.order.onchange', 'end');
-      }
+      Events.searchOrder(event.target.value);
     };
 
     // Set stage search element
     if (this.elems.stage) {
       this.elems.stage.id = 'aIV-stage';
       this.elems.stage.className = 'showStage';
-      this.elems.stage.value = this.vals.stage;
       this.elems.stage.onchange = function(event) {
-
-        if (app.searchBar.vals.stage != event.target.value) {
-          events.debug.group('searchBar.stage.onchange', 'coll');
-
-          app.searchBar.vals.stage = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.stage.onchange', 'end');
-        }
+        Events.searchStage(event.target.value);
       };
     }
 
@@ -4202,17 +4118,8 @@
     if (this.elems.source) {
       this.elems.source.id = 'aIV-source';
       this.elems.source.className = 'showSource';
-      this.elems.source.value = this.vals.source;
       this.elems.source.onchange = function(event) {
-
-        if (app.searchBar.vals.source != event.target.value) {
-          events.debug.group('searchBar.source.onchange', 'coll');
-
-          app.searchBar.vals.source = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.source.onchange', 'end');
-        }
+        Events.searchSource(event.target.value);
       };
     }
 
@@ -4220,18 +4127,8 @@
     if (this.elems.mainCat) {
       this.elems.mainCat.id = 'aIV-mainCat';
       this.elems.mainCat.className = 'showMainCat';
-      this.elems.mainCat.value = this.vals.mainCat;
       this.elems.mainCat.onchange = function(event) {
-
-        if (app.searchBar.vals.mainCat != event.target.value) {
-          events.debug.group('searchBar.mainCat.onchange', 'coll');
-
-          app.searchBar.vals.mainCat = event.target.value;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          events.debug.group('searchBar.mainCat.onchange', 'end');
-        }
+        Events.searchMainCat(event.target.value);
       };
     }
 
@@ -4239,17 +4136,8 @@
     if (this.elems.subCat) {
       this.elems.subCat.id = 'aIV-subCat';
       this.elems.subCat.className = 'showSubCat';
-      this.elems.subCat.value = this.vals.subCat;
       this.elems.subCat.onchange = function(event) {
-
-        if (app.searchBar.vals.subCat != event.target.value) {
-          events.debug.group('searchBar.subCat.onchange', 'coll');
-
-          app.searchBar.vals.subCat = event.target.value;
-          app.updateDisplay();
-
-          events.debug.group('searchBar.subCat.onchange', 'end');
-        }
+        Events.searchSubCat(event.target.value);
       };
     }
 
@@ -4261,7 +4149,7 @@
    * Public Method (SearchBar.prototype.setOptElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's option elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setOptElems = function() {
 
@@ -4452,17 +4340,21 @@
     // Update the select value
     val = val || 'all';
     this.vals.subCat = val;
-    this.elems.subCat.value = val;
 
-    // Clear subCat's children
-    while (this.elems.subCat.firstChild) {
-      this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+    if (this.elems.subCat) {
+
+      this.elems.subCat.value = val;
+
+      // Clear subCat's children
+      while (this.elems.subCat.firstChild) {
+        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      }
+
+      // Append the new children
+      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+        this.elems.subCat.appendChild(elem);
+      }, this);
     }
-
-    // Append the new children
-    this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
-      this.elems.subCat.appendChild(elem);
-    }, this);
   };
 
 
@@ -5843,12 +5735,8 @@
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {elem} */
       var a;
-
-      urlConfig = app.config.url.get('id');
 
       if (!url) {
         url = Number(id);
@@ -5857,21 +5745,11 @@
       a = document.createElement('a');
       a.href = 'id/' + url;
       a.innerHTML = id;
-      a.onclick = function() {
-        events.debug.group('questionID.onclick', 'coll', 'id= $$', id);
-        events.debug.start('questionID.onclick', id);
-
-        app.searchBar.elems.view.value = 'one';
-        app.moveDisplay(id);
-
-        if (urlConfig) {
-          // ADD URL LOGIC HERE
-        }
-
-        events.debug.group('questionID.onclick', 'end');
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkId(id);
+        };
+      })(id);
 
       return a;
     }
@@ -5961,21 +5839,11 @@
       a.href = 'source/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('source.onclick', id);
-
-        if (app.searchBar.vals.source != id) {
-          events.debug.group('source.onclick', 'coll', 'sourceID= $$', id);
-
-          app.searchBar.vals.source = id;
-          app.searchBar.elems.source.value = id;
-          app.updateDisplay();
-
-          events.debug.group('source.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkSource(id);
+        };
+      })(id);
 
       return a;
     }
@@ -6218,43 +6086,26 @@
       this.debug.start('makeMainCatLink', id, name);
       this.debug.args('makeMainCatLink', id, 'string', name, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
       var a;
 
-      urlConfig = app.config.url.get('category');
       url = app.categories.get(id, 'url');
 
       a = document.createElement('a');
       a.href = 'category/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('mainCat.onclick', id);
-
-        if (app.searchBar.vals.mainCat != id) {
-          events.debug.group('mainCat.onclick', 'coll', 'mainCat= $$', id);
-
-          app.searchBar.vals.mainCat = id;
-          app.searchBar.elems.mainCat.value = id;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-          events.debug.group('mainCat.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkMainCat(id);
+        };
+      })(id);
 
       debugMsg = 'a= $$, a.onclick= $$';
       this.debug.state('makeMainCatLink', debugMsg, a, a.onclick);
+
       return a;
     }
 
@@ -6276,8 +6127,6 @@
       this.debug.start('makeSubCatLink', id, name);
       this.debug.args('makeSubCatLink', id, 'string', name, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -6286,8 +6135,6 @@
       var parentId;
       /** @type {string} */
       var parentUrl;
-
-      urlConfig = app.config.url.get('category');
 
       // Set the sub category's parent id and url
       app.categories.ids.some(function(/** string */ catId) {
@@ -6313,40 +6160,15 @@
       a.href = 'category/' + parentUrl + '/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-        events.debug.start('subCat.onclick', id);
-
-        if (app.searchBar.vals.subCat != id) {
-          events.debug.group('subCat.onclick', 'coll', 'subCat= $$', id);
-
-          // Check the main category and update the values and options
-          if (app.searchBar.vals.mainCat !== 'all' ||
-              app.searchBar.vals.mainCat !== parentId) {
-            app.searchBar.vals.mainCat = 'all';
-            app.searchBar.elems.mainCat.value = 'all';
-            app.searchBar.updateSubCatOpts(id);
-            app.searchBar.elems.subCat.value = id;
-          }
-          else {
-            app.searchBar.vals.subCat = id;
-            app.searchBar.elems.subCat.value = id;
-          }
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-          // Finish the display update
-          app.updateDisplay();
-
-          events.debug.group('subCat.onclick', 'end');
-        }
-
-        return false;
-      };
+      a.onclick = (function(id, parentId) {
+        return function() {
+          Events.linkSubCat(id, parentId);
+        };
+      })(id, parentId);
 
       debugMsg = 'a= $$, a.onclick= $$';
       this.debug.state('makeSubCatLink', debugMsg, a, a.onclick);
+
       return a;
     }
 
@@ -6666,59 +6488,25 @@
       extHov.style.opacity = '0';
     };
 
-    extOpen.onclick = function() {
-      events.debug.group('extCodeView', 'coll');
-      events.debug.start('extCodeView');
+    extOpen.onclick = (function(overflow, code, ext, extOpen,
+                                extClose, extHovO, extHovC) {
+      /** @type {elemMap} */
+      var elems;
 
-      /** @type {number} */
-      var newWidth;
-      /** @type {number} */
-      var newRight;
+      elems = {
+        code    : code,
+        ext     : ext,
+        extOpen : extOpen,
+        extClose: extClose,
+        extHovO : extHovO,
+        extHovC : extHovC
+      };
+      Object.freeze(elems);
 
-      newWidth = code.clientWidth;
-      events.debug.state('extCodeView', 'orgWidth= $$', newWidth);
-
-      if (extOpen.innerHTML === 'close') {
-
-        extClose.style.opacity = '0.0';
-
-        ext.style.right = '-4px';
-
-        newWidth -= overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extOpen.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'open';
-            extHovC.style.display = 'none';
-            extHovO.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      else if (extOpen.innerHTML === 'open') {
-
-        extOpen.style.opacity = '0.0';
-
-        newRight = overflow + 4;
-        ext.style.right = '-' + newRight + 'px';
-        events.debug.state('extCodeView', 'newRight= $$', newRight);
-
-        newWidth += overflow;
-        events.debug.state('extCodeView', 'newWidth= $$', newWidth);
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extClose.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'close';
-            extHovO.style.display = 'none';
-            extHovC.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      events.debug.group('extCodeView', 'end');
-    };
+      return function() {
+        Events.extCodeView(overflow, elems);
+      };
+    })(overflow, code, ext, extOpen, extClose, extHovO, extHovC);
 
     ext.appendChild(extClose);
     ext.appendChild(extOpen);
@@ -6735,7 +6523,7 @@
 
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Class                                                      |
+ * | The Prettifier Module                                                     |
  * v ------------------------------------------------------------------------- v
                                                                 prettify.js */
   /**
@@ -8637,6 +8425,376 @@
 
     return prettify;
   })();
+
+
+/* -----------------------------------------------------------------------------
+ * | The Events Class                                                          |
+ * v ------------------------------------------------------------------------- v
+                                                          classes/events.js */
+  /**
+   * ----------------------------------------------- 
+   * Public Class (Events)
+   * -----------------------------------------------
+   * @desc The app's event handlers.
+   * @type {Object<string, function>}
+   * @struct
+   */
+  var Events = {};
+
+  // $s$
+  /**
+   * ----------------------------------------------- 
+   * Public Property (Events.debug)
+   * -----------------------------------------------
+   * @desc The Debug instance for the app's DOM events.
+   * @type {Debug}
+   */
+  Events.debug = aIV.debug('Events');
+  // $e$
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchView)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the view search option.
+   * @param {string} newVal - The new value for the view.
+   */
+  Events.searchView = function(newVal) {
+
+    this.debug.start('searchView.onchange', newVal);
+    this.debug.args('searchView.onchange', newVal, 'string');
+
+    /** @type {string} */
+    var oldVal;
+
+    if (app.searchBar.vals.view != newVal) {
+
+      this.debug.group('searchView.onchange', 'coll');
+
+      oldVal = app.searchBar.vals.view;
+      app.searchBar.vals.view = newVal;
+      app.updateDisplay({
+        noVals : true,
+        reset  : true,
+        oldView: oldVal
+      });
+
+      this.debug.group('searchView.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchOrder)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the order search option.
+   * @param {string} newVal - The new value for the order.
+   */
+  Events.searchOrder = function(newVal) {
+
+    this.debug.start('searchOrder.onchange', newVal);
+    this.debug.args('searchOrder.onchange', newVal, 'string');
+
+    if (app.searchBar.vals.order != newVal) {
+
+      this.debug.group('searchOrder.onchange', 'coll');
+
+      app.searchBar.vals.order = newVal;
+      app.updateDisplay({
+        noVals: true,
+        reset : true,
+        flip  : true,
+        index : true
+      });
+
+      this.debug.group('searchOrder.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchStage)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the stage search option.
+   * @param {string} newVal - The new value for the stage.
+   */
+  Events.searchStage = function(newVal) {
+
+    this.debug.start('searchStage.onchange', newVal);
+    this.debug.args('searchStage.onchange', newVal, 'string');
+
+    if (app.searchBar.vals.stage != newVal) {
+
+      this.debug.group('searchStage.onchange', 'coll');
+
+      app.searchBar.vals.stage = newVal;
+      app.updateDisplay();
+
+      this.debug.group('searchStage.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchSource)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the source search option.
+   * @param {string} newVal - The new value for the source.
+   */
+  Events.searchSource = function(newVal) {
+
+    this.debug.start('searchSource.onchange', newVal);
+    this.debug.args('searchSource.onchange', newVal, 'string');
+
+    if (app.searchBar.vals.source != newVal) {
+
+      this.debug.group('searchSource.onchange', 'coll');
+
+      app.searchBar.vals.source = newVal;
+      app.updateDisplay();
+
+      this.debug.group('searchSource.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchMainCat)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the main category search option.
+   * @param {string} newVal - The new value for the main category.
+   */
+  Events.searchMainCat = function(newVal) {
+
+    this.debug.start('searchMainCat.onchange', newVal);
+    this.debug.args('searchMainCat.onchange', newVal, 'string');
+
+    if (app.searchBar.vals.mainCat != newVal) {
+
+      this.debug.group('searchMainCat.onchange', 'coll');
+
+      app.searchBar.vals.mainCat = newVal;
+      app.searchBar.updateSubCatOpts();
+      app.updateDisplay();
+
+      this.debug.group('searchMainCat.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchSubCat)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the sub category search option.
+   * @param {string} newVal - The new value for the sub category.
+   */
+  Events.searchSubCat = function(newVal) {
+
+    this.debug.start('searchSubCat.onchange', newVal);
+    this.debug.args('searchSubCat.onchange', newVal, 'string');
+
+    if (app.searchBar.vals.subCat != newVal) {
+
+      this.debug.group('searchSubCat.onchange', 'coll');
+
+      app.searchBar.vals.subCat = newVal;
+      app.updateDisplay();
+
+      this.debug.group('searchSubCat.onchange', 'end');
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkId)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question id.
+   * @param {number} id - The question's id to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkId = function(id) {
+
+    this.debug.group('linkId.onclick', 'coll', 'questionID= $$', id);
+    this.debug.start('linkId.onclick', id);
+    this.debug.args('linkId.onclick', id, 'number');
+
+    app.searchBar.elems.view.value = 'one';
+    app.moveDisplay(id);
+
+    this.debug.group('linkId.onclick', 'end');
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSource)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question source.
+   * @param {string} id - The question's source to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkSource = function(id) {
+
+    this.debug.start('linkSource.onclick', id);
+    this.debug.args('linkSource.onclick', id, 'string');
+
+    if (app.searchBar.vals.source != id) {
+
+      this.debug.group('linkSource.onclick', 'coll', 'sourceID= $$', id);
+
+      app.searchBar.vals.source = id;
+      app.searchBar.elems.source.value = id;
+      app.updateDisplay();
+
+      this.debug.group('linkSource.onclick', 'end');
+    }
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkMainCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question main category.
+   * @param {string} id - The question's category to link to.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkMainCat = function(id) {
+
+    this.debug.start('linkMainCat.onclick', id);
+    this.debug.args('linkMainCat.onclick', id, 'string');
+
+    if (app.searchBar.vals.mainCat != id) {
+
+      this.debug.group('linkMainCat.onclick', 'coll', 'mainCatID= $$', id);
+
+      app.searchBar.vals.mainCat = id;
+      app.searchBar.elems.mainCat.value = id;
+      app.searchBar.updateSubCatOpts();
+      app.updateDisplay();
+
+      this.debug.group('linkMainCat.onclick', 'end');
+    }
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSubCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question sub category.
+   * @param {string} id - The question's category to link to.
+   * @param {string} parentId - The sub category's parent category.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.linkSubCat = function(id, parentId) {
+
+    this.debug.start('linkSubCat.onclick', id, parentId);
+    this.debug.args('linkSubCat.onclick', id, 'string', parentId, 'string');
+
+    if (app.searchBar.vals.subCat != id) {
+
+      this.debug.group('linkSubCat.onclick', 'coll', 'subCatID= $$', id);
+
+      // Check the main category and update the values and options
+      if (app.searchBar.vals.mainCat !== 'all' &&
+          app.searchBar.vals.mainCat !== parentId) {
+        app.searchBar.vals.mainCat = 'all';
+        app.searchBar.elems.mainCat.value = 'all';
+        app.searchBar.updateSubCatOpts(id);
+        app.searchBar.elems.subCat.value = id;
+      }
+      else {
+        app.searchBar.vals.subCat = id;
+        app.searchBar.elems.subCat.value = id;
+      }
+
+      // Finish the display update
+      app.updateDisplay();
+
+      this.debug.group('linkSubCat.onclick', 'end');
+    }
+
+    return false;
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.extCodeView)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question code extender.
+   * @param {number} overflow - The question's code view overflow pixel count.
+   * @param {elemMap} elems - The code view elements.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.extCodeView = function(overflow, elems) {
+
+    var debugMsg;
+    debugMsg = 'overflow= $$, elems= $$'
+    this.debug.group('extCodeView.onclick', 'coll', debugMsg, overflow, elems);
+    this.debug.start('extCodeView.onclick', overflow, elems);
+    this.debug.args('extCodeView.onclick', overflow, 'number', elems, 'elemMap');
+
+    /** @type {number} */
+    var newWidth;
+    /** @type {number} */
+    var newRight;
+
+    newWidth = elems.code.clientWidth;
+
+    this.debug.state('extCodeView.onclick', 'orgWidth= $$', newWidth);
+
+    if (elems.extOpen.innerHTML === 'close') {
+
+      elems.extClose.style.opacity = '0';
+
+      elems.ext.style.right = '-4px';
+
+      newWidth = newWidth - overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      setTimeout(function() {
+        elems.extOpen.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'open';
+          elems.extHovC.style.display = 'none';
+          elems.extHovO.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+    else if (elems.extOpen.innerHTML === 'open') {
+
+      elems.extOpen.style.opacity = '0';
+
+      newRight = overflow + 4;
+      elems.ext.style.right = '-' + newRight + 'px';
+
+      this.debug.state('extCodeView.onclick', 'newRight= $$', newRight);
+
+      newWidth = newWidth + overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      this.debug.state('extCodeView.onclick', 'newWidth= $$', newWidth);
+
+      setTimeout(function() {
+        elems.extClose.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'close';
+          elems.extHovO.style.display = 'none';
+          elems.extHovC.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+
+    this.debug.group('extCodeView.onclick', 'end');
+
+    return false;
+  };
+
+  Object.freeze(Events);
 
 
 /* -----------------------------------------------------------------------------
