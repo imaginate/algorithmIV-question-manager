@@ -17,10 +17,12 @@
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {stringsMap} */
+    /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
     var len;
+    /** @type {Object<string, (string|stringMap)>} */
+    var vals;
 
     // $s$
     /**
@@ -117,10 +119,20 @@
      */
     this.questions;
 
-    // Setup the properties
-    this.flags   = new AppFlags(!!questions);
-    this.elems   = new AppElems();
+    /**
+     * ---------------------------------------------------
+     * Public Property (App.isHistory)
+     * ---------------------------------------------------
+     * @type {boolean}
+     */
+    this.isHistory;
+
+    // Save the count of questions for use before questions is setup
     len = (!!questions) ? questions.length : 0;
+
+    // Setup the properties    
+    this.flags   = new AppFlags(!!len);
+    this.elems   = new AppElems();
     this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
@@ -168,11 +180,41 @@
     );
     names = this.searchBar.names;
     ids = this.searchBar.ids.subCat;
-    len = this.questions.len;
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
+
+    // Setup the value of history
+    this.isHistory = true;
+    vals = {
+      ids  : this.vals.get('ids').slice(0),
+      len  : this.vals.get('len'),
+      index: this.vals.get('index')
+    };
+    vals.searchBar = {
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
+    vals = JSON.stringify(vals);
+    try {
+      window.history.replaceState(vals);
+    }
+    catch (e) {
+      this.debug.fail('init', false, 'Oi, an old browser. Just let it die.');
+      this.isHistory = false;
+    }
+
+    // Setup the onpopstate event
+    if (this.isHistory) {
+      window.onpopstate = function(event) {
+        app.setupNewState(event.state);
+      };
+    }
 
     // Close this debug console group
     this.debug.group('init', 'end');
