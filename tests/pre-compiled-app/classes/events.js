@@ -288,4 +288,77 @@
     return false;
   };
 
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.extCodeView)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question code extender.
+   * @param {number} overflow - The question's code view overflow pixel count.
+   * @param {elemMap} elems - The code view elements.
+   * @return {boolean} Returns false to avoid the default action.
+   */
+  Events.extCodeView = function(overflow, elems) {
+
+    var debugMsg;
+    debugMsg = 'overflow= $$, elems= $$'
+    this.debug.group('extCodeView.onclick', 'coll', debugMsg, overflow, elems);
+    this.debug.start('extCodeView.onclick', overflow, elems);
+    this.debug.args('extCodeView.onclick', overflow, 'number', elems, 'elemMap');
+
+    /** @type {number} */
+    var newWidth;
+    /** @type {number} */
+    var newRight;
+
+    newWidth = elems.code.clientWidth;
+
+    this.debug.state('extCodeView.onclick', 'orgWidth= $$', newWidth);
+
+    if (elems.extOpen.innerHTML === 'close') {
+
+      elems.extClose.style.opacity = '0';
+
+      elems.ext.style.right = '-4px';
+
+      newWidth = newWidth - overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      setTimeout(function() {
+        elems.extOpen.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'open';
+          elems.extHovC.style.display = 'none';
+          elems.extHovO.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+    else if (elems.extOpen.innerHTML === 'open') {
+
+      elems.extOpen.style.opacity = '0';
+
+      newRight = overflow + 4;
+      elems.ext.style.right = '-' + newRight + 'px';
+
+      this.debug.state('extCodeView.onclick', 'newRight= $$', newRight);
+
+      newWidth = newWidth + overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      this.debug.state('extCodeView.onclick', 'newWidth= $$', newWidth);
+
+      setTimeout(function() {
+        elems.extClose.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'close';
+          elems.extHovO.style.display = 'none';
+          elems.extHovC.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+
+    this.debug.group('extCodeView.onclick', 'end');
+
+    return false;
+  };
+
   Object.freeze(Events);

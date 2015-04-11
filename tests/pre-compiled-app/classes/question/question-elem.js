@@ -1001,59 +1001,25 @@
       extHov.style.opacity = '0';
     };
 
-    extOpen.onclick = function() {
-      events.debug.group('extCodeView', 'coll');
-      events.debug.start('extCodeView');
+    extOpen.onclick = (function(overflow, code, ext, extOpen,
+                                extClose, extHovO, extHovC) {
+      /** @type {elemMap} */
+      var elems;
 
-      /** @type {number} */
-      var newWidth;
-      /** @type {number} */
-      var newRight;
+      elems = {
+        code    : code,
+        ext     : ext,
+        extOpen : extOpen,
+        extClose: extClose,
+        extHovO : extHovO,
+        extHovC : extHovC
+      };
+      Object.freeze(elems);
 
-      newWidth = code.clientWidth;
-      events.debug.state('extCodeView', 'orgWidth= $$', newWidth);
-
-      if (extOpen.innerHTML === 'close') {
-
-        extClose.style.opacity = '0.0';
-
-        ext.style.right = '-4px';
-
-        newWidth -= overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extOpen.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'open';
-            extHovC.style.display = 'none';
-            extHovO.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      else if (extOpen.innerHTML === 'open') {
-
-        extOpen.style.opacity = '0.0';
-
-        newRight = overflow + 4;
-        ext.style.right = '-' + newRight + 'px';
-        events.debug.state('extCodeView', 'newRight= $$', newRight);
-
-        newWidth += overflow;
-        events.debug.state('extCodeView', 'newWidth= $$', newWidth);
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extClose.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'close';
-            extHovO.style.display = 'none';
-            extHovC.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      events.debug.group('extCodeView', 'end');
-    };
+      return function() {
+        Events.extCodeView(overflow, elems);
+      };
+    })(overflow, code, ext, extOpen, extClose, extHovO, extHovC);
 
     ext.appendChild(extClose);
     ext.appendChild(extOpen);
