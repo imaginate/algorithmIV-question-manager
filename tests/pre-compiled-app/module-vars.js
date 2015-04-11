@@ -10,15 +10,6 @@
 
   /**
    * ----------------------------------------------- 
-   * Public Variable (events.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's DOM events.
-   * @type {{ debug: Debug }}
-   */
-  var events = { debug: aIV.debug('Events') };
-
-  /**
-   * ----------------------------------------------- 
    * Public Variable (polyfill.debug)
    * -----------------------------------------------
    * @desc The Debug instance for the app's polyfilled methods.
