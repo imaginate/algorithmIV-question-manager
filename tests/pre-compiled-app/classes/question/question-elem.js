@@ -248,12 +248,8 @@
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {elem} */
       var a;
-
-      urlConfig = app.config.url.get('id');
 
       if (!url) {
         url = Number(id);
@@ -268,10 +264,6 @@
 
         app.searchBar.elems.view.value = 'one';
         app.moveDisplay(id);
-
-        if (urlConfig) {
-          // ADD URL LOGIC HERE
-        }
 
         events.debug.group('questionID.onclick', 'end');
 
@@ -623,14 +615,11 @@
       this.debug.start('makeMainCatLink', id, name);
       this.debug.args('makeMainCatLink', id, 'string', name, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
       var a;
 
-      urlConfig = app.config.url.get('category');
       url = app.categories.get(id, 'url');
 
       a = document.createElement('a');
@@ -647,10 +636,6 @@
           app.searchBar.elems.mainCat.value = id;
           app.searchBar.updateSubCatOpts();
           app.updateDisplay();
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
 
           events.debug.group('mainCat.onclick', 'end');
         }
@@ -681,8 +666,6 @@
       this.debug.start('makeSubCatLink', id, name);
       this.debug.args('makeSubCatLink', id, 'string', name, 'string');
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -691,8 +674,6 @@
       var parentId;
       /** @type {string} */
       var parentUrl;
-
-      urlConfig = app.config.url.get('category');
 
       // Set the sub category's parent id and url
       app.categories.ids.some(function(/** string */ catId) {
@@ -735,10 +716,6 @@
           else {
             app.searchBar.vals.subCat = id;
             app.searchBar.elems.subCat.value = id;
-          }
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
           }
 
           // Finish the display update
