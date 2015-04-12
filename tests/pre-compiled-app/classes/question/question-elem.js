@@ -261,6 +261,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkId(id);
+          return false;
         };
       })(id);
 
@@ -355,6 +356,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkSource(id);
+          return false;
         };
       })(id);
 
@@ -613,6 +615,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkMainCat(id);
+          return false;
         };
       })(id);
 
@@ -676,6 +679,7 @@
       a.onclick = (function(id, parentId) {
         return function() {
           Events.linkSubCat(id, parentId);
+          return false;
         };
       })(id, parentId);
 
