@@ -840,7 +840,7 @@
     var ids;
     /** @type {number} */
     var len;
-    /** @type {Object<string, (string|stringMap)>} */
+    /** @type {stringMap} */
     var vals;
 
     // $s$
@@ -1007,11 +1007,6 @@
     // Setup the value of history
     this.isHistory = true;
     vals = {
-      ids  : this.vals.get('ids').slice(0),
-      len  : this.vals.get('len'),
-      index: this.vals.get('index')
-    };
-    vals.searchBar = {
       view   : this.searchBar.vals.view,
       order  : this.searchBar.vals.order,
       stage  : this.searchBar.vals.stage,
@@ -1031,7 +1026,7 @@
     // Setup the onpopstate event
     if (this.isHistory) {
       window.onpopstate = function(event) {
-        app.setupNewState(event.state);
+        Events.popState( JSON.parse(event.state) );
       };
     }
 
@@ -1073,7 +1068,11 @@
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({ flip: flip, oldView: 'one' });
+        app.updateDisplay({
+          flipElems  : flip,
+          oldView    : 'one',
+          noPushState: true
+        });
 
         app.debug.group('setupDisplay', 'end');
       }, renderTime);
@@ -1090,16 +1089,18 @@
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
    * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noVals - If set to true it indicates
+   * @param {boolean=} settings.noMatch - If set to true it indicates
    *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flip - If set to true it indicates that
+   * @param {boolean=} settings.flipElems - If set to true it indicates that
    *   the order of each question's element should be flipped.
    * @param {string=} settings.oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.reset - If set to true it indicates
+   * @param {boolean=} settings.noMatchReset - If set to true it indicates
    *   that the ids and index should be reset.
-   * @param {boolean=} settings.index - If set to true it indicates
+   * @param {boolean=} settings.keepIndex - If set to true it indicates
    *   that the index should NOT be changed.
+   * @param {boolean=} settings.noPushState - If set to true it indicates
+   *   that the pushState call should NOT be made.
    */
   App.prototype.updateDisplay = function(settings) {
 
@@ -1107,43 +1108,63 @@
     this.debug.start('updateDisplay', settings);
     this.debug.args('updateDisplay', settings, 'object=');
 
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var oldIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var oldIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var resetIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var resetIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var newIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {stringMap} */
+    var vals;
+    /** @type {boolean} */
+    var noMatch;
+    /** @type {boolean} */
+    var noMatchReset;
+    /** @type {boolean} */
+    var flipElems;
+    /** @type {boolean} */
+    var keepIndex;
+    /** @type {boolean} */
+    var noPushState;
+    /** @type {string} */
     var view;
+    /** @type {string} */
+    var oldView;
 
-    settings = settings || {};
+    settings = ( checkType(settings, '!object') ) ? settings : {};
+
+    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
+      false : ( checkType(settings.noMatch, '!boolean') ) ?
+        settings.noMatch : false
+    );
+    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
+      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
+        settings.noMatchReset : false
+    );
+    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
+      false : ( checkType(settings.flipElems, '!boolean') ) ?
+        settings.flipElems : false
+    );
+    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
+      false : ( checkType(settings.keepIndex, '!boolean') ) ?
+        settings.keepIndex : false
+    );
+    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
+      false : ( checkType(settings.noPushState, '!boolean') ) ?
+        settings.noPushState : false
+    );
+
+    view = app.searchBar.vals.view;
+    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
+      view : ( checkType(settings.oldView, '!string') ) ?
+        settings.oldView : view
+    );
 
     // Save the old matching question ids and index
     oldIds = this.vals.get('len');
@@ -1151,13 +1172,13 @@
     oldIndex = this.vals.get('index');
 
     // Update the current matching question ids and index
-    if (!!settings.noVals) {
-      if (!!settings.reset) {
+    if (noMatch || noMatchReset) {
+      if (noMatchReset) {
         resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (!!settings.flip && resetIds) {
+        if (flipElems && resetIds) {
           resetIds.reverse();
         }
-        resetIndex = (!!settings.index) ? oldIndex : 0;
+        resetIndex = (keepIndex) ? oldIndex : 0;
         this.vals.reset(resetIds, resetIndex);
       }
     }
@@ -1177,7 +1198,6 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      view = app.searchBar.vals.view;
       app.elems.nav.style.display = ( (view === 'all') ?
         'none' : (view === 'ten' && app.vals.get('len') > 10) ?
           'block' : (view === 'one' && app.vals.get('len') > 1) ?
@@ -1185,22 +1205,33 @@
       );
 
       // Check if the questions order should be flipped
-      if (!!settings.flip) {
+      if (flipElems) {
         app.questions.reverseElems();
       }
 
       // Hide the old questions
-      if (!!settings.oldView) {
-        view = settings.oldView;
-      }
-      app.questions.hideElems(oldIds, oldIndex, view);
+      app.questions.hideElems(oldIds, oldIndex, oldView);
 
       // Show the new questions
       app.questions.showElems(newIds, newIndex);
 
+      // Update the state
+      if (app.isHistory && !noPushState) {
+        vals = {
+          view   : app.searchBar.vals.view,
+          order  : app.searchBar.vals.order,
+          stage  : app.searchBar.vals.stage,
+          source : app.searchBar.vals.source,
+          mainCat: app.searchBar.vals.mainCat,
+          subCat : app.searchBar.vals.subCat
+        };
+        vals = JSON.stringify(vals);
+        window.history.pushState(vals);
+      }
+
       // Show the question's main element
       app.elems.main.style.opacity = '1';
-        
+
       app.debug.group('updateDisplay', 'end');
     }, 520);
   };
@@ -2182,20 +2213,17 @@
      * -----------------------------------------------
      * @desc Resets the app values.
      * @param {nums} newIds - The new matching question ids.
-     * @param {num=} newIndex - The starting index.
+     * @param {number=} newIndex - The starting index.
      */
     this.reset = function(newIds, newIndex) {
 
       this.debug.start('reset', newIds, newIndex);
       this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
 
-      /**
-       * @type {num}
-       * private
-       */
+      /** @type {number} */
       var newLen;
 
-      newLen = newIds.length || 0;
+      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
 
       // Set newIndex
       if (app.searchBar.vals.view === 'all') {
@@ -4684,25 +4712,13 @@
 
     this.debug.start('reverseElems');
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var direction;
-    /**
-     * @type {Question}
-     * @private
-     */
+    /** @type {Question} */
     var question;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     direction = app.searchBar.vals.order;
@@ -4743,10 +4759,7 @@
     debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
     this.debug.args(debugArgs);
 
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     if (index === -1) {
@@ -5748,6 +5761,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkId(id);
+          return false;
         };
       })(id);
 
@@ -5842,6 +5856,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkSource(id);
+          return false;
         };
       })(id);
 
@@ -6100,6 +6115,7 @@
       a.onclick = (function(id) {
         return function() {
           Events.linkMainCat(id);
+          return false;
         };
       })(id);
 
@@ -6163,6 +6179,7 @@
       a.onclick = (function(id, parentId) {
         return function() {
           Events.linkSubCat(id, parentId);
+          return false;
         };
       })(id, parentId);
 
@@ -8454,6 +8471,58 @@
 
   /**
    * ----------------------------------------------- 
+   * Public Method (Events.popState)
+   * -----------------------------------------------
+   * @desc The onPopState event handler for the window.
+   * @param {Object} newState - The new state to apply to the app.
+   */
+  Events.popState = function(newState) {
+
+    this.debug.group('popState', 'coll');
+    this.debug.start('popState', newState);
+    this.debug.args('popState', newState, 'object');
+
+    /** @type {string} */
+    var oldView;
+    /** @type {boolean} */
+    var flipElems;
+
+    oldView = app.searchBar.vals.view;
+    flipElems = (app.searchBar.vals.order !== newState.order);
+
+    app.searchBar.vals.view    = newState.view;
+    app.searchBar.vals.order   = newState.order;
+    app.searchBar.vals.stage   = newState.stage;
+    app.searchBar.vals.source  = newState.source;
+    app.searchBar.vals.mainCat = newState.mainCat;
+    app.searchBar.vals.subCat  = newState.subCat;
+
+    app.searchBar.elems.view.value = newState.view;
+    app.searchBar.elems.order.value = newState.order;
+    if (app.searchBar.elems.stage) {
+      app.searchBar.elems.stage.value = newState.stage;
+    }
+    if (app.searchBar.elems.source) {
+      app.searchBar.elems.source.value = newState.source;
+    }
+    if (app.searchBar.elems.mainCat) {
+      app.searchBar.elems.mainCat.value = newState.mainCat;
+    }
+    if (app.searchBar.elems.subCat) {
+      app.searchBar.elems.subCat.value = newState.subCat;
+    }
+
+    app.updateDisplay({
+      flipElems  : flipElems,
+      oldView    : oldView,
+      noPushState: true
+    });
+
+    this.debug.group('popState', 'end');
+  };
+
+  /**
+   * ----------------------------------------------- 
    * Public Method (Events.searchView)
    * -----------------------------------------------
    * @desc The onChange event handler for the view search option.
@@ -8474,9 +8543,8 @@
       oldVal = app.searchBar.vals.view;
       app.searchBar.vals.view = newVal;
       app.updateDisplay({
-        noVals : true,
-        reset  : true,
-        oldView: oldVal
+        noMatchReset: true,
+        oldView     : oldVal
       });
 
       this.debug.group('searchView.onchange', 'end');
@@ -8501,10 +8569,9 @@
 
       app.searchBar.vals.order = newVal;
       app.updateDisplay({
-        noVals: true,
-        reset : true,
-        flip  : true,
-        index : true
+        noMatchReset: true,
+        flipElems   : true,
+        keepIndex   : true
       });
 
       this.debug.group('searchOrder.onchange', 'end');
@@ -8610,7 +8677,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question id.
    * @param {number} id - The question's id to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkId = function(id) {
 
@@ -8622,8 +8688,6 @@
     app.moveDisplay(id);
 
     this.debug.group('linkId.onclick', 'end');
-
-    return false;
   };
 
   /**
@@ -8632,7 +8696,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question source.
    * @param {string} id - The question's source to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkSource = function(id) {
 
@@ -8649,8 +8712,6 @@
 
       this.debug.group('linkSource.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -8659,7 +8720,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question main category.
    * @param {string} id - The question's category to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkMainCat = function(id) {
 
@@ -8677,8 +8737,6 @@
 
       this.debug.group('linkMainCat.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -8688,7 +8746,6 @@
    * @desc The onClick event handler for a question sub category.
    * @param {string} id - The question's category to link to.
    * @param {string} parentId - The sub category's parent category.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkSubCat = function(id, parentId) {
 
@@ -8717,8 +8774,6 @@
 
       this.debug.group('linkSubCat.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -8728,7 +8783,6 @@
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
    * @param {elemMap} elems - The code view elements.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.extCodeView = function(overflow, elems) {
 
@@ -8790,8 +8844,6 @@
     }
 
     this.debug.group('extCodeView.onclick', 'end');
-
-    return false;
   };
 
   Object.freeze(Events);
