@@ -40,15 +40,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.url)
-     * -----------------------------------------------
-     * @desc Whether to create formatted urls for the questions.
-     * @type {UrlConfig}
-     */
-    this.url;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (Config.links)
      * -----------------------------------------------
      * @desc Whether to display search links for each question.
@@ -70,14 +61,6 @@
     if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
       config.prettifyFormat = {};
     }
-    if (!config.showURL || typeof config.showURL !== 'object') {
-      if (!!config.showUrl && typeof config.showUrl === 'object') {
-        config.showURL = config.showUrl;
-      }
-      else {
-        config.showURL = {};
-      }
-    }
     if (!config.showLinks || typeof config.showLinks !== 'object') {
       config.showLinks = {};
     }
@@ -86,13 +69,11 @@
     this.searchBar  = new SearchBarConfig(config.searchSettings);
     this.questions  = new QuestionsConfig(config.questionFormat);
     this.prettifier = new PrettyConfig(config.prettifyFormat);
-    this.url        = new UrlConfig(config.showURL);
     this.links      = new LinksConfig(config.showLinks);
 
     Object.freeze(this.searchBar);
     Object.freeze(this.questions);
     Object.freeze(this.prettifier);
-    Object.freeze(this.url);
     Object.freeze(this.links);
 
   };

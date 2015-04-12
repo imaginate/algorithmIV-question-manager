@@ -22,6 +22,7 @@
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
                                                    highlight-syntax-vars.js */
+
       /**
        * ---------------------------------------------
        * Private Variable (newLine)

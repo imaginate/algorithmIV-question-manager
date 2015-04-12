@@ -71,17 +71,14 @@
      * -----------------------------------------------
      * @desc Resets the app values.
      * @param {nums} newIds - The new matching question ids.
-     * @param {num=} newIndex - The starting index.
+     * @param {number=} newIndex - The starting index.
      */
     this.reset = function(newIds, newIndex) {
 
-      /**
-       * @type {num}
-       * private
-       */
+      /** @type {number} */
       var newLen;
 
-      newLen = newIds.length || 0;
+      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
 
       // Set newIndex
       if (app.searchBar.vals.view === 'all') {

@@ -71,7 +71,6 @@
      *   mainCat: string,
      *   subCat : string
      * }}
-     * @dict
      */
     this.vals;
 
@@ -88,7 +87,6 @@
      *   mainCat: ?elem,
      *   subCat : ?elem
      * }}
-     * @dict
      */
     this.elems;
 
@@ -175,15 +173,20 @@
         mainCat = categories.get(mainId);
         this.names.mainCat[ mainId ] = mainCat.get('name');
 
+        // Add the sub category options
+        this.opts.subCat[ mainId ] = [];
+
         // Add the sub categories names and ids
         subs = mainCat.get('subs');
         if (subs && subs.length) {
           this.ids.subCat[ mainId ] = subs.slice(0);
           this.ids.subCat[ mainId ].unshift('all');
-          this.opts.subCat[ mainId ] = [];
           subs.forEach(function(/** string */ subId) {
             this.names.subCat[ subId ] = categories.get(subId, 'name');
           }, this);
+        }
+        else {
+          this.ids.subCat[ mainId ] = [ 'all' ];
         }
       }, this);
     }
@@ -248,12 +251,47 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-    this.vals.view    = defaults.get('view');
-    this.vals.order   = defaults.get('order');
-    this.vals.stage   = defaults.get('stage');
-    this.vals.source  = defaults.get('source');
-    this.vals.mainCat = defaults.get('mainCat');
-    this.vals.subCat  = defaults.get('subCat');
+    /** @type {string} */
+    var view;
+    /** @type {string} */
+    var order;
+    /** @type {string} */
+    var stage;
+    /** @type {string} */
+    var source;
+    /** @type {string} */
+    var mainCat;
+    /** @type {string} */
+    var subCat;
+
+    view    = defaults.get('view');
+    order   = defaults.get('order');
+    stage   = defaults.get('stage');
+    source  = defaults.get('source');
+    mainCat = defaults.get('mainCat');
+    subCat  = defaults.get('subCat');
+
+    this.vals.view    = view;
+    this.vals.order   = order;
+    this.vals.stage   = stage;
+    this.vals.source  = source;
+    this.vals.mainCat = mainCat;
+    this.vals.subCat  = subCat;
+
+    this.elems.view.value = view;
+    this.elems.order.value = order;
+    if (this.elems.stage) {
+      this.elems.stage.value = stage;
+    }
+    if (this.elems.source) {
+      this.elems.source.value = source;
+    }
+    if (this.elems.mainCat) {
+      this.elems.mainCat.value = mainCat;
+    }
+    if (this.elems.subCat) {
+      this.elems.subCat.value = subCat;
+    }
   };
 
   /**
@@ -271,56 +309,23 @@
     // Set view search element
     this.elems.view.id = 'aIV-view';
     this.elems.view.className = 'showView';
-    this.elems.view.value = this.vals.view;
     this.elems.view.onchange = function(event) {
-      /** @type {string} */
-      var oldVal;
-
-      if (app.searchBar.vals.view != event.target.value) {
-
-        oldVal = app.searchBar.vals.view;
-        app.searchBar.vals.view = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          oldVal: oldVal
-        });
-
-      }
+      Events.searchView(event.target.value);
     };
 
     // Set order search element
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
-    this.elems.order.value = this.vals.order;
     this.elems.order.onchange = function(event) {
-
-      if (app.searchBar.vals.order != event.target.value) {
-
-        app.searchBar.vals.order = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          flip  : true,
-          index : true
-        });
-
-      }
+      Events.searchOrder(event.target.value);
     };
 
     // Set stage search element
     if (this.elems.stage) {
       this.elems.stage.id = 'aIV-stage';
       this.elems.stage.className = 'showStage';
-      this.elems.stage.value = this.vals.stage;
       this.elems.stage.onchange = function(event) {
-
-        if (app.searchBar.vals.stage != event.target.value) {
-
-          app.searchBar.vals.stage = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchStage(event.target.value);
       };
     }
 
@@ -328,15 +333,8 @@
     if (this.elems.source) {
       this.elems.source.id = 'aIV-source';
       this.elems.source.className = 'showSource';
-      this.elems.source.value = this.vals.source;
       this.elems.source.onchange = function(event) {
-
-        if (app.searchBar.vals.source != event.target.value) {
-
-          app.searchBar.vals.source = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchSource(event.target.value);
       };
     }
 
@@ -344,16 +342,8 @@
     if (this.elems.mainCat) {
       this.elems.mainCat.id = 'aIV-mainCat';
       this.elems.mainCat.className = 'showMainCat';
-      this.elems.mainCat.value = this.vals.mainCat;
       this.elems.mainCat.onchange = function(event) {
-
-        if (app.searchBar.vals.mainCat != event.target.value) {
-
-          app.searchBar.vals.mainCat = event.target.value;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-        }
+        Events.searchMainCat(event.target.value);
       };
     }
 
@@ -361,15 +351,8 @@
     if (this.elems.subCat) {
       this.elems.subCat.id = 'aIV-subCat';
       this.elems.subCat.className = 'showSubCat';
-      this.elems.subCat.value = this.vals.subCat;
       this.elems.subCat.onchange = function(event) {
-
-        if (app.searchBar.vals.subCat != event.target.value) {
-
-          app.searchBar.vals.subCat = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchSubCat(event.target.value);
       };
     }
 
@@ -380,7 +363,7 @@
    * Public Method (SearchBar.prototype.setOptElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's option elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setOptElems = function() {
 
@@ -561,15 +544,19 @@
     // Update the select value
     val = val || 'all';
     this.vals.subCat = val;
-    this.elems.subCat.value = val;
 
-    // Clear subCat's children
-    while (this.elems.subCat.firstChild) {
-      this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+    if (this.elems.subCat) {
+
+      this.elems.subCat.value = val;
+
+      // Clear subCat's children
+      while (this.elems.subCat.firstChild) {
+        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      }
+
+      // Append the new children
+      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+        this.elems.subCat.appendChild(elem);
+      }, this);
     }
-
-    // Append the new children
-    this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
-      this.elems.subCat.appendChild(elem);
-    }, this);
   };

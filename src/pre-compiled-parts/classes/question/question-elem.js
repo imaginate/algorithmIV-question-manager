@@ -217,12 +217,8 @@
      */
     function makeIdLink(id, url) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {elem} */
       var a;
-
-      urlConfig = app.config.url.get('id');
 
       if (!url) {
         url = Number(id);
@@ -231,17 +227,12 @@
       a = document.createElement('a');
       a.href = 'id/' + url;
       a.innerHTML = id;
-      a.onclick = function() {
-
-        app.searchBar.elems.view.value = 'one';
-        app.moveDisplay(id);
-
-        if (urlConfig) {
-          // ADD URL LOGIC HERE
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkId(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -322,18 +313,12 @@
       a.href = 'source/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.source != id) {
-
-          app.searchBar.vals.source = id;
-          app.searchBar.elems.source.value = id;
-          app.updateDisplay();
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkSource(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -558,37 +543,23 @@
      */
     function makeMainCatLink(id, name) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
       var a;
 
-      urlConfig = app.config.url.get('category');
       url = app.categories.get(id, 'url');
 
       a = document.createElement('a');
       a.href = 'category/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.mainCat != id) {
-
-          app.searchBar.vals.mainCat = id;
-          app.searchBar.elems.mainCat.value = id;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkMainCat(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -607,8 +578,6 @@
      */
     function makeSubCatLink(id, name) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -617,8 +586,6 @@
       var parentId;
       /** @type {string} */
       var parentUrl;
-
-      urlConfig = app.config.url.get('category');
 
       // Set the sub category's parent id and url
       app.categories.ids.some(function(/** string */ catId) {
@@ -644,34 +611,12 @@
       a.href = 'category/' + parentUrl + '/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.subCat != id) {
-
-          // Check the main category and update the values and options
-          if (app.searchBar.vals.mainCat !== 'all' ||
-              app.searchBar.vals.mainCat !== parentId) {
-            app.searchBar.vals.mainCat = 'all';
-            app.searchBar.elems.mainCat.value = 'all';
-            app.searchBar.updateSubCatOpts(id);
-            app.searchBar.elems.subCat.value = id;
-          }
-          else {
-            app.searchBar.vals.subCat = id;
-            app.searchBar.elems.subCat.value = id;
-          }
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-          // Finish the display update
-          app.updateDisplay();
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id, parentId) {
+        return function() {
+          Events.linkSubCat(id, parentId);
+          return false;
+        };
+      })(id, parentId);
 
       return a;
     }
@@ -970,53 +915,25 @@
       extHov.style.opacity = '0';
     };
 
-    extOpen.onclick = function() {
+    extOpen.onclick = (function(overflow, code, ext, extOpen,
+                                extClose, extHovO, extHovC) {
+      /** @type {elemMap} */
+      var elems;
 
-      /** @type {number} */
-      var newWidth;
-      /** @type {number} */
-      var newRight;
+      elems = {
+        code    : code,
+        ext     : ext,
+        extOpen : extOpen,
+        extClose: extClose,
+        extHovO : extHovO,
+        extHovC : extHovC
+      };
+      Object.freeze(elems);
 
-      newWidth = code.clientWidth;
-
-      if (extOpen.innerHTML === 'close') {
-
-        extClose.style.opacity = '0.0';
-
-        ext.style.right = '-4px';
-
-        newWidth -= overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extOpen.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'open';
-            extHovC.style.display = 'none';
-            extHovO.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      else if (extOpen.innerHTML === 'open') {
-
-        extOpen.style.opacity = '0.0';
-
-        newRight = overflow + 4;
-        ext.style.right = '-' + newRight + 'px';
-
-        newWidth += overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extClose.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'close';
-            extHovO.style.display = 'none';
-            extHovC.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-    };
+      return function() {
+        Events.extCodeView(overflow, elems);
+      };
+    })(overflow, code, ext, extOpen, extClose, extHovO, extHovC);
 
     ext.appendChild(extClose);
     ext.appendChild(extOpen);

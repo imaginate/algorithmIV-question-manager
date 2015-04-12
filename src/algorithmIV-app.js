@@ -2,11 +2,11 @@
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - App Module (v1.1.0)
+ * Algorithm IV Question Manager - App Module (v1.1.1)
  * -----------------------------------------------------------------------------
  * @file The module for implementing the aIV question management app.
  * @module aIVApp
- * @version 1.1.0
+ * @version 1.1.1
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
  * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
@@ -85,6 +85,7 @@
  * | The Public Variables for the Module                                       |
  * v ------------------------------------------------------------------------- v
                                                              module-vars.js */
+
   /**
    * ----------------------------------------------- 
    * Public Variable (resources)
@@ -759,10 +760,12 @@
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {stringsMap} */
+    /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
     var len;
+    /** @type {stringMap} */
+    var vals;
 
     /**
      * ----------------------------------------------- 
@@ -832,10 +835,20 @@
      */
     this.questions;
 
-    // Setup the properties
-    this.flags   = new AppFlags(!!questions);
-    this.elems   = new AppElems();
+    /**
+     * ---------------------------------------------------
+     * Public Property (App.isHistory)
+     * ---------------------------------------------------
+     * @type {boolean}
+     */
+    this.isHistory;
+
+    // Save the count of questions for use before questions is setup
     len = (!!questions) ? questions.length : 0;
+
+    // Setup the properties    
+    this.flags   = new AppFlags(!!len);
+    this.elems   = new AppElems();
     this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
@@ -883,11 +896,35 @@
     );
     names = this.searchBar.names;
     ids = this.searchBar.ids.subCat;
-    len = this.questions.len;
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
+
+    // Setup the value of history
+    this.isHistory = true;
+    vals = {
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
+    vals = JSON.stringify(vals);
+    try {
+      window.history.replaceState(vals);
+    }
+    catch (e) {
+      this.isHistory = false;
+    }
+
+    // Setup the onpopstate event
+    if (this.isHistory) {
+      window.onpopstate = function(event) {
+        Events.popState( JSON.parse(event.state) );
+      };
+    }
 
   };
 
@@ -913,7 +950,7 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
-      renderTime = this.questions.len * 30;
+      renderTime = this.questions.len * 32;
       setTimeout(function() {
         /** @type {boolean} */
         var flip;
@@ -921,7 +958,11 @@
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({ flip: flip, oldView: 'one' });
+        app.updateDisplay({
+          flipElems  : flip,
+          oldView    : 'one',
+          noPushState: true
+        });
 
       }, renderTime);
     }
@@ -936,56 +977,78 @@
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
    * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noVals - If set to true it indicates
+   * @param {boolean=} settings.noMatch - If set to true it indicates
    *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flip - If set to true it indicates that
+   * @param {boolean=} settings.flipElems - If set to true it indicates that
    *   the order of each question's element should be flipped.
    * @param {string=} settings.oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.reset - If set to true it indicates
+   * @param {boolean=} settings.noMatchReset - If set to true it indicates
    *   that the ids and index should be reset.
-   * @param {boolean=} settings.index - If set to true it indicates
+   * @param {boolean=} settings.keepIndex - If set to true it indicates
    *   that the index should NOT be changed.
+   * @param {boolean=} settings.noPushState - If set to true it indicates
+   *   that the pushState call should NOT be made.
    */
   App.prototype.updateDisplay = function(settings) {
 
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var oldIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var oldIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var resetIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var resetIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var newIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {stringMap} */
+    var vals;
+    /** @type {boolean} */
+    var noMatch;
+    /** @type {boolean} */
+    var noMatchReset;
+    /** @type {boolean} */
+    var flipElems;
+    /** @type {boolean} */
+    var keepIndex;
+    /** @type {boolean} */
+    var noPushState;
+    /** @type {string} */
     var view;
+    /** @type {string} */
+    var oldView;
 
-    settings = settings || {};
+    settings = ( checkType(settings, '!object') ) ? settings : {};
+
+    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
+      false : ( checkType(settings.noMatch, '!boolean') ) ?
+        settings.noMatch : false
+    );
+    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
+      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
+        settings.noMatchReset : false
+    );
+    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
+      false : ( checkType(settings.flipElems, '!boolean') ) ?
+        settings.flipElems : false
+    );
+    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
+      false : ( checkType(settings.keepIndex, '!boolean') ) ?
+        settings.keepIndex : false
+    );
+    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
+      false : ( checkType(settings.noPushState, '!boolean') ) ?
+        settings.noPushState : false
+    );
+
+    view = app.searchBar.vals.view;
+    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
+      view : ( checkType(settings.oldView, '!string') ) ?
+        settings.oldView : view
+    );
 
     // Save the old matching question ids and index
     oldIds = this.vals.get('len');
@@ -993,13 +1056,13 @@
     oldIndex = this.vals.get('index');
 
     // Update the current matching question ids and index
-    if (!!settings.noVals) {
-      if (!!settings.reset) {
+    if (noMatch || noMatchReset) {
+      if (noMatchReset) {
         resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (!!settings.flip && resetIds) {
+        if (flipElems && resetIds) {
           resetIds.reverse();
         }
-        resetIndex = (!!settings.index) ? oldIndex : 0;
+        resetIndex = (keepIndex) ? oldIndex : 0;
         this.vals.reset(resetIds, resetIndex);
       }
     }
@@ -1019,7 +1082,6 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      view = app.searchBar.vals.view;
       app.elems.nav.style.display = ( (view === 'all') ?
         'none' : (view === 'ten' && app.vals.get('len') > 10) ?
           'block' : (view === 'one' && app.vals.get('len') > 1) ?
@@ -1027,22 +1089,33 @@
       );
 
       // Check if the questions order should be flipped
-      if (!!settings.flip) {
+      if (flipElems) {
         app.questions.reverseElems();
       }
 
       // Hide the old questions
-      if (!!settings.oldView) {
-        view = settings.oldView;
-      }
-      app.questions.hideElems(oldIds, oldIndex, view);
+      app.questions.hideElems(oldIds, oldIndex, oldView);
 
       // Show the new questions
       app.questions.showElems(newIds, newIndex);
 
+      // Update the state
+      if (app.isHistory && !noPushState) {
+        vals = {
+          view   : app.searchBar.vals.view,
+          order  : app.searchBar.vals.order,
+          stage  : app.searchBar.vals.stage,
+          source : app.searchBar.vals.source,
+          mainCat: app.searchBar.vals.mainCat,
+          subCat : app.searchBar.vals.subCat
+        };
+        vals = JSON.stringify(vals);
+        window.history.pushState(vals);
+      }
+
       // Show the question's main element
       app.elems.main.style.opacity = '1';
-        
+
     }, 520);
   };
 
@@ -1932,17 +2005,14 @@
      * -----------------------------------------------
      * @desc Resets the app values.
      * @param {nums} newIds - The new matching question ids.
-     * @param {num=} newIndex - The starting index.
+     * @param {number=} newIndex - The starting index.
      */
     this.reset = function(newIds, newIndex) {
 
-      /**
-       * @type {num}
-       * private
-       */
+      /** @type {number} */
       var newLen;
 
-      newLen = newIds.length || 0;
+      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
 
       // Set newIndex
       if (app.searchBar.vals.view === 'all') {
@@ -2103,15 +2173,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Config.url)
-     * -----------------------------------------------
-     * @desc Whether to create formatted urls for the questions.
-     * @type {UrlConfig}
-     */
-    this.url;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (Config.links)
      * -----------------------------------------------
      * @desc Whether to display search links for each question.
@@ -2133,14 +2194,6 @@
     if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
       config.prettifyFormat = {};
     }
-    if (!config.showURL || typeof config.showURL !== 'object') {
-      if (!!config.showUrl && typeof config.showUrl === 'object') {
-        config.showURL = config.showUrl;
-      }
-      else {
-        config.showURL = {};
-      }
-    }
     if (!config.showLinks || typeof config.showLinks !== 'object') {
       config.showLinks = {};
     }
@@ -2149,13 +2202,11 @@
     this.searchBar  = new SearchBarConfig(config.searchSettings);
     this.questions  = new QuestionsConfig(config.questionFormat);
     this.prettifier = new PrettyConfig(config.prettifyFormat);
-    this.url        = new UrlConfig(config.showURL);
     this.links      = new LinksConfig(config.showLinks);
 
     Object.freeze(this.searchBar);
     Object.freeze(this.questions);
     Object.freeze(this.prettifier);
-    Object.freeze(this.url);
     Object.freeze(this.links);
 
   };
@@ -2764,76 +2815,6 @@
 
 
 /* -----------------------------------------------------------------------------
- * | The URL Config Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                               classes/config/url-config.js */
-  /**
-   * -----------------------------------------------------
-   * Public Class (UrlConfig)
-   * -----------------------------------------------------
-   * @desc The configuration settings for creating urls for the questions.
-   * @param {Object} config - The user's config settings for url searches.
-   * @constructor
-   */
-  var UrlConfig = function(config) {
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (UrlConfig.id)
-     * -----------------------------------------------
-     * @desc Whether to display an id search option in the url.
-     * @type {boolean}
-     * @private
-     */
-    var id;
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (UrlConfig.category)
-     * -----------------------------------------------
-     * @desc Whether to display a category search option in the url.
-     * @type {boolean}
-     * @private
-     */
-    var category;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (UrlConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        category: category
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Set the properties
-    id       = false;
-    category = false;
-
-    if (config.hasOwnProperty('id') && config.id === true) {
-      id = true;
-    }
-    if (config.hasOwnProperty('category') && config.category === true) {
-      category = true;
-    }
-  };
-
-  // Ensure constructor is set to this class.
-  UrlConfig.prototype.constructor = UrlConfig;
-
-
-/* -----------------------------------------------------------------------------
  * | The Links Config Class                                                    |
  * v ------------------------------------------------------------------------- v
                                              classes/config/links-config.js */
@@ -3395,7 +3376,6 @@
      *   mainCat: string,
      *   subCat : string
      * }}
-     * @dict
      */
     this.vals;
 
@@ -3412,7 +3392,6 @@
      *   mainCat: ?elem,
      *   subCat : ?elem
      * }}
-     * @dict
      */
     this.elems;
 
@@ -3499,15 +3478,20 @@
         mainCat = categories.get(mainId);
         this.names.mainCat[ mainId ] = mainCat.get('name');
 
+        // Add the sub category options
+        this.opts.subCat[ mainId ] = [];
+
         // Add the sub categories names and ids
         subs = mainCat.get('subs');
         if (subs && subs.length) {
           this.ids.subCat[ mainId ] = subs.slice(0);
           this.ids.subCat[ mainId ].unshift('all');
-          this.opts.subCat[ mainId ] = [];
           subs.forEach(function(/** string */ subId) {
             this.names.subCat[ subId ] = categories.get(subId, 'name');
           }, this);
+        }
+        else {
+          this.ids.subCat[ mainId ] = [ 'all' ];
         }
       }, this);
     }
@@ -3572,12 +3556,47 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-    this.vals.view    = defaults.get('view');
-    this.vals.order   = defaults.get('order');
-    this.vals.stage   = defaults.get('stage');
-    this.vals.source  = defaults.get('source');
-    this.vals.mainCat = defaults.get('mainCat');
-    this.vals.subCat  = defaults.get('subCat');
+    /** @type {string} */
+    var view;
+    /** @type {string} */
+    var order;
+    /** @type {string} */
+    var stage;
+    /** @type {string} */
+    var source;
+    /** @type {string} */
+    var mainCat;
+    /** @type {string} */
+    var subCat;
+
+    view    = defaults.get('view');
+    order   = defaults.get('order');
+    stage   = defaults.get('stage');
+    source  = defaults.get('source');
+    mainCat = defaults.get('mainCat');
+    subCat  = defaults.get('subCat');
+
+    this.vals.view    = view;
+    this.vals.order   = order;
+    this.vals.stage   = stage;
+    this.vals.source  = source;
+    this.vals.mainCat = mainCat;
+    this.vals.subCat  = subCat;
+
+    this.elems.view.value = view;
+    this.elems.order.value = order;
+    if (this.elems.stage) {
+      this.elems.stage.value = stage;
+    }
+    if (this.elems.source) {
+      this.elems.source.value = source;
+    }
+    if (this.elems.mainCat) {
+      this.elems.mainCat.value = mainCat;
+    }
+    if (this.elems.subCat) {
+      this.elems.subCat.value = subCat;
+    }
   };
 
   /**
@@ -3595,56 +3614,23 @@
     // Set view search element
     this.elems.view.id = 'aIV-view';
     this.elems.view.className = 'showView';
-    this.elems.view.value = this.vals.view;
     this.elems.view.onchange = function(event) {
-      /** @type {string} */
-      var oldVal;
-
-      if (app.searchBar.vals.view != event.target.value) {
-
-        oldVal = app.searchBar.vals.view;
-        app.searchBar.vals.view = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          oldVal: oldVal
-        });
-
-      }
+      Events.searchView(event.target.value);
     };
 
     // Set order search element
     this.elems.order.id = 'aIV-order';
     this.elems.order.className = 'showOrder';
-    this.elems.order.value = this.vals.order;
     this.elems.order.onchange = function(event) {
-
-      if (app.searchBar.vals.order != event.target.value) {
-
-        app.searchBar.vals.order = event.target.value;
-        app.updateDisplay({
-          noVals: true,
-          reset : true,
-          flip  : true,
-          index : true
-        });
-
-      }
+      Events.searchOrder(event.target.value);
     };
 
     // Set stage search element
     if (this.elems.stage) {
       this.elems.stage.id = 'aIV-stage';
       this.elems.stage.className = 'showStage';
-      this.elems.stage.value = this.vals.stage;
       this.elems.stage.onchange = function(event) {
-
-        if (app.searchBar.vals.stage != event.target.value) {
-
-          app.searchBar.vals.stage = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchStage(event.target.value);
       };
     }
 
@@ -3652,15 +3638,8 @@
     if (this.elems.source) {
       this.elems.source.id = 'aIV-source';
       this.elems.source.className = 'showSource';
-      this.elems.source.value = this.vals.source;
       this.elems.source.onchange = function(event) {
-
-        if (app.searchBar.vals.source != event.target.value) {
-
-          app.searchBar.vals.source = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchSource(event.target.value);
       };
     }
 
@@ -3668,16 +3647,8 @@
     if (this.elems.mainCat) {
       this.elems.mainCat.id = 'aIV-mainCat';
       this.elems.mainCat.className = 'showMainCat';
-      this.elems.mainCat.value = this.vals.mainCat;
       this.elems.mainCat.onchange = function(event) {
-
-        if (app.searchBar.vals.mainCat != event.target.value) {
-
-          app.searchBar.vals.mainCat = event.target.value;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-        }
+        Events.searchMainCat(event.target.value);
       };
     }
 
@@ -3685,15 +3656,8 @@
     if (this.elems.subCat) {
       this.elems.subCat.id = 'aIV-subCat';
       this.elems.subCat.className = 'showSubCat';
-      this.elems.subCat.value = this.vals.subCat;
       this.elems.subCat.onchange = function(event) {
-
-        if (app.searchBar.vals.subCat != event.target.value) {
-
-          app.searchBar.vals.subCat = event.target.value;
-          app.updateDisplay();
-
-        }
+        Events.searchSubCat(event.target.value);
       };
     }
 
@@ -3704,7 +3668,7 @@
    * Public Method (SearchBar.prototype.setOptElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's option elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setOptElems = function() {
 
@@ -3885,17 +3849,21 @@
     // Update the select value
     val = val || 'all';
     this.vals.subCat = val;
-    this.elems.subCat.value = val;
 
-    // Clear subCat's children
-    while (this.elems.subCat.firstChild) {
-      this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+    if (this.elems.subCat) {
+
+      this.elems.subCat.value = val;
+
+      // Clear subCat's children
+      while (this.elems.subCat.firstChild) {
+        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      }
+
+      // Append the new children
+      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+        this.elems.subCat.appendChild(elem);
+      }, this);
     }
-
-    // Append the new children
-    this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
-      this.elems.subCat.appendChild(elem);
-    }, this);
   };
 
 
@@ -4146,25 +4114,13 @@
    */
   Questions.prototype.reverseElems = function() {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var direction;
-    /**
-     * @type {Question}
-     * @private
-     */
+    /** @type {Question} */
     var question;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     direction = app.searchBar.vals.order;
@@ -4199,10 +4155,7 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     if (index === -1) {
@@ -5073,12 +5026,8 @@
      */
     function makeIdLink(id, url) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {elem} */
       var a;
-
-      urlConfig = app.config.url.get('id');
 
       if (!url) {
         url = Number(id);
@@ -5087,17 +5036,12 @@
       a = document.createElement('a');
       a.href = 'id/' + url;
       a.innerHTML = id;
-      a.onclick = function() {
-
-        app.searchBar.elems.view.value = 'one';
-        app.moveDisplay(id);
-
-        if (urlConfig) {
-          // ADD URL LOGIC HERE
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkId(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -5178,18 +5122,12 @@
       a.href = 'source/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.source != id) {
-
-          app.searchBar.vals.source = id;
-          app.searchBar.elems.source.value = id;
-          app.updateDisplay();
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkSource(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -5414,37 +5352,23 @@
      */
     function makeMainCatLink(id, name) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
       var a;
 
-      urlConfig = app.config.url.get('category');
       url = app.categories.get(id, 'url');
 
       a = document.createElement('a');
       a.href = 'category/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.mainCat != id) {
-
-          app.searchBar.vals.mainCat = id;
-          app.searchBar.elems.mainCat.value = id;
-          app.searchBar.updateSubCatOpts();
-          app.updateDisplay();
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id) {
+        return function() {
+          Events.linkMainCat(id);
+          return false;
+        };
+      })(id);
 
       return a;
     }
@@ -5463,8 +5387,6 @@
      */
     function makeSubCatLink(id, name) {
 
-      /** @type {boolean} */
-      var urlConfig;
       /** @type {string} */
       var url;
       /** @type {elem} */
@@ -5473,8 +5395,6 @@
       var parentId;
       /** @type {string} */
       var parentUrl;
-
-      urlConfig = app.config.url.get('category');
 
       // Set the sub category's parent id and url
       app.categories.ids.some(function(/** string */ catId) {
@@ -5500,34 +5420,12 @@
       a.href = 'category/' + parentUrl + '/' + url;
       a.className = 'dark';
       a.innerHTML = name;
-      a.onclick = function() {
-
-        if (app.searchBar.vals.subCat != id) {
-
-          // Check the main category and update the values and options
-          if (app.searchBar.vals.mainCat !== 'all' ||
-              app.searchBar.vals.mainCat !== parentId) {
-            app.searchBar.vals.mainCat = 'all';
-            app.searchBar.elems.mainCat.value = 'all';
-            app.searchBar.updateSubCatOpts(id);
-            app.searchBar.elems.subCat.value = id;
-          }
-          else {
-            app.searchBar.vals.subCat = id;
-            app.searchBar.elems.subCat.value = id;
-          }
-
-          if (urlConfig) {
-            // ADD URL LOGIC HERE
-          }
-
-          // Finish the display update
-          app.updateDisplay();
-
-        }
-
-        return false;
-      };
+      a.onclick = (function(id, parentId) {
+        return function() {
+          Events.linkSubCat(id, parentId);
+          return false;
+        };
+      })(id, parentId);
 
       return a;
     }
@@ -5826,53 +5724,25 @@
       extHov.style.opacity = '0';
     };
 
-    extOpen.onclick = function() {
+    extOpen.onclick = (function(overflow, code, ext, extOpen,
+                                extClose, extHovO, extHovC) {
+      /** @type {elemMap} */
+      var elems;
 
-      /** @type {number} */
-      var newWidth;
-      /** @type {number} */
-      var newRight;
+      elems = {
+        code    : code,
+        ext     : ext,
+        extOpen : extOpen,
+        extClose: extClose,
+        extHovO : extHovO,
+        extHovC : extHovC
+      };
+      Object.freeze(elems);
 
-      newWidth = code.clientWidth;
-
-      if (extOpen.innerHTML === 'close') {
-
-        extClose.style.opacity = '0.0';
-
-        ext.style.right = '-4px';
-
-        newWidth -= overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extOpen.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'open';
-            extHovC.style.display = 'none';
-            extHovO.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-      else if (extOpen.innerHTML === 'open') {
-
-        extOpen.style.opacity = '0.0';
-
-        newRight = overflow + 4;
-        ext.style.right = '-' + newRight + 'px';
-
-        newWidth += overflow;
-        code.style.width = newWidth + 'px';
-
-        setTimeout(function() {
-          extClose.style.opacity = '0.8';
-          setTimeout(function() {
-            extOpen.innerHTML = 'close';
-            extHovO.style.display = 'none';
-            extHovC.style.display = 'block';
-          }, 600);
-        }, 400);
-      }
-    };
+      return function() {
+        Events.extCodeView(overflow, elems);
+      };
+    })(overflow, code, ext, extOpen, extClose, extHovO, extHovC);
 
     ext.appendChild(extClose);
     ext.appendChild(extOpen);
@@ -5889,7 +5759,7 @@
 
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Class                                                      |
+ * | The Prettifier Module                                                     |
  * v ------------------------------------------------------------------------- v
                                                                 prettify.js */
   /**
@@ -5920,6 +5790,7 @@
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
                                                            prettify-vars.js */
+
     /**
      * ---------------------------------------------
      * Private Variable (config)
@@ -6752,6 +6623,7 @@
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
                                                    highlight-syntax-vars.js */
+
       /**
        * ---------------------------------------------
        * Private Variable (newLine)
@@ -7633,6 +7505,323 @@
 
     return prettify;
   })();
+
+
+/* -----------------------------------------------------------------------------
+ * | The Events Class                                                          |
+ * v ------------------------------------------------------------------------- v
+                                                          classes/events.js */
+  /**
+   * ----------------------------------------------- 
+   * Public Class (Events)
+   * -----------------------------------------------
+   * @desc The app's event handlers.
+   * @type {Object<string, function>}
+   * @struct
+   */
+  var Events = {};
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.popState)
+   * -----------------------------------------------
+   * @desc The onPopState event handler for the window.
+   * @param {Object} newState - The new state to apply to the app.
+   */
+  Events.popState = function(newState) {
+
+    /** @type {string} */
+    var oldView;
+    /** @type {boolean} */
+    var flipElems;
+
+    oldView = app.searchBar.vals.view;
+    flipElems = (app.searchBar.vals.order !== newState.order);
+
+    app.searchBar.vals.view    = newState.view;
+    app.searchBar.vals.order   = newState.order;
+    app.searchBar.vals.stage   = newState.stage;
+    app.searchBar.vals.source  = newState.source;
+    app.searchBar.vals.mainCat = newState.mainCat;
+    app.searchBar.vals.subCat  = newState.subCat;
+
+    app.searchBar.elems.view.value = newState.view;
+    app.searchBar.elems.order.value = newState.order;
+    if (app.searchBar.elems.stage) {
+      app.searchBar.elems.stage.value = newState.stage;
+    }
+    if (app.searchBar.elems.source) {
+      app.searchBar.elems.source.value = newState.source;
+    }
+    if (app.searchBar.elems.mainCat) {
+      app.searchBar.elems.mainCat.value = newState.mainCat;
+    }
+    if (app.searchBar.elems.subCat) {
+      app.searchBar.elems.subCat.value = newState.subCat;
+    }
+
+    app.updateDisplay({
+      flipElems  : flipElems,
+      oldView    : oldView,
+      noPushState: true
+    });
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchView)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the view search option.
+   * @param {string} newVal - The new value for the view.
+   */
+  Events.searchView = function(newVal) {
+
+    /** @type {string} */
+    var oldVal;
+
+    if (app.searchBar.vals.view != newVal) {
+
+      oldVal = app.searchBar.vals.view;
+      app.searchBar.vals.view = newVal;
+      app.updateDisplay({
+        noMatchReset: true,
+        oldView     : oldVal
+      });
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchOrder)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the order search option.
+   * @param {string} newVal - The new value for the order.
+   */
+  Events.searchOrder = function(newVal) {
+
+    if (app.searchBar.vals.order != newVal) {
+
+      app.searchBar.vals.order = newVal;
+      app.updateDisplay({
+        noMatchReset: true,
+        flipElems   : true,
+        keepIndex   : true
+      });
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchStage)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the stage search option.
+   * @param {string} newVal - The new value for the stage.
+   */
+  Events.searchStage = function(newVal) {
+
+    if (app.searchBar.vals.stage != newVal) {
+
+      app.searchBar.vals.stage = newVal;
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchSource)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the source search option.
+   * @param {string} newVal - The new value for the source.
+   */
+  Events.searchSource = function(newVal) {
+
+    if (app.searchBar.vals.source != newVal) {
+
+      app.searchBar.vals.source = newVal;
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchMainCat)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the main category search option.
+   * @param {string} newVal - The new value for the main category.
+   */
+  Events.searchMainCat = function(newVal) {
+
+    if (app.searchBar.vals.mainCat != newVal) {
+
+      app.searchBar.vals.mainCat = newVal;
+      app.searchBar.updateSubCatOpts();
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.searchSubCat)
+   * -----------------------------------------------
+   * @desc The onChange event handler for the sub category search option.
+   * @param {string} newVal - The new value for the sub category.
+   */
+  Events.searchSubCat = function(newVal) {
+
+    if (app.searchBar.vals.subCat != newVal) {
+
+      app.searchBar.vals.subCat = newVal;
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkId)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question id.
+   * @param {number} id - The question's id to link to.
+   */
+  Events.linkId = function(id) {
+
+    app.searchBar.elems.view.value = 'one';
+    app.moveDisplay(id);
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSource)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question source.
+   * @param {string} id - The question's source to link to.
+   */
+  Events.linkSource = function(id) {
+
+    if (app.searchBar.vals.source != id) {
+
+      app.searchBar.vals.source = id;
+      app.searchBar.elems.source.value = id;
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkMainCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question main category.
+   * @param {string} id - The question's category to link to.
+   */
+  Events.linkMainCat = function(id) {
+
+    if (app.searchBar.vals.mainCat != id) {
+
+      app.searchBar.vals.mainCat = id;
+      app.searchBar.elems.mainCat.value = id;
+      app.searchBar.updateSubCatOpts();
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.linkSubCat)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question sub category.
+   * @param {string} id - The question's category to link to.
+   * @param {string} parentId - The sub category's parent category.
+   */
+  Events.linkSubCat = function(id, parentId) {
+
+    if (app.searchBar.vals.subCat != id) {
+
+      // Check the main category and update the values and options
+      if (app.searchBar.vals.mainCat !== 'all' &&
+          app.searchBar.vals.mainCat !== parentId) {
+        app.searchBar.vals.mainCat = 'all';
+        app.searchBar.elems.mainCat.value = 'all';
+        app.searchBar.updateSubCatOpts(id);
+        app.searchBar.elems.subCat.value = id;
+      }
+      else {
+        app.searchBar.vals.subCat = id;
+        app.searchBar.elems.subCat.value = id;
+      }
+
+      // Finish the display update
+      app.updateDisplay();
+
+    }
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.extCodeView)
+   * -----------------------------------------------
+   * @desc The onClick event handler for a question code extender.
+   * @param {number} overflow - The question's code view overflow pixel count.
+   * @param {elemMap} elems - The code view elements.
+   */
+  Events.extCodeView = function(overflow, elems) {
+
+    /** @type {number} */
+    var newWidth;
+    /** @type {number} */
+    var newRight;
+
+    newWidth = elems.code.clientWidth;
+
+    if (elems.extOpen.innerHTML === 'close') {
+
+      elems.extClose.style.opacity = '0';
+
+      elems.ext.style.right = '-4px';
+
+      newWidth = newWidth - overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      setTimeout(function() {
+        elems.extOpen.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'open';
+          elems.extHovC.style.display = 'none';
+          elems.extHovO.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+    else if (elems.extOpen.innerHTML === 'open') {
+
+      elems.extOpen.style.opacity = '0';
+
+      newRight = overflow + 4;
+      elems.ext.style.right = '-' + newRight + 'px';
+
+      newWidth = newWidth + overflow;
+      elems.code.style.width = newWidth + 'px';
+
+      setTimeout(function() {
+        elems.extClose.style.opacity = '0.8';
+        setTimeout(function() {
+          elems.extOpen.innerHTML = 'close';
+          elems.extHovO.style.display = 'none';
+          elems.extHovC.style.display = 'block';
+        }, 600);
+      }, 400);
+    }
+
+  };
+
+  Object.freeze(Events);
 
 
 /* -----------------------------------------------------------------------------

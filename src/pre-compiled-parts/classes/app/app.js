@@ -17,10 +17,12 @@
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {stringsMap} */
+    /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
     var len;
+    /** @type {stringMap} */
+    var vals;
 
     /**
      * ----------------------------------------------- 
@@ -90,10 +92,20 @@
      */
     this.questions;
 
-    // Setup the properties
-    this.flags   = new AppFlags(!!questions);
-    this.elems   = new AppElems();
+    /**
+     * ---------------------------------------------------
+     * Public Property (App.isHistory)
+     * ---------------------------------------------------
+     * @type {boolean}
+     */
+    this.isHistory;
+
+    // Save the count of questions for use before questions is setup
     len = (!!questions) ? questions.length : 0;
+
+    // Setup the properties    
+    this.flags   = new AppFlags(!!len);
+    this.elems   = new AppElems();
     this.vals    = new AppVals(len);
     this.config  = new Config(config);
     this.sources = new Sources(sources);
@@ -141,11 +153,35 @@
     );
     names = this.searchBar.names;
     ids = this.searchBar.ids.subCat;
-    len = this.questions.len;
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
+
+    // Setup the value of history
+    this.isHistory = true;
+    vals = {
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
+    vals = JSON.stringify(vals);
+    try {
+      window.history.replaceState(vals);
+    }
+    catch (e) {
+      this.isHistory = false;
+    }
+
+    // Setup the onpopstate event
+    if (this.isHistory) {
+      window.onpopstate = function(event) {
+        Events.popState( JSON.parse(event.state) );
+      };
+    }
 
   };
 
@@ -171,7 +207,7 @@
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
-      renderTime = this.questions.len * 30;
+      renderTime = this.questions.len * 32;
       setTimeout(function() {
         /** @type {boolean} */
         var flip;
@@ -179,7 +215,11 @@
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({ flip: flip, oldView: 'one' });
+        app.updateDisplay({
+          flipElems  : flip,
+          oldView    : 'one',
+          noPushState: true
+        });
 
       }, renderTime);
     }
@@ -194,56 +234,78 @@
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
    * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noVals - If set to true it indicates
+   * @param {boolean=} settings.noMatch - If set to true it indicates
    *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flip - If set to true it indicates that
+   * @param {boolean=} settings.flipElems - If set to true it indicates that
    *   the order of each question's element should be flipped.
    * @param {string=} settings.oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.reset - If set to true it indicates
+   * @param {boolean=} settings.noMatchReset - If set to true it indicates
    *   that the ids and index should be reset.
-   * @param {boolean=} settings.index - If set to true it indicates
+   * @param {boolean=} settings.keepIndex - If set to true it indicates
    *   that the index should NOT be changed.
+   * @param {boolean=} settings.noPushState - If set to true it indicates
+   *   that the pushState call should NOT be made.
    */
   App.prototype.updateDisplay = function(settings) {
 
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var oldIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var oldIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var resetIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var resetIndex;
-    /**
-     * @type {?nums}
-     * @private
-     */
+    /** @type {?nums} */
     var newIds;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {stringMap} */
+    var vals;
+    /** @type {boolean} */
+    var noMatch;
+    /** @type {boolean} */
+    var noMatchReset;
+    /** @type {boolean} */
+    var flipElems;
+    /** @type {boolean} */
+    var keepIndex;
+    /** @type {boolean} */
+    var noPushState;
+    /** @type {string} */
     var view;
+    /** @type {string} */
+    var oldView;
 
-    settings = settings || {};
+    settings = ( checkType(settings, '!object') ) ? settings : {};
+
+    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
+      false : ( checkType(settings.noMatch, '!boolean') ) ?
+        settings.noMatch : false
+    );
+    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
+      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
+        settings.noMatchReset : false
+    );
+    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
+      false : ( checkType(settings.flipElems, '!boolean') ) ?
+        settings.flipElems : false
+    );
+    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
+      false : ( checkType(settings.keepIndex, '!boolean') ) ?
+        settings.keepIndex : false
+    );
+    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
+      false : ( checkType(settings.noPushState, '!boolean') ) ?
+        settings.noPushState : false
+    );
+
+    view = app.searchBar.vals.view;
+    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
+      view : ( checkType(settings.oldView, '!string') ) ?
+        settings.oldView : view
+    );
 
     // Save the old matching question ids and index
     oldIds = this.vals.get('len');
@@ -251,13 +313,13 @@
     oldIndex = this.vals.get('index');
 
     // Update the current matching question ids and index
-    if (!!settings.noVals) {
-      if (!!settings.reset) {
+    if (noMatch || noMatchReset) {
+      if (noMatchReset) {
         resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (!!settings.flip && resetIds) {
+        if (flipElems && resetIds) {
           resetIds.reverse();
         }
-        resetIndex = (!!settings.index) ? oldIndex : 0;
+        resetIndex = (keepIndex) ? oldIndex : 0;
         this.vals.reset(resetIds, resetIndex);
       }
     }
@@ -277,7 +339,6 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      view = app.searchBar.vals.view;
       app.elems.nav.style.display = ( (view === 'all') ?
         'none' : (view === 'ten' && app.vals.get('len') > 10) ?
           'block' : (view === 'one' && app.vals.get('len') > 1) ?
@@ -285,22 +346,33 @@
       );
 
       // Check if the questions order should be flipped
-      if (!!settings.flip) {
+      if (flipElems) {
         app.questions.reverseElems();
       }
 
       // Hide the old questions
-      if (!!settings.oldView) {
-        view = settings.oldView;
-      }
-      app.questions.hideElems(oldIds, oldIndex, view);
+      app.questions.hideElems(oldIds, oldIndex, oldView);
 
       // Show the new questions
       app.questions.showElems(newIds, newIndex);
 
+      // Update the state
+      if (app.isHistory && !noPushState) {
+        vals = {
+          view   : app.searchBar.vals.view,
+          order  : app.searchBar.vals.order,
+          stage  : app.searchBar.vals.stage,
+          source : app.searchBar.vals.source,
+          mainCat: app.searchBar.vals.mainCat,
+          subCat : app.searchBar.vals.subCat
+        };
+        vals = JSON.stringify(vals);
+        window.history.pushState(vals);
+      }
+
       // Show the question's main element
       app.elems.main.style.opacity = '1';
-        
+
     }, 520);
   };
 

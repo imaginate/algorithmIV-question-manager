@@ -241,25 +241,13 @@
    */
   Questions.prototype.reverseElems = function() {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var direction;
-    /**
-     * @type {Question}
-     * @private
-     */
+    /** @type {Question} */
     var question;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     direction = app.searchBar.vals.order;
@@ -294,10 +282,7 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     if (index === -1) {
