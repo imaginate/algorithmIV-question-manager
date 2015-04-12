@@ -2,12 +2,12 @@
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - App Module (v1.1.0)
+ * Algorithm IV Question Manager - App Module (v1.1.1)
  * -----------------------------------------------------------------------------
  * @file The module for implementing the aIV question management app with
  *   debugging code included and turned on.
  * @module aIVApp
- * @version 1.1.0
+ * @version 1.1.1
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
  * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})

@@ -8,11 +8,11 @@
 
 ##Directions
 - For version 1.0.2: [See Algorithm IV's online documentation](http://www.algorithmIV.com/docs/start)
-- For version 1.1.0: [See this repo's example](https://github.com/imaginate/algorithmIV-question-manager/tree/master/example)
+- For version 1.1.1: [See this repo's example](https://github.com/imaginate/algorithmIV-question-manager/tree/master/example)
 
 ##Live Example
 - For version 1.0.2: [Visit Algorithm IV's website](http://www.algorithmiv.com/example)
-- For version 1.1.0: [Download this repo's example](https://github.com/imaginate/algorithmIV-question-manager/tree/master/example)
+- For version 1.1.1: [Download this repo's example](https://github.com/imaginate/algorithmIV-question-manager/tree/master/example)
 
 
 ##Contributing
