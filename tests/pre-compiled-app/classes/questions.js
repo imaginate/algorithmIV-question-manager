@@ -320,25 +320,13 @@
 
     this.debug.start('reverseElems');
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var direction;
-    /**
-     * @type {Question}
-     * @private
-     */
+    /** @type {Question} */
     var question;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     direction = app.searchBar.vals.order;
@@ -379,10 +367,7 @@
     debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
     this.debug.args(debugArgs);
 
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     if (index === -1) {
