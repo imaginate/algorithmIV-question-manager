@@ -189,7 +189,6 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/conf
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/config/defaults-search-bar-config.js>src/pre-compiled-parts/classes/config/defaults-search-bar-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/config/questions-config.js>src/pre-compiled-parts/classes/config/questions-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/config/pretty-config.js>src/pre-compiled-parts/classes/config/pretty-config.js
-sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/config/url-config.js>src/pre-compiled-parts/classes/config/url-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/config/links-config.js>src/pre-compiled-parts/classes/config/links-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/question/question.js>src/pre-compiled-parts/classes/question/question.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/question/question-format.js>src/pre-compiled-parts/classes/question/question-format.js
@@ -200,6 +199,7 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/cate
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/category.js>src/pre-compiled-parts/classes/category.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/search-bar.js>src/pre-compiled-parts/classes/search-bar.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/questions.js>src/pre-compiled-parts/classes/questions.js
+sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/classes/events.js>src/pre-compiled-parts/classes/events.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/polyfill-methods.js>src/pre-compiled-parts/polyfill-methods.js
 cd src/pre-compiled-parts
 find . -type f -exec sed -i "/^$/N;/^\n$/D" {} \;
@@ -252,7 +252,6 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\conf
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\config\defaults-search-bar-config.js>src\pre-compiled-parts\classes\config\defaults-search-bar-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\config\questions-config.js>src\pre-compiled-parts\classes\config\questions-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\config\pretty-config.js>src\pre-compiled-parts\classes\config\pretty-config.js
-sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\config\url-config.js>src\pre-compiled-parts\classes\config\url-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\config\links-config.js>src\pre-compiled-parts\classes\config\links-config.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\question\question.js>src\pre-compiled-parts\classes\question\question.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\question\question-format.js>src\pre-compiled-parts\classes\question\question-format.js
@@ -263,6 +262,7 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\cate
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\category.js>src\pre-compiled-parts\classes\category.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\search-bar.js>src\pre-compiled-parts\classes\search-bar.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\questions.js>src\pre-compiled-parts\classes\questions.js
+sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\classes\events.js>src\pre-compiled-parts\classes\events.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\polyfill-methods.js>src\pre-compiled-parts\polyfill-methods.js
 cd src\pre-compiled-parts
 for /f %f in ('dir /b') do sed -i "/^$/N;/^\n$/D" %f
@@ -326,7 +326,6 @@ sed \
   -e "/defaults-search-bar-config.js/ r classes/config/defaults-search-bar-config.js" \
   -e "/questions-config.js/ r classes/config/questions-config.js" \
   -e "/pretty-config.js/ r classes/config/pretty-config.js" \
-  -e "/url-config.js/ r classes/config/url-config.js" \
   -e "/links-config.js/ r classes/config/links-config.js" \
   -e "/sources.js/ r classes/sources.js" \
   -e "/source.js/ r classes/source.js" \
@@ -338,6 +337,7 @@ sed \
   -e "/question-format.js/ r classes/question/question-format.js" \
   -e "/question-elem.js/ r classes/question/question-elem.js" \
   -e "/prettify.js/ r prettify.js" \
+  -e "/events.js/ r classes/events.js" \
   -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 cp -u pre-compiled-parts/algorithmIV-app-temp.js algorithmIV-app.js
@@ -367,7 +367,6 @@ sed ^
   -e "/defaults-search-bar-config.js/ r classes\config\defaults-search-bar-config.js" ^
   -e "/questions-config.js/ r classes\config\questions-config.js" ^
   -e "/pretty-config.js/ r classes\config\pretty-config.js" ^
-  -e "/url-config.js/ r classes\config\url-config.js" ^
   -e "/links-config.js/ r classes\config\links-config.js" ^
   -e "/sources.js/ r classes\sources.js" ^
   -e "/source.js/ r classes\source.js" ^
@@ -379,6 +378,7 @@ sed ^
   -e "/question-format.js/ r classes\question\question-format.js" ^
   -e "/question-elem.js/ r classes\question\question-elem.js" ^
   -e "/prettify.js/ r prettify.js" ^
+  -e "/events.js/ r classes\events.js" ^
   -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 copy /y pre-compiled-parts\algorithmIV-app-temp.js algorithmIV-app.js
