@@ -21,6 +21,58 @@
 
   /**
    * ----------------------------------------------- 
+   * Public Method (Events.popState)
+   * -----------------------------------------------
+   * @desc The onPopState event handler for the window.
+   * @param {Object} newState - The new state to apply to the app.
+   */
+  Events.popState = function(newState) {
+
+    this.debug.group('popState', 'coll');
+    this.debug.start('popState', newState);
+    this.debug.args('popState', newState, 'object');
+
+    /** @type {string} */
+    var oldView;
+    /** @type {boolean} */
+    var flipElems;
+
+    oldView = app.searchBar.vals.view;
+    flipElems = (app.searchBar.vals.order !== newState.order);
+
+    app.searchBar.vals.view    = newState.view;
+    app.searchBar.vals.order   = newState.order;
+    app.searchBar.vals.stage   = newState.stage;
+    app.searchBar.vals.source  = newState.source;
+    app.searchBar.vals.mainCat = newState.mainCat;
+    app.searchBar.vals.subCat  = newState.subCat;
+
+    app.searchBar.elems.view.value = newState.view;
+    app.searchBar.elems.order.value = newState.order;
+    if (app.searchBar.elems.stage) {
+      app.searchBar.elems.stage.value = newState.stage;
+    }
+    if (app.searchBar.elems.source) {
+      app.searchBar.elems.source.value = newState.source;
+    }
+    if (app.searchBar.elems.mainCat) {
+      app.searchBar.elems.mainCat.value = newState.mainCat;
+    }
+    if (app.searchBar.elems.subCat) {
+      app.searchBar.elems.subCat.value = newState.subCat;
+    }
+
+    app.updateDisplay({
+      flipElems  : flipElems,
+      oldView    : oldView,
+      noPushState: true
+    });
+
+    this.debug.group('popState', 'end');
+  };
+
+  /**
+   * ----------------------------------------------- 
    * Public Method (Events.searchView)
    * -----------------------------------------------
    * @desc The onChange event handler for the view search option.
@@ -41,9 +93,8 @@
       oldVal = app.searchBar.vals.view;
       app.searchBar.vals.view = newVal;
       app.updateDisplay({
-        noVals : true,
-        reset  : true,
-        oldView: oldVal
+        noMatchReset: true,
+        oldView     : oldVal
       });
 
       this.debug.group('searchView.onchange', 'end');
@@ -68,10 +119,9 @@
 
       app.searchBar.vals.order = newVal;
       app.updateDisplay({
-        noVals: true,
-        reset : true,
-        flip  : true,
-        index : true
+        noMatchReset: true,
+        flipElems   : true,
+        keepIndex   : true
       });
 
       this.debug.group('searchOrder.onchange', 'end');
@@ -177,7 +227,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question id.
    * @param {number} id - The question's id to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkId = function(id) {
 
@@ -189,8 +238,6 @@
     app.moveDisplay(id);
 
     this.debug.group('linkId.onclick', 'end');
-
-    return false;
   };
 
   /**
@@ -199,7 +246,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question source.
    * @param {string} id - The question's source to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkSource = function(id) {
 
@@ -216,8 +262,6 @@
 
       this.debug.group('linkSource.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -226,7 +270,6 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question main category.
    * @param {string} id - The question's category to link to.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkMainCat = function(id) {
 
@@ -244,8 +287,6 @@
 
       this.debug.group('linkMainCat.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -255,7 +296,6 @@
    * @desc The onClick event handler for a question sub category.
    * @param {string} id - The question's category to link to.
    * @param {string} parentId - The sub category's parent category.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.linkSubCat = function(id, parentId) {
 
@@ -284,8 +324,6 @@
 
       this.debug.group('linkSubCat.onclick', 'end');
     }
-
-    return false;
   };
 
   /**
@@ -295,7 +333,6 @@
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
    * @param {elemMap} elems - The code view elements.
-   * @return {boolean} Returns false to avoid the default action.
    */
   Events.extCodeView = function(overflow, elems) {
 
@@ -357,8 +394,6 @@
     }
 
     this.debug.group('extCodeView.onclick', 'end');
-
-    return false;
   };
 
   Object.freeze(Events);
