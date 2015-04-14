@@ -181,10 +181,15 @@
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
-    var debugArgs;
+
+    debugMsg = 'defaults= $$, names= $$, ids= $$, quesLen= $$';
+    debugArgs = [ 'update', 'coll', debugMsg, defaults, names ];
+    debugArgs.push(ids, quesLen);
+    this.debug.group(debugArgs);
+
     this.debug.start('update', defaults, names, ids, quesLen);
-    debugArgs = [ 'update' ];
-    debugArgs.push(defaults, 'object', names, 'object');
+
+    debugArgs = [ 'update', defaults, 'object', names, 'object' ];
     debugArgs.push(ids, 'object', quesLen, 'number');
     this.debug.args(debugArgs);
 
@@ -241,4 +246,6 @@
         }
       }
     }
+
+    this.debug.group('update', 'end');
   };
