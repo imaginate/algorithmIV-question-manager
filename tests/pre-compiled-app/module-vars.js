@@ -1,22 +1,7 @@
-  // $s$
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the module's public methods.
-   * @type {Debug}
-   */
+  // The debugging vars
   var debug = aIV.debug('module');
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (polyfill.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's polyfilled methods.
-   * @type {{ debug: Debug }}
-   */
   var polyfill = { debug: aIV.debug('polyfill') };
-  // $e$
+  var debugArgs, debugMsg, debugCheck;
 
   /**
    * ----------------------------------------------- 
