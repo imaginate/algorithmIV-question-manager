@@ -44,7 +44,7 @@
      */
     var categories;
     /**
-     * @type {?objects}
+     * @type {!objects}
      * @private
      */
     var questions;
@@ -95,10 +95,9 @@
     );
     questions = ( ( settings.hasOwnProperty('questions') ) ?
       settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : null
+        settings.question : []
     );
 
-    // $s$
     debugCheck = checkType(resourceList, 'string|strings');
     debugMsg = 'Error: The given resources property was an ';
     debugMsg += 'incorrect data type. resources= $$';
@@ -119,16 +118,14 @@
     debugMsg += 'incorrect data type. categories= $$';
     debug.fail('init', debugCheck, debugMsg, categories);
 
-    debugMsg = 'Error: No questions were provided.';
-    debug.fail('init', (!!questions), debugMsg);
+    debugCheck = checkType(questions, '!objects');
+    debugMsg = 'Error: The given questions property was an ';
+    debugMsg += 'incorrect data type. questions= $$';
+    debug.fail('init', debugCheck, debugMsg, questions);
 
-    if (questions) {
-      debugCheck = (checkType(questions, 'objects') && !!questions.length);
-      debugMsg = 'Error: The given questions property was an ';
-      debugMsg += 'incorrect data type. questions= $$';
-      debug.fail('init', debugCheck, debugMsg, questions);
-    }
-    // $e$
+    debugCheck = (questions.length > 0);
+    debugMsg = 'Error: No questions were provided.';
+    debug.fail('init', debugCheck, debugMsg);
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
@@ -143,20 +140,14 @@
     if ( !checkType(categories, 'stringMap|objectMap') ) {
       categories = null;
     }
-    if ( checkType(questions, '!objects') ) {
-      if (!questions.length) {
-        questions = null;
-      }
-    }
-    else {
-      questions = null;
+    if ( !checkType(questions, '!objects') ) {
+      questions = [];
     }
 
     // Setup and start the app
     setup = function() {
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
-      Object.freeze(app);
       app.setupDisplay();
     };
 
@@ -197,6 +188,21 @@
     debug.start('init.getResource', prop);
     debug.args('init.getResource', prop, 'string=');
     debug.state('init.getResource', 'resources= $$', resources);
+
+    /** @type {string} */
+    var errorMsg;
+
+    prop = prop || '';
+
+    if (prop && !resources.hasOwnProperty(prop)) {
+      errorMsg = 'The resource you requested does not exist. Please verify that \'';
+      errorMsg += prop + '\' is a correct json file name in the resources folder ';
+      errorMsg += 'and that the file name was included in the setup of the app ';
+      errorMsg += '(see algorithmiv.com/docs/resources).';
+      console.error(errorMsg);
+      debugger;
+      return;
+    }
 
     return (!!prop) ? resources[ prop ] : resources;
   }
