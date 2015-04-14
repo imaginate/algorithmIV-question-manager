@@ -191,6 +191,7 @@
     newIndex = this.config.searchBar.defaults.get('startID');
     if (newIndex > 0) {
       this.searchBar.vals.view = 'one';
+      newIndex = newIds.indexOf(newIndex);
     }
     len = newIds.length;
     if (this.searchBar.vals.view === 'all' || !len) {
@@ -200,6 +201,8 @@
       newIndex = 0;
     }
     this.vals.set(newIds, newIndex);
+
+    this.debug.state('init', 'index= $$', this.vals.get('index'));
 
     // Setup the value of isHistory
     this.isHistory = true;
@@ -431,6 +434,7 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
+      this.debug.state('findMatches', 'newIds= $$', []);
       return [];
     }
 
@@ -442,6 +446,8 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
+
+      this.debug.state('findMatches', 'newIds= $$', newIds);
 
       return newIds;
     }
@@ -482,6 +488,8 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
+
+      this.debug.state('findMatches', 'newIds= $$', newIds);
 
       return newIds;
     }
@@ -573,6 +581,8 @@
     if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
+
+    this.debug.state('findMatches', 'newIds= $$', newIds);
 
     return newIds;
   };
