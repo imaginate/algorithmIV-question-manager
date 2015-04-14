@@ -382,27 +382,27 @@
     this.debug.start('addElemContent');
 
     this.elem.addContent({
-      id      : this.format.get('id'),
+      id      : this.get('id', true),
       url     : this.get('url'),
-      complete: this.format.get('complete'),
+      complete: this.get('complete', true),
       source  : {
         id  : this.get('source'),
-        name: this.format.get('source')
+        name: this.get('source', true)
       },
       mainCat : {
         ids  : this.get('mainCat'),
-        h3   : this.format.get('mainCat').h3,
-        names: this.format.get('mainCat').names
+        h3   : this.get('mainCat', true).h3,
+        names: this.get('mainCat', true).names
       },
       subCat  : {
         ids  : this.get('subCat'),
-        h3   : this.format.get('subCat').h3,
-        names: this.format.get('subCat').names
+        h3   : this.get('subCat', true).h3,
+        names: this.get('subCat', true).names
       },
       links   : this.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
-      solution: this.format.get('solution'),
+      solution: this.get('solution', true),
       output  : this.get('output')
     });
 
