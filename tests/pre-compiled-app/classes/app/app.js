@@ -369,7 +369,7 @@
    * -----------------------------------------------
    * @desc Finds the matching question ids for the current
    *   selected search values.
-   * @type {function}
+   * @return {numbers} An array of the matching ids.
    */
   App.prototype.findMatches = function() {
 
@@ -391,6 +391,8 @@
     var newIds;
     /** @type {boolean} */
     var pass;
+    /** @type {function} */
+    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;
@@ -423,11 +425,10 @@
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
 
-      // Make array of all ids
-      len = this.questions.len;
-      newIds = new Array(len);
-      while (i--) {
-        newIds[i] = i + 1;
+      newIds = this.vals.get('allIds').slice(0);
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
       }
 
       return newIds;
@@ -446,77 +447,122 @@
     }
 
     // Set the newIds to the min length array
-    
+    if (stage && stage.length === len) {
+      newIds = stage.slice(0);
+      stage = null;
+    }
+    else if (source && source.length === len) {
+      newIds = source.slice(0);
+      source = null;
+    }
+    else if (mainCat && mainCat.length === len) {
+      newIds = mainCat.slice(0);
+      mainCat = null;
+    }
+    else if (subCat && subCat.length === len) {
+      newIds = subCat.slice(0);
+      subCat = null;
+    }
 
-    // Get the current matching question ids
-    while (true) {
-      ++i;
+    // Check for all null arrays
+    if (!stage && !source && !mainCat && !subCat) {
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
+      }
+
+      return newIds;
+    }
+
+    // The helper function that checks each array for the
+    // current value being checked & removes the checked
+    // values from the array
+    checkForValue = function(/** number */ val, /** numbers */ arr) {
+
+      /** @type {boolean} */
+      var pass;
+      /** @type {number} */
+      var i;
+      /** @type {number} */
+      var compareVal;
+
+      pass = false;
+
+      i = arr.length;
+      while (i--) {
+
+        compareVal = arr[i];
+
+        if (compareVal >= val) {
+          arr.pop();
+          if (compareVal === val) {
+            pass = true;
+            break;
+          }
+        }
+        else {
+          break;
+        }
+      }
+
+      return pass;
+    };
+
+    // Remove the question ids that do not exist in all other arrays
+    i = newIds.length;
+    while (i--) {
       pass = true;
 
       if (stage) {
         if (!stage.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (stage[0] === i) {
-          stage.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], stage);
       }
 
       if (source) {
         if (!source.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (source[0] === i) {
-          source.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], source);
       }
 
       if (mainCat) {
         if (!mainCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (mainCat[0] === i) {
-          mainCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], mainCat);
       }
 
       if (subCat) {
         if (!subCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (subCat[0] === i) {
-          subCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], subCat);
       }
 
-      if (pass) {
-        newIds.push(i);
-      }
-
-      if (i === len) {
-        break;
+      if (!pass) {
+        newIds.splice(i, 1);
       }
     }
 
-    // Check if results should be reversed
     if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
-    // Update the values
-    this.vals.reset(newIds);
+    return newIds;
   };
 
   /**
