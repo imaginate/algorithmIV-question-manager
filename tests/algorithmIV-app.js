@@ -4337,16 +4337,6 @@
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
 
-    this.debug = aIV.debug('Question');
-
-    this.debug.group('init', 'coll', 'questionID= $$', id);
-
-    this.debug.start('init', question, id, config, sources, categories);
-
-    debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
-    this.debug.args(debugArgs);
-
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
     ////////////////////////////////////////////////////////////////////////////
