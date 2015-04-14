@@ -192,7 +192,14 @@
     if (newIndex > 0) {
       this.searchBar.vals.view = 'one';
     }
-    this.vals.reset(newIds, newIndex);
+    len = newIds.length;
+    if (this.searchBar.vals.view === 'all' || !len) {
+      newIndex = -1;
+    }
+    else if (newIndex < 0 || newIndex >= len) {
+      newIndex = 0;
+    }
+    this.vals.set(newIds, newIndex);
 
     // Setup the value of isHistory
     this.isHistory = true;
