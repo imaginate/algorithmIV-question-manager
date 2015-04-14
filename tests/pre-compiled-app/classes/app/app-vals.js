@@ -23,7 +23,7 @@
      * Protected Property (AppVals.allIds)
      * -----------------------------------------------
      * @desc The ids of all of the questions.
-     * @type {numbers}
+     * @type {!numbers}
      * @private
      */
     var allIds;
@@ -33,7 +33,7 @@
      * Protected Property (AppVals.ids)
      * -----------------------------------------------
      * @desc The ids of the questions that match the current search criteria.
-     * @type {numbers}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -89,7 +89,7 @@
      * -----------------------------------------------
      * @desc Gets an app value.
      * @param {string} prop - The name of the value to get.
-     * @return {(number|numbers)}
+     * @return {!(number|numbers)}
      */
     this.get = function(prop) {
 
@@ -172,6 +172,8 @@
 
     /** @type {number} */
     var len;
+
+    index = index || 0;
 
     if (!ids) {
       ids = this.get('allIds');
@@ -290,32 +292,4 @@
     debugMsg = 'Error: An incorrect view was parsed. ';
     debugMsg += 'app.searchBar.vals.view= $$';
     this.debug.fail('move', false, debugMsg, view);
-  };
-
-  /**
-   * ----------------------------------------------- 
-   * Public Method (AppVals.prototype.getStateObj)
-   * -----------------------------------------------
-   * @desc Returns a state object for the current app values.
-   * @return {Object<string, (string|number|numbers)>}
-   */
-  AppVals.prototype.getStateObj = function() {
-
-    this.debug.start('getStateObj');
-
-    /** @type {Object<string, (string|number|numbers)>} */
-    var vals;
-
-    vals = {
-      ids    : this.get('ids').slice(0),
-      index  : this.get('index'),
-      view   : app.searchBar.vals.view,
-      order  : app.searchBar.vals.order,
-      stage  : app.searchBar.vals.stage,
-      source : app.searchBar.vals.source,
-      mainCat: app.searchBar.vals.mainCat,
-      subCat : app.searchBar.vals.subCat
-    };
-
-    return vals;
   };
