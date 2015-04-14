@@ -397,16 +397,16 @@
    * Public Method (Questions.prototype.hideElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'none' for the provided questions.
-   * @param {?nums} ids - The previous active question ids.
-   * @param {num} index - The index of the ids to hide from view.
-   * @param {string=} view - The old value of app.searchBar.vals.view.
+   * @param {!numbers} ids - The previous active question ids.
+   * @param {number} index - The index of the ids to hide from view.
+   * @param {string} view - The old value of app.searchBar.vals.view.
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
-    debugArgs = [ 'hideElems' ];
-    debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
+
+    debugArgs = [ 'hideElems', ids, '!numbers', index, 'number' ];
+    debugArgs.push(view, 'string');
     this.debug.args(debugArgs);
 
     /** @type {number} */
@@ -414,8 +414,8 @@
 
     if (index === -1) {
 
-      // No questions to hide (i.e. hide the empty message)
-      if (!ids) {
+      // Hide the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'none';
         return;
       }
@@ -423,36 +423,38 @@
       // Hide all of the provided ids
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
 
       return;
     }
 
-    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('hideElems', (!!ids && !!ids.length), debugMsg, ids);
-    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    debugArgs = [ 'hideElems' ];
-    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
-    this.debug.fail(debugArgs);
+    debugMsg = 'Error: No ids were provided with a non-negative index.';
+    debugCheck = (ids.length > 0);
+    this.debug.fail('hideElems', debugCheck, debugMsg);
 
-    view = view || app.searchBar.vals.view;
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugCheck = (index > -1 && index < ids.length);
+    this.debug.fail('hideElems', debugCheck, debugMsg, ids, index);
 
     // Hide only the index of the provided ids
     if (view === 'one') {
-      this.setStyle(ids[index], 'display', 'none');
+      this.setElemStyle(ids[ index ], 'display', 'none');
       return;
     }
 
     // Hide the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be hidden
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
+
       return;
     }
   };
@@ -467,7 +469,6 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    var debugArgs, debugMsg, debugCheck;
     this.debug.start('showElems', ids, index);
     this.debug.args('showElems', ids, '!numbers', index, 'number');
 
@@ -475,8 +476,8 @@
     var view;
     /** @type {number} */
     var i;
-    /** @type {elem} */
-    var questionElem;
+    /** @type {string} */
+    var newClassName;
 
     if (index === -1) {
 
@@ -489,11 +490,9 @@
       // Show all of the provided ids
       i = ids.length;
       while (i--) {
-        questionElem = this.get( ids[i] ).elem;
-        questionElem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
 
       return;
@@ -511,8 +510,8 @@
 
     // Show only the index of the provided ids
     if (view === 'one') {
-      this.get( ids[index] ).elem.root.className = 'question shade1 hideLink';
-      this.setStyle(ids[index], 'display', 'block');
+      this.setElemClass(ids[ index ], 'question shade1 hideLink');
+      this.setElemStyle(ids[ index ], 'display', 'block');
       return;
     }
 
@@ -525,11 +524,11 @@
 
       i = ids.length;
       while (i--) {
-        this.get( ids[i] ).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
+
       return;
     }
   };
