@@ -264,7 +264,7 @@
       a.innerHTML = id;
       a.onclick = (function(id) {
         return function() {
-          Events.linkId(id);
+          Events.linkId( Number(id) );
           return false;
         };
       })(id);
