@@ -277,6 +277,7 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
+    this.debug.group('setToDefaults', 'coll', 'defaults= $$', defaults);
     this.debug.start('setToDefaults', defaults);
     this.debug.args('setToDefaults', defaults, 'object');
 
@@ -321,6 +322,8 @@
     if (this.elems.subCat) {
       this.elems.subCat.value = subCat;
     }
+
+    this.debug.group('setToDefaults', 'end');
   };
 
   /**
