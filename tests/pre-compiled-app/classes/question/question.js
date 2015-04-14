@@ -12,23 +12,34 @@
    */
   var Question = function(question, id, config, sources, categories) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Question.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Question class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Question');
 
     var debugArgs;
+
     this.debug.group('init', 'coll', 'questionID= $$', id);
+
     this.debug.start('init', question, id, config, sources, categories);
+
     debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup & Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.elem)
+     * -----------------------------------------------
+     * @desc The question's DOM container.
+     * @type {element}
+     */
+    this.elem = new QuestionElem(id);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -132,63 +143,17 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.format)
+     * Protected Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
      * @type {QuestionFormat}
      */
-    this.format;
+    var format;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Question.elem)
-     * -----------------------------------------------
-     * @desc The question element.
-     * @type {elem}
-     */
-    this.elem;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Question.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
-
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        url     : url,
-        complete: complete,
-        source  : source,
-        mainCat : mainCat,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        solution: solution,
-        output  : output
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Setup the question's element
-    this.elem = new QuestionElem(id);
-
-    // Setup the protected properties
     url = '';
     if (!!question.url && typeof question.url === 'string') {
       url = question.url.toLowerCase();
@@ -214,7 +179,6 @@
         mainCat.splice(i, 1);
       }
     });
-    Object.freeze(mainCat);
 
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
@@ -225,7 +189,6 @@
         subCat.splice(i, 1);
       }
     });
-    Object.freeze(subCat);
 
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
@@ -241,7 +204,6 @@
         }
       });
     }
-    Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
@@ -276,8 +238,7 @@
       }
     }
 
-    // Setup the question format
-    this.format = new QuestionFormat({
+    format = new QuestionFormat({
       id      : id,
       complete: complete,
       source  : source,
@@ -286,11 +247,73 @@
       solution: solution
     }, config, sources, categories);
 
-    // Close this debug console group
+    // Freeze the needed protected properties
+    Object.freeze(mainCat);
+    Object.freeze(subCat);
+    Object.freeze(links);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Question.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop, formatted) {
+
+      var debugMsg, debugCheck;
+      this.debug.start('get', prop, formatted);
+      this.debug.args('get', prop, 'string', formatted, 'boolean=');
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        url     : url,
+        complete: complete,
+        source  : source,
+        mainCat : mainCat,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        solution: solution,
+        output  : output
+      };
+
+      debugMsg = 'Error: The given property does not exist. ';
+      debugMsg += 'property= $$, formatted= $$';
+      debugCheck = props.hasOwnProperty(prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop, formatted);
+
+      formatted = formatted || false;
+
+      return (formatted) ? format.get(prop) : props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Question.prototype.constructor = Question;
 
   /**
