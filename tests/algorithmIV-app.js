@@ -999,6 +999,7 @@
     newIndex = this.config.searchBar.defaults.get('startID');
     if (newIndex > 0) {
       this.searchBar.vals.view = 'one';
+      newIndex = newIds.indexOf(newIndex);
     }
     len = newIds.length;
     if (this.searchBar.vals.view === 'all' || !len) {
@@ -1008,6 +1009,8 @@
       newIndex = 0;
     }
     this.vals.set(newIds, newIndex);
+
+    this.debug.state('init', 'index= $$', this.vals.get('index'));
 
     // Setup the value of isHistory
     this.isHistory = true;
@@ -1079,7 +1082,12 @@
         flip = (app.searchBar.vals.order === 'desc');
         app.updateDisplay(null, null, null, flip, true);
 
-        app.debug.group('setupDisplay', 'end');
+        // $s$
+        setTimeout(function() {
+          app.debug.group('setupDisplay', 'end');
+        }, 520);
+        // $e$
+
       }, renderTime);
     }
     else {
@@ -1106,7 +1114,7 @@
                                          flipElems, noPushState) {
 
     debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
-    debugMsg += 'flipElems= $$, noPushState';
+    debugMsg += 'flipElems= $$, noPushState= $$';
     debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
     debugArgs.push(oldIndex, oldView, flipElems, noPushState);
     this.debug.group(debugArgs);
@@ -1234,6 +1242,7 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
+      this.debug.state('findMatches', 'newIds= $$', []);
       return [];
     }
 
@@ -1245,6 +1254,8 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
+
+      this.debug.state('findMatches', 'newIds= $$', newIds);
 
       return newIds;
     }
@@ -1285,6 +1296,8 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
+
+      this.debug.state('findMatches', 'newIds= $$', newIds);
 
       return newIds;
     }
@@ -1376,6 +1389,8 @@
     if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
+
+    this.debug.state('findMatches', 'newIds= $$', newIds);
 
     return newIds;
   };
@@ -1786,8 +1801,12 @@
     nTitle.innerHTML = 'Next';
     nArrow.innerHTML = 'Next';
 
-    pArrow.onclick = Events.prev;
-    nArrow.onclick = Events.next;
+    pArrow.onclick = function() {
+      Events.prev();
+    };
+    nArrow.onclick = function() {
+      Events.next();
+    };
 
     prev.appendChild(pArrow);
     prev.appendChild(pBG);
@@ -2123,14 +2142,12 @@
       this.debug.start('set', newIds, newIndex);
       this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
 
-      newIndex = newIndex || null;
-
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (newIndex) {
+      if (typeof newIndex === 'number') {
         index = newIndex;
       }
     };
@@ -2142,8 +2159,6 @@
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
-
-    this.debug.group('init', 'end');
 
     // Freeze this class instance
     Object.freeze(this);
@@ -2215,6 +2230,7 @@
     var last;
 
     id = (typeof way === 'number') ? way : 0;
+    index = this.get('index');
 
     // Check the value for way
     if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
@@ -2258,12 +2274,16 @@
     // Handle moving the index one spot
     if (view === 'one') {
 
+      this.debug.state('move', 'index= $$', index);
+
       if (way === 'prev') {
         index = (index === 0) ? last : --index;
       }
       else if (way === 'next') {
         index = (index === last) ? 0 : ++index;
       }
+
+      this.debug.state('move', 'index= $$', index);
 
       this.set(null, index);
 
@@ -2720,10 +2740,15 @@
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
-    var debugArgs;
+
+    debugMsg = 'defaults= $$, names= $$, ids= $$, quesLen= $$';
+    debugArgs = [ 'update', 'coll', debugMsg, defaults, names ];
+    debugArgs.push(ids, quesLen);
+    this.debug.group(debugArgs);
+
     this.debug.start('update', defaults, names, ids, quesLen);
-    debugArgs = [ 'update' ];
-    debugArgs.push(defaults, 'object', names, 'object');
+
+    debugArgs = [ 'update', defaults, 'object', names, 'object' ];
     debugArgs.push(ids, 'object', quesLen, 'number');
     this.debug.args(debugArgs);
 
@@ -2780,6 +2805,8 @@
         }
       }
     }
+
+    this.debug.group('update', 'end');
   };
 
 
@@ -3988,6 +4015,7 @@
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
+    this.debug.group('setToDefaults', 'coll', 'defaults= $$', defaults);
     this.debug.start('setToDefaults', defaults);
     this.debug.args('setToDefaults', defaults, 'object');
 
@@ -4032,6 +4060,8 @@
     if (this.elems.subCat) {
       this.elems.subCat.value = subCat;
     }
+
+    this.debug.group('setToDefaults', 'end');
   };
 
   /**
@@ -4715,6 +4745,9 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
+    debugMsg = 'ids= $$, index= $$, view= $$';
+    this.debug.group('hideElems', 'coll', debugMsg, ids, index, view);
+
     this.debug.start('hideElems', ids, index, view);
 
     debugArgs = [ 'hideElems', ids, '!numbers', index, 'number' ];
@@ -4729,6 +4762,7 @@
       // Hide the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'none';
+        this.debug.group('hideElems', 'end');
         return;
       }
 
@@ -4738,6 +4772,7 @@
         this.setElemStyle(ids[i], 'display', 'none');
       }
 
+      this.debug.group('hideElems', 'end');
       return;
     }
 
@@ -4752,6 +4787,7 @@
     // Hide only the index of the provided ids
     if (view === 'one') {
       this.setElemStyle(ids[ index ], 'display', 'none');
+      this.debug.group('hideElems', 'end');
       return;
     }
 
@@ -4767,6 +4803,7 @@
         this.setElemStyle(ids[i], 'display', 'none');
       }
 
+      this.debug.group('hideElems', 'end');
       return;
     }
   };
@@ -4781,7 +4818,11 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
+    debugMsg = 'ids= $$, index= $$';
+    this.debug.group('showElems', 'coll', debugMsg, ids, index);
+
     this.debug.start('showElems', ids, index);
+
     this.debug.args('showElems', ids, '!numbers', index, 'number');
 
     /** @type {string} */
@@ -4796,6 +4837,7 @@
       // Show the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'block';
+        this.debug.group('showElems', 'end');
         return;
       }
 
@@ -4807,6 +4849,7 @@
         this.setElemStyle(ids[i], 'display', 'block');
       }
 
+      this.debug.group('showElems', 'end');
       return;
     }
 
@@ -4824,6 +4867,7 @@
     if (view === 'one') {
       this.setElemClass(ids[ index ], 'question shade1 hideLink');
       this.setElemStyle(ids[ index ], 'display', 'block');
+      this.debug.group('showElems', 'end');
       return;
     }
 
@@ -4841,6 +4885,7 @@
         this.setElemStyle(ids[i], 'display', 'block');
       }
 
+      this.debug.group('showElems', 'end');
       return;
     }
   };
@@ -5234,27 +5279,27 @@
     this.debug.start('addElemContent');
 
     this.elem.addContent({
-      id      : this.format.get('id'),
+      id      : this.get('id', true),
       url     : this.get('url'),
-      complete: this.format.get('complete'),
+      complete: this.get('complete', true),
       source  : {
         id  : this.get('source'),
-        name: this.format.get('source')
+        name: this.get('source', true)
       },
       mainCat : {
         ids  : this.get('mainCat'),
-        h3   : this.format.get('mainCat').h3,
-        names: this.format.get('mainCat').names
+        h3   : this.get('mainCat', true).h3,
+        names: this.get('mainCat', true).names
       },
       subCat  : {
         ids  : this.get('subCat'),
-        h3   : this.format.get('subCat').h3,
-        names: this.format.get('subCat').names
+        h3   : this.get('subCat', true).h3,
+        names: this.get('subCat', true).names
       },
       links   : this.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
-      solution: this.format.get('solution'),
+      solution: this.get('solution', true),
       output  : this.get('output')
     });
 
@@ -5761,7 +5806,7 @@
       a.innerHTML = id;
       a.onclick = (function(id) {
         return function() {
-          Events.linkId(id);
+          Events.linkId( Number(id) );
           return false;
         };
       })(id);
@@ -8484,8 +8529,6 @@
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
 
-    app.vals.reset(newState.ids, newState.index);
-
     app.searchBar.vals.view    = newState.view;
     app.searchBar.vals.order   = newState.order;
     app.searchBar.vals.stage   = newState.stage;
@@ -8507,6 +8550,8 @@
     if (app.searchBar.elems.subCat) {
       app.searchBar.elems.subCat.value = newState.subCat;
     }
+
+    app.vals.reset(newState.ids, newState.index);
 
     app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
