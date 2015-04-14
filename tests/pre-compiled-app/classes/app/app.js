@@ -6,37 +6,16 @@
    * @param {?objectMap} config - The user's config settings.
    * @param {?stringMap} sources - The user's sources.
    * @param {?(objectMap|stringMap)} categories - The user's categories.
-   * @param {?objects} questions - The user's questions.
+   * @param {!objects} questions - The user's questions.
    * @constructor
    */
   var App = function(config, sources, categories, questions) {
 
-    /** @type {booleanMap} */
-    var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
-    var defaults;
-    /** @type {Object<string, stringMap>} */
-    var names;
-    /** @type {Object<string, strings>} */
-    var ids;
-    /** @type {number} */
-    var len;
-    /** @type {stringMap} */
-    var vals;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (App.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the App class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('App');
 
-    var debugArgs, debugMsg;
     debugMsg = 'Error: No questions were provided to this app\'s init.';
-    this.debug.fail('init', !!questions, debugMsg);
+    debugCheck = (questions.length > 0);
+    this.debug.fail('init', debugCheck, debugMsg);
 
     debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
     debugArgs = [ 'init', 'open', debugMsg ];
@@ -45,11 +24,13 @@
 
     this.debug.start('init', config, sources, categories, questions);
 
-    debugArgs = [ 'init' ];
-    debugArgs.push(config, 'object', sources, 'object');
-    debugArgs.push(categories, 'object', questions, 'objects');
+    debugArgs = [ 'init', config, 'objectMap', sources, 'stringMap' ];
+    debugArgs.push(categories, 'objectMap|stringMap', questions, '!objects');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -123,12 +104,32 @@
      * ---------------------------------------------------
      * Public Property (App.isHistory)
      * ---------------------------------------------------
+     * @desc Tells whether the browser has a usable History class.
      * @type {boolean}
      */
     this.isHistory;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {booleanMap} */
+    var tmpConfig;
+    /** @type {?Object<string, (string|num)>} */
+    var defaults;
+    /** @type {Object<string, stringMap>} */
+    var names;
+    /** @type {Object<string, strings>} */
+    var ids;
+    /** @type {number} */
+    var len;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var newIndex;
+
     // Save the count of questions for use before questions is setup
-    len = (!!questions) ? questions.length : 0;
+    len = questions.length;
 
     // Setup the properties    
     this.flags   = new AppFlags(!!len);
@@ -139,12 +140,11 @@
     this.categories = new Categories(categories);
 
     Object.freeze(this.flags);
-    Object.freeze(this.elems);
-    Object.freeze(this.vals);
     Object.freeze(this.config);
     Object.freeze(this.sources);
     Object.freeze(this.categories);
 
+    // Setup the prettifier
     tmpConfig = {
       trimSpace   : this.config.prettifier.get('trimSpace'),
       tabLength   : this.config.prettifier.get('tabLength'),
@@ -152,6 +152,7 @@
     };
     prettify.setConfig(tmpConfig);
 
+    // Setup the search bar
     tmpConfig = {
       stage   : this.config.searchBar.get('stage'),
       source  : this.config.searchBar.get('source'),
@@ -159,7 +160,9 @@
       subCat  : this.config.searchBar.get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
+    Object.freeze(this.searchBar);
 
+    // Setup the questions
     tmpConfig = {
       id      : this.config.questions.get('id'),
       complete: this.config.questions.get('complete'),
@@ -169,13 +172,11 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources, this.categories);
-
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
+    this.questions = new Questions(questions, tmpConfig, this.sources,
+                                   this.categories);
 
     // Set the search defaults
-    defaults = ( (!!config && !!config.searchDefaults) ?
+    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -185,22 +186,22 @@
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
 
-    // Setup the value of history
+    // Update the current values to match the given defaults
+    newIds = this.findMatches();
+    newIndex = this.config.searchBar.defaults.get('startID');
+    if (newIndex > 0) {
+      this.searchBar.vals.view = 'one';
+    }
+    this.vals.reset(newIds, newIndex);
+
+    // Setup the value of isHistory
     this.isHistory = true;
-    vals = {
-      view   : this.searchBar.vals.view,
-      order  : this.searchBar.vals.order,
-      stage  : this.searchBar.vals.stage,
-      source : this.searchBar.vals.source,
-      mainCat: this.searchBar.vals.mainCat,
-      subCat : this.searchBar.vals.subCat
-    };
-    vals = JSON.stringify(vals);
     try {
-      window.history.replaceState(vals);
+      window.history.replaceState( this.getStateObj() );
     }
     catch (e) {
-      this.debug.fail('init', false, 'Oi, an old browser. Just let it die.');
+      debugCheck = 'Oi, an old browser. Just let it die.';
+      this.debug.fail('init', false, debugCheck);
       this.isHistory = false;
     }
 
@@ -211,11 +212,20 @@
       };
     }
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   App.prototype.constructor = App;
 
   /**
@@ -223,7 +233,7 @@
    * Public Method (App.prototype.setupDisplay)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
-   * @type {function()}
+   * @type {function}
    */
   App.prototype.setupDisplay = function() {
 
@@ -234,26 +244,25 @@
     var renderTime;
 
     if ( this.flags.get('initArgs') ) {
+
       this.elems.appendNav();
       this.searchBar.setMainElems();
       this.searchBar.setOptElems();
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
+
       renderTime = this.questions.len * 32;
       this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
       setTimeout(function() {
+
         /** @type {boolean} */
         var flip;
 
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({
-          flipElems  : flip,
-          oldView    : 'one',
-          noPushState: true
-        });
+        app.updateDisplay(null, null, null, flip, true);
 
         app.debug.group('setupDisplay', 'end');
       }, renderTime);
@@ -269,107 +278,53 @@
    * Public Method (App.prototype.updateDisplay)
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
-   * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noMatch - If set to true it indicates
-   *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flipElems - If set to true it indicates that
-   *   the order of each question's element should be flipped.
-   * @param {string=} settings.oldView - The value of view before the
+   * @param {numbers=} oldIds - The old matching ids.
+   * @param {?number=} oldIndex - The old ids index.
+   * @param {?string=} oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.noMatchReset - If set to true it indicates
-   *   that the ids and index should be reset.
-   * @param {boolean=} settings.keepIndex - If set to true it indicates
-   *   that the index should NOT be changed.
-   * @param {boolean=} settings.noPushState - If set to true it indicates
+   * @param {boolean=} flipElems - If set to true it indicates that
+   *   the order of each question's element should be flipped.
+   * @param {boolean=} noPushState - If set to true it indicates
    *   that the pushState call should NOT be made.
    */
-  App.prototype.updateDisplay = function(settings) {
+  App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
+                                         flipElems, noPushState) {
 
-    this.debug.group('updateDisplay', 'coll', 'settings= $$', settings);
-    this.debug.start('updateDisplay', settings);
-    this.debug.args('updateDisplay', settings, 'object=');
+    debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
+    debugMsg += 'flipElems= $$, noPushState';
+    debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
+    debugArgs.push(oldIndex, oldView, flipElems, noPushState);
+    this.debug.group(debugArgs);
 
-    /** @type {?nums} */
-    var oldIds;
-    /** @type {number} */
-    var oldIndex;
-    /** @type {?nums} */
-    var resetIds;
-    /** @type {number} */
-    var resetIndex;
-    /** @type {?nums} */
+    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView ];
+    debugArgs.push(flipElems, noPushState);
+    this.debug.start(debugArgs);
+
+    debugArgs = [ 'updateDisplay', oldIds, 'numbers=' ];
+    debugArgs.push(oldIndex, '?number=', oldView, '?string=');
+    debugArgs.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    this.debug.args(debugArgs);
+
+    /** @type {!numbers} */
     var newIds;
     /** @type {number} */
     var newIndex;
-    /** @type {stringMap} */
-    var vals;
-    /** @type {boolean} */
-    var noMatch;
-    /** @type {boolean} */
-    var noMatchReset;
-    /** @type {boolean} */
-    var flipElems;
-    /** @type {boolean} */
-    var keepIndex;
-    /** @type {boolean} */
-    var noPushState;
     /** @type {string} */
-    var view;
-    /** @type {string} */
-    var oldView;
+    var newView;
 
-    settings = ( checkType(settings, '!object') ) ? settings : {};
-
-    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
-      false : ( checkType(settings.noMatch, '!boolean') ) ?
-        settings.noMatch : false
-    );
-    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
-      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
-        settings.noMatchReset : false
-    );
-    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
-      false : ( checkType(settings.flipElems, '!boolean') ) ?
-        settings.flipElems : false
-    );
-    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
-      false : ( checkType(settings.keepIndex, '!boolean') ) ?
-        settings.keepIndex : false
-    );
-    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
-      false : ( checkType(settings.noPushState, '!boolean') ) ?
-        settings.noPushState : false
+    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    oldIndex = ( ( checkType(oldIndex, '!number') ) ?
+      oldIndex : this.vals.get('index')
     );
 
-    view = app.searchBar.vals.view;
-    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
-      view : ( checkType(settings.oldView, '!string') ) ?
-        settings.oldView : view
-    );
+    newView = app.searchBar.vals.view;
+    oldView = ( checkType(oldView, '!string') ) ? oldView : newView;
 
-    // Save the old matching question ids and index
-    oldIds = this.vals.get('len');
-    oldIds = (oldIds) ? this.vals.get('ids').slice(0) : null;
-    oldIndex = this.vals.get('index');
-
-    // Update the current matching question ids and index
-    if (noMatch || noMatchReset) {
-      if (noMatchReset) {
-        resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (flipElems && resetIds) {
-          resetIds.reverse();
-        }
-        resetIndex = (keepIndex) ? oldIndex : 0;
-        this.vals.reset(resetIds, resetIndex);
-      }
-    }
-    else {
-      this.updateValues();
-    }
+    flipElems = flipElems || false;
+    noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('len');
-    newIds = (newIds) ? this.vals.get('ids').slice(0) : null;
+    newIds = this.vals.get('ids').slice(0);
     newIndex = this.vals.get('index');
 
     // Hide the question's main element
@@ -379,9 +334,9 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (view === 'all') ?
-        'none' : (view === 'ten' && app.vals.get('len') > 10) ?
-          'block' : (view === 'one' && app.vals.get('len') > 1) ?
+      app.elems.nav.style.display = ( (newView === 'all') ?
+        'none' : (newView === 'ten' && app.vals.get('len') > 10) ?
+          'block' : (newView === 'one' && app.vals.get('len') > 1) ?
             'block' : 'none'
       );
 
@@ -398,16 +353,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        vals = {
-          view   : app.searchBar.vals.view,
-          order  : app.searchBar.vals.order,
-          stage  : app.searchBar.vals.stage,
-          source : app.searchBar.vals.source,
-          mainCat: app.searchBar.vals.mainCat,
-          subCat : app.searchBar.vals.subCat
-        };
-        vals = JSON.stringify(vals);
-        window.history.pushState(vals);
+        window.history.pushState( app.getStateObj() );
       }
 
       // Show the question's main element
@@ -419,54 +365,31 @@
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.updateValues)
+   * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Updates the current selected values for the app.
-   * @type {function()}
+   * @desc Finds the matching question ids for the current
+   *   selected search values.
+   * @type {function}
    */
-  App.prototype.updateValues = function() {
+  App.prototype.findMatches = function() {
 
-    this.debug.start('updateValues');
+    this.debug.start('findMatches');
 
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var stage;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var source;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var mainCat;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var subCat;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var newIds;
-    /**
-     * @type {boolean}
-     * @private
-     */
+    /** @type {boolean} */
     var pass;
 
     // Save the current values
@@ -476,38 +399,54 @@
     subCat  = this.searchBar.vals.subCat;
 
     // Save the matching ids
-    stage   = (stage   === 'all') ? null : this.searchBar.ques.stage[ stage ];
-    source  = (source  === 'all') ? null : this.sources.get(source).get('ids');
-    mainCat = (mainCat === 'all') ? null : this.categories.get(mainCat).get('ids');
-    subCat  = (subCat  === 'all') ? null : this.categories.get(subCat).get('ids');
-
-    // Copy the arrays or add empty objects
-    if (stage) {
-      stage = (stage.length) ? stage.slice(0) : { length: 0 };
-    }
-    if (source) {
-      source = (source.length) ? source.slice(0) : { length: 0 };
-    }
-    if (mainCat) {
-      mainCat = (mainCat.length) ? mainCat.slice(0) : { length: 0 };
-    }
-    if (subCat) {
-      subCat = (subCat.length) ? subCat.slice(0) : { length: 0 };
-    }
+    stage = ( (stage === 'all') ?
+      null : this.searchBar.ques.stage[ stage ].slice(0)
+    );
+    source = ( (source === 'all') ?
+      null : this.sources.get(source).get('ids').slice(0)
+    );
+    mainCat = ( (mainCat === 'all') ?
+      null : this.categories.get(mainCat).get('ids').slice(0)
+    );
+    subCat = ( (subCat === 'all') ?
+      null : this.categories.get(subCat).get('ids').slice(0)
+    );
 
     // Check for empty arrays
     if ((stage   && !stage.length)   ||
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.vals.reset([]);
-      return;
+      return [];
     }
 
-    // Setup needed vars
-    newIds = [];
-    len = this.questions.len;
-    i = 0;
+    // Check for all ids
+    if (!stage && !source && !mainCat && !subCat) {
+
+      // Make array of all ids
+      len = this.questions.len;
+      newIds = new Array(len);
+      while (i--) {
+        newIds[i] = i + 1;
+      }
+
+      return newIds;
+    }
+
+    // Find the min length array
+    len = (stage) ? stage.length : this.questions.len;
+    if (source && source.length < len) {
+      len = source.length;
+    }
+    if (mainCat && mainCat.length < len) {
+      len = mainCat.length;
+    }
+    if (subCat && subCat.length < len) {
+      len = subCat.length;
+    }
+
+    // Set the newIds to the min length array
+    
 
     // Get the current matching question ids
     while (true) {
@@ -581,68 +520,29 @@
   };
 
   /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.getStateObj)
    * -----------------------------------------------
-   * Public Method (App.prototype.moveDisplay)
-   * -----------------------------------------------
-   * @desc Show the prev, next, or a specific question(s).
-   * @param {(string|number)} way - The location to show.
-   *   The options are 'prev', 'next', or a question id.
+   * @desc Returns a state object for the current app values.
+   * @return {Object<string, (string|number|numbers)>}
    */
-  App.prototype.moveDisplay = function(way) {
+  App.prototype.getStateObj = function() {
 
-    this.debug.group('moveDisplay', 'coll', 'way= $$', way);
-    this.debug.start('moveDisplay', way);
-    this.debug.args('moveDisplay', way, 'string|number');
+    this.debug.start('getStateObj');
 
-    /**
-     * @type {?nums}
-     * @private
-     */
-    var ids;
-    /**
-     * @type {num}
-     * @private
-     */
-    var oldIndex;
-    /**
-     * @type {num}
-     * @private
-     */
-    var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
-    var oldView;
+    /** @type {Object<string, (string|number|numbers)>} */
+    var vals;
 
-    ids = this.vals.get('len');
-    ids = (ids) ? this.vals.get('ids').slice(0) : null;
+    vals = {
+      ids    : this.vals.get('ids').slice(0),
+      index  : this.vals.get('index'),
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
 
-    oldView = this.searchBar.vals.view;
-
-    oldIndex = this.vals.get('index');
-    newIndex = this.vals.move(way);
-
-    // Hide the question's main element
-    this.elems.main.style.opacity = '0';
-
-    // Wrap logic in timeout to allow css transitions to complete
-    setTimeout(function() {
-
-      // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (app.vals.get('len') > 1) ?
-        'block' : 'none'
-      );
-
-      // Hide the old questions
-      app.questions.hideElems(ids, oldIndex, oldView);
-
-      // Show the new questions
-      app.questions.showElems(ids, newIndex);
-
-      // Show the question's main element
-      app.elems.main.style.opacity = '1';
-        
-      app.debug.group('moveDisplay', 'end');
-    }, 520);
+    return JSON.stringify(vals);
   };
