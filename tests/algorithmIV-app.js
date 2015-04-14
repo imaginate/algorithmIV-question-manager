@@ -30,18 +30,22 @@
  * @typedef {*} val
  * @typedef {number} num
  * @typedef {HTMLElement} elem
+ * @typedef {HTMLElement} element
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
+ * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
  * @typedef {Array<HTMLElement>} elems
+ * @typedef {Array<HTMLElement>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
+ * @typedef {Object<string, HTMLElement>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
@@ -86,25 +90,10 @@
  * | The Public Variables for the Module                                       |
  * v ------------------------------------------------------------------------- v
                                                              module-vars.js */
-  // $s$
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the module's public methods.
-   * @type {Debug}
-   */
+  // The debugging vars
   var debug = aIV.debug('module');
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (polyfill.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's polyfilled methods.
-   * @type {{ debug: Debug }}
-   */
   var polyfill = { debug: aIV.debug('polyfill') };
-  // $e$
+  var debugArgs, debugMsg, debugCheck;
 
   /**
    * ----------------------------------------------- 
@@ -825,37 +814,16 @@
    * @param {?objectMap} config - The user's config settings.
    * @param {?stringMap} sources - The user's sources.
    * @param {?(objectMap|stringMap)} categories - The user's categories.
-   * @param {?objects} questions - The user's questions.
+   * @param {!objects} questions - The user's questions.
    * @constructor
    */
   var App = function(config, sources, categories, questions) {
 
-    /** @type {booleanMap} */
-    var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
-    var defaults;
-    /** @type {Object<string, stringMap>} */
-    var names;
-    /** @type {Object<string, strings>} */
-    var ids;
-    /** @type {number} */
-    var len;
-    /** @type {stringMap} */
-    var vals;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (App.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the App class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('App');
 
-    var debugArgs, debugMsg;
     debugMsg = 'Error: No questions were provided to this app\'s init.';
-    this.debug.fail('init', !!questions, debugMsg);
+    debugCheck = (questions.length > 0);
+    this.debug.fail('init', debugCheck, debugMsg);
 
     debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
     debugArgs = [ 'init', 'open', debugMsg ];
@@ -864,11 +832,13 @@
 
     this.debug.start('init', config, sources, categories, questions);
 
-    debugArgs = [ 'init' ];
-    debugArgs.push(config, 'object', sources, 'object');
-    debugArgs.push(categories, 'object', questions, 'objects');
+    debugArgs = [ 'init', config, 'objectMap', sources, 'stringMap' ];
+    debugArgs.push(categories, 'objectMap|stringMap', questions, '!objects');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -942,12 +912,32 @@
      * ---------------------------------------------------
      * Public Property (App.isHistory)
      * ---------------------------------------------------
+     * @desc Tells whether the browser has a usable History class.
      * @type {boolean}
      */
     this.isHistory;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {booleanMap} */
+    var tmpConfig;
+    /** @type {?Object<string, (string|num)>} */
+    var defaults;
+    /** @type {Object<string, stringMap>} */
+    var names;
+    /** @type {Object<string, strings>} */
+    var ids;
+    /** @type {number} */
+    var len;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var newIndex;
+
     // Save the count of questions for use before questions is setup
-    len = (!!questions) ? questions.length : 0;
+    len = questions.length;
 
     // Setup the properties    
     this.flags   = new AppFlags(!!len);
@@ -958,12 +948,11 @@
     this.categories = new Categories(categories);
 
     Object.freeze(this.flags);
-    Object.freeze(this.elems);
-    Object.freeze(this.vals);
     Object.freeze(this.config);
     Object.freeze(this.sources);
     Object.freeze(this.categories);
 
+    // Setup the prettifier
     tmpConfig = {
       trimSpace   : this.config.prettifier.get('trimSpace'),
       tabLength   : this.config.prettifier.get('tabLength'),
@@ -971,6 +960,7 @@
     };
     prettify.setConfig(tmpConfig);
 
+    // Setup the search bar
     tmpConfig = {
       stage   : this.config.searchBar.get('stage'),
       source  : this.config.searchBar.get('source'),
@@ -978,7 +968,9 @@
       subCat  : this.config.searchBar.get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
+    Object.freeze(this.searchBar);
 
+    // Setup the questions
     tmpConfig = {
       id      : this.config.questions.get('id'),
       complete: this.config.questions.get('complete'),
@@ -988,13 +980,11 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources, this.categories);
-
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
+    this.questions = new Questions(questions, tmpConfig, this.sources,
+                                   this.categories);
 
     // Set the search defaults
-    defaults = ( (!!config && !!config.searchDefaults) ?
+    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -1004,22 +994,22 @@
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
 
-    // Setup the value of history
+    // Update the current values to match the given defaults
+    newIds = this.findMatches();
+    newIndex = this.config.searchBar.defaults.get('startID');
+    if (newIndex > 0) {
+      this.searchBar.vals.view = 'one';
+    }
+    this.vals.reset(newIds, newIndex);
+
+    // Setup the value of isHistory
     this.isHistory = true;
-    vals = {
-      view   : this.searchBar.vals.view,
-      order  : this.searchBar.vals.order,
-      stage  : this.searchBar.vals.stage,
-      source : this.searchBar.vals.source,
-      mainCat: this.searchBar.vals.mainCat,
-      subCat : this.searchBar.vals.subCat
-    };
-    vals = JSON.stringify(vals);
     try {
-      window.history.replaceState(vals);
+      window.history.replaceState( this.getStateObj() );
     }
     catch (e) {
-      this.debug.fail('init', false, 'Oi, an old browser. Just let it die.');
+      debugCheck = 'Oi, an old browser. Just let it die.';
+      this.debug.fail('init', false, debugCheck);
       this.isHistory = false;
     }
 
@@ -1030,11 +1020,20 @@
       };
     }
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   App.prototype.constructor = App;
 
   /**
@@ -1042,7 +1041,7 @@
    * Public Method (App.prototype.setupDisplay)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
-   * @type {function()}
+   * @type {function}
    */
   App.prototype.setupDisplay = function() {
 
@@ -1053,26 +1052,25 @@
     var renderTime;
 
     if ( this.flags.get('initArgs') ) {
+
       this.elems.appendNav();
       this.searchBar.setMainElems();
       this.searchBar.setOptElems();
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
+
       renderTime = this.questions.len * 32;
       this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
       setTimeout(function() {
+
         /** @type {boolean} */
         var flip;
 
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({
-          flipElems  : flip,
-          oldView    : 'one',
-          noPushState: true
-        });
+        app.updateDisplay(null, null, null, flip, true);
 
         app.debug.group('setupDisplay', 'end');
       }, renderTime);
@@ -1088,107 +1086,53 @@
    * Public Method (App.prototype.updateDisplay)
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
-   * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noMatch - If set to true it indicates
-   *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flipElems - If set to true it indicates that
-   *   the order of each question's element should be flipped.
-   * @param {string=} settings.oldView - The value of view before the
+   * @param {numbers=} oldIds - The old matching ids.
+   * @param {?number=} oldIndex - The old ids index.
+   * @param {?string=} oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.noMatchReset - If set to true it indicates
-   *   that the ids and index should be reset.
-   * @param {boolean=} settings.keepIndex - If set to true it indicates
-   *   that the index should NOT be changed.
-   * @param {boolean=} settings.noPushState - If set to true it indicates
+   * @param {boolean=} flipElems - If set to true it indicates that
+   *   the order of each question's element should be flipped.
+   * @param {boolean=} noPushState - If set to true it indicates
    *   that the pushState call should NOT be made.
    */
-  App.prototype.updateDisplay = function(settings) {
+  App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
+                                         flipElems, noPushState) {
 
-    this.debug.group('updateDisplay', 'coll', 'settings= $$', settings);
-    this.debug.start('updateDisplay', settings);
-    this.debug.args('updateDisplay', settings, 'object=');
+    debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
+    debugMsg += 'flipElems= $$, noPushState';
+    debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
+    debugArgs.push(oldIndex, oldView, flipElems, noPushState);
+    this.debug.group(debugArgs);
 
-    /** @type {?nums} */
-    var oldIds;
-    /** @type {number} */
-    var oldIndex;
-    /** @type {?nums} */
-    var resetIds;
-    /** @type {number} */
-    var resetIndex;
-    /** @type {?nums} */
+    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView ];
+    debugArgs.push(flipElems, noPushState);
+    this.debug.start(debugArgs);
+
+    debugArgs = [ 'updateDisplay', oldIds, 'numbers=' ];
+    debugArgs.push(oldIndex, '?number=', oldView, '?string=');
+    debugArgs.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    this.debug.args(debugArgs);
+
+    /** @type {!numbers} */
     var newIds;
     /** @type {number} */
     var newIndex;
-    /** @type {stringMap} */
-    var vals;
-    /** @type {boolean} */
-    var noMatch;
-    /** @type {boolean} */
-    var noMatchReset;
-    /** @type {boolean} */
-    var flipElems;
-    /** @type {boolean} */
-    var keepIndex;
-    /** @type {boolean} */
-    var noPushState;
     /** @type {string} */
-    var view;
-    /** @type {string} */
-    var oldView;
+    var newView;
 
-    settings = ( checkType(settings, '!object') ) ? settings : {};
-
-    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
-      false : ( checkType(settings.noMatch, '!boolean') ) ?
-        settings.noMatch : false
-    );
-    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
-      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
-        settings.noMatchReset : false
-    );
-    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
-      false : ( checkType(settings.flipElems, '!boolean') ) ?
-        settings.flipElems : false
-    );
-    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
-      false : ( checkType(settings.keepIndex, '!boolean') ) ?
-        settings.keepIndex : false
-    );
-    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
-      false : ( checkType(settings.noPushState, '!boolean') ) ?
-        settings.noPushState : false
+    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    oldIndex = ( ( checkType(oldIndex, '!number') ) ?
+      oldIndex : this.vals.get('index')
     );
 
-    view = app.searchBar.vals.view;
-    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
-      view : ( checkType(settings.oldView, '!string') ) ?
-        settings.oldView : view
-    );
+    newView = app.searchBar.vals.view;
+    oldView = ( checkType(oldView, '!string') ) ? oldView : newView;
 
-    // Save the old matching question ids and index
-    oldIds = this.vals.get('len');
-    oldIds = (oldIds) ? this.vals.get('ids').slice(0) : null;
-    oldIndex = this.vals.get('index');
-
-    // Update the current matching question ids and index
-    if (noMatch || noMatchReset) {
-      if (noMatchReset) {
-        resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (flipElems && resetIds) {
-          resetIds.reverse();
-        }
-        resetIndex = (keepIndex) ? oldIndex : 0;
-        this.vals.reset(resetIds, resetIndex);
-      }
-    }
-    else {
-      this.updateValues();
-    }
+    flipElems = flipElems || false;
+    noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('len');
-    newIds = (newIds) ? this.vals.get('ids').slice(0) : null;
+    newIds = this.vals.get('ids').slice(0);
     newIndex = this.vals.get('index');
 
     // Hide the question's main element
@@ -1198,9 +1142,9 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (view === 'all') ?
-        'none' : (view === 'ten' && app.vals.get('len') > 10) ?
-          'block' : (view === 'one' && app.vals.get('len') > 1) ?
+      app.elems.nav.style.display = ( (newView === 'all') ?
+        'none' : (newView === 'ten' && app.vals.get('len') > 10) ?
+          'block' : (newView === 'one' && app.vals.get('len') > 1) ?
             'block' : 'none'
       );
 
@@ -1217,16 +1161,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        vals = {
-          view   : app.searchBar.vals.view,
-          order  : app.searchBar.vals.order,
-          stage  : app.searchBar.vals.stage,
-          source : app.searchBar.vals.source,
-          mainCat: app.searchBar.vals.mainCat,
-          subCat : app.searchBar.vals.subCat
-        };
-        vals = JSON.stringify(vals);
-        window.history.pushState(vals);
+        window.history.pushState( app.getStateObj() );
       }
 
       // Show the question's main element
@@ -1238,55 +1173,34 @@
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.updateValues)
+   * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Updates the current selected values for the app.
-   * @type {function()}
+   * @desc Finds the matching question ids for the current
+   *   selected search values.
+   * @return {numbers} An array of the matching ids.
    */
-  App.prototype.updateValues = function() {
+  App.prototype.findMatches = function() {
 
-    this.debug.start('updateValues');
+    this.debug.start('findMatches');
 
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var stage;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var source;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var mainCat;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var subCat;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var newIds;
-    /**
-     * @type {boolean}
-     * @private
-     */
+    /** @type {boolean} */
     var pass;
+    /** @type {function} */
+    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;
@@ -1295,175 +1209,196 @@
     subCat  = this.searchBar.vals.subCat;
 
     // Save the matching ids
-    stage   = (stage   === 'all') ? null : this.searchBar.ques.stage[ stage ];
-    source  = (source  === 'all') ? null : this.sources.get(source).get('ids');
-    mainCat = (mainCat === 'all') ? null : this.categories.get(mainCat).get('ids');
-    subCat  = (subCat  === 'all') ? null : this.categories.get(subCat).get('ids');
-
-    // Copy the arrays or add empty objects
-    if (stage) {
-      stage = (stage.length) ? stage.slice(0) : { length: 0 };
-    }
-    if (source) {
-      source = (source.length) ? source.slice(0) : { length: 0 };
-    }
-    if (mainCat) {
-      mainCat = (mainCat.length) ? mainCat.slice(0) : { length: 0 };
-    }
-    if (subCat) {
-      subCat = (subCat.length) ? subCat.slice(0) : { length: 0 };
-    }
+    stage = ( (stage === 'all') ?
+      null : this.searchBar.ques.stage[ stage ].slice(0)
+    );
+    source = ( (source === 'all') ?
+      null : this.sources.get(source).get('ids').slice(0)
+    );
+    mainCat = ( (mainCat === 'all') ?
+      null : this.categories.get(mainCat).get('ids').slice(0)
+    );
+    subCat = ( (subCat === 'all') ?
+      null : this.categories.get(subCat).get('ids').slice(0)
+    );
 
     // Check for empty arrays
     if ((stage   && !stage.length)   ||
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.vals.reset([]);
-      return;
+      return [];
     }
 
-    // Setup needed vars
-    newIds = [];
-    len = this.questions.len;
-    i = 0;
+    // Check for all ids
+    if (!stage && !source && !mainCat && !subCat) {
 
-    // Get the current matching question ids
-    while (true) {
-      ++i;
+      newIds = this.vals.get('allIds').slice(0);
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
+      }
+
+      return newIds;
+    }
+
+    // Find the min length array
+    len = (stage) ? stage.length : this.questions.len;
+    if (source && source.length < len) {
+      len = source.length;
+    }
+    if (mainCat && mainCat.length < len) {
+      len = mainCat.length;
+    }
+    if (subCat && subCat.length < len) {
+      len = subCat.length;
+    }
+
+    // Set the newIds to the min length array
+    if (stage && stage.length === len) {
+      newIds = stage.slice(0);
+      stage = null;
+    }
+    else if (source && source.length === len) {
+      newIds = source.slice(0);
+      source = null;
+    }
+    else if (mainCat && mainCat.length === len) {
+      newIds = mainCat.slice(0);
+      mainCat = null;
+    }
+    else if (subCat && subCat.length === len) {
+      newIds = subCat.slice(0);
+      subCat = null;
+    }
+
+    // Check for all null arrays
+    if (!stage && !source && !mainCat && !subCat) {
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
+      }
+
+      return newIds;
+    }
+
+    // The helper function that checks each array for the
+    // current value being checked & removes the checked
+    // values from the array
+    checkForValue = function(/** number */ val, /** numbers */ arr) {
+
+      /** @type {boolean} */
+      var pass;
+      /** @type {number} */
+      var i;
+      /** @type {number} */
+      var compareVal;
+
+      pass = false;
+
+      i = arr.length;
+      while (i--) {
+
+        compareVal = arr[i];
+
+        if (compareVal >= val) {
+          arr.pop();
+          if (compareVal === val) {
+            pass = true;
+            break;
+          }
+        }
+        else {
+          break;
+        }
+      }
+
+      return pass;
+    };
+
+    // Remove the question ids that do not exist in all other arrays
+    i = newIds.length;
+    while (i--) {
       pass = true;
 
       if (stage) {
         if (!stage.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (stage[0] === i) {
-          stage.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], stage);
       }
 
       if (source) {
         if (!source.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (source[0] === i) {
-          source.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], source);
       }
 
       if (mainCat) {
         if (!mainCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (mainCat[0] === i) {
-          mainCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], mainCat);
       }
 
       if (subCat) {
         if (!subCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (subCat[0] === i) {
-          subCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], subCat);
       }
 
-      if (pass) {
-        newIds.push(i);
-      }
-
-      if (i === len) {
-        break;
+      if (!pass) {
+        newIds.splice(i, 1);
       }
     }
 
-    // Check if results should be reversed
     if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
-    // Update the values
-    this.vals.reset(newIds);
+    return newIds;
   };
 
   /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.getStateObj)
    * -----------------------------------------------
-   * Public Method (App.prototype.moveDisplay)
-   * -----------------------------------------------
-   * @desc Show the prev, next, or a specific question(s).
-   * @param {(string|number)} way - The location to show.
-   *   The options are 'prev', 'next', or a question id.
+   * @desc Returns a state object for the current app values.
+   * @return {Object<string, (string|number|numbers)>}
    */
-  App.prototype.moveDisplay = function(way) {
+  App.prototype.getStateObj = function() {
 
-    this.debug.group('moveDisplay', 'coll', 'way= $$', way);
-    this.debug.start('moveDisplay', way);
-    this.debug.args('moveDisplay', way, 'string|number');
+    this.debug.start('getStateObj');
 
-    /**
-     * @type {?nums}
-     * @private
-     */
-    var ids;
-    /**
-     * @type {num}
-     * @private
-     */
-    var oldIndex;
-    /**
-     * @type {num}
-     * @private
-     */
-    var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
-    var oldView;
+    /** @type {Object<string, (string|number|numbers)>} */
+    var vals;
 
-    ids = this.vals.get('len');
-    ids = (ids) ? this.vals.get('ids').slice(0) : null;
+    vals = {
+      ids    : this.vals.get('ids').slice(0),
+      index  : this.vals.get('index'),
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
 
-    oldView = this.searchBar.vals.view;
-
-    oldIndex = this.vals.get('index');
-    newIndex = this.vals.move(way);
-
-    // Hide the question's main element
-    this.elems.main.style.opacity = '0';
-
-    // Wrap logic in timeout to allow css transitions to complete
-    setTimeout(function() {
-
-      // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (app.vals.get('len') > 1) ?
-        'block' : 'none'
-      );
-
-      // Hide the old questions
-      app.questions.hideElems(ids, oldIndex, oldView);
-
-      // Show the new questions
-      app.questions.showElems(ids, newIndex);
-
-      // Show the question's main element
-      app.elems.main.style.opacity = '1';
-        
-      app.debug.group('moveDisplay', 'end');
-    }, 520);
+    return JSON.stringify(vals);
   };
 
 
@@ -1582,36 +1517,22 @@
    */
   var AppElems = function() {
 
-    /** @type {elem} */
-    var elem;
-    /** @type {elem} */
-    var code;
-    /** @type {elem} */
-    var ol;
-    /** @type {elem} */
-    var li;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppElems.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppElems class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppElems');
 
-    var debugCheck, debugMsg;
     this.debug.group('init', 'coll');
+
     this.debug.start('init');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -1620,7 +1541,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {elem}
+     * @type {element}
      */
     this.sel;
 
@@ -1629,7 +1550,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {elem}
+     * @type {element}
      */
     this.main;
 
@@ -1638,7 +1559,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {elem}
+     * @type {element}
      */
     this.nav;
 
@@ -1647,7 +1568,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {elem}
+     * @type {element}
      */
     this.ques;
 
@@ -1656,7 +1577,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {elem}
+     * @type {element}
      */
     this.hold;
 
@@ -1665,7 +1586,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {elem}
+     * @type {element}
      */
     this.none;
 
@@ -1692,8 +1613,19 @@
      */
     this.code;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the app's elements
+    /** @type {element} */
+    var elem;
+    /** @type {element} */
+    var code;
+    /** @type {element} */
+    var ol;
+    /** @type {element} */
+    var li;
+
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
@@ -1766,6 +1698,7 @@
 
     debugMsg = 'this.code.ol.height= $$, this.code.li.height= $$';
     this.debug.state('init', debugMsg, this.code.ol.height, this.code.li.height);
+
     debugCheck = (this.code.ol.height > 0 && this.code.li.height > 0);
     debugMsg = 'The code list or list item\'s height failed to compute.';
     this.debug.fail('init', debugCheck, debugMsg);
@@ -1776,11 +1709,20 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppElems.prototype.constructor = AppElems;
 
   /**
@@ -1794,45 +1736,21 @@
 
     this.debug.start('appendNav');
 
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var prev;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pTitle;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var next;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nTitle;
 
     prev   = document.createElement('div');
@@ -1861,16 +1779,8 @@
     nTitle.innerHTML = 'Next';
     nArrow.innerHTML = 'Next';
 
-    pArrow.onclick = function() {
-      Events.debug.group('prev.onclick', 'coll');
-      app.moveDisplay('prev');
-      Events.debug.group('prev.onclick', 'end');
-    };
-    nArrow.onclick = function() {
-      Events.debug.group('next.onclick', 'coll');
-      app.moveDisplay('next');
-      Events.debug.group('next.onclick', 'end');
-    };
+    pArrow.onclick = Events.prev;
+    nArrow.onclick = Events.next;
 
     prev.appendChild(pArrow);
     prev.appendChild(pBG);
@@ -1888,76 +1798,37 @@
    * Public Method (AppElems.prototype.appendError)
    * -------------------------------------------------
    * @desc Creates and appends the error elements.
-   * @type {function()}
+   * @type {function}
    */
   AppElems.prototype.appendError = function() {
 
     this.debug.start('appendError');
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var errorMsg;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var example;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var exampleLineCount;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var divHeight;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var errorDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h2;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var p;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var exampleDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h3;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var div;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pre;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var code;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var ol;
 
     errorMsg = '' +
@@ -2124,60 +1995,85 @@
    * Public Class (AppVals)
    * -----------------------------------------------------
    * @desc The app's current values.
-   * @param {number} quesLen - The number of questions for the app.
+   * @param {number} questionsLen - The total number of questions.
    * @constructor
    */
-  var AppVals = function(quesLen) {
+  var AppVals = function(questionsLen) {
 
-    /** @type {number} */
-    var i;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppVals.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppVals class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppVals');
 
-    this.debug.start('init');
-    this.debug.args('init', quesLen, 'number');
-    // $e$
+    this.debug.start('init', questionsLen);
+
+    this.debug.args('init', questionsLen, 'number');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
+     * Protected Property (AppVals.allIds)
+     * -----------------------------------------------
+     * @desc The ids of all of the questions.
+     * @type {!numbers}
+     * @private
+     */
+    var allIds;
+
+    /**
+     * -----------------------------------------------
      * Protected Property (AppVals.ids)
      * -----------------------------------------------
-     * @desc The ids of the questions that match the current search
-     *   criteria.
-     * @type {nums}
+     * @desc The ids of the questions that match the current search criteria.
+     * @type {!numbers}
      * @private
      */
     var ids;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.len)
      * -----------------------------------------------
-     * @desc The number of questions that match the current search
-     *   criteria.
-     * @type {num}
+     * @desc The number of questions that match the current search criteria.
+     * @type {number}
      * @private
      */
     var len;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.index)
      * -----------------------------------------------
      * @desc The current index of the ids array being displayed.
      *   If the view = 'all' or no ids match then index = -1.
-     * @type {num}
+     * @type {number}
      * @private
      */
     var index;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {number} */
+    var i;
+
+    allIds = new Array(questionsLen);
+    i = questionsLen;
+    while (i--) {
+      allIds[i] = i + 1;
+    }
+
+    ids = allIds.slice(0);
+    len = questionsLen;
+    index = -1;
+
+    // Freeze the needed protected properties
+    Object.freeze(allIds);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2185,183 +2081,210 @@
      * -----------------------------------------------
      * @desc Gets an app value.
      * @param {string} prop - The name of the value to get.
-     * @return {(num|nums)}
+     * @return {!(number|numbers)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, (num|nums)>} */
-      var values = {
-        ids  : ids,
-        len  : len,
-        index: index
+      /** @type {Object<string, (number|numbers)>} */
+      var props = {
+        allIds: allIds,
+        ids   : ids,
+        len   : len,
+        index : index
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', values.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return values[prop];
+      return props[ prop ];
     };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (AppVals.set)
+     * -----------------------------------------------
+     * @desc Sets the app's current values.
+     * @param {numbers} newIds - The new matching question ids.
+     * @param {number=} newIndex - The new starting index.
+     */
+    this.set = function(newIds, newIndex) {
+
+      this.debug.start('set', newIds, newIndex);
+      this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
+
+      newIndex = newIndex || null;
+
+      if (newIds) {
+        ids = newIds.slice(0);
+        len = ids.length;
+      }
+
+      if (newIndex) {
+        index = newIndex;
+      }
+    };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
+    Object.freeze(this.set);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.reset)
-     * -----------------------------------------------
-     * @desc Resets the app values.
-     * @param {nums} newIds - The new matching question ids.
-     * @param {number=} newIndex - The starting index.
-     */
-    this.reset = function(newIds, newIndex) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      this.debug.start('reset', newIds, newIndex);
-      this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
+    this.debug.group('init', 'end');
 
-      /** @type {number} */
-      var newLen;
-
-      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
-
-      // Set newIndex
-      if (app.searchBar.vals.view === 'all') {
-        newIndex = -1;
-      }
-      else {
-        if (newLen) {
-          if (typeof newIndex !== 'number' ||
-              newIndex < 0 || newIndex >= newLen) {
-            newIndex = 0;
-          }
-        }
-        else {
-          newIndex = -1;
-        }
-      }
-
-      // Reset the values
-      ids = (newLen) ? newIds.slice(0) : [];
-      len = newLen;
-      index = newIndex;
-    };
-    Object.freeze(this.reset);
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.move)
-     * -----------------------------------------------
-     * @desc Go to the prev, next, or a specific index.
-     * @param {(string|number)} way - The location to move the index.
-     *   The options are 'prev', 'next', or a question id.
-     * @return {num} The new index.
-     */
-    this.move = function(way) {
-
-      var debugMsg, debugCheck;
-      this.debug.start('move', way);
-      this.debug.args('move', way, 'string|number');
-      // Debug message for initial value checks
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-
-      /**
-       * @type {string}
-       * private
-       */
-      var view;
-      /**
-       * @type {num}
-       * private
-       */
-      var last;
-
-      // Check the value for way
-      if (typeof way === 'string' &&
-          way !== 'prev' && way !== 'next') {
-        way = way.replace(/[^0-9]/g, '');
-        this.debug.fail('move', !!way, debugMsg, way);
-        way = Number(way);
-      }
-
-      // $s$
-      if (typeof way !== 'string') {
-        debugCheck = (way > 0 && way <= app.questions.len);
-        this.debug.fail('move', debugCheck, debugMsg, way);
-      }
-      // $e$
-
-      // Save the value of the current view
-      view = app.searchBar.vals.view;
-
-      if (typeof way === 'number') {
-        if (view !== 'one') {
-          app.searchBar.vals.view = 'one';
-        }
-        index = ids.indexOf(way);
-        this.debug.fail('move', (index !== -1), debugMsg, way);
-        return index;
-      }
-
-      debugMsg = 'Error: This method should not have been called now. ';
-      debugMsg += 'The nav elements should be hidden.';
-
-      // Save the last index
-      last = len - 1;
-
-      // The single view actions
-      if (view === 'one') {
-
-        this.debug.fail('move', (len > 1), debugMsg);
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : --index;
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : ++index;
-        }
-
-        return index;
-      }
-
-      // The ten view actions
-      if (view === 'ten') {
-
-        this.debug.fail('move', (len > 10), debugMsg);
-
-        // Update the last index
-        last -= (last % 10);
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : (index - 10);
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : (index + 10);
-        }
-
-        return index;
-      }
-
-      debugMsg = 'Error: An incorrect view was parsed. ';
-      debugMsg += 'app.searchBar.vals.view= $$';
-      this.debug.fail('move', false, debugMsg, view);
-    };
-    Object.freeze(this.move);
-
-
-    // Setup the properties
-    ids = new Array(quesLen);
-    len = quesLen;
-    index = 0;
-
-    i = quesLen;
-    while (i--) {
-      ids[i] = i + 1;
-    }
+    // Freeze this class instance
+    Object.freeze(this);
   };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
 
   // Ensure constructor is set to this class.
   AppVals.prototype.constructor = AppVals;
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.reset)
+   * -----------------------------------------------
+   * @desc Resets the app values.
+   * @param {numbers} ids - The new matching question ids.
+   * @param {number=} index - The new starting index.
+   */
+  AppVals.prototype.reset = function(ids, index) {
+
+    this.debug.start('reset', ids, index);
+    this.debug.args('reset', ids, 'numbers', index, 'number=');
+
+    /** @type {number} */
+    var len;
+
+    index = index || 0;
+
+    if (!ids) {
+      ids = this.get('allIds');
+    }
+    len = ids.length;
+
+    // Check the new index value
+    if (app.searchBar.vals.view === 'all' || !len) {
+      index = -1;
+    }
+    else if (index < 0 || index >= len) {
+      index = 0;
+    }
+
+    // Reset the values
+    this.set(ids, index);
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.move)
+   * -----------------------------------------------
+   * @desc Go to the prev, next, or a specific index.
+   * @param {(string|number)} way - The location to move the index.
+   *   The options are 'prev', 'next', or a question id.
+   * @return {number} The new index.
+   */
+  AppVals.prototype.move = function(way) {
+
+    this.debug.start('move', way);
+    this.debug.args('move', way, 'string|number');
+
+    /** @type {number} */
+    var id;
+    /** @type {string} */
+    var view;
+    /** @type {number} */
+    var index;
+    /** @type {number} */
+    var last;
+
+    id = (typeof way === 'number') ? way : 0;
+
+    // Check the value for way
+    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+      try {
+        id = Number( way.replace(/[^0-9]/g, '') );
+      }
+      catch (e) {
+        debugMsg = 'Error: An incorrect value was given for way. way= $$';
+        this.debug.fail('move', false, debugMsg, way);
+        return;
+      }
+    }
+
+    view = app.searchBar.vals.view;
+
+    // Handle moving to a specific question id
+    if (id) {
+
+      debugCheck = (id > 0 && id <= app.questions.len);
+      debugMsg = 'Error: An incorrect value was given for way. way= $$';
+      this.debug.fail('move', debugCheck, debugMsg, way);
+
+      if (view !== 'one') {
+        app.searchBar.vals.view = 'one';
+      }
+
+      index = this.get('ids').indexOf(way);
+
+      this.set(null, index);
+
+      debugCheck = (index !== -1);
+      debugMsg = 'Error: An incorrect value was given for way. way= $$';
+      this.debug.fail('move', debugCheck, debugMsg, way);
+
+      return index;
+    }
+
+    // Save the last index
+    last = this.get('len') - 1;
+
+    // Handle moving the index one spot
+    if (view === 'one') {
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : --index;
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : ++index;
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    // Handle moving the index ten spots
+    if (view === 'ten') {
+
+      // Update the last index
+      last = last - (last % 10);
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : (index - 10);
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : (index + 10);
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    debugMsg = 'Error: An incorrect view was parsed. ';
+    debugMsg += 'app.searchBar.vals.view= $$';
+    this.debug.fail('move', false, debugMsg, view);
+  };
 
 
 /* -----------------------------------------------------------------------------
@@ -4403,35 +4326,84 @@
    */
   var Questions = function(questions, config, sources, categories) {
 
+    this.debug = aIV.debug('Questions');
+
+    debugMsg = 'questions= $$, config= $$';
+    this.debug.group('init', 'open', debugMsg, questions, config);
+
+    this.debug.start('init', questions, config, sources, categories);
+
+    debugArgs = [ 'init', questions, 'objects', config, 'booleanMap' ];
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+
+    this.debug = aIV.debug('Question');
+
+    this.debug.group('init', 'coll', 'questionID= $$', id);
+
+    this.debug.start('init', question, id, config, sources, categories);
+
+    debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
+    debugArgs.push(sources, 'object', categories, 'object');
+    this.debug.args(debugArgs);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.len)
+     * -----------------------------------------------
+     * @desc The total number of questions.
+     * @type {number}
+     */
+    this.len;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.list)
+     * -----------------------------------------------
+     * @desc An array of all the question objects.
+     * @return {questions}
+     */
+    this.list;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /** @type {number} */
     var i;
     /** @type {number} */
     var id;
     /** @type {number} */
     var len;
-    /** @type {string} */
-    var url;
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Questions.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Questions class.
-     * @type {Debug}
-     */
-    this.debug = aIV.debug('Questions');
+    this.len = questions.length;
 
-    var debugArgs;
-    debugArgs = [ 'init', 'open' ];
-    debugArgs.push('questions= $$, config= $$', questions, config);
-    this.debug.group(debugArgs);
-    this.debug.start('init', questions, config, sources, categories);
-    debugArgs = [ 'init' ];
-    debugArgs.push(questions, 'objects', config, 'booleanMap');
-    debugArgs.push(sources, 'object', categories, 'object');
-    this.debug.args(debugArgs);
-    // $e$
+    len = this.len + 1;
+    this.list = (this.len) ? new Array(len) : [];
+
+    // Add blank to beginning of list so ids and indexes match
+    if (this.len) {
+      this.list[0] = null;
+    }
+
+    // Add the Question object references to the list
+    --len;
+    i = -1;
+    while (++i < len) {
+      id = i + 1;
+      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+    }
+
+    // Freeze the public properties that are objects
+    Object.freeze(this.list);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -4442,37 +4414,50 @@
      */
     var data;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.len)
-     * -----------------------------------------------
-     * @desc The number of questions supplied to this app instance.
-     * @type {number}
-     */
-    this.len;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.list)
-     * -----------------------------------------------
-     * @desc The array of question objects.
-     * @return {questions}
-     */
-    this.list;
+    /** @type {string} */
+    var url;
+
+    data = {};
+
+    // Build the data hash map
+    ++i;
+    while (--i) {
+      url = this.list[i].get('url');
+      if (url) {
+        data[ url ] = this.list[i];
+      }
+    }
+
+    // Freeze the protected properties
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question by id or url.
+     * @desc Gets a question's object or property.
      * @param {(number|string)} id - The question id to get.
-     * @return {Question}
+     * @param {string=} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val}
      */
-    this.get = function(id) {
+    this.get = function(id, prop, formatted) {
 
-      var debugMsg, debugCheck;
-      this.debug.start('get', id);
-      this.debug.args('get', id, 'number|string');
+      var debugArgs, debugMsg, debugCheck;
+      this.debug.start('get', id, prop, formatted);
+
+      debugArgs = [ 'get', id, 'number|string', prop, 'string=' ];
+      debugArgs.push(formatted, 'boolean=');
+      this.debug.args(debugArgs);
 
       debugMsg = 'Error: This question id does not exist. id= $$';
       debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
@@ -4481,128 +4466,108 @@
       /** @type {Question} */
       var question;
 
-      question = (typeof id === 'number') ? this.list[id] : data[id];
+      prop = prop || '';
+      formatted = formatted || false;
 
-      // $s$
-      if (debugCheck) {
-        debugMsg = 'Error: This question id was not an instanceof ';
-        debugMsg += 'Question. id= $$';
-        debugCheck = (question instanceof Question);
-        this.debug.fail('get', debugCheck, debugMsg, id);
-      }
-      // $e$
+      question = (typeof id === 'number') ? this.list[ id ] : data[ id ];
 
-      return question;
+      return ( (!prop) ?
+        question : (prop === 'elem') ?
+          question.elem : question.get(prop, formatted)
+      );
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.setStyle)
-     * -----------------------------------------------
-     * @desc Sets the style for a question's element.
-     * @param {!(number|string)} id - The question id to set.
-     * @param {!(string|stringMap)} type - The style setting to set. If a
-     *   string is given then another param with the value is required.
-     *   If an object is provided then use key => value pairs as such
-     *   styleType => newValue (e.g. { display: 'none' }).
-     * @param {!(string|number)=} val - If the type param is a string then
-     *   this is the new value for the it.
-     */
-    this.setStyle = function(id, type, val) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      // $s$
-      var debugArgs, debugMsg, debugCheck;
-      this.debug.start('setStyle', id, type, val);
-
-      debugArgs = [ 'setStyle' ];
-      debugArgs.push(id, '!number|string', type, '!string|stringMap');
-      debugArgs.push(val, '!string|number=');
-      this.debug.args(debugArgs);
-
-      debugMsg = 'Error: An invalid question id was provided. id= $$';
-      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('setStyle', debugCheck, debugMsg, id);
-
-      if (typeof type === 'string') {
-        debugMsg = 'Error: A third param (val) is required when the given type ';
-        debugMsg += 'is a string. It should be a string or number. val= $$';
-        debugArgs = [ 'setStyle' ];
-        debugArgs.push(checkType(val, 'string|number'), debugMsg, val);
-        this.debug.fail(debugArgs);
-      }
-      // $e$
-
-      // Handle one type change
-      if (typeof type === 'string') {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(type) ) {
-          type = camelCase(type);
-        }
-
-        this.get(id).elem.root.style[type] = val;
-        return;
-      }
-
-      // Handle multiple type changes
-      Object.keys(type).forEach(function(/** string */ key) {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(key) ) {
-          key = camelCase(key);
-        }
-
-        this.get(id).elem.root.style[key] = type[key];
-      }, this);
-    };
-    Object.freeze(this.setStyle);
-
-
-    // Check the argument data type
-    if (!questions || !checkType(questions, '!objects')) {
-      questions = [];
-    }
-
-    // Setup the len and list properties
-    this.len = questions.length;
-    len = this.len + 1;
-    this.list = (this.len) ? new Array(len) : [];
-
-    // Add blank to beginning of list so ids and indexes match
-    if (this.len) {
-      this.list[0] = null;
-    }
-
-    // Add the questions
-    --len;
-    i = -1;
-    while (++i < len) {
-      id = i + 1;
-      this.list[id] = new Question(questions[i], id, config, sources, categories);
-      Object.freeze(this.list[id]);
-    }
-
-    // Setup the data hash map
-    data = {};
-
-    ++i;
-    while (--i) {
-      url = this.list[i].get('url');
-      if (url) {
-        data[url] = this.list[i];
-      }
-    }
-
-    Object.freeze(this.list);
-    Object.freeze(data);
-
-    // Close this debug console group
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Questions.prototype.constructor = Questions;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemStyle)
+   * ---------------------------------------------------
+   * @desc Sets the style for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {!(string|stringMap)} type - The style setting to set.
+   *   If a string is given then another param with the value is
+   *   required. If an object is provided then use key => value
+   *   pairs like styleType => newValue (see below example).
+   * @param {(string|number)=} val - If the type param is a string then
+   *   this is the new value for the it.
+   * @example
+   *   app.questions.setElemStyle(5, { display: 'none' });
+   *   // OR
+   *   app.questions.setElemStyle(5, 'display', 'none');
+   */
+  Questions.prototype.setElemStyle = function(id, type, val) {
+
+    this.debug.start('setElemStyle', id, type, val);
+
+    debugArgs = [ 'setElemStyle', id, 'number|string' ];
+    debugArgs.push(type, '!string|stringMap', val, 'string|number=');
+    this.debug.args(debugArgs);
+
+    // Handle one update
+    if (typeof type === 'string') {
+
+      debugMsg = 'Error: A third param (val) is required when the given type ';
+      debugMsg += 'is a string. It should be a string or number. val= $$';
+      debugCheck = checkType(val, 'string|number');
+      this.debug.fail('setElemStyle', debugCheck, debugMsg, val);
+
+      // Replace dashes with camel case
+      if ( /\-/.test(type) ) {
+        type = camelCase(type);
+      }
+
+      this.get(id).elem.root.style[ type ] = val;
+      return;
+    }
+
+    // Handle multiple updates
+    Object.keys(type).forEach(function(/** string */ key) {
+
+      // Replace dashes with camel case
+      if ( /\-/.test(key) ) {
+        key = camelCase(key);
+      }
+
+      this.get(id).elem.root.style[ key ] = type[ key ];
+    }, this);
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemClass)
+   * ---------------------------------------------------
+   * @desc Sets the class name for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {string} newClassName - The new class name.
+   */
+  Questions.prototype.setElemClass = function(id, newClassName) {
+
+    this.debug.start('setElemClass', id, newClassName);
+
+    debugArgs = [ 'setElemClass', id, 'number|string' ];
+    debugArgs.push(newClassName, 'string');
+    this.debug.args(debugArgs);
+
+    this.get(id).elem.root.className = newClassName;
+  };
 
   /**
    * -----------------------------------------------------
@@ -4747,16 +4712,16 @@
    * Public Method (Questions.prototype.hideElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'none' for the provided questions.
-   * @param {?nums} ids - The previous active question ids.
-   * @param {num} index - The index of the ids to hide from view.
-   * @param {string=} view - The old value of app.searchBar.vals.view.
+   * @param {!numbers} ids - The previous active question ids.
+   * @param {number} index - The index of the ids to hide from view.
+   * @param {string} view - The old value of app.searchBar.vals.view.
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    var debugArgs, debugMsg;
     this.debug.start('hideElems', ids, index, view);
-    debugArgs = [ 'hideElems' ];
-    debugArgs.push(ids, 'numbers', index, 'number', view, 'string=');
+
+    debugArgs = [ 'hideElems', ids, '!numbers', index, 'number' ];
+    debugArgs.push(view, 'string');
     this.debug.args(debugArgs);
 
     /** @type {number} */
@@ -4764,8 +4729,8 @@
 
     if (index === -1) {
 
-      // No questions to hide (i.e. hide the empty message)
-      if (!ids) {
+      // Hide the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'none';
         return;
       }
@@ -4773,36 +4738,38 @@
       // Hide all of the provided ids
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
 
       return;
     }
 
-    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('hideElems', (!!ids && !!ids.length), debugMsg, ids);
-    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    debugArgs = [ 'hideElems' ];
-    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
-    this.debug.fail(debugArgs);
+    debugMsg = 'Error: No ids were provided with a non-negative index.';
+    debugCheck = (ids.length > 0);
+    this.debug.fail('hideElems', debugCheck, debugMsg);
 
-    view = view || app.searchBar.vals.view;
+    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
+    debugCheck = (index > -1 && index < ids.length);
+    this.debug.fail('hideElems', debugCheck, debugMsg, ids, index);
 
     // Hide only the index of the provided ids
     if (view === 'one') {
-      this.setStyle(ids[index], 'display', 'none');
+      this.setElemStyle(ids[ index ], 'display', 'none');
       return;
     }
 
     // Hide the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be hidden
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
+
       return;
     }
   };
@@ -4812,30 +4779,25 @@
    * Public Method (Questions.prototype.showElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'block' for the provided questions.
-   * @param {?nums} ids - The new active question ids.
-   * @param {num} index - The index of the ids to show.
+   * @param {!numbers} ids - The new active question ids.
+   * @param {number} index - The index of the ids to show.
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    var debugArgs, debugMsg;
     this.debug.start('showElems', ids, index);
-    this.debug.args('showElems', ids, 'numbers', index, 'number');
+    this.debug.args('showElems', ids, '!numbers', index, 'number');
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var view;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
+    /** @type {string} */
+    var newClassName;
 
     if (index === -1) {
 
-      // No questions to show (i.e. show the empty message)
-      if (!ids) {
+      // Show the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'block';
         return;
       }
@@ -4843,43 +4805,45 @@
       // Show all of the provided ids
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
 
       return;
     }
 
-    debugMsg = 'Error: No ids were provided with a non-negative index. ids= $$';
-    this.debug.fail('showElems', (!!ids && !!ids.length), debugMsg, ids);
+    debugMsg = 'Error: No ids were provided with a non-negative index.';
+    debugCheck = (ids.length > 0);
+    this.debug.fail('showElems', debugCheck, debugMsg);
+
     debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    debugArgs = [ 'showElems' ];
-    debugArgs.push((index > -1 && index < ids.length), debugMsg, ids, index);
-    this.debug.fail(debugArgs);
+    debugCheck = (index > -1 && index < ids.length);
+    this.debug.fail('showElems', debugCheck, debugMsg, ids, index);
 
     view = app.searchBar.vals.view;
 
-    // Hide only the index of the provided ids
+    // Show only the index of the provided ids
     if (view === 'one') {
-      this.get(ids[index]).elem.root.className = 'question shade1 hideLink';
-      this.setStyle(ids[index], 'display', 'block');
+      this.setElemClass(ids[ index ], 'question shade1 hideLink');
+      this.setElemStyle(ids[ index ], 'display', 'block');
       return;
     }
 
-    // Hide the index plus ten (or to the array end)
+    // Show the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be shown
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
+
       return;
     }
   };
@@ -4903,23 +4867,32 @@
    */
   var Question = function(question, id, config, sources, categories) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Question.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Question class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Question');
 
-    var debugArgs;
     this.debug.group('init', 'coll', 'questionID= $$', id);
+
     this.debug.start('init', question, id, config, sources, categories);
+
     debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup & Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.elem)
+     * -----------------------------------------------
+     * @desc The question's DOM container.
+     * @type {element}
+     */
+    this.elem = new QuestionElem(id);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -5023,63 +4996,17 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.format)
+     * Protected Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
      * @type {QuestionFormat}
      */
-    this.format;
+    var format;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Question.elem)
-     * -----------------------------------------------
-     * @desc The question element.
-     * @type {elem}
-     */
-    this.elem;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Question.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
-
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        url     : url,
-        complete: complete,
-        source  : source,
-        mainCat : mainCat,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        solution: solution,
-        output  : output
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Setup the question's element
-    this.elem = new QuestionElem(id);
-
-    // Setup the protected properties
     url = '';
     if (!!question.url && typeof question.url === 'string') {
       url = question.url.toLowerCase();
@@ -5105,7 +5032,6 @@
         mainCat.splice(i, 1);
       }
     });
-    Object.freeze(mainCat);
 
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
@@ -5116,7 +5042,6 @@
         subCat.splice(i, 1);
       }
     });
-    Object.freeze(subCat);
 
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
@@ -5132,7 +5057,6 @@
         }
       });
     }
-    Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
@@ -5167,8 +5091,7 @@
       }
     }
 
-    // Setup the question format
-    this.format = new QuestionFormat({
+    format = new QuestionFormat({
       id      : id,
       complete: complete,
       source  : source,
@@ -5177,11 +5100,73 @@
       solution: solution
     }, config, sources, categories);
 
-    // Close this debug console group
+    // Freeze the needed protected properties
+    Object.freeze(mainCat);
+    Object.freeze(subCat);
+    Object.freeze(links);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Question.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop, formatted) {
+
+      var debugMsg, debugCheck;
+      this.debug.start('get', prop, formatted);
+      this.debug.args('get', prop, 'string', formatted, 'boolean=');
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        url     : url,
+        complete: complete,
+        source  : source,
+        mainCat : mainCat,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        solution: solution,
+        output  : output
+      };
+
+      debugMsg = 'Error: The given property does not exist. ';
+      debugMsg += 'property= $$, formatted= $$';
+      debugCheck = props.hasOwnProperty(prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop, formatted);
+
+      formatted = formatted || false;
+
+      return (formatted) ? format.get(prop) : props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Question.prototype.constructor = Question;
 
   /**
@@ -5297,29 +5282,21 @@
    */
   var QuestionFormat = function(question, config, sources, categories) {
 
-    /** @type {{ result: string, lineCount: number }} */
-    var code;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (QuestionFormat.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the QuestionFormat class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('QuestionFormat');
 
-    var debugArgs;
-    debugArgs = [ 'init', 'coll' ];
-    debugArgs.push('id= $$, question= $$', question.id, question);
+    debugArgs = [ 'init', 'coll', 'id= $$, question= $$' ];
+    debugArgs.push(question.id, question);
     this.debug.group(debugArgs);
+
     this.debug.start('init', question, config, sources, categories);
-    debugArgs = [ 'init' ];
-    debugArgs.push(question, 'object', config, 'booleanMap');
+
+    debugArgs = [ 'init', question, 'object', config, 'booleanMap' ];
     debugArgs.push(sources, 'object', categories, 'object');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -5390,37 +5367,12 @@
      */
     var solution;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionFormat.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        source  : source,
-        complete: complete,
-        mainCat : mainCat,
-        subCat  : subCat,
-        solution: solution
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', details.hasOwnProperty(prop), debugMsg, prop);
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
-
+    /** @type {{ result: string, lineCount: number }} */
+    var code;
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';
@@ -5482,15 +5434,63 @@
       solution.lineCount = code.lineCount;
     }
 
+    // Freeze all of the properties that are objects
     Object.freeze(mainCat);
     Object.freeze(subCat);
     Object.freeze(solution);
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionFormat.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop) {
+
+      var debugMsg, debugCheck;
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        source  : source,
+        complete: complete,
+        mainCat : mainCat,
+        subCat  : subCat,
+        solution: solution
+      };
+
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      debugCheck = props.hasOwnProperty(prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionFormat.prototype.constructor = QuestionFormat;
 
 
@@ -5508,26 +5508,22 @@
    */
   var QuestionElem = function(id) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (QuestionElem.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the QuestionElem class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('QuestionElem');
 
     this.debug.start('init', id);
+
     this.debug.args('init', id, 'number');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -5536,7 +5532,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {elem}
+     * @type {element}
      */
     this.info;
 
@@ -5545,7 +5541,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {elem}
+     * @type {element}
      */
     this.solution;
 
@@ -5554,7 +5550,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {elem}
+     * @type {element}
      */
     this.pre;
 
@@ -5563,12 +5559,14 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {elem}
+     * @type {element}
      */
     this.code;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the elements
     this.root = document.createElement('section');
     this.info = document.createElement('div');
 
@@ -5578,9 +5576,16 @@
     this.info.className = 'info';
 
     this.root.appendChild(this.info);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionElem.prototype.constructor = QuestionElem;
 
   /**
@@ -5622,9 +5627,9 @@
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
-    /** @type {elem} */
+    /** @type {element} */
     var root;
-    /** @type {elem} */
+    /** @type {element} */
     var info;
     /** @type {boolean} */
     var testTextContent;
@@ -5683,19 +5688,18 @@
      */
     function appendId(id, url) {
 
-      var debugMsg;
       this.debug.start('appendId', id, url);
       this.debug.args('appendId', id, 'string', url, 'string');
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('id');
@@ -5740,7 +5744,7 @@
      * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
@@ -5748,7 +5752,7 @@
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       if (!url) {
@@ -5778,19 +5782,18 @@
      */
     function appendSource(source) {
 
-      var debugMsg;
       this.debug.start('appendSource', source);
       this.debug.args('appendSource', source, 'stringMap');
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('source');
@@ -5834,7 +5837,7 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
@@ -5844,7 +5847,7 @@
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.sources.get(id, 'url');
@@ -5876,11 +5879,11 @@
       this.debug.start('appendComplete', complete);
       this.debug.args('appendComplete', complete, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -5917,11 +5920,11 @@
       this.debug.start('appendCategory', main, sub);
       this.debug.args('appendCategory', main, 'object', sub, 'object');
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var mainDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var subDiv;
 
       contain = document.createElement('div');
@@ -5958,7 +5961,7 @@
      * ---------------------------------------------
      * @desc Appends the question's main categories.
      * @param {Object} main - The question's main categories.
-     * @param {elem} div - The DOM container for the main categories.
+     * @param {element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
@@ -5968,9 +5971,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -5978,7 +5981,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -6024,7 +6027,7 @@
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
      * @param {Object} sub - The question's sub categories.
-     * @param {elem} div - The DOM container for the sub categories.
+     * @param {element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
@@ -6034,9 +6037,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -6044,7 +6047,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -6092,18 +6095,17 @@
      * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
-      var debugMsg;
       this.debug.start('makeMainCatLink', id, name);
       this.debug.args('makeMainCatLink', id, 'string', name, 'string');
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.categories.get(id, 'url');
@@ -6134,18 +6136,17 @@
      *   indexOf to find the sub category's parent.
      * @param {string} id - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeSubCatLink(id, name) {
 
-      var debugMsg;
       this.debug.start('makeSubCatLink', id, name);
       this.debug.args('makeSubCatLink', id, 'string', name, 'string');
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
       /** @type {string} */
       var parentId;
@@ -6194,14 +6195,14 @@
      * Private Method (makeLinkSpan)
      * ---------------------------------------------
      * @desc Creates a span element for spacing between links.
-     * @return {elem} The span element.
+     * @return {element} The span element.
      * @private
      */
     function makeLinkSpan() {
 
       this.debug.start('makeLinkSpan');
 
-      /** @type {elem} */
+      /** @type {element} */
       var span;
 
       span = document.createElement('span');
@@ -6224,11 +6225,11 @@
       this.debug.start('appendProblem', problem, descr);
       this.debug.args('appendProblem', problem, 'string', descr, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -6264,17 +6265,17 @@
       this.debug.start('appendSolution', solution);
       this.debug.args('appendSolution', solution, 'object');
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var preDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var pre;
-      /** @type {elem} */
+      /** @type {element} */
       var code;
-      /** @type {elem} */
+      /** @type {element} */
       var ol;
       /** @type {number} */
       var height;
@@ -6328,11 +6329,11 @@
       this.debug.start('appendOutput', output);
       this.debug.args('appendOutput', output, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -6369,11 +6370,11 @@
       this.debug.start('appendLinks', links);
       this.debug.args('appendLinks', links, 'objects');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -6393,7 +6394,7 @@
       div.appendChild(p);
 
       links.forEach(function(/** Object */ linkObj) {
-        /** @type {elem} */
+        /** @type {element} */
         var a;
 
         a = document.createElement('a');
@@ -6422,28 +6423,27 @@
    */
   QuestionElem.prototype.addCodeExt = function() {
 
-    var debugMsg, debugArgs;
     this.debug.start('addCodeExt');
 
     /** @type {number} */
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {elem} */
+    /** @type {element} */
     var code;
-    /** @type {elem} */
+    /** @type {element} */
     var ext;
-    /** @type {elem} */
+    /** @type {element} */
     var extClose;
-    /** @type {elem} */
+    /** @type {element} */
     var extOpen;
-    /** @type {elem} */
+    /** @type {element} */
     var extBG;
-    /** @type {elem} */
+    /** @type {element} */
     var extHov;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovC;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovO;
     /** @type {boolean} */
     var testTextContent;
@@ -6507,7 +6507,7 @@
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elemMap} */
+      /** @type {elementMap} */
       var elems;
 
       elems = {
@@ -8458,16 +8458,7 @@
    */
   var Events = {};
 
-  // $s$
-  /**
-   * ----------------------------------------------- 
-   * Public Property (Events.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's DOM events.
-   * @type {Debug}
-   */
   Events.debug = aIV.debug('Events');
-  // $e$
 
   /**
    * ----------------------------------------------- 
@@ -8482,13 +8473,21 @@
     this.debug.start('popState', newState);
     this.debug.args('popState', newState, 'object');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {number} */
+    var oldIndex;
     /** @type {string} */
     var oldView;
     /** @type {boolean} */
     var flipElems;
 
+    oldIds = app.vals.get('ids').slice(0);
+    oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
+
+    app.vals.reset(newState.ids, newState.index);
 
     app.searchBar.vals.view    = newState.view;
     app.searchBar.vals.order   = newState.order;
@@ -8512,14 +8511,59 @@
       app.searchBar.elems.subCat.value = newState.subCat;
     }
 
-    app.updateDisplay({
-      flipElems  : flipElems,
-      oldView    : oldView,
-      noPushState: true
-    });
+    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
     this.debug.group('popState', 'end');
   };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.prev)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the previous button.
+   * @type {function}
+   */
+  Events.prev = function() {
+
+    this.debug.group('prev.onclick', 'coll');
+    this.debug.start('prev.onclick');
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('prev');
+
+    app.updateDisplay(null, oldIndex);
+
+    this.debug.group('prev.onclick', 'end');
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.next)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the next button.
+   * @type {function}
+   */
+  Events.next = function() {
+
+    this.debug.group('next.onclick', 'coll');
+    this.debug.start('next.onclick');
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('next');
+
+    app.updateDisplay(null, oldIndex);
+
+    this.debug.group('next.onclick', 'end');
+  };
+
 
   /**
    * ----------------------------------------------- 
@@ -8533,19 +8577,29 @@
     this.debug.start('searchView.onchange', newVal);
     this.debug.args('searchView.onchange', newVal, 'string');
 
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var oldIndex;
+    /** @type {number} */
+    var newIndex;
     /** @type {string} */
-    var oldVal;
+    var oldView;
 
     if (app.searchBar.vals.view != newVal) {
 
       this.debug.group('searchView.onchange', 'coll');
 
-      oldVal = app.searchBar.vals.view;
+      len = app.vals.get('len');
+
+      oldIndex = app.vals.get('index');
+      newIndex = (newVal === 'all' || !len) ? -1 : 0;
+      oldView = app.searchBar.vals.view;
+
       app.searchBar.vals.view = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        oldView     : oldVal
-      });
+      app.vals.set(null, newIndex);
+
+      app.updateDisplay(null, oldIndex, oldView);
 
       this.debug.group('searchView.onchange', 'end');
     }
@@ -8563,16 +8617,23 @@
     this.debug.start('searchOrder.onchange', newVal);
     this.debug.args('searchOrder.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+
     if (app.searchBar.vals.order != newVal) {
 
       this.debug.group('searchOrder.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      newIds = oldIds.slice(0);
+      newIds.reverse();
+
       app.searchBar.vals.order = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        flipElems   : true,
-        keepIndex   : true
-      });
+      app.vals.set(newIds);
+
+      app.updateDisplay(oldIds, null, null, true);
 
       this.debug.group('searchOrder.onchange', 'end');
     }
@@ -8590,12 +8651,27 @@
     this.debug.start('searchStage.onchange', newVal);
     this.debug.args('searchStage.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.stage != newVal) {
 
       this.debug.group('searchStage.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.stage = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchStage.onchange', 'end');
     }
@@ -8613,12 +8689,27 @@
     this.debug.start('searchSource.onchange', newVal);
     this.debug.args('searchSource.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != newVal) {
 
       this.debug.group('searchSource.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchSource.onchange', 'end');
     }
@@ -8636,13 +8727,28 @@
     this.debug.start('searchMainCat.onchange', newVal);
     this.debug.args('searchMainCat.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != newVal) {
 
       this.debug.group('searchMainCat.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = newVal;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchMainCat.onchange', 'end');
     }
@@ -8660,12 +8766,27 @@
     this.debug.start('searchSubCat.onchange', newVal);
     this.debug.args('searchSubCat.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != newVal) {
 
       this.debug.group('searchSubCat.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.subCat = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchSubCat.onchange', 'end');
     }
@@ -8684,8 +8805,19 @@
     this.debug.start('linkId.onclick', id);
     this.debug.args('linkId.onclick', id, 'number');
 
+    /** @type {number} */
+    var oldIndex;
+    /** @type {string} */
+    var oldView;
+
+    oldIndex = app.vals.get('index');
+    oldView = app.searchBar.vals.view;
+
     app.searchBar.elems.view.value = 'one';
-    app.moveDisplay(id);
+
+    app.vals.move(id);
+
+    app.updateDisplay(null, oldIndex, oldView);
 
     this.debug.group('linkId.onclick', 'end');
   };
@@ -8702,13 +8834,28 @@
     this.debug.start('linkSource.onclick', id);
     this.debug.args('linkSource.onclick', id, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != id) {
 
       this.debug.group('linkSource.onclick', 'coll', 'sourceID= $$', id);
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = id;
       app.searchBar.elems.source.value = id;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkSource.onclick', 'end');
     }
@@ -8726,14 +8873,29 @@
     this.debug.start('linkMainCat.onclick', id);
     this.debug.args('linkMainCat.onclick', id, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != id) {
 
       this.debug.group('linkMainCat.onclick', 'coll', 'mainCatID= $$', id);
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = id;
       app.searchBar.elems.mainCat.value = id;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkMainCat.onclick', 'end');
     }
@@ -8752,9 +8914,19 @@
     this.debug.start('linkSubCat.onclick', id, parentId);
     this.debug.args('linkSubCat.onclick', id, 'string', parentId, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != id) {
 
       this.debug.group('linkSubCat.onclick', 'coll', 'subCatID= $$', id);
+
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
 
       // Check the main category and update the values and options
       if (app.searchBar.vals.mainCat !== 'all' &&
@@ -8769,8 +8941,11 @@
         app.searchBar.elems.subCat.value = id;
       }
 
-      // Finish the display update
-      app.updateDisplay();
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkSubCat.onclick', 'end');
     }
@@ -8786,7 +8961,6 @@
    */
   Events.extCodeView = function(overflow, elems) {
 
-    var debugMsg;
     debugMsg = 'overflow= $$, elems= $$'
     this.debug.group('extCodeView.onclick', 'coll', debugMsg, overflow, elems);
     this.debug.start('extCodeView.onclick', overflow, elems);
@@ -9020,7 +9194,7 @@
      */
     var categories;
     /**
-     * @type {?objects}
+     * @type {!objects}
      * @private
      */
     var questions;
@@ -9071,10 +9245,9 @@
     );
     questions = ( ( settings.hasOwnProperty('questions') ) ?
       settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : null
+        settings.question : []
     );
 
-    // $s$
     debugCheck = checkType(resourceList, 'string|strings');
     debugMsg = 'Error: The given resources property was an ';
     debugMsg += 'incorrect data type. resources= $$';
@@ -9095,16 +9268,14 @@
     debugMsg += 'incorrect data type. categories= $$';
     debug.fail('init', debugCheck, debugMsg, categories);
 
-    debugMsg = 'Error: No questions were provided.';
-    debug.fail('init', (!!questions), debugMsg);
+    debugCheck = checkType(questions, '!objects');
+    debugMsg = 'Error: The given questions property was an ';
+    debugMsg += 'incorrect data type. questions= $$';
+    debug.fail('init', debugCheck, debugMsg, questions);
 
-    if (questions) {
-      debugCheck = (checkType(questions, 'objects') && !!questions.length);
-      debugMsg = 'Error: The given questions property was an ';
-      debugMsg += 'incorrect data type. questions= $$';
-      debug.fail('init', debugCheck, debugMsg, questions);
-    }
-    // $e$
+    debugCheck = (questions.length > 0);
+    debugMsg = 'Error: No questions were provided.';
+    debug.fail('init', debugCheck, debugMsg);
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
@@ -9119,20 +9290,14 @@
     if ( !checkType(categories, 'stringMap|objectMap') ) {
       categories = null;
     }
-    if ( checkType(questions, '!objects') ) {
-      if (!questions.length) {
-        questions = null;
-      }
-    }
-    else {
-      questions = null;
+    if ( !checkType(questions, '!objects') ) {
+      questions = [];
     }
 
     // Setup and start the app
     setup = function() {
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
-      Object.freeze(app);
       app.setupDisplay();
     };
 
@@ -9173,6 +9338,21 @@
     debug.start('init.getResource', prop);
     debug.args('init.getResource', prop, 'string=');
     debug.state('init.getResource', 'resources= $$', resources);
+
+    /** @type {string} */
+    var errorMsg;
+
+    prop = prop || '';
+
+    if (prop && !resources.hasOwnProperty(prop)) {
+      errorMsg = 'The resource you requested does not exist. Please verify that \'';
+      errorMsg += prop + '\' is a correct json file name in the resources folder ';
+      errorMsg += 'and that the file name was included in the setup of the app ';
+      errorMsg += '(see algorithmiv.com/docs/resources).';
+      console.error(errorMsg);
+      debugger;
+      return;
+    }
 
     return (!!prop) ? resources[ prop ] : resources;
   }
