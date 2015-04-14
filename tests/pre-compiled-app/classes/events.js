@@ -8,16 +8,7 @@
    */
   var Events = {};
 
-  // $s$
-  /**
-   * ----------------------------------------------- 
-   * Public Property (Events.debug)
-   * -----------------------------------------------
-   * @desc The Debug instance for the app's DOM events.
-   * @type {Debug}
-   */
   Events.debug = aIV.debug('Events');
-  // $e$
 
   /**
    * ----------------------------------------------- 
@@ -32,13 +23,21 @@
     this.debug.start('popState', newState);
     this.debug.args('popState', newState, 'object');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {number} */
+    var oldIndex;
     /** @type {string} */
     var oldView;
     /** @type {boolean} */
     var flipElems;
 
+    oldIds = app.vals.get('ids').slice(0);
+    oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
+
+    app.vals.reset(newState.ids, newState.index);
 
     app.searchBar.vals.view    = newState.view;
     app.searchBar.vals.order   = newState.order;
@@ -62,14 +61,59 @@
       app.searchBar.elems.subCat.value = newState.subCat;
     }
 
-    app.updateDisplay({
-      flipElems  : flipElems,
-      oldView    : oldView,
-      noPushState: true
-    });
+    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
     this.debug.group('popState', 'end');
   };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.prev)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the previous button.
+   * @type {function}
+   */
+  Events.prev = function() {
+
+    this.debug.group('prev.onclick', 'coll');
+    this.debug.start('prev.onclick');
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('prev');
+
+    app.updateDisplay(null, oldIndex);
+
+    this.debug.group('prev.onclick', 'end');
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.next)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the next button.
+   * @type {function}
+   */
+  Events.next = function() {
+
+    this.debug.group('next.onclick', 'coll');
+    this.debug.start('next.onclick');
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('next');
+
+    app.updateDisplay(null, oldIndex);
+
+    this.debug.group('next.onclick', 'end');
+  };
+
 
   /**
    * ----------------------------------------------- 
@@ -83,19 +127,29 @@
     this.debug.start('searchView.onchange', newVal);
     this.debug.args('searchView.onchange', newVal, 'string');
 
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var oldIndex;
+    /** @type {number} */
+    var newIndex;
     /** @type {string} */
-    var oldVal;
+    var oldView;
 
     if (app.searchBar.vals.view != newVal) {
 
       this.debug.group('searchView.onchange', 'coll');
 
-      oldVal = app.searchBar.vals.view;
+      len = app.vals.get('len');
+
+      oldIndex = app.vals.get('index');
+      newIndex = (newVal === 'all' || !len) ? -1 : 0;
+      oldView = app.searchBar.vals.view;
+
       app.searchBar.vals.view = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        oldView     : oldVal
-      });
+      app.vals.set(null, newIndex);
+
+      app.updateDisplay(null, oldIndex, oldView);
 
       this.debug.group('searchView.onchange', 'end');
     }
@@ -113,16 +167,23 @@
     this.debug.start('searchOrder.onchange', newVal);
     this.debug.args('searchOrder.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+
     if (app.searchBar.vals.order != newVal) {
 
       this.debug.group('searchOrder.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      newIds = oldIds.slice(0);
+      newIds.reverse();
+
       app.searchBar.vals.order = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        flipElems   : true,
-        keepIndex   : true
-      });
+      app.vals.set(newIds);
+
+      app.updateDisplay(oldIds, null, null, true);
 
       this.debug.group('searchOrder.onchange', 'end');
     }
@@ -140,12 +201,27 @@
     this.debug.start('searchStage.onchange', newVal);
     this.debug.args('searchStage.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.stage != newVal) {
 
       this.debug.group('searchStage.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.stage = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchStage.onchange', 'end');
     }
@@ -163,12 +239,27 @@
     this.debug.start('searchSource.onchange', newVal);
     this.debug.args('searchSource.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != newVal) {
 
       this.debug.group('searchSource.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchSource.onchange', 'end');
     }
@@ -186,13 +277,28 @@
     this.debug.start('searchMainCat.onchange', newVal);
     this.debug.args('searchMainCat.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != newVal) {
 
       this.debug.group('searchMainCat.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = newVal;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchMainCat.onchange', 'end');
     }
@@ -210,12 +316,27 @@
     this.debug.start('searchSubCat.onchange', newVal);
     this.debug.args('searchSubCat.onchange', newVal, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != newVal) {
 
       this.debug.group('searchSubCat.onchange', 'coll');
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.subCat = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('searchSubCat.onchange', 'end');
     }
@@ -234,8 +355,19 @@
     this.debug.start('linkId.onclick', id);
     this.debug.args('linkId.onclick', id, 'number');
 
+    /** @type {number} */
+    var oldIndex;
+    /** @type {string} */
+    var oldView;
+
+    oldIndex = app.vals.get('index');
+    oldView = app.searchBar.vals.view;
+
     app.searchBar.elems.view.value = 'one';
-    app.moveDisplay(id);
+
+    app.vals.move(id);
+
+    app.updateDisplay(null, oldIndex, oldView);
 
     this.debug.group('linkId.onclick', 'end');
   };
@@ -252,13 +384,28 @@
     this.debug.start('linkSource.onclick', id);
     this.debug.args('linkSource.onclick', id, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != id) {
 
       this.debug.group('linkSource.onclick', 'coll', 'sourceID= $$', id);
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = id;
       app.searchBar.elems.source.value = id;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkSource.onclick', 'end');
     }
@@ -276,14 +423,29 @@
     this.debug.start('linkMainCat.onclick', id);
     this.debug.args('linkMainCat.onclick', id, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != id) {
 
       this.debug.group('linkMainCat.onclick', 'coll', 'mainCatID= $$', id);
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = id;
       app.searchBar.elems.mainCat.value = id;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkMainCat.onclick', 'end');
     }
@@ -302,9 +464,19 @@
     this.debug.start('linkSubCat.onclick', id, parentId);
     this.debug.args('linkSubCat.onclick', id, 'string', parentId, 'string');
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != id) {
 
       this.debug.group('linkSubCat.onclick', 'coll', 'subCatID= $$', id);
+
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
 
       // Check the main category and update the values and options
       if (app.searchBar.vals.mainCat !== 'all' &&
@@ -319,8 +491,11 @@
         app.searchBar.elems.subCat.value = id;
       }
 
-      // Finish the display update
-      app.updateDisplay();
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
       this.debug.group('linkSubCat.onclick', 'end');
     }
@@ -336,7 +511,6 @@
    */
   Events.extCodeView = function(overflow, elems) {
 
-    var debugMsg;
     debugMsg = 'overflow= $$, elems= $$'
     this.debug.group('extCodeView.onclick', 'coll', debugMsg, overflow, elems);
     this.debug.start('extCodeView.onclick', overflow, elems);
