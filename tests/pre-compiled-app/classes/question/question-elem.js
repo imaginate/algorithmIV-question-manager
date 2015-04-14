@@ -8,26 +8,22 @@
    */
   var QuestionElem = function(id) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (QuestionElem.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the QuestionElem class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('QuestionElem');
 
     this.debug.start('init', id);
+
     this.debug.args('init', id, 'number');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -36,7 +32,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {elem}
+     * @type {element}
      */
     this.info;
 
@@ -45,7 +41,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {elem}
+     * @type {element}
      */
     this.solution;
 
@@ -54,7 +50,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {elem}
+     * @type {element}
      */
     this.pre;
 
@@ -63,12 +59,14 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {elem}
+     * @type {element}
      */
     this.code;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the elements
     this.root = document.createElement('section');
     this.info = document.createElement('div');
 
@@ -78,9 +76,16 @@
     this.info.className = 'info';
 
     this.root.appendChild(this.info);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionElem.prototype.constructor = QuestionElem;
 
   /**
@@ -122,9 +127,9 @@
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
-    /** @type {elem} */
+    /** @type {element} */
     var root;
-    /** @type {elem} */
+    /** @type {element} */
     var info;
     /** @type {boolean} */
     var testTextContent;
@@ -183,19 +188,18 @@
      */
     function appendId(id, url) {
 
-      var debugMsg;
       this.debug.start('appendId', id, url);
       this.debug.args('appendId', id, 'string', url, 'string');
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('id');
@@ -240,7 +244,7 @@
      * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
@@ -248,7 +252,7 @@
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       if (!url) {
@@ -278,19 +282,18 @@
      */
     function appendSource(source) {
 
-      var debugMsg;
       this.debug.start('appendSource', source);
       this.debug.args('appendSource', source, 'stringMap');
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('source');
@@ -334,7 +337,7 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
@@ -344,7 +347,7 @@
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.sources.get(id, 'url');
@@ -376,11 +379,11 @@
       this.debug.start('appendComplete', complete);
       this.debug.args('appendComplete', complete, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -417,11 +420,11 @@
       this.debug.start('appendCategory', main, sub);
       this.debug.args('appendCategory', main, 'object', sub, 'object');
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var mainDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var subDiv;
 
       contain = document.createElement('div');
@@ -458,7 +461,7 @@
      * ---------------------------------------------
      * @desc Appends the question's main categories.
      * @param {Object} main - The question's main categories.
-     * @param {elem} div - The DOM container for the main categories.
+     * @param {element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
@@ -468,9 +471,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -478,7 +481,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -524,7 +527,7 @@
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
      * @param {Object} sub - The question's sub categories.
-     * @param {elem} div - The DOM container for the sub categories.
+     * @param {element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
@@ -534,9 +537,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -544,7 +547,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -592,18 +595,17 @@
      * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
-      var debugMsg;
       this.debug.start('makeMainCatLink', id, name);
       this.debug.args('makeMainCatLink', id, 'string', name, 'string');
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.categories.get(id, 'url');
@@ -634,18 +636,17 @@
      *   indexOf to find the sub category's parent.
      * @param {string} id - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeSubCatLink(id, name) {
 
-      var debugMsg;
       this.debug.start('makeSubCatLink', id, name);
       this.debug.args('makeSubCatLink', id, 'string', name, 'string');
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
       /** @type {string} */
       var parentId;
@@ -694,14 +695,14 @@
      * Private Method (makeLinkSpan)
      * ---------------------------------------------
      * @desc Creates a span element for spacing between links.
-     * @return {elem} The span element.
+     * @return {element} The span element.
      * @private
      */
     function makeLinkSpan() {
 
       this.debug.start('makeLinkSpan');
 
-      /** @type {elem} */
+      /** @type {element} */
       var span;
 
       span = document.createElement('span');
@@ -724,11 +725,11 @@
       this.debug.start('appendProblem', problem, descr);
       this.debug.args('appendProblem', problem, 'string', descr, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -764,17 +765,17 @@
       this.debug.start('appendSolution', solution);
       this.debug.args('appendSolution', solution, 'object');
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var preDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var pre;
-      /** @type {elem} */
+      /** @type {element} */
       var code;
-      /** @type {elem} */
+      /** @type {element} */
       var ol;
       /** @type {number} */
       var height;
@@ -828,11 +829,11 @@
       this.debug.start('appendOutput', output);
       this.debug.args('appendOutput', output, 'string');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -869,11 +870,11 @@
       this.debug.start('appendLinks', links);
       this.debug.args('appendLinks', links, 'objects');
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -893,7 +894,7 @@
       div.appendChild(p);
 
       links.forEach(function(/** Object */ linkObj) {
-        /** @type {elem} */
+        /** @type {element} */
         var a;
 
         a = document.createElement('a');
@@ -922,28 +923,27 @@
    */
   QuestionElem.prototype.addCodeExt = function() {
 
-    var debugMsg, debugArgs;
     this.debug.start('addCodeExt');
 
     /** @type {number} */
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {elem} */
+    /** @type {element} */
     var code;
-    /** @type {elem} */
+    /** @type {element} */
     var ext;
-    /** @type {elem} */
+    /** @type {element} */
     var extClose;
-    /** @type {elem} */
+    /** @type {element} */
     var extOpen;
-    /** @type {elem} */
+    /** @type {element} */
     var extBG;
-    /** @type {elem} */
+    /** @type {element} */
     var extHov;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovC;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovO;
     /** @type {boolean} */
     var testTextContent;
@@ -1007,7 +1007,7 @@
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elemMap} */
+      /** @type {elementMap} */
       var elems;
 
       elems = {
