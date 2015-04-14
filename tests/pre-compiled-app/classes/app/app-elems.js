@@ -269,8 +269,12 @@
     nTitle.innerHTML = 'Next';
     nArrow.innerHTML = 'Next';
 
-    pArrow.onclick = Events.prev;
-    nArrow.onclick = Events.next;
+    pArrow.onclick = function() {
+      Events.prev();
+    };
+    nArrow.onclick = function() {
+      Events.next();
+    };
 
     prev.appendChild(pArrow);
     prev.appendChild(pBG);
