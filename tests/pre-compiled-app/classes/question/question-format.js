@@ -13,8 +13,6 @@
 
     this.debug = aIV.debug('QuestionFormat');
 
-    var debugArgs;
-
     debugArgs = [ 'init', 'coll', 'id= $$, question= $$' ];
     debugArgs.push(question.id, question);
     this.debug.group(debugArgs);

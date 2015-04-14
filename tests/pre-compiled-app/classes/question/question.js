@@ -14,8 +14,6 @@
 
     this.debug = aIV.debug('Question');
 
-    var debugArgs;
-
     this.debug.group('init', 'coll', 'questionID= $$', id);
 
     this.debug.start('init', question, id, config, sources, categories);
