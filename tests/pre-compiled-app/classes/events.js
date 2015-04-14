@@ -37,8 +37,6 @@
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
 
-    app.vals.reset(newState.ids, newState.index);
-
     app.searchBar.vals.view    = newState.view;
     app.searchBar.vals.order   = newState.order;
     app.searchBar.vals.stage   = newState.stage;
@@ -60,6 +58,8 @@
     if (app.searchBar.elems.subCat) {
       app.searchBar.elems.subCat.value = newState.subCat;
     }
+
+    app.vals.reset(newState.ids, newState.index);
 
     app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
