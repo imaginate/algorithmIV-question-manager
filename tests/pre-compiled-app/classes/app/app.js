@@ -271,7 +271,12 @@
         flip = (app.searchBar.vals.order === 'desc');
         app.updateDisplay(null, null, null, flip, true);
 
-        app.debug.group('setupDisplay', 'end');
+        // $s$
+        setTimeout(function() {
+          app.debug.group('setupDisplay', 'end');
+        }, 520);
+        // $e$
+
       }, renderTime);
     }
     else {
@@ -298,7 +303,7 @@
                                          flipElems, noPushState) {
 
     debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
-    debugMsg += 'flipElems= $$, noPushState';
+    debugMsg += 'flipElems= $$, noPushState= $$';
     debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
     debugArgs.push(oldIndex, oldView, flipElems, noPushState);
     this.debug.group(debugArgs);

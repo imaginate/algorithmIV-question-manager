@@ -393,6 +393,9 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
+    debugMsg = 'ids= $$, index= $$, view= $$';
+    this.debug.group('hideElems', 'coll', debugMsg, ids, index, view);
+
     this.debug.start('hideElems', ids, index, view);
 
     debugArgs = [ 'hideElems', ids, '!numbers', index, 'number' ];
@@ -407,6 +410,7 @@
       // Hide the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'none';
+        this.debug.group('hideElems', 'end');
         return;
       }
 
@@ -416,6 +420,7 @@
         this.setElemStyle(ids[i], 'display', 'none');
       }
 
+      this.debug.group('hideElems', 'end');
       return;
     }
 
@@ -430,6 +435,7 @@
     // Hide only the index of the provided ids
     if (view === 'one') {
       this.setElemStyle(ids[ index ], 'display', 'none');
+      this.debug.group('hideElems', 'end');
       return;
     }
 
@@ -445,6 +451,7 @@
         this.setElemStyle(ids[i], 'display', 'none');
       }
 
+      this.debug.group('hideElems', 'end');
       return;
     }
   };
@@ -459,7 +466,11 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
+    debugMsg = 'ids= $$, index= $$';
+    this.debug.group('showElems', 'coll', debugMsg, ids, index);
+
     this.debug.start('showElems', ids, index);
+
     this.debug.args('showElems', ids, '!numbers', index, 'number');
 
     /** @type {string} */
@@ -474,6 +485,7 @@
       // Show the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'block';
+        this.debug.group('showElems', 'end');
         return;
       }
 
@@ -485,6 +497,7 @@
         this.setElemStyle(ids[i], 'display', 'block');
       }
 
+      this.debug.group('showElems', 'end');
       return;
     }
 
@@ -502,6 +515,7 @@
     if (view === 'one') {
       this.setElemClass(ids[ index ], 'question shade1 hideLink');
       this.setElemStyle(ids[ index ], 'display', 'block');
+      this.debug.group('showElems', 'end');
       return;
     }
 
@@ -519,6 +533,7 @@
         this.setElemStyle(ids[i], 'display', 'block');
       }
 
+      this.debug.group('showElems', 'end');
       return;
     }
   };
