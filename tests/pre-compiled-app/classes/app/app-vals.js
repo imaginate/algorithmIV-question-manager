@@ -124,14 +124,12 @@
       this.debug.start('set', newIds, newIndex);
       this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
 
-      newIndex = newIndex || null;
-
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (newIndex) {
+      if (typeof newIndex === 'number') {
         index = newIndex;
       }
     };
@@ -143,8 +141,6 @@
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
-
-    this.debug.group('init', 'end');
 
     // Freeze this class instance
     Object.freeze(this);
@@ -216,6 +212,7 @@
     var last;
 
     id = (typeof way === 'number') ? way : 0;
+    index = this.get('index');
 
     // Check the value for way
     if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
@@ -259,12 +256,16 @@
     // Handle moving the index one spot
     if (view === 'one') {
 
+      this.debug.state('move', 'index= $$', index);
+
       if (way === 'prev') {
         index = (index === 0) ? last : --index;
       }
       else if (way === 'next') {
         index = (index === last) ? 0 : ++index;
       }
+
+      this.debug.state('move', 'index= $$', index);
 
       this.set(null, index);
 
