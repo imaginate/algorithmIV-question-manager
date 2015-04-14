@@ -7,36 +7,22 @@
    */
   var AppElems = function() {
 
-    /** @type {elem} */
-    var elem;
-    /** @type {elem} */
-    var code;
-    /** @type {elem} */
-    var ol;
-    /** @type {elem} */
-    var li;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppElems.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppElems class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppElems');
 
-    var debugCheck, debugMsg;
     this.debug.group('init', 'coll');
+
     this.debug.start('init');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -45,7 +31,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {elem}
+     * @type {element}
      */
     this.sel;
 
@@ -54,7 +40,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {elem}
+     * @type {element}
      */
     this.main;
 
@@ -63,7 +49,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {elem}
+     * @type {element}
      */
     this.nav;
 
@@ -72,7 +58,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {elem}
+     * @type {element}
      */
     this.ques;
 
@@ -81,7 +67,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {elem}
+     * @type {element}
      */
     this.hold;
 
@@ -90,7 +76,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {elem}
+     * @type {element}
      */
     this.none;
 
@@ -117,8 +103,19 @@
      */
     this.code;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the app's elements
+    /** @type {element} */
+    var elem;
+    /** @type {element} */
+    var code;
+    /** @type {element} */
+    var ol;
+    /** @type {element} */
+    var li;
+
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
@@ -191,6 +188,7 @@
 
     debugMsg = 'this.code.ol.height= $$, this.code.li.height= $$';
     this.debug.state('init', debugMsg, this.code.ol.height, this.code.li.height);
+
     debugCheck = (this.code.ol.height > 0 && this.code.li.height > 0);
     debugMsg = 'The code list or list item\'s height failed to compute.';
     this.debug.fail('init', debugCheck, debugMsg);
@@ -201,11 +199,16 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
     this.debug.group('init', 'end');
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppElems.prototype.constructor = AppElems;
 
   /**
@@ -219,45 +222,21 @@
 
     this.debug.start('appendNav');
 
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var prev;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pTitle;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var next;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nTitle;
 
     prev   = document.createElement('div');
@@ -286,16 +265,8 @@
     nTitle.innerHTML = 'Next';
     nArrow.innerHTML = 'Next';
 
-    pArrow.onclick = function() {
-      Events.debug.group('prev.onclick', 'coll');
-      app.moveDisplay('prev');
-      Events.debug.group('prev.onclick', 'end');
-    };
-    nArrow.onclick = function() {
-      Events.debug.group('next.onclick', 'coll');
-      app.moveDisplay('next');
-      Events.debug.group('next.onclick', 'end');
-    };
+    pArrow.onclick = Events.prev;
+    nArrow.onclick = Events.next;
 
     prev.appendChild(pArrow);
     prev.appendChild(pBG);
@@ -313,76 +284,37 @@
    * Public Method (AppElems.prototype.appendError)
    * -------------------------------------------------
    * @desc Creates and appends the error elements.
-   * @type {function()}
+   * @type {function}
    */
   AppElems.prototype.appendError = function() {
 
     this.debug.start('appendError');
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var errorMsg;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var example;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var exampleLineCount;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var divHeight;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var errorDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h2;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var p;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var exampleDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h3;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var div;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pre;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var code;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var ol;
 
     errorMsg = '' +
