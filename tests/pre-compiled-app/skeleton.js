@@ -45,6 +45,7 @@
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
+ * @typedef {Object<string, HTMLElement>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
