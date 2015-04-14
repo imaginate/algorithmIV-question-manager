@@ -200,7 +200,6 @@
    */
   Questions.prototype.setElemStyle = function(id, type, val) {
 
-    var debugArgs, debugMsg, debugCheck;
     this.debug.start('setElemStyle', id, type, val);
 
     debugArgs = [ 'setElemStyle', id, 'number|string' ];
@@ -234,6 +233,25 @@
 
       this.get(id).elem.root.style[ key ] = type[ key ];
     }, this);
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemClass)
+   * ---------------------------------------------------
+   * @desc Sets the class name for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {string} newClassName - The new class name.
+   */
+  Questions.prototype.setElemClass = function(id, newClassName) {
+
+    this.debug.start('setElemClass', id, newClassName);
+
+    debugArgs = [ 'setElemClass', id, 'number|string' ];
+    debugArgs.push(newClassName, 'string');
+    this.debug.args(debugArgs);
+
+    this.get(id).elem.root.className = newClassName;
   };
 
   /**
