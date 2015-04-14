@@ -3,60 +3,85 @@
    * Public Class (AppVals)
    * -----------------------------------------------------
    * @desc The app's current values.
-   * @param {number} quesLen - The number of questions for the app.
+   * @param {number} questionsLen - The total number of questions.
    * @constructor
    */
-  var AppVals = function(quesLen) {
+  var AppVals = function(questionsLen) {
 
-    /** @type {number} */
-    var i;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppVals.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppVals class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppVals');
 
-    this.debug.start('init');
-    this.debug.args('init', quesLen, 'number');
-    // $e$
+    this.debug.start('init', questionsLen);
+
+    this.debug.args('init', questionsLen, 'number');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
+     * Protected Property (AppVals.allIds)
+     * -----------------------------------------------
+     * @desc The ids of all of the questions.
+     * @type {numbers}
+     * @private
+     */
+    var allIds;
+
+    /**
+     * -----------------------------------------------
      * Protected Property (AppVals.ids)
      * -----------------------------------------------
-     * @desc The ids of the questions that match the current search
-     *   criteria.
-     * @type {nums}
+     * @desc The ids of the questions that match the current search criteria.
+     * @type {numbers}
      * @private
      */
     var ids;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.len)
      * -----------------------------------------------
-     * @desc The number of questions that match the current search
-     *   criteria.
-     * @type {num}
+     * @desc The number of questions that match the current search criteria.
+     * @type {number}
      * @private
      */
     var len;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.index)
      * -----------------------------------------------
      * @desc The current index of the ids array being displayed.
      *   If the view = 'all' or no ids match then index = -1.
-     * @type {num}
+     * @type {number}
      * @private
      */
     var index;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {number} */
+    var i;
+
+    allIds = new Array(questionsLen);
+    i = questionsLen;
+    while (i--) {
+      allIds[i] = i + 1;
+    }
+
+    ids = allIds.slice(0);
+    len = questionsLen;
+    index = -1;
+
+    // Freeze the needed protected properties
+    Object.freeze(allIds);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -64,180 +89,233 @@
      * -----------------------------------------------
      * @desc Gets an app value.
      * @param {string} prop - The name of the value to get.
-     * @return {(num|nums)}
+     * @return {(number|numbers)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, (num|nums)>} */
-      var values = {
-        ids  : ids,
-        len  : len,
-        index: index
+      /** @type {Object<string, (number|numbers)>} */
+      var props = {
+        allIds: allIds,
+        ids   : ids,
+        len   : len,
+        index : index
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', values.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return values[prop];
+      return props[ prop ];
     };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (AppVals.set)
+     * -----------------------------------------------
+     * @desc Sets the app's current values.
+     * @param {numbers} newIds - The new matching question ids.
+     * @param {number=} newIndex - The new starting index.
+     */
+    this.set = function(newIds, newIndex) {
+
+      this.debug.start('set', newIds, newIndex);
+      this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
+
+      newIndex = newIndex || null;
+
+      if (newIds) {
+        ids = newIds.slice(0);
+        len = ids.length;
+      }
+
+      if (newIndex) {
+        index = newIndex;
+      }
+    };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
+    Object.freeze(this.set);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.reset)
-     * -----------------------------------------------
-     * @desc Resets the app values.
-     * @param {nums} newIds - The new matching question ids.
-     * @param {number=} newIndex - The starting index.
-     */
-    this.reset = function(newIds, newIndex) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      this.debug.start('reset', newIds, newIndex);
-      this.debug.args('reset', newIds, 'numbers', newIndex, 'number=');
+    this.debug.group('init', 'end');
 
-      /** @type {number} */
-      var newLen;
-
-      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
-
-      // Set newIndex
-      if (app.searchBar.vals.view === 'all') {
-        newIndex = -1;
-      }
-      else {
-        if (newLen) {
-          if (typeof newIndex !== 'number' ||
-              newIndex < 0 || newIndex >= newLen) {
-            newIndex = 0;
-          }
-        }
-        else {
-          newIndex = -1;
-        }
-      }
-
-      // Reset the values
-      ids = (newLen) ? newIds.slice(0) : [];
-      len = newLen;
-      index = newIndex;
-    };
-    Object.freeze(this.reset);
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.move)
-     * -----------------------------------------------
-     * @desc Go to the prev, next, or a specific index.
-     * @param {(string|number)} way - The location to move the index.
-     *   The options are 'prev', 'next', or a question id.
-     * @return {num} The new index.
-     */
-    this.move = function(way) {
-
-      var debugMsg, debugCheck;
-      this.debug.start('move', way);
-      this.debug.args('move', way, 'string|number');
-      // Debug message for initial value checks
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-
-      /**
-       * @type {string}
-       * private
-       */
-      var view;
-      /**
-       * @type {num}
-       * private
-       */
-      var last;
-
-      // Check the value for way
-      if (typeof way === 'string' &&
-          way !== 'prev' && way !== 'next') {
-        way = way.replace(/[^0-9]/g, '');
-        this.debug.fail('move', !!way, debugMsg, way);
-        way = Number(way);
-      }
-
-      // $s$
-      if (typeof way !== 'string') {
-        debugCheck = (way > 0 && way <= app.questions.len);
-        this.debug.fail('move', debugCheck, debugMsg, way);
-      }
-      // $e$
-
-      // Save the value of the current view
-      view = app.searchBar.vals.view;
-
-      if (typeof way === 'number') {
-        if (view !== 'one') {
-          app.searchBar.vals.view = 'one';
-        }
-        index = ids.indexOf(way);
-        this.debug.fail('move', (index !== -1), debugMsg, way);
-        return index;
-      }
-
-      debugMsg = 'Error: This method should not have been called now. ';
-      debugMsg += 'The nav elements should be hidden.';
-
-      // Save the last index
-      last = len - 1;
-
-      // The single view actions
-      if (view === 'one') {
-
-        this.debug.fail('move', (len > 1), debugMsg);
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : --index;
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : ++index;
-        }
-
-        return index;
-      }
-
-      // The ten view actions
-      if (view === 'ten') {
-
-        this.debug.fail('move', (len > 10), debugMsg);
-
-        // Update the last index
-        last -= (last % 10);
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : (index - 10);
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : (index + 10);
-        }
-
-        return index;
-      }
-
-      debugMsg = 'Error: An incorrect view was parsed. ';
-      debugMsg += 'app.searchBar.vals.view= $$';
-      this.debug.fail('move', false, debugMsg, view);
-    };
-    Object.freeze(this.move);
-
-
-    // Setup the properties
-    ids = new Array(quesLen);
-    len = quesLen;
-    index = 0;
-
-    i = quesLen;
-    while (i--) {
-      ids[i] = i + 1;
-    }
+    // Freeze this class instance
+    Object.freeze(this);
   };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
 
   // Ensure constructor is set to this class.
   AppVals.prototype.constructor = AppVals;
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.reset)
+   * -----------------------------------------------
+   * @desc Resets the app values.
+   * @param {numbers} ids - The new matching question ids.
+   * @param {number=} index - The new starting index.
+   */
+  AppVals.prototype.reset = function(ids, index) {
+
+    this.debug.start('reset', ids, index);
+    this.debug.args('reset', ids, 'numbers', index, 'number=');
+
+    /** @type {number} */
+    var len;
+
+    if (!ids) {
+      ids = this.get('allIds');
+    }
+    len = ids.length;
+
+    // Check the new index value
+    if (app.searchBar.vals.view === 'all' || !len) {
+      index = -1;
+    }
+    else if (index < 0 || index >= len) {
+      index = 0;
+    }
+
+    // Reset the values
+    this.set(ids, index);
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.move)
+   * -----------------------------------------------
+   * @desc Go to the prev, next, or a specific index.
+   * @param {(string|number)} way - The location to move the index.
+   *   The options are 'prev', 'next', or a question id.
+   * @return {number} The new index.
+   */
+  AppVals.prototype.move = function(way) {
+
+    this.debug.start('move', way);
+    this.debug.args('move', way, 'string|number');
+
+    /** @type {number} */
+    var id;
+    /** @type {string} */
+    var view;
+    /** @type {number} */
+    var index;
+    /** @type {number} */
+    var last;
+
+    id = (typeof way === 'number') ? way : 0;
+
+    // Check the value for way
+    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+      try {
+        id = Number( way.replace(/[^0-9]/g, '') );
+      }
+      catch (e) {
+        debugMsg = 'Error: An incorrect value was given for way. way= $$';
+        this.debug.fail('move', false, debugMsg, way);
+        return;
+      }
+    }
+
+    view = app.searchBar.vals.view;
+
+    // Handle moving to a specific question id
+    if (id) {
+
+      debugCheck = (id > 0 && id <= app.questions.len);
+      debugMsg = 'Error: An incorrect value was given for way. way= $$';
+      this.debug.fail('move', debugCheck, debugMsg, way);
+
+      if (view !== 'one') {
+        app.searchBar.vals.view = 'one';
+      }
+
+      index = this.get('ids').indexOf(way);
+
+      this.set(null, index);
+
+      debugCheck = (index !== -1);
+      debugMsg = 'Error: An incorrect value was given for way. way= $$';
+      this.debug.fail('move', debugCheck, debugMsg, way);
+
+      return index;
+    }
+
+    // Save the last index
+    last = this.get('len') - 1;
+
+    // Handle moving the index one spot
+    if (view === 'one') {
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : --index;
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : ++index;
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    // Handle moving the index ten spots
+    if (view === 'ten') {
+
+      // Update the last index
+      last = last - (last % 10);
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : (index - 10);
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : (index + 10);
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    debugMsg = 'Error: An incorrect view was parsed. ';
+    debugMsg += 'app.searchBar.vals.view= $$';
+    this.debug.fail('move', false, debugMsg, view);
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.getStateObj)
+   * -----------------------------------------------
+   * @desc Returns a state object for the current app values.
+   * @return {Object<string, (string|number|numbers)>}
+   */
+  AppVals.prototype.getStateObj = function() {
+
+    this.debug.start('getStateObj');
+
+    /** @type {Object<string, (string|number|numbers)>} */
+    var vals;
+
+    vals = {
+      ids    : this.get('ids').slice(0),
+      index  : this.get('index'),
+      view   : app.searchBar.vals.view,
+      order  : app.searchBar.vals.order,
+      stage  : app.searchBar.vals.stage,
+      source : app.searchBar.vals.source,
+      mainCat: app.searchBar.vals.mainCat,
+      subCat : app.searchBar.vals.subCat
+    };
+
+    return vals;
+  };
