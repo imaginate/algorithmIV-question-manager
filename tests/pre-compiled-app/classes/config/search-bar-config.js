@@ -92,6 +92,9 @@
     if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
+    if (!category && subCat) {
+      subCat = false;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
