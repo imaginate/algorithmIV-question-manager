@@ -10,19 +10,15 @@
    */
   var Category = function(name, subs) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Category.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Category class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Category');
 
     this.debug.start('init', name, subs);
+
     this.debug.args('init', name, 'string', subs, 'strings=');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -44,36 +40,57 @@
      */
     var ids;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    ids = [];
+    subs = (!!subs) ? Object.freeze(subs) : null;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Category.get)
      * -----------------------------------------------
-     * @desc Gets a property from the category.
-     * @param {string} prop - The name of the detail to get.
-     * @return {(string|nums)}
+     * @desc Gets a protected property's value from the category.
+     * @param {string} prop - The name of the property to get.
+     * @return {(string|numbers)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, function>} */
-      var category = {
-        name: function() { return name; },
-        url : function() { return url; },
+      /** @type {Object<string, (string|numbers|function)>} */
+      var props = {
+        name: name,
+        url : url,
+        subs: subs,
         ids : function() {
           return Object.freeze( ids.slice(0) );
-        },
-        subs: function() { return subs; }
+        }
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', category.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return category[prop]();
+      prop = props[ prop ];
+
+      return (typeof prop === 'function') ? prop() : prop;
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -91,22 +108,21 @@
         ids.push(id);
       }
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.addId);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    if (!name || typeof name !== 'string') {
-      name = '';
-      url  = '';
-    }
-    else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
-    }
-    ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Category.prototype.constructor = Category;

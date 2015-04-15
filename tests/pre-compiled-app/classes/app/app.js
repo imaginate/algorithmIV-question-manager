@@ -140,7 +140,6 @@
     this.categories = new Categories(categories);
 
     Object.freeze(this.sources);
-    Object.freeze(this.categories);
 
     // Setup the prettifier
     tmpConfig = {
