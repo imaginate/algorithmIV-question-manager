@@ -269,6 +269,9 @@
       category: app.config.searchBar.get('category'),
       subCat  : app.config.searchBar.get('subCat')
     };
+    config.source = config.source || app.config.links.get('source');
+    config.category = config.category || app.config.links.get('category');
+    config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
     i = 0;
