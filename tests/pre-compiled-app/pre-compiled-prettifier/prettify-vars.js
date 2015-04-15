@@ -1,13 +1,5 @@
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (prettify.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the prettifier.
-     * @type {Debug}
-     */
+    // The prettifier's debugger object
     prettify.debug = aIV.debug('prettify');
-    // $e$
 
     /**
      * ---------------------------------------------
