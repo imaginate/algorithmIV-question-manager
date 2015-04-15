@@ -17,51 +17,28 @@
    */
   var _init = function(settings) {
 
-    var debugMsg, debugCheck;
     debug.start('init', settings);
+
     debug.args('init', settings, 'object');
+
     debugMsg = 'Error: A second attempt to init this app occurred.';
     debug.fail('init', (!_initialized), debugMsg);
 
-    /**
-     * @type {?(string|strings)}
-     * @private
-     */
+    /** @type {?(string|strings)} */
     var resourceList;
-    /**
-     * @type {?objectMap}
-     * @private
-     */
+    /** @type {objectMap} */
     var config;
-    /**
-     * @type {?stringMap}
-     * @private
-     */
+    /** @type {stringMap} */
     var sources;
-    /**
-     * @type {?(objectMap|stringMap)}
-     * @private
-     */
+    /** @type {(objectMap|stringMap)} */
     var categories;
-    /**
-     * @type {!objects}
-     * @private
-     */
+    /** @type {!objects} */
     var questions;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var setup;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var callback;
-    /**
-     * @type {number}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     // Check if app has been initialized
