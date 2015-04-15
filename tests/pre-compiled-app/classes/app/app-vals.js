@@ -150,7 +150,6 @@
 // The Prototype Methods
 ////////////////////////////////////////////////////////////////////////////////
 
-  // Ensure constructor is set to this class.
   AppVals.prototype.constructor = AppVals;
 
   /**

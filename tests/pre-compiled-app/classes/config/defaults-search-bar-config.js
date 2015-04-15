@@ -145,7 +145,7 @@
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'string|number');
 
-      /** @type {function} */
+      /** @type {Object<string, function>} */
       var props = {
         startID: function() { startID = val; },
         view   : function() { view    = val; },
