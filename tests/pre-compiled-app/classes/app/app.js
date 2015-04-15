@@ -140,7 +140,6 @@
     this.categories = new Categories(categories);
 
     Object.freeze(this.flags);
-    Object.freeze(this.config);
     Object.freeze(this.sources);
     Object.freeze(this.categories);
 
@@ -420,13 +419,13 @@
       null : this.searchBar.ques.stage[ stage ].slice(0)
     );
     source = ( (source === 'all') ?
-      null : this.sources.get(source).get('ids').slice(0)
+      null : this.sources.get(source, 'ids').slice(0)
     );
     mainCat = ( (mainCat === 'all') ?
-      null : this.categories.get(mainCat).get('ids').slice(0)
+      null : this.categories.get(mainCat, 'ids').slice(0)
     );
     subCat = ( (subCat === 'all') ?
-      null : this.categories.get(subCat).get('ids').slice(0)
+      null : this.categories.get(subCat, 'ids').slice(0)
     );
 
     // Check for empty arrays
