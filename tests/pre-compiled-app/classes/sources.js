@@ -8,30 +8,25 @@
    */
   var Sources = function(sources) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Sources.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Sources class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Sources');
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
-    this.debug.start('init', sources);
-    this.debug.args('init', sources, 'stringMap');
-    // $e$
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Sources.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the source objects using the ids as keys.
-     * @type {Object<string, Source>}
-     * @private
-     */
-    var data;
+    this.debug.start('init', sources);
+
+    this.debug.args('init', sources, 'stringMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
+
+    if ( !checkType(sources, '!stringMap') ) {
+      sources = {};
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -51,57 +46,98 @@
      */
     this.len;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    this.ids = Object.keys(sources);
+    this.len = this.ids.length;
+
+    // Sort the ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, sources);
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Sources.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the source objects using the ids as keys.
+     * @type {Object<string, Source>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    data = {};
+
+    // Build the data hash map
+    if (this.len) {
+      this.ids.forEach(function(/** string */ sourceId) {
+        data[ sourceId ] = new Source(sources[ sourceId ]);
+      });
+    }
+
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source object or property.
+     * @desc Get a source's Source object or property.
      * @param {string} id - The source id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Source|string|nums)}
+     * @param {string=} prop - The property to get.
+     * @return {(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
+      /** @type {Source} */
+      var source;
 
-      return (!!prop) ? data[id].get(prop) : data[id];
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      debugCheck = data.hasOwnProperty(id);
+      debugMsg = 'Error: The given source does not exist. sourceID= $$';
+      this.debug.fail('get', debugCheck, debugMsg, id);
+
+      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? source.get(prop) : source;
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Check the argument data types
-    if ( !checkType(sources, '!stringMap') ) {
-      sources = {};
-    }
-
-    // Setup the properties
-    this.ids = Object.keys(sources);
-    this.len = this.ids.length;
-    data = {};
-
-    if (this.len) {
-
-      // Sort the ids
-      this.ids = sortKeys(this.ids, sources);
-
-      // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
-        data[id] = new Source(sources[id]);
-      });
-    }
-
-    Object.freeze(this.ids);
-    Object.freeze(data);
-
-    // Close this debug console group
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Sources.prototype.constructor = Sources;

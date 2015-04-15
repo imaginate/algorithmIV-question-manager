@@ -139,8 +139,6 @@
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
 
-    Object.freeze(this.sources);
-
     // Setup the prettifier
     tmpConfig = {
       trimSpace   : this.config.prettifier.get('trimSpace'),
