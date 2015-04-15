@@ -155,13 +155,17 @@
       /** @type {Category} */
       var category;
 
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
       debugCheck = data.hasOwnProperty(id);
       debugMsg = 'Error: The given category does not exist. catID= $$';
       this.debug.fail('get', debugCheck, debugMsg, id);
 
       category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
 
-      return (typeof prop === 'string') ? category.get(prop) : category;
+      return (prop) ? category.get(prop) : category;
     };
 
     // Freeze all of the methods
