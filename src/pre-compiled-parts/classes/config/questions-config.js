@@ -8,6 +8,10 @@
    */
   var QuestionsConfig = function(config) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (QuestionsConfig.id)
@@ -98,34 +102,10 @@
      */
     var output;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionsConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        complete: complete,
-        source  : source,
-        category: category,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        output  : output
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     id       = true;
     complete = true;
     source   = true;
@@ -163,7 +143,50 @@
     if (config.hasOwnProperty('output') && config.output === false) {
       output = false;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionsConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from QuestionsConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        complete: complete,
+        source  : source,
+        category: category,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        output  : output
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionsConfig.prototype.constructor = QuestionsConfig;

@@ -8,18 +8,31 @@
    */
   var Categories = function(categories) {
 
-    /** @type {strings} */
-    var subIds;
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Categories.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
-     * @private
-     */
-    var data;
+    if ( checkType(categories, '!stringMap') ) {
+      categories = {
+        main: categories,
+        sub : {}
+      };
+    }
+    else {
+      if (!categories) {
+        categories = {};
+      }
+      if (!categories.main || !checkType(categories.main, '!stringMap')) {
+        categories.main = {};
+      }
+      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
+        categories.sub = {};
+      }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -39,55 +52,55 @@
      */
     this.len;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Categories.get)
-     * -----------------------------------------------
-     * @desc Get a category object or property.
-     * @param {string} id - The category id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Category|string|nums)}
-     */
-    this.get = function(id, prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      return ( ( !data.hasOwnProperty(id) ) ?
-        false : (!!prop) ?
-          data[id].get(prop) : data[id]
-      );
-    };
-    Object.freeze(this.get);
+    /** @type {number} */
+    var allIndex;
 
-    // Check the argument data types
-    if ( checkType(categories, '!stringMap') ) {
-      categories = {
-        main: categories,
-        sub : {}
-      };
-    }
-    else {
-      if (!categories) {
-        categories = {};
-      }
-      if (!categories.main || !checkType(categories.main, '!stringMap')) {
-        categories.main = {};
-      }
-      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
-        categories.sub = {};
-      }
-    }
-
-    // Setup the properties
     this.ids = Object.keys(categories.main);
     this.len = this.ids.length;
+
+    // Sort the main category ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, categories.main);
+    }
+
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Categories.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the category objects using the ids as keys.
+     * @type {Object<string, Category>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {strings} */
+    var subIds;
+
     data = {};
 
     if (this.len) {
 
-      // Sort the main category ids
-      this.ids = sortKeys(this.ids, categories.main);
-
-      // Build the hash map
+      // Build the data hash map
       this.ids.forEach(function(/** string */ mainId) {
 
         // Save and sort the sub category ids if they exist
@@ -101,22 +114,58 @@
 
         // Add main category to the hash map
         data[ mainId ] = new Category(categories.main[ mainId ], subIds);
-        Object.freeze(data[ mainId ]);
 
         // Add the sub categories to the hash map
         if (subIds && subIds.length) {
           subIds.forEach(function(/** string */ subId) {
             data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-            Object.freeze(data[ subId ]);
           });
         } 
       });
     }
 
-    Object.freeze(this.ids);
     Object.freeze(data);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Categories.get)
+     * -----------------------------------------------
+     * @desc Get a catgory's Category object or property.
+     * @param {string} id - The category id to get.
+     * @param {string=} prop - The property to get.
+     * @return {(Category|string|numbers)}
+     */
+    this.get = function(id, prop) {
+
+      /** @type {Category} */
+      var category;
+
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? category.get(prop) : category;
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Categories.prototype.constructor = Categories;

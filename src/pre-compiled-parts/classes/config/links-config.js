@@ -10,6 +10,10 @@
    */
   var LinksConfig = function(config) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (LinksConfig.id)
@@ -40,28 +44,10 @@
      */
     var category;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (LinksConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        source  : source,
-        category: category
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Set the properties
     id       = true;
     source   = false;
     category = true;
@@ -75,7 +61,44 @@
     if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (LinksConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from LinksConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        source  : source,
+        category: category
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   LinksConfig.prototype.constructor = LinksConfig;

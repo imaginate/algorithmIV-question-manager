@@ -11,14 +11,63 @@
    */
   var Questions = function(questions, config, sources, categories) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.len)
+     * -----------------------------------------------
+     * @desc The total number of questions.
+     * @type {number}
+     */
+    this.len;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.list)
+     * -----------------------------------------------
+     * @desc An array of all the question objects.
+     * @return {questions}
+     */
+    this.list;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /** @type {number} */
     var i;
     /** @type {number} */
     var id;
     /** @type {number} */
     var len;
-    /** @type {string} */
-    var url;
+
+    this.len = questions.length;
+
+    len = this.len + 1;
+    this.list = (this.len) ? new Array(len) : [];
+
+    // Add blank to beginning of list so ids and indexes match
+    if (this.len) {
+      this.list[0] = null;
+    }
+
+    // Add the Question object references to the list
+    --len;
+    i = -1;
+    while (++i < len) {
+      id = i + 1;
+      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+    }
+
+    // Freeze the public properties that are objects
+    Object.freeze(this.list);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -29,125 +78,130 @@
      */
     var data;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.len)
-     * -----------------------------------------------
-     * @desc The number of questions supplied to this app instance.
-     * @type {number}
-     */
-    this.len;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.list)
-     * -----------------------------------------------
-     * @desc The array of question objects.
-     * @return {questions}
-     */
-    this.list;
+    /** @type {string} */
+    var url;
+
+    data = {};
+
+    // Build the data hash map
+    ++i;
+    while (--i) {
+      url = this.list[i].get('url');
+      if (url) {
+        data[ url ] = this.list[i];
+      }
+    }
+
+    // Freeze the protected properties
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question by id or url.
+     * @desc Gets a question's object or property.
      * @param {(number|string)} id - The question id to get.
-     * @return {Question}
+     * @param {string=} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val}
      */
-    this.get = function(id) {
+    this.get = function(id, prop, formatted) {
 
       /** @type {Question} */
       var question;
 
-      question = (typeof id === 'number') ? this.list[id] : data[id];
+      prop = prop || '';
+      formatted = formatted || false;
 
-      return question;
+      question = (typeof id === 'number') ? this.list[ id ] : data[ id ];
+
+      return ( (!prop) ?
+        question : (prop === 'elem') ?
+          question.elem : question.get(prop, formatted)
+      );
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.setStyle)
-     * -----------------------------------------------
-     * @desc Sets the style for a question's element.
-     * @param {!(number|string)} id - The question id to set.
-     * @param {!(string|stringMap)} type - The style setting to set. If a
-     *   string is given then another param with the value is required.
-     *   If an object is provided then use key => value pairs as such
-     *   styleType => newValue (e.g. { display: 'none' }).
-     * @param {!(string|number)=} val - If the type param is a string then
-     *   this is the new value for the it.
-     */
-    this.setStyle = function(id, type, val) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      // Handle one type change
-      if (typeof type === 'string') {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(type) ) {
-          type = camelCase(type);
-        }
-
-        this.get(id).elem.root.style[type] = val;
-        return;
-      }
-
-      // Handle multiple type changes
-      Object.keys(type).forEach(function(/** string */ key) {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(key) ) {
-          key = camelCase(key);
-        }
-
-        this.get(id).elem.root.style[key] = type[key];
-      }, this);
-    };
-    Object.freeze(this.setStyle);
-
-    // Check the argument data type
-    if (!questions || !checkType(questions, '!objects')) {
-      questions = [];
-    }
-
-    // Setup the len and list properties
-    this.len = questions.length;
-    len = this.len + 1;
-    this.list = (this.len) ? new Array(len) : [];
-
-    // Add blank to beginning of list so ids and indexes match
-    if (this.len) {
-      this.list[0] = null;
-    }
-
-    // Add the questions
-    --len;
-    i = -1;
-    while (++i < len) {
-      id = i + 1;
-      this.list[id] = new Question(questions[i], id, config, sources, categories);
-      Object.freeze(this.list[id]);
-    }
-
-    // Setup the data hash map
-    data = {};
-
-    ++i;
-    while (--i) {
-      url = this.list[i].get('url');
-      if (url) {
-        data[url] = this.list[i];
-      }
-    }
-
-    Object.freeze(this.list);
-    Object.freeze(data);
-
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Questions.prototype.constructor = Questions;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemStyle)
+   * ---------------------------------------------------
+   * @desc Sets the style for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {!(string|stringMap)} type - The style setting to set.
+   *   If a string is given then another param with the value is
+   *   required. If an object is provided then use key => value
+   *   pairs like styleType => newValue (see below example).
+   * @param {(string|number)=} val - If the type param is a string then
+   *   this is the new value for the it.
+   * @example
+   *   app.questions.setElemStyle(5, { display: 'none' });
+   *   // OR
+   *   app.questions.setElemStyle(5, 'display', 'none');
+   */
+  Questions.prototype.setElemStyle = function(id, type, val) {
+
+    // Handle one update
+    if (typeof type === 'string') {
+
+      // Replace dashes with camel case
+      if ( /\-/.test(type) ) {
+        type = camelCase(type);
+      }
+
+      this.get(id).elem.root.style[ type ] = val;
+      return;
+    }
+
+    // Handle multiple updates
+    Object.keys(type).forEach(function(/** string */ key) {
+
+      // Replace dashes with camel case
+      if ( /\-/.test(key) ) {
+        key = camelCase(key);
+      }
+
+      this.get(id).elem.root.style[ key ] = type[ key ];
+    }, this);
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemClass)
+   * ---------------------------------------------------
+   * @desc Sets the class name for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {string} newClassName - The new class name.
+   */
+  Questions.prototype.setElemClass = function(id, newClassName) {
+
+    this.get(id).elem.root.className = newClassName;
+  };
 
   /**
    * -----------------------------------------------------
@@ -171,6 +225,9 @@
       category: app.config.searchBar.get('category'),
       subCat  : app.config.searchBar.get('subCat')
     };
+    config.source = config.source || app.config.links.get('source');
+    config.category = config.category || app.config.links.get('category');
+    config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
     i = 0;
@@ -276,9 +333,9 @@
    * Public Method (Questions.prototype.hideElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'none' for the provided questions.
-   * @param {?nums} ids - The previous active question ids.
-   * @param {num} index - The index of the ids to hide from view.
-   * @param {string=} view - The old value of app.searchBar.vals.view.
+   * @param {!numbers} ids - The previous active question ids.
+   * @param {number} index - The index of the ids to hide from view.
+   * @param {string} view - The old value of app.searchBar.vals.view.
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
@@ -287,8 +344,8 @@
 
     if (index === -1) {
 
-      // No questions to hide (i.e. hide the empty message)
-      if (!ids) {
+      // Hide the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'none';
         return;
       }
@@ -296,29 +353,30 @@
       // Hide all of the provided ids
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
 
       return;
     }
 
-    view = view || app.searchBar.vals.view;
-
     // Hide only the index of the provided ids
     if (view === 'one') {
-      this.setStyle(ids[index], 'display', 'none');
+      this.setElemStyle(ids[ index ], 'display', 'none');
       return;
     }
 
     // Hide the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be hidden
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
+
       return;
     }
   };
@@ -328,26 +386,22 @@
    * Public Method (Questions.prototype.showElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'block' for the provided questions.
-   * @param {?nums} ids - The new active question ids.
-   * @param {num} index - The index of the ids to show.
+   * @param {!numbers} ids - The new active question ids.
+   * @param {number} index - The index of the ids to show.
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var view;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
+    /** @type {string} */
+    var newClassName;
 
     if (index === -1) {
 
-      // No questions to show (i.e. show the empty message)
-      if (!ids) {
+      // Show the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'block';
         return;
       }
@@ -355,10 +409,9 @@
       // Show all of the provided ids
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
 
       return;
@@ -366,25 +419,27 @@
 
     view = app.searchBar.vals.view;
 
-    // Hide only the index of the provided ids
+    // Show only the index of the provided ids
     if (view === 'one') {
-      this.get(ids[index]).elem.root.className = 'question shade1 hideLink';
-      this.setStyle(ids[index], 'display', 'block');
+      this.setElemClass(ids[ index ], 'question shade1 hideLink');
+      this.setElemStyle(ids[ index ], 'display', 'block');
       return;
     }
 
-    // Hide the index plus ten (or to the array end)
+    // Show the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be shown
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
+
       return;
     }
   };

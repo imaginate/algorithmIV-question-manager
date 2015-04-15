@@ -11,8 +11,9 @@
    */
   var QuestionFormat = function(question, config, sources, categories) {
 
-    /** @type {{ result: string, lineCount: number }} */
-    var code;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -83,29 +84,12 @@
      */
     var solution;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionFormat.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        source  : source,
-        complete: complete,
-        mainCat : mainCat,
-        subCat  : subCat,
-        solution: solution
-      };
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
+    /** @type {{ result: string, lineCount: number }} */
+    var code;
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';
@@ -167,11 +151,51 @@
       solution.lineCount = code.lineCount;
     }
 
+    // Freeze all of the properties that are objects
     Object.freeze(mainCat);
     Object.freeze(subCat);
     Object.freeze(solution);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionFormat.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        source  : source,
+        complete: complete,
+        mainCat : mainCat,
+        subCat  : subCat,
+        solution: solution
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionFormat.prototype.constructor = QuestionFormat;

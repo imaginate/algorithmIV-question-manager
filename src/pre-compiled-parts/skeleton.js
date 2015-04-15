@@ -29,18 +29,22 @@
  * @typedef {*} val
  * @typedef {number} num
  * @typedef {HTMLElement} elem
+ * @typedef {HTMLElement} element
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
+ * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
  * @typedef {Array<HTMLElement>} elems
+ * @typedef {Array<HTMLElement>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
+ * @typedef {Object<string, HTMLElement>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 

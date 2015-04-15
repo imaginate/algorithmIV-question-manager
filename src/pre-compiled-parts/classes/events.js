@@ -17,11 +17,17 @@
    */
   Events.popState = function(newState) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {number} */
+    var oldIndex;
     /** @type {string} */
     var oldView;
     /** @type {boolean} */
     var flipElems;
 
+    oldIds = app.vals.get('ids').slice(0);
+    oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
 
@@ -47,11 +53,49 @@
       app.searchBar.elems.subCat.value = newState.subCat;
     }
 
-    app.updateDisplay({
-      flipElems  : flipElems,
-      oldView    : oldView,
-      noPushState: true
-    });
+    app.vals.reset(newState.ids, newState.index);
+
+    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.prev)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the previous button.
+   * @type {function}
+   */
+  Events.prev = function() {
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('prev');
+
+    app.updateDisplay(null, oldIndex);
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.next)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the next button.
+   * @type {function}
+   */
+  Events.next = function() {
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('next');
+
+    app.updateDisplay(null, oldIndex);
 
   };
 
@@ -64,17 +108,27 @@
    */
   Events.searchView = function(newVal) {
 
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var oldIndex;
+    /** @type {number} */
+    var newIndex;
     /** @type {string} */
-    var oldVal;
+    var oldView;
 
     if (app.searchBar.vals.view != newVal) {
 
-      oldVal = app.searchBar.vals.view;
+      len = app.vals.get('len');
+
+      oldIndex = app.vals.get('index');
+      newIndex = (newVal === 'all' || !len) ? -1 : 0;
+      oldView = app.searchBar.vals.view;
+
       app.searchBar.vals.view = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        oldView     : oldVal
-      });
+      app.vals.set(null, newIndex);
+
+      app.updateDisplay(null, oldIndex, oldView);
 
     }
   };
@@ -88,14 +142,21 @@
    */
   Events.searchOrder = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+
     if (app.searchBar.vals.order != newVal) {
 
+      oldIds = app.vals.get('ids');
+      newIds = oldIds.slice(0);
+      newIds.reverse();
+
       app.searchBar.vals.order = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        flipElems   : true,
-        keepIndex   : true
-      });
+      app.vals.set(newIds);
+
+      app.updateDisplay(oldIds, null, null, true);
 
     }
   };
@@ -109,10 +170,25 @@
    */
   Events.searchStage = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.stage != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.stage = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -126,10 +202,25 @@
    */
   Events.searchSource = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -143,11 +234,26 @@
    */
   Events.searchMainCat = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = newVal;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -161,10 +267,25 @@
    */
   Events.searchSubCat = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.subCat = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -178,8 +299,19 @@
    */
   Events.linkId = function(id) {
 
+    /** @type {number} */
+    var oldIndex;
+    /** @type {string} */
+    var oldView;
+
+    oldIndex = app.vals.get('index');
+    oldView = app.searchBar.vals.view;
+
     app.searchBar.elems.view.value = 'one';
-    app.moveDisplay(id);
+
+    app.vals.move(id);
+
+    app.updateDisplay(null, oldIndex, oldView);
 
   };
 
@@ -192,11 +324,28 @@
    */
   Events.linkSource = function(id) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != id) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = id;
-      app.searchBar.elems.source.value = id;
-      app.updateDisplay();
+      if (app.searchBar.elems.source) {
+        app.searchBar.elems.source.value = id;
+      }
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -210,12 +359,29 @@
    */
   Events.linkMainCat = function(id) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != id) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = id;
-      app.searchBar.elems.mainCat.value = id;
+      if (app.searchBar.elems.mainCat) {
+        app.searchBar.elems.mainCat.value = id;
+      }
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -230,23 +396,39 @@
    */
   Events.linkSubCat = function(id, parentId) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != id) {
+
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
 
       // Check the main category and update the values and options
       if (app.searchBar.vals.mainCat !== 'all' &&
           app.searchBar.vals.mainCat !== parentId) {
         app.searchBar.vals.mainCat = 'all';
-        app.searchBar.elems.mainCat.value = 'all';
+        if (app.searchBar.elems.mainCat) {
+          app.searchBar.elems.mainCat.value = 'all';
+        }
         app.searchBar.updateSubCatOpts(id);
-        app.searchBar.elems.subCat.value = id;
       }
       else {
         app.searchBar.vals.subCat = id;
-        app.searchBar.elems.subCat.value = id;
+        if (app.searchBar.elems.subCat) {
+          app.searchBar.elems.subCat.value = id;
+        }
       }
 
-      // Finish the display update
-      app.updateDisplay();
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };

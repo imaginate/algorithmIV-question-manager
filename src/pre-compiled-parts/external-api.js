@@ -17,45 +17,21 @@
    */
   var _init = function(settings) {
 
-    /**
-     * @type {?(string|strings)}
-     * @private
-     */
+    /** @type {?(string|strings)} */
     var resourceList;
-    /**
-     * @type {?objectMap}
-     * @private
-     */
+    /** @type {objectMap} */
     var config;
-    /**
-     * @type {?stringMap}
-     * @private
-     */
+    /** @type {stringMap} */
     var sources;
-    /**
-     * @type {?(objectMap|stringMap)}
-     * @private
-     */
+    /** @type {(objectMap|stringMap)} */
     var categories;
-    /**
-     * @type {?objects}
-     * @private
-     */
+    /** @type {!objects} */
     var questions;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var setup;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var callback;
-    /**
-     * @type {number}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     // Check if app has been initialized
@@ -89,7 +65,7 @@
     );
     questions = ( ( settings.hasOwnProperty('questions') ) ?
       settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : null
+        settings.question : []
     );
 
     // Check the types of the arguments
@@ -105,20 +81,14 @@
     if ( !checkType(categories, 'stringMap|objectMap') ) {
       categories = null;
     }
-    if ( checkType(questions, '!objects') ) {
-      if (!questions.length) {
-        questions = null;
-      }
-    }
-    else {
-      questions = null;
+    if ( !checkType(questions, '!objects') ) {
+      questions = [];
     }
 
     // Setup and start the app
     setup = function() {
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
-      Object.freeze(app);
       app.setupDisplay();
     };
 
@@ -155,6 +125,20 @@
    * @return {val} Either the entire resources object or one of its properties.
    */
   _init.getResource = function(prop) {
+
+    /** @type {string} */
+    var errorMsg;
+
+    prop = prop || '';
+
+    if (prop && !resources.hasOwnProperty(prop)) {
+      errorMsg = 'The resource you requested does not exist. Please verify that \'';
+      errorMsg += prop + '\' is a correct json file name in the resources folder ';
+      errorMsg += 'and that the file name was included in the setup of the app ';
+      errorMsg += '(see algorithmiv.com/docs/resources).';
+      console.error(errorMsg);
+      return;
+    }
 
     return (!!prop) ? resources[ prop ] : resources;
   }

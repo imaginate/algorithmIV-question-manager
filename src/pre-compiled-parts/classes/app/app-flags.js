@@ -9,6 +9,10 @@
    */
   var AppFlags = function(pass) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)
@@ -18,6 +22,16 @@
      * @private
      */
     var initArgs;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    initArgs = pass;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -34,9 +48,8 @@
         initArgs: initArgs
       };
 
-      return flags[prop];
+      return flags[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -48,20 +61,28 @@
      */
     this.set = function(prop, val) {
 
-      /** @private */
+      /** @type {Object<string, function>} */
       var flags = {
-        initArgs: function () {
-          initArgs = val;
-        }
+        initArgs: function () { initArgs = val; }
       };
 
-      flags[prop]();
+      flags[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
-    // Setup the properties
-    initArgs = pass;
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppFlags.prototype.constructor = AppFlags;

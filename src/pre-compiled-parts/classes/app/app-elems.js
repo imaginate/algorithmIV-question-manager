@@ -7,21 +7,16 @@
    */
   var AppElems = function() {
 
-    /** @type {elem} */
-    var elem;
-    /** @type {elem} */
-    var code;
-    /** @type {elem} */
-    var ol;
-    /** @type {elem} */
-    var li;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -30,7 +25,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {elem}
+     * @type {element}
      */
     this.sel;
 
@@ -39,7 +34,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {elem}
+     * @type {element}
      */
     this.main;
 
@@ -48,7 +43,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {elem}
+     * @type {element}
      */
     this.nav;
 
@@ -57,7 +52,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {elem}
+     * @type {element}
      */
     this.ques;
 
@@ -66,7 +61,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {elem}
+     * @type {element}
      */
     this.hold;
 
@@ -75,7 +70,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {elem}
+     * @type {element}
      */
     this.none;
 
@@ -102,7 +97,19 @@
      */
     this.code;
 
-    // Setup the app's elements
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {element} */
+    var elem;
+    /** @type {element} */
+    var code;
+    /** @type {element} */
+    var ol;
+    /** @type {element} */
+    var li;
+
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
@@ -177,9 +184,18 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppElems.prototype.constructor = AppElems;
 
   /**
@@ -191,45 +207,21 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var prev;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pTitle;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var next;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nTitle;
 
     prev   = document.createElement('div');
@@ -259,10 +251,10 @@
     nArrow.innerHTML = 'Next';
 
     pArrow.onclick = function() {
-      app.moveDisplay('prev');
+      Events.prev();
     };
     nArrow.onclick = function() {
-      app.moveDisplay('next');
+      Events.next();
     };
 
     prev.appendChild(pArrow);
@@ -281,74 +273,35 @@
    * Public Method (AppElems.prototype.appendError)
    * -------------------------------------------------
    * @desc Creates and appends the error elements.
-   * @type {function()}
+   * @type {function}
    */
   AppElems.prototype.appendError = function() {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var errorMsg;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var example;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var exampleLineCount;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var divHeight;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var errorDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h2;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var p;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var exampleDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h3;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var div;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pre;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var code;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var ol;
 
     errorMsg = '' +

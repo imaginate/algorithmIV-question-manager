@@ -8,6 +8,23 @@
    */
   var SearchBarConfig = function(config) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarConfig.defaults)
+     * -----------------------------------------------
+     * @desc The default search options to display upon app init.
+     * @type {DefaultsSearchBarConfig}
+     */
+    this.defaults = new DefaultsSearchBarConfig();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (SearchBarConfig.stage)
@@ -48,38 +65,10 @@
      */
     var subCat;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.defaults)
-     * -----------------------------------------------
-     * @desc The default search options to display upon app init.
-     * @type {DefaultsSearchBarConfig}
-     */
-    this.defaults;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (SearchBarConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        stage   : stage,
-        source  : source,
-        category: category,
-        subCat  : subCat
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     stage    = true;
     source   = true;
     category = true;
@@ -97,10 +86,48 @@
     if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
+    if (!category && subCat) {
+      subCat = false;
+    }
 
-    this.defaults = new DefaultsSearchBarConfig();
-    Object.freeze(this.defaults);
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (SearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from SearchBarConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        stage   : stage,
+        source  : source,
+        category: category,
+        subCat  : subCat
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBarConfig.prototype.constructor = SearchBarConfig;

@@ -7,6 +7,10 @@
    */
   var DefaultsSearchBarConfig = function() {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ---------------------------------------------------
      * Protected Property (DefaultsSearchBarConfig.startID)
@@ -77,18 +81,34 @@
      */
     var subCat;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    startID = 0;
+    view    = 'one';
+    order   = 'asc';
+    stage   = 'all';
+    source  = 'all';
+    mainCat = 'all';
+    subCat  = 'all';
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.get)
      * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
+     * @desc Gets a protected property's value from DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to get.
      * @return {(string|number)}
      */
     this.get = function(prop) {
 
       /** @type {Object<string, (string|number)>} */
-      var settings = {
+      var props = {
         startID: startID,
         view   : view,
         order  : order,
@@ -98,23 +118,21 @@
         subCat : subCat
       };
 
-      return settings[prop];
+      return props[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.set)
      * -----------------------------------------------
-     * @desc Sets a config setting.
-     * @param {string} prop - The name of the setting to set.
-     * @param {(string|number)} val - The value to set the
-     *   property to.
+     * @desc Sets a protected property's value for DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to set.
+     * @param {(string|number)} val - The value to set the property to.
      */
     this.set = function(prop, val) {
 
-      /** @private */
-      var settings = {
+      /** @type {Object<string, function>} */
+      var props = {
         startID: function() { startID = val; },
         view   : function() { view    = val; },
         order  : function() { order   = val; },
@@ -124,21 +142,25 @@
         subCat : function() { subCat  = val; }
       };
 
-      settings[prop]();
+      props[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
-    // Setup the properties
-    startID = 0;
-    view    = 'one';
-    order   = 'asc';
-    stage   = 'all';
-    source  = 'all';
-    mainCat = 'all';
-    subCat  = 'all';
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
 
   /**
@@ -207,4 +229,5 @@
         }
       }
     }
+
   };

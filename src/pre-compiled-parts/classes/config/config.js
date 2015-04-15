@@ -8,6 +8,10 @@
    */
   var Config = function(config) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Property (Config.searchBar)
@@ -47,7 +51,11 @@
      */
     this.links;
 
-    // Check the user config settings
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Check the given user's config object
     if (!config || typeof config !== 'object') {
       config = {};
     }
@@ -71,12 +79,16 @@
     this.prettifier = new PrettyConfig(config.prettifyFormat);
     this.links      = new LinksConfig(config.showLinks);
 
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
-    Object.freeze(this.prettifier);
-    Object.freeze(this.links);
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Config.prototype.constructor = Config;

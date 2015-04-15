@@ -29,18 +29,22 @@
  * @typedef {*} val
  * @typedef {number} num
  * @typedef {HTMLElement} elem
+ * @typedef {HTMLElement} element
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
+ * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
  * @typedef {Array<HTMLElement>} elems
+ * @typedef {Array<HTMLElement>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
  * @typedef {Object<string, HTMLElement>} elemMap
+ * @typedef {Object<string, HTMLElement>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
@@ -749,23 +753,14 @@
    * @param {?objectMap} config - The user's config settings.
    * @param {?stringMap} sources - The user's sources.
    * @param {?(objectMap|stringMap)} categories - The user's categories.
-   * @param {?objects} questions - The user's questions.
+   * @param {!objects} questions - The user's questions.
    * @constructor
    */
   var App = function(config, sources, categories, questions) {
 
-    /** @type {booleanMap} */
-    var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
-    var defaults;
-    /** @type {Object<string, stringMap>} */
-    var names;
-    /** @type {Object<string, strings>} */
-    var ids;
-    /** @type {number} */
-    var len;
-    /** @type {stringMap} */
-    var vals;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -839,12 +834,32 @@
      * ---------------------------------------------------
      * Public Property (App.isHistory)
      * ---------------------------------------------------
+     * @desc Tells whether the browser has a usable History class.
      * @type {boolean}
      */
     this.isHistory;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {booleanMap} */
+    var tmpConfig;
+    /** @type {?Object<string, (string|num)>} */
+    var defaults;
+    /** @type {Object<string, stringMap>} */
+    var names;
+    /** @type {Object<string, strings>} */
+    var ids;
+    /** @type {number} */
+    var len;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var newIndex;
+
     // Save the count of questions for use before questions is setup
-    len = (!!questions) ? questions.length : 0;
+    len = questions.length;
 
     // Setup the properties    
     this.flags   = new AppFlags(!!len);
@@ -854,13 +869,7 @@
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
 
-    Object.freeze(this.flags);
-    Object.freeze(this.elems);
-    Object.freeze(this.vals);
-    Object.freeze(this.config);
-    Object.freeze(this.sources);
-    Object.freeze(this.categories);
-
+    // Setup the prettifier
     tmpConfig = {
       trimSpace   : this.config.prettifier.get('trimSpace'),
       tabLength   : this.config.prettifier.get('tabLength'),
@@ -868,6 +877,7 @@
     };
     prettify.setConfig(tmpConfig);
 
+    // Setup the search bar
     tmpConfig = {
       stage   : this.config.searchBar.get('stage'),
       source  : this.config.searchBar.get('source'),
@@ -876,6 +886,7 @@
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
 
+    // Setup the questions
     tmpConfig = {
       id      : this.config.questions.get('id'),
       complete: this.config.questions.get('complete'),
@@ -885,13 +896,11 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources, this.categories);
-
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
+    this.questions = new Questions(questions, tmpConfig, this.sources,
+                                   this.categories);
 
     // Set the search defaults
-    defaults = ( (!!config && !!config.searchDefaults) ?
+    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -901,19 +910,26 @@
     // Set the search bar to the defaults
     this.searchBar.setToDefaults(this.config.searchBar.defaults);
 
-    // Setup the value of history
+    // Update the current values to match the given defaults
+    newIds = this.findMatches();
+    newIndex = this.config.searchBar.defaults.get('startID');
+    if (newIndex > 0) {
+      this.searchBar.vals.view = 'one';
+      newIndex = newIds.indexOf(newIndex);
+    }
+    len = newIds.length;
+    if (this.searchBar.vals.view === 'all' || !len) {
+      newIndex = -1;
+    }
+    else if (newIndex < 0 || newIndex >= len) {
+      newIndex = 0;
+    }
+    this.vals.set(newIds, newIndex);
+
+    // Setup the value of isHistory
     this.isHistory = true;
-    vals = {
-      view   : this.searchBar.vals.view,
-      order  : this.searchBar.vals.order,
-      stage  : this.searchBar.vals.stage,
-      source : this.searchBar.vals.source,
-      mainCat: this.searchBar.vals.mainCat,
-      subCat : this.searchBar.vals.subCat
-    };
-    vals = JSON.stringify(vals);
     try {
-      window.history.replaceState(vals);
+      window.history.replaceState( this.getStateObj() );
     }
     catch (e) {
       this.isHistory = false;
@@ -926,9 +942,18 @@
       };
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   App.prototype.constructor = App;
 
   /**
@@ -936,7 +961,7 @@
    * Public Method (App.prototype.setupDisplay)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
-   * @type {function()}
+   * @type {function}
    */
   App.prototype.setupDisplay = function() {
 
@@ -944,25 +969,24 @@
     var renderTime;
 
     if ( this.flags.get('initArgs') ) {
+
       this.elems.appendNav();
       this.searchBar.setMainElems();
       this.searchBar.setOptElems();
       this.searchBar.appendElems();
       this.questions.addIdsToSearch();
       this.questions.appendElems();
+
       renderTime = this.questions.len * 32;
       setTimeout(function() {
+
         /** @type {boolean} */
         var flip;
 
         app.questions.addCodeExts();
         app.elems.hold.style.display = 'none';
         flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay({
-          flipElems  : flip,
-          oldView    : 'one',
-          noPushState: true
-        });
+        app.updateDisplay(null, null, null, flip, true);
 
       }, renderTime);
     }
@@ -976,103 +1000,38 @@
    * Public Method (App.prototype.updateDisplay)
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
-   * @param {Object=} settings - Settings to change the update actions.
-   * @param {boolean=} settings.noMatch - If set to true it indicates
-   *   that new matching values should NOT be calculated.
-   * @param {boolean=} settings.flipElems - If set to true it indicates that
-   *   the order of each question's element should be flipped.
-   * @param {string=} settings.oldView - The value of view before the
+   * @param {numbers=} oldIds - The old matching ids.
+   * @param {?number=} oldIndex - The old ids index.
+   * @param {?string=} oldView - The value of view before the
    *   update. Defaults to the value of the new view.
-   * @param {boolean=} settings.noMatchReset - If set to true it indicates
-   *   that the ids and index should be reset.
-   * @param {boolean=} settings.keepIndex - If set to true it indicates
-   *   that the index should NOT be changed.
-   * @param {boolean=} settings.noPushState - If set to true it indicates
+   * @param {boolean=} flipElems - If set to true it indicates that
+   *   the order of each question's element should be flipped.
+   * @param {boolean=} noPushState - If set to true it indicates
    *   that the pushState call should NOT be made.
    */
-  App.prototype.updateDisplay = function(settings) {
+  App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
+                                         flipElems, noPushState) {
 
-    /** @type {?nums} */
-    var oldIds;
-    /** @type {number} */
-    var oldIndex;
-    /** @type {?nums} */
-    var resetIds;
-    /** @type {number} */
-    var resetIndex;
-    /** @type {?nums} */
+    /** @type {!numbers} */
     var newIds;
     /** @type {number} */
     var newIndex;
-    /** @type {stringMap} */
-    var vals;
-    /** @type {boolean} */
-    var noMatch;
-    /** @type {boolean} */
-    var noMatchReset;
-    /** @type {boolean} */
-    var flipElems;
-    /** @type {boolean} */
-    var keepIndex;
-    /** @type {boolean} */
-    var noPushState;
     /** @type {string} */
-    var view;
-    /** @type {string} */
-    var oldView;
+    var newView;
 
-    settings = ( checkType(settings, '!object') ) ? settings : {};
-
-    noMatch = ( ( !settings.hasOwnProperty('noMatch') ) ?
-      false : ( checkType(settings.noMatch, '!boolean') ) ?
-        settings.noMatch : false
-    );
-    noMatchReset = ( ( !settings.hasOwnProperty('noMatchReset') ) ?
-      false : ( checkType(settings.noMatchReset, '!boolean') ) ?
-        settings.noMatchReset : false
-    );
-    flipElems = ( ( !settings.hasOwnProperty('flipElems') ) ?
-      false : ( checkType(settings.flipElems, '!boolean') ) ?
-        settings.flipElems : false
-    );
-    keepIndex = ( ( !settings.hasOwnProperty('keepIndex') ) ?
-      false : ( checkType(settings.keepIndex, '!boolean') ) ?
-        settings.keepIndex : false
-    );
-    noPushState = ( ( !settings.hasOwnProperty('noPushState') ) ?
-      false : ( checkType(settings.noPushState, '!boolean') ) ?
-        settings.noPushState : false
+    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    oldIndex = ( ( checkType(oldIndex, '!number') ) ?
+      oldIndex : this.vals.get('index')
     );
 
-    view = app.searchBar.vals.view;
-    oldView = ( ( !settings.hasOwnProperty('oldView') ) ?
-      view : ( checkType(settings.oldView, '!string') ) ?
-        settings.oldView : view
-    );
+    newView = app.searchBar.vals.view;
+    oldView = ( checkType(oldView, '!string') ) ? oldView : newView;
 
-    // Save the old matching question ids and index
-    oldIds = this.vals.get('len');
-    oldIds = (oldIds) ? this.vals.get('ids').slice(0) : null;
-    oldIndex = this.vals.get('index');
-
-    // Update the current matching question ids and index
-    if (noMatch || noMatchReset) {
-      if (noMatchReset) {
-        resetIds = (oldIds) ? oldIds.slice(0) : null;
-        if (flipElems && resetIds) {
-          resetIds.reverse();
-        }
-        resetIndex = (keepIndex) ? oldIndex : 0;
-        this.vals.reset(resetIds, resetIndex);
-      }
-    }
-    else {
-      this.updateValues();
-    }
+    flipElems = flipElems || false;
+    noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('len');
-    newIds = (newIds) ? this.vals.get('ids').slice(0) : null;
+    newIds = this.vals.get('ids').slice(0);
     newIndex = this.vals.get('index');
 
     // Hide the question's main element
@@ -1082,9 +1041,9 @@
     setTimeout(function() {
 
       // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (view === 'all') ?
-        'none' : (view === 'ten' && app.vals.get('len') > 10) ?
-          'block' : (view === 'one' && app.vals.get('len') > 1) ?
+      app.elems.nav.style.display = ( (newView === 'all') ?
+        'none' : (newView === 'ten' && app.vals.get('len') > 10) ?
+          'block' : (newView === 'one' && app.vals.get('len') > 1) ?
             'block' : 'none'
       );
 
@@ -1101,16 +1060,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        vals = {
-          view   : app.searchBar.vals.view,
-          order  : app.searchBar.vals.order,
-          stage  : app.searchBar.vals.stage,
-          source : app.searchBar.vals.source,
-          mainCat: app.searchBar.vals.mainCat,
-          subCat : app.searchBar.vals.subCat
-        };
-        vals = JSON.stringify(vals);
-        window.history.pushState(vals);
+        window.history.pushState( app.getStateObj() );
       }
 
       // Show the question's main element
@@ -1121,53 +1071,32 @@
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.updateValues)
+   * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Updates the current selected values for the app.
-   * @type {function()}
+   * @desc Finds the matching question ids for the current
+   *   selected search values.
+   * @return {numbers} An array of the matching ids.
    */
-  App.prototype.updateValues = function() {
+  App.prototype.findMatches = function() {
 
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var stage;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var source;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var mainCat;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var subCat;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
-    /**
-     * @type {nums}
-     * @private
-     */
+    /** @type {nums} */
     var newIds;
-    /**
-     * @type {boolean}
-     * @private
-     */
+    /** @type {boolean} */
     var pass;
+    /** @type {function} */
+    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;
@@ -1176,170 +1105,194 @@
     subCat  = this.searchBar.vals.subCat;
 
     // Save the matching ids
-    stage   = (stage   === 'all') ? null : this.searchBar.ques.stage[ stage ];
-    source  = (source  === 'all') ? null : this.sources.get(source).get('ids');
-    mainCat = (mainCat === 'all') ? null : this.categories.get(mainCat).get('ids');
-    subCat  = (subCat  === 'all') ? null : this.categories.get(subCat).get('ids');
-
-    // Copy the arrays or add empty objects
-    if (stage) {
-      stage = (stage.length) ? stage.slice(0) : { length: 0 };
-    }
-    if (source) {
-      source = (source.length) ? source.slice(0) : { length: 0 };
-    }
-    if (mainCat) {
-      mainCat = (mainCat.length) ? mainCat.slice(0) : { length: 0 };
-    }
-    if (subCat) {
-      subCat = (subCat.length) ? subCat.slice(0) : { length: 0 };
-    }
+    stage = ( (stage === 'all') ?
+      null : this.searchBar.ques.stage[ stage ].slice(0)
+    );
+    source = ( (source === 'all') ?
+      null : this.sources.get(source, 'ids').slice(0)
+    );
+    mainCat = ( (mainCat === 'all') ?
+      null : this.categories.get(mainCat, 'ids').slice(0)
+    );
+    subCat = ( (subCat === 'all') ?
+      null : this.categories.get(subCat, 'ids').slice(0)
+    );
 
     // Check for empty arrays
     if ((stage   && !stage.length)   ||
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.vals.reset([]);
-      return;
+      return [];
     }
 
-    // Setup needed vars
-    newIds = [];
-    len = this.questions.len;
-    i = 0;
+    // Check for all ids
+    if (!stage && !source && !mainCat && !subCat) {
 
-    // Get the current matching question ids
-    while (true) {
-      ++i;
+      newIds = this.vals.get('allIds').slice(0);
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
+      }
+
+      return newIds;
+    }
+
+    // Find the min length array
+    len = (stage) ? stage.length : this.questions.len;
+    if (source && source.length < len) {
+      len = source.length;
+    }
+    if (mainCat && mainCat.length < len) {
+      len = mainCat.length;
+    }
+    if (subCat && subCat.length < len) {
+      len = subCat.length;
+    }
+
+    // Set the newIds to the min length array
+    if (stage && stage.length === len) {
+      newIds = stage.slice(0);
+      stage = null;
+    }
+    else if (source && source.length === len) {
+      newIds = source.slice(0);
+      source = null;
+    }
+    else if (mainCat && mainCat.length === len) {
+      newIds = mainCat.slice(0);
+      mainCat = null;
+    }
+    else if (subCat && subCat.length === len) {
+      newIds = subCat.slice(0);
+      subCat = null;
+    }
+
+    // Check for all null arrays
+    if (!stage && !source && !mainCat && !subCat) {
+
+      if (this.searchBar.vals.order === 'desc') {
+        newIds.reverse();
+      }
+
+      return newIds;
+    }
+
+    // The helper function that checks each array for the
+    // current value being checked & removes the checked
+    // values from the array
+    checkForValue = function(/** number */ val, /** numbers */ arr) {
+
+      /** @type {boolean} */
+      var pass;
+      /** @type {number} */
+      var i;
+      /** @type {number} */
+      var compareVal;
+
+      pass = false;
+
+      i = arr.length;
+      while (i--) {
+
+        compareVal = arr[i];
+
+        if (compareVal >= val) {
+          arr.pop();
+          if (compareVal === val) {
+            pass = true;
+            break;
+          }
+        }
+        else {
+          break;
+        }
+      }
+
+      return pass;
+    };
+
+    // Remove the question ids that do not exist in all other arrays
+    i = newIds.length;
+    while (i--) {
       pass = true;
 
       if (stage) {
         if (!stage.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (stage[0] === i) {
-          stage.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], stage);
       }
 
       if (source) {
         if (!source.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (source[0] === i) {
-          source.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], source);
       }
 
       if (mainCat) {
         if (!mainCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (mainCat[0] === i) {
-          mainCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], mainCat);
       }
 
       if (subCat) {
         if (!subCat.length) {
+          if (i) {
+            newIds.splice(0, i);
+          }
           break;
         }
-        if (subCat[0] === i) {
-          subCat.shift();
-        }
-        else {
-          pass = false;
-        }
+        pass = pass && checkForValue(newIds[i], subCat);
       }
 
-      if (pass) {
-        newIds.push(i);
-      }
-
-      if (i === len) {
-        break;
+      if (!pass) {
+        newIds.splice(i, 1);
       }
     }
 
-    // Check if results should be reversed
     if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
-    // Update the values
-    this.vals.reset(newIds);
+    return newIds;
   };
 
   /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.getStateObj)
    * -----------------------------------------------
-   * Public Method (App.prototype.moveDisplay)
-   * -----------------------------------------------
-   * @desc Show the prev, next, or a specific question(s).
-   * @param {(string|number)} way - The location to show.
-   *   The options are 'prev', 'next', or a question id.
+   * @desc Returns a state object for the current app values.
+   * @return {Object<string, (string|number|numbers)>}
    */
-  App.prototype.moveDisplay = function(way) {
+  App.prototype.getStateObj = function() {
 
-    /**
-     * @type {?nums}
-     * @private
-     */
-    var ids;
-    /**
-     * @type {num}
-     * @private
-     */
-    var oldIndex;
-    /**
-     * @type {num}
-     * @private
-     */
-    var newIndex;
-    /**
-     * @type {string}
-     * @private
-     */
-    var oldView;
+    /** @type {Object<string, (string|number|numbers)>} */
+    var vals;
 
-    ids = this.vals.get('len');
-    ids = (ids) ? this.vals.get('ids').slice(0) : null;
+    vals = {
+      ids    : this.vals.get('ids').slice(0),
+      index  : this.vals.get('index'),
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
+    };
 
-    oldView = this.searchBar.vals.view;
-
-    oldIndex = this.vals.get('index');
-    newIndex = this.vals.move(way);
-
-    // Hide the question's main element
-    this.elems.main.style.opacity = '0';
-
-    // Wrap logic in timeout to allow css transitions to complete
-    setTimeout(function() {
-
-      // Show or hide the prev and next nav elements
-      app.elems.nav.style.display = ( (app.vals.get('len') > 1) ?
-        'block' : 'none'
-      );
-
-      // Hide the old questions
-      app.questions.hideElems(ids, oldIndex, oldView);
-
-      // Show the new questions
-      app.questions.showElems(ids, newIndex);
-
-      // Show the question's main element
-      app.elems.main.style.opacity = '1';
-        
-    }, 520);
+    return JSON.stringify(vals);
   };
 
 
@@ -1358,6 +1311,10 @@
    */
   var AppFlags = function(pass) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (AppFlags.initArgs)
@@ -1367,6 +1324,16 @@
      * @private
      */
     var initArgs;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    initArgs = pass;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -1383,9 +1350,8 @@
         initArgs: initArgs
       };
 
-      return flags[prop];
+      return flags[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -1397,22 +1363,30 @@
      */
     this.set = function(prop, val) {
 
-      /** @private */
+      /** @type {Object<string, function>} */
       var flags = {
-        initArgs: function () {
-          initArgs = val;
-        }
+        initArgs: function () { initArgs = val; }
       };
 
-      flags[prop]();
+      flags[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
-    // Setup the properties
-    initArgs = pass;
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppFlags.prototype.constructor = AppFlags;
 
 
@@ -1429,21 +1403,16 @@
    */
   var AppElems = function() {
 
-    /** @type {elem} */
-    var elem;
-    /** @type {elem} */
-    var code;
-    /** @type {elem} */
-    var ol;
-    /** @type {elem} */
-    var li;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -1452,7 +1421,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {elem}
+     * @type {element}
      */
     this.sel;
 
@@ -1461,7 +1430,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {elem}
+     * @type {element}
      */
     this.main;
 
@@ -1470,7 +1439,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {elem}
+     * @type {element}
      */
     this.nav;
 
@@ -1479,7 +1448,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {elem}
+     * @type {element}
      */
     this.ques;
 
@@ -1488,7 +1457,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {elem}
+     * @type {element}
      */
     this.hold;
 
@@ -1497,7 +1466,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {elem}
+     * @type {element}
      */
     this.none;
 
@@ -1524,7 +1493,19 @@
      */
     this.code;
 
-    // Setup the app's elements
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {element} */
+    var elem;
+    /** @type {element} */
+    var code;
+    /** @type {element} */
+    var ol;
+    /** @type {element} */
+    var li;
+
     this.root = document.createElement('div');
     this.sel  = document.createElement('nav');
     this.main = document.createElement('div');
@@ -1599,9 +1580,18 @@
     Object.freeze(this.code.ol);
     Object.freeze(this.code.li);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppElems.prototype.constructor = AppElems;
 
   /**
@@ -1613,45 +1603,21 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var prev;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pTitle;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var next;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nArrow;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nBG;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var nTitle;
 
     prev   = document.createElement('div');
@@ -1681,10 +1647,10 @@
     nArrow.innerHTML = 'Next';
 
     pArrow.onclick = function() {
-      app.moveDisplay('prev');
+      Events.prev();
     };
     nArrow.onclick = function() {
-      app.moveDisplay('next');
+      Events.next();
     };
 
     prev.appendChild(pArrow);
@@ -1703,74 +1669,35 @@
    * Public Method (AppElems.prototype.appendError)
    * -------------------------------------------------
    * @desc Creates and appends the error elements.
-   * @type {function()}
+   * @type {function}
    */
   AppElems.prototype.appendError = function() {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var errorMsg;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var example;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var exampleLineCount;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var divHeight;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var errorDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h2;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var p;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var exampleDiv;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var h3;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var div;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var pre;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var code;
-    /**
-     * @type {elem}
-     * @private
-     */
+    /** @type {element} */
     var ol;
 
     errorMsg = '' +
@@ -1937,46 +1864,79 @@
    * Public Class (AppVals)
    * -----------------------------------------------------
    * @desc The app's current values.
-   * @param {number} quesLen - The number of questions for the app.
+   * @param {number} questionsLen - The total number of questions.
    * @constructor
    */
-  var AppVals = function(quesLen) {
+  var AppVals = function(questionsLen) {
 
-    /** @type {number} */
-    var i;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
+     * Protected Property (AppVals.allIds)
+     * -----------------------------------------------
+     * @desc The ids of all of the questions.
+     * @type {!numbers}
+     * @private
+     */
+    var allIds;
+
+    /**
+     * -----------------------------------------------
      * Protected Property (AppVals.ids)
      * -----------------------------------------------
-     * @desc The ids of the questions that match the current search
-     *   criteria.
-     * @type {nums}
+     * @desc The ids of the questions that match the current search criteria.
+     * @type {!numbers}
      * @private
      */
     var ids;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.len)
      * -----------------------------------------------
-     * @desc The number of questions that match the current search
-     *   criteria.
-     * @type {num}
+     * @desc The number of questions that match the current search criteria.
+     * @type {number}
      * @private
      */
     var len;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (AppVals.index)
      * -----------------------------------------------
      * @desc The current index of the ids array being displayed.
      *   If the view = 'all' or no ids match then index = -1.
-     * @type {num}
+     * @type {number}
      * @private
      */
     var index;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {number} */
+    var i;
+
+    allIds = new Array(questionsLen);
+    i = questionsLen;
+    while (i--) {
+      allIds[i] = i + 1;
+    }
+
+    ids = allIds.slice(0);
+    len = questionsLen;
+    index = -1;
+
+    // Freeze the needed protected properties
+    Object.freeze(allIds);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -1984,147 +1944,177 @@
      * -----------------------------------------------
      * @desc Gets an app value.
      * @param {string} prop - The name of the value to get.
-     * @return {(num|nums)}
+     * @return {!(number|numbers)}
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (num|nums)>} */
-      var values = {
-        ids  : ids,
-        len  : len,
-        index: index
+      /** @type {Object<string, (number|numbers)>} */
+      var props = {
+        allIds: allIds,
+        ids   : ids,
+        len   : len,
+        index : index
       };
 
-      return values[prop];
+      return props[ prop ];
     };
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (AppVals.set)
+     * -----------------------------------------------
+     * @desc Sets the app's current values.
+     * @param {numbers} newIds - The new matching question ids.
+     * @param {number=} newIndex - The new starting index.
+     */
+    this.set = function(newIds, newIndex) {
+
+      if (newIds) {
+        ids = newIds.slice(0);
+        len = ids.length;
+      }
+
+      if (typeof newIndex === 'number') {
+        index = newIndex;
+      }
+    };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
+    Object.freeze(this.set);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.reset)
-     * -----------------------------------------------
-     * @desc Resets the app values.
-     * @param {nums} newIds - The new matching question ids.
-     * @param {number=} newIndex - The starting index.
-     */
-    this.reset = function(newIds, newIndex) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {number} */
-      var newLen;
-
-      newLen = ( checkType(newIds, 'numbers') ) ? newIds.length : 0;
-
-      // Set newIndex
-      if (app.searchBar.vals.view === 'all') {
-        newIndex = -1;
-      }
-      else {
-        if (newLen) {
-          if (typeof newIndex !== 'number' ||
-              newIndex < 0 || newIndex >= newLen) {
-            newIndex = 0;
-          }
-        }
-        else {
-          newIndex = -1;
-        }
-      }
-
-      // Reset the values
-      ids = (newLen) ? newIds.slice(0) : [];
-      len = newLen;
-      index = newIndex;
-    };
-    Object.freeze(this.reset);
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppVals.move)
-     * -----------------------------------------------
-     * @desc Go to the prev, next, or a specific index.
-     * @param {(string|number)} way - The location to move the index.
-     *   The options are 'prev', 'next', or a question id.
-     * @return {num} The new index.
-     */
-    this.move = function(way) {
-
-      /**
-       * @type {string}
-       * private
-       */
-      var view;
-      /**
-       * @type {num}
-       * private
-       */
-      var last;
-
-      // Check the value for way
-      if (typeof way === 'string' &&
-          way !== 'prev' && way !== 'next') {
-        way = way.replace(/[^0-9]/g, '');
-        way = Number(way);
-      }
-
-      // Save the value of the current view
-      view = app.searchBar.vals.view;
-
-      if (typeof way === 'number') {
-        if (view !== 'one') {
-          app.searchBar.vals.view = 'one';
-        }
-        index = ids.indexOf(way);
-        return index;
-      }
-
-      // Save the last index
-      last = len - 1;
-
-      // The single view actions
-      if (view === 'one') {
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : --index;
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : ++index;
-        }
-
-        return index;
-      }
-
-      // The ten view actions
-      if (view === 'ten') {
-
-        // Update the last index
-        last -= (last % 10);
-
-        if (way === 'prev') {
-          index = (index === 0) ? last : (index - 10);
-        }
-        else if (way === 'next') {
-          index = (index === last) ? 0 : (index + 10);
-        }
-
-        return index;
-      }
-
-    };
-    Object.freeze(this.move);
-
-    // Setup the properties
-    ids = new Array(quesLen);
-    len = quesLen;
-    index = 0;
-
-    i = quesLen;
-    while (i--) {
-      ids[i] = i + 1;
-    }
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppVals.prototype.constructor = AppVals;
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.reset)
+   * -----------------------------------------------
+   * @desc Resets the app values.
+   * @param {numbers} ids - The new matching question ids.
+   * @param {number=} index - The new starting index.
+   */
+  AppVals.prototype.reset = function(ids, index) {
+
+    /** @type {number} */
+    var len;
+
+    index = index || 0;
+
+    if (!ids) {
+      ids = this.get('allIds');
+    }
+    len = ids.length;
+
+    // Check the new index value
+    if (app.searchBar.vals.view === 'all' || !len) {
+      index = -1;
+    }
+    else if (index < 0 || index >= len) {
+      index = 0;
+    }
+
+    // Reset the values
+    this.set(ids, index);
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (AppVals.prototype.move)
+   * -----------------------------------------------
+   * @desc Go to the prev, next, or a specific index.
+   * @param {(string|number)} way - The location to move the index.
+   *   The options are 'prev', 'next', or a question id.
+   * @return {number} The new index.
+   */
+  AppVals.prototype.move = function(way) {
+
+    /** @type {number} */
+    var id;
+    /** @type {string} */
+    var view;
+    /** @type {number} */
+    var index;
+    /** @type {number} */
+    var last;
+
+    id = (typeof way === 'number') ? way : 0;
+    index = this.get('index');
+
+    // Check the value for way
+    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+      try {
+        id = Number( way.replace(/[^0-9]/g, '') );
+      }
+      catch (e) {
+        return;
+      }
+    }
+
+    view = app.searchBar.vals.view;
+
+    // Handle moving to a specific question id
+    if (id) {
+
+      if (view !== 'one') {
+        app.searchBar.vals.view = 'one';
+      }
+
+      index = this.get('ids').indexOf(way);
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    // Save the last index
+    last = this.get('len') - 1;
+
+    // Handle moving the index one spot
+    if (view === 'one') {
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : --index;
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : ++index;
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+    // Handle moving the index ten spots
+    if (view === 'ten') {
+
+      // Update the last index
+      last = last - (last % 10);
+
+      if (way === 'prev') {
+        index = (index === 0) ? last : (index - 10);
+      }
+      else if (way === 'next') {
+        index = (index === last) ? 0 : (index + 10);
+      }
+
+      this.set(null, index);
+
+      return index;
+    }
+
+  };
 
 
 /* -----------------------------------------------------------------------------
@@ -2140,6 +2130,10 @@
    * @constructor
    */
   var Config = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2180,7 +2174,11 @@
      */
     this.links;
 
-    // Check the user config settings
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Check the given user's config object
     if (!config || typeof config !== 'object') {
       config = {};
     }
@@ -2204,14 +2202,18 @@
     this.prettifier = new PrettyConfig(config.prettifyFormat);
     this.links      = new LinksConfig(config.showLinks);
 
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
-    Object.freeze(this.prettifier);
-    Object.freeze(this.links);
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Config.prototype.constructor = Config;
 
 
@@ -2228,6 +2230,23 @@
    * @constructor
    */
   var SearchBarConfig = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarConfig.defaults)
+     * -----------------------------------------------
+     * @desc The default search options to display upon app init.
+     * @type {DefaultsSearchBarConfig}
+     */
+    this.defaults = new DefaultsSearchBarConfig();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2269,38 +2288,10 @@
      */
     var subCat;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.defaults)
-     * -----------------------------------------------
-     * @desc The default search options to display upon app init.
-     * @type {DefaultsSearchBarConfig}
-     */
-    this.defaults;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (SearchBarConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        stage   : stage,
-        source  : source,
-        category: category,
-        subCat  : subCat
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     stage    = true;
     source   = true;
     category = true;
@@ -2318,12 +2309,50 @@
     if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
+    if (!category && subCat) {
+      subCat = false;
+    }
 
-    this.defaults = new DefaultsSearchBarConfig();
-    Object.freeze(this.defaults);
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (SearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from SearchBarConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        stage   : stage,
+        source  : source,
+        category: category,
+        subCat  : subCat
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBarConfig.prototype.constructor = SearchBarConfig;
 
 
@@ -2339,6 +2368,10 @@
    * @constructor
    */
   var DefaultsSearchBarConfig = function() {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
@@ -2410,18 +2443,34 @@
      */
     var subCat;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    startID = 0;
+    view    = 'one';
+    order   = 'asc';
+    stage   = 'all';
+    source  = 'all';
+    mainCat = 'all';
+    subCat  = 'all';
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.get)
      * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
+     * @desc Gets a protected property's value from DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to get.
      * @return {(string|number)}
      */
     this.get = function(prop) {
 
       /** @type {Object<string, (string|number)>} */
-      var settings = {
+      var props = {
         startID: startID,
         view   : view,
         order  : order,
@@ -2431,23 +2480,21 @@
         subCat : subCat
       };
 
-      return settings[prop];
+      return props[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.set)
      * -----------------------------------------------
-     * @desc Sets a config setting.
-     * @param {string} prop - The name of the setting to set.
-     * @param {(string|number)} val - The value to set the
-     *   property to.
+     * @desc Sets a protected property's value for DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to set.
+     * @param {(string|number)} val - The value to set the property to.
      */
     this.set = function(prop, val) {
 
-      /** @private */
-      var settings = {
+      /** @type {Object<string, function>} */
+      var props = {
         startID: function() { startID = val; },
         view   : function() { view    = val; },
         order  : function() { order   = val; },
@@ -2457,21 +2504,25 @@
         subCat : function() { subCat  = val; }
       };
 
-      settings[prop]();
+      props[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
-    // Setup the properties
-    startID = 0;
-    view    = 'one';
-    order   = 'asc';
-    stage   = 'all';
-    source  = 'all';
-    mainCat = 'all';
-    subCat  = 'all';
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
 
   /**
@@ -2540,6 +2591,7 @@
         }
       }
     }
+
   };
 
 
@@ -2556,6 +2608,10 @@
    * @constructor
    */
   var QuestionsConfig = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2647,34 +2703,10 @@
      */
     var output;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionsConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        complete: complete,
-        source  : source,
-        category: category,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        output  : output
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     id       = true;
     complete = true;
     source   = true;
@@ -2712,9 +2744,52 @@
     if (config.hasOwnProperty('output') && config.output === false) {
       output = false;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionsConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from QuestionsConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        complete: complete,
+        source  : source,
+        category: category,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        output  : output
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionsConfig.prototype.constructor = QuestionsConfig;
 
 
@@ -2727,11 +2802,15 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|num|boolean)>} config - The user's
-   *   prettifier config settings.
+   * @param {Object<string, (string|number|boolean)>} config - The user's
+   *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2763,28 +2842,10 @@
      */
     var commentLinks;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (PrettyConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {(number|boolean)}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, (number|boolean)>} */
-      var settings = {
-        trimSpace   : trimSpace,
-        tabLength   : tabLength,
-        commentLinks: commentLinks
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     trimSpace = 0;
     tabLength = 2;
     commentLinks = false;
@@ -2808,9 +2869,46 @@
     if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
       commentLinks = true;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (PrettyConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from PrettyConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {(number|boolean)}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, (number|boolean)>} */
+      var props = {
+        trimSpace   : trimSpace,
+        tabLength   : tabLength,
+        commentLinks: commentLinks
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   PrettyConfig.prototype.constructor = PrettyConfig;
 
 
@@ -2829,6 +2927,10 @@
    * @constructor
    */
   var LinksConfig = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2860,28 +2962,10 @@
      */
     var category;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (LinksConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        source  : source,
-        category: category
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Set the properties
     id       = true;
     source   = false;
     category = true;
@@ -2895,9 +2979,46 @@
     if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (LinksConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from LinksConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        source  : source,
+        category: category
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   LinksConfig.prototype.constructor = LinksConfig;
 
 
@@ -2915,15 +3036,17 @@
    */
   var Sources = function(sources) {
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Sources.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the source objects using the ids as keys.
-     * @type {Object<string, Source>}
-     * @private
-     */
-    var data;
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
+
+    if ( !checkType(sources, '!stringMap') ) {
+      sources = {};
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2943,49 +3066,91 @@
      */
     this.len;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    this.ids = Object.keys(sources);
+    this.len = this.ids.length;
+
+    // Sort the ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, sources);
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Sources.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the source objects using the ids as keys.
+     * @type {Object<string, Source>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    data = {};
+
+    // Build the data hash map
+    if (this.len) {
+      this.ids.forEach(function(/** string */ sourceId) {
+        data[ sourceId ] = new Source(sources[ sourceId ]);
+      });
+    }
+
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source object or property.
+     * @desc Get a source's Source object or property.
      * @param {string} id - The source id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Source|string|nums)}
+     * @param {string=} prop - The property to get.
+     * @return {(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      return (!!prop) ? data[id].get(prop) : data[id];
+      /** @type {Source} */
+      var source;
+
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? source.get(prop) : source;
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
-    // Check the argument data types
-    if ( !checkType(sources, '!stringMap') ) {
-      sources = {};
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    this.ids = Object.keys(sources);
-    this.len = this.ids.length;
-    data = {};
-
-    if (this.len) {
-
-      // Sort the ids
-      this.ids = sortKeys(this.ids, sources);
-
-      // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
-        data[id] = new Source(sources[id]);
-      });
-    }
-
-    Object.freeze(this.ids);
-    Object.freeze(data);
-
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Sources.prototype.constructor = Sources;
 
 
@@ -3002,6 +3167,10 @@
    * @constructor
    */
   var Source = function(name) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3023,28 +3192,48 @@
      */
     var ids;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    ids = [];
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Source.get)
      * -----------------------------------------------
-     * @desc Gets a detail for the source.
+     * @desc Gets a protected property's value from the source.
      * @param {string} prop - The name of the property to get.
-     * @return {(string|nums)}
+     * @return {(string|numbers)}
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, function>} */
-      var source = {
-        name: function() { return name; },
-        url : function() { return url; },
+      /** @type {Object<string, (string|function)>} */
+      var props = {
+        name: name,
+        url : url,
         ids : function() {
           return Object.freeze( ids.slice(0) );
         }
       };
 
-      return source[prop]();
+      prop = props[ prop ];
+
+      return (typeof prop === 'function') ? prop() : prop;
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -3059,22 +3248,23 @@
         ids.push(id);
       }
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.addId);
 
-    // Setup the properties
-    if (!name || typeof name !== 'string') {
-      name = '';
-      url  = '';
-    }
-    else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
-    }
-    ids = [];
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Source.prototype.constructor = Source;
 
 
@@ -3092,18 +3282,31 @@
    */
   var Categories = function(categories) {
 
-    /** @type {strings} */
-    var subIds;
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Categories.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
-     * @private
-     */
-    var data;
+    if ( checkType(categories, '!stringMap') ) {
+      categories = {
+        main: categories,
+        sub : {}
+      };
+    }
+    else {
+      if (!categories) {
+        categories = {};
+      }
+      if (!categories.main || !checkType(categories.main, '!stringMap')) {
+        categories.main = {};
+      }
+      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
+        categories.sub = {};
+      }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3123,55 +3326,55 @@
      */
     this.len;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Categories.get)
-     * -----------------------------------------------
-     * @desc Get a category object or property.
-     * @param {string} id - The category id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Category|string|nums)}
-     */
-    this.get = function(id, prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      return ( ( !data.hasOwnProperty(id) ) ?
-        false : (!!prop) ?
-          data[id].get(prop) : data[id]
-      );
-    };
-    Object.freeze(this.get);
+    /** @type {number} */
+    var allIndex;
 
-    // Check the argument data types
-    if ( checkType(categories, '!stringMap') ) {
-      categories = {
-        main: categories,
-        sub : {}
-      };
-    }
-    else {
-      if (!categories) {
-        categories = {};
-      }
-      if (!categories.main || !checkType(categories.main, '!stringMap')) {
-        categories.main = {};
-      }
-      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
-        categories.sub = {};
-      }
-    }
-
-    // Setup the properties
     this.ids = Object.keys(categories.main);
     this.len = this.ids.length;
+
+    // Sort the main category ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, categories.main);
+    }
+
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Categories.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the category objects using the ids as keys.
+     * @type {Object<string, Category>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {strings} */
+    var subIds;
+
     data = {};
 
     if (this.len) {
 
-      // Sort the main category ids
-      this.ids = sortKeys(this.ids, categories.main);
-
-      // Build the hash map
+      // Build the data hash map
       this.ids.forEach(function(/** string */ mainId) {
 
         // Save and sort the sub category ids if they exist
@@ -3185,24 +3388,60 @@
 
         // Add main category to the hash map
         data[ mainId ] = new Category(categories.main[ mainId ], subIds);
-        Object.freeze(data[ mainId ]);
 
         // Add the sub categories to the hash map
         if (subIds && subIds.length) {
           subIds.forEach(function(/** string */ subId) {
             data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-            Object.freeze(data[ subId ]);
           });
         } 
       });
     }
 
-    Object.freeze(this.ids);
     Object.freeze(data);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Categories.get)
+     * -----------------------------------------------
+     * @desc Get a catgory's Category object or property.
+     * @param {string} id - The category id to get.
+     * @param {string=} prop - The property to get.
+     * @return {(Category|string|numbers)}
+     */
+    this.get = function(id, prop) {
+
+      /** @type {Category} */
+      var category;
+
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? category.get(prop) : category;
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Categories.prototype.constructor = Categories;
 
 
@@ -3221,6 +3460,10 @@
    * @constructor
    */
   var Category = function(name, subs) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3242,29 +3485,50 @@
      */
     var ids;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    ids = [];
+    subs = (!!subs) ? Object.freeze(subs) : null;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Category.get)
      * -----------------------------------------------
-     * @desc Gets a property from the category.
-     * @param {string} prop - The name of the detail to get.
-     * @return {(string|nums)}
+     * @desc Gets a protected property's value from the category.
+     * @param {string} prop - The name of the property to get.
+     * @return {(string|numbers)}
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, function>} */
-      var category = {
-        name: function() { return name; },
-        url : function() { return url; },
+      /** @type {Object<string, (string|numbers|function)>} */
+      var props = {
+        name: name,
+        url : url,
+        subs: subs,
         ids : function() {
           return Object.freeze( ids.slice(0) );
-        },
-        subs: function() { return subs; }
+        }
       };
 
-      return category[prop]();
+      prop = props[ prop ];
+
+      return (typeof prop === 'function') ? prop() : prop;
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -3279,23 +3543,23 @@
         ids.push(id);
       }
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.addId);
 
-    // Setup the properties
-    if (!name || typeof name !== 'string') {
-      name = '';
-      url  = '';
-    }
-    else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
-    }
-    ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Category.prototype.constructor = Category;
 
 
@@ -3317,8 +3581,9 @@
    */
   var SearchBar = function(config, sources, categories) {
 
-    /** @type {boolean} */
-    var pass;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3411,6 +3676,13 @@
      */
     this.opts;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {boolean} */
+    var pass;
+
     // Setup the names, ids, and opts properties
     this.names = {
       view: {
@@ -3496,18 +3768,11 @@
       }, this);
     }
 
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-
     // Setup the question ids property
     this.ques = {};
     this.ques.stage = {};
     this.ques.stage.com = [];
     this.ques.stage.inc = [];
-
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
 
     // Setup the current values property
     this.vals = {
@@ -3540,11 +3805,26 @@
       document.createElement('select') : null
     );
 
+    // Freeze all of the completed properties
+    Object.freeze(this.names);
+    Object.freeze(this.ids);
+    Object.freeze(this.opts);
+    Object.freeze(this.ques.stage);
+    Object.freeze(this.ques);
     Object.freeze(this.elems);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBar.prototype.constructor = SearchBar;
 
   /**
@@ -3597,6 +3877,7 @@
     if (this.elems.subCat) {
       this.elems.subCat.value = subCat;
     }
+
   };
 
   /**
@@ -3604,7 +3885,7 @@
    * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setMainElems = function() {
 
@@ -3825,7 +4106,7 @@
    * Public Method (SearchBar.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Appends the search bar's elements to the selections root.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.appendElems = function() {
 
@@ -3842,27 +4123,31 @@
    * Public Method (SearchBar.prototype.updateSubCatOpts)
    * -----------------------------------------------------
    * @desc Updates the children appended to the sub category select element.
-   * @param {string=} val - The new value to update subCat to.
+   * @param {string=} newVal - The new value to update subCat to.
    */
-  SearchBar.prototype.updateSubCatOpts = function(val) {
+  SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
-    // Update the select value
-    val = val || 'all';
-    this.vals.subCat = val;
+    /** @type {elements} */
+    var opts;
+
+    newVal = (typeof newVal === 'string') ? newVal : 'all';
+
+    this.vals.subCat = newVal;
 
     if (this.elems.subCat) {
 
-      this.elems.subCat.value = val;
-
-      // Clear subCat's children
+      // Clear subCat's current option elements
       while (this.elems.subCat.firstChild) {
         this.elems.subCat.removeChild(this.elems.subCat.firstChild);
       }
 
-      // Append the new children
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+      // Append the new option elements
+      opts = this.opts.subCat[ this.vals.mainCat ];
+      opts.forEach(function(/** element */ elem) {
         this.elems.subCat.appendChild(elem);
       }, this);
+
+      this.elems.subCat.value = newVal;
     }
   };
 
@@ -3884,14 +4169,63 @@
    */
   var Questions = function(questions, config, sources, categories) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.len)
+     * -----------------------------------------------
+     * @desc The total number of questions.
+     * @type {number}
+     */
+    this.len;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.list)
+     * -----------------------------------------------
+     * @desc An array of all the question objects.
+     * @return {questions}
+     */
+    this.list;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /** @type {number} */
     var i;
     /** @type {number} */
     var id;
     /** @type {number} */
     var len;
-    /** @type {string} */
-    var url;
+
+    this.len = questions.length;
+
+    len = this.len + 1;
+    this.list = (this.len) ? new Array(len) : [];
+
+    // Add blank to beginning of list so ids and indexes match
+    if (this.len) {
+      this.list[0] = null;
+    }
+
+    // Add the Question object references to the list
+    --len;
+    i = -1;
+    while (++i < len) {
+      id = i + 1;
+      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+    }
+
+    // Freeze the public properties that are objects
+    Object.freeze(this.list);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3902,125 +4236,130 @@
      */
     var data;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Questions.len)
-     * -----------------------------------------------
-     * @desc The number of questions supplied to this app instance.
-     * @type {number}
-     */
-    this.len;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.list)
-     * -----------------------------------------------
-     * @desc The array of question objects.
-     * @return {questions}
-     */
-    this.list;
+    /** @type {string} */
+    var url;
+
+    data = {};
+
+    // Build the data hash map
+    ++i;
+    while (--i) {
+      url = this.list[i].get('url');
+      if (url) {
+        data[ url ] = this.list[i];
+      }
+    }
+
+    // Freeze the protected properties
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question by id or url.
+     * @desc Gets a question's object or property.
      * @param {(number|string)} id - The question id to get.
-     * @return {Question}
+     * @param {string=} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val}
      */
-    this.get = function(id) {
+    this.get = function(id, prop, formatted) {
 
       /** @type {Question} */
       var question;
 
-      question = (typeof id === 'number') ? this.list[id] : data[id];
+      prop = prop || '';
+      formatted = formatted || false;
 
-      return question;
+      question = (typeof id === 'number') ? this.list[ id ] : data[ id ];
+
+      return ( (!prop) ?
+        question : (prop === 'elem') ?
+          question.elem : question.get(prop, formatted)
+      );
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Questions.setStyle)
-     * -----------------------------------------------
-     * @desc Sets the style for a question's element.
-     * @param {!(number|string)} id - The question id to set.
-     * @param {!(string|stringMap)} type - The style setting to set. If a
-     *   string is given then another param with the value is required.
-     *   If an object is provided then use key => value pairs as such
-     *   styleType => newValue (e.g. { display: 'none' }).
-     * @param {!(string|number)=} val - If the type param is a string then
-     *   this is the new value for the it.
-     */
-    this.setStyle = function(id, type, val) {
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-      // Handle one type change
-      if (typeof type === 'string') {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(type) ) {
-          type = camelCase(type);
-        }
-
-        this.get(id).elem.root.style[type] = val;
-        return;
-      }
-
-      // Handle multiple type changes
-      Object.keys(type).forEach(function(/** string */ key) {
-
-        // Replace dashes with camel case
-        if ( /\-/.test(key) ) {
-          key = camelCase(key);
-        }
-
-        this.get(id).elem.root.style[key] = type[key];
-      }, this);
-    };
-    Object.freeze(this.setStyle);
-
-    // Check the argument data type
-    if (!questions || !checkType(questions, '!objects')) {
-      questions = [];
-    }
-
-    // Setup the len and list properties
-    this.len = questions.length;
-    len = this.len + 1;
-    this.list = (this.len) ? new Array(len) : [];
-
-    // Add blank to beginning of list so ids and indexes match
-    if (this.len) {
-      this.list[0] = null;
-    }
-
-    // Add the questions
-    --len;
-    i = -1;
-    while (++i < len) {
-      id = i + 1;
-      this.list[id] = new Question(questions[i], id, config, sources, categories);
-      Object.freeze(this.list[id]);
-    }
-
-    // Setup the data hash map
-    data = {};
-
-    ++i;
-    while (--i) {
-      url = this.list[i].get('url');
-      if (url) {
-        data[url] = this.list[i];
-      }
-    }
-
-    Object.freeze(this.list);
-    Object.freeze(data);
-
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Questions.prototype.constructor = Questions;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemStyle)
+   * ---------------------------------------------------
+   * @desc Sets the style for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {!(string|stringMap)} type - The style setting to set.
+   *   If a string is given then another param with the value is
+   *   required. If an object is provided then use key => value
+   *   pairs like styleType => newValue (see below example).
+   * @param {(string|number)=} val - If the type param is a string then
+   *   this is the new value for the it.
+   * @example
+   *   app.questions.setElemStyle(5, { display: 'none' });
+   *   // OR
+   *   app.questions.setElemStyle(5, 'display', 'none');
+   */
+  Questions.prototype.setElemStyle = function(id, type, val) {
+
+    // Handle one update
+    if (typeof type === 'string') {
+
+      // Replace dashes with camel case
+      if ( /\-/.test(type) ) {
+        type = camelCase(type);
+      }
+
+      this.get(id).elem.root.style[ type ] = val;
+      return;
+    }
+
+    // Handle multiple updates
+    Object.keys(type).forEach(function(/** string */ key) {
+
+      // Replace dashes with camel case
+      if ( /\-/.test(key) ) {
+        key = camelCase(key);
+      }
+
+      this.get(id).elem.root.style[ key ] = type[ key ];
+    }, this);
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemClass)
+   * ---------------------------------------------------
+   * @desc Sets the class name for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {string} newClassName - The new class name.
+   */
+  Questions.prototype.setElemClass = function(id, newClassName) {
+
+    this.get(id).elem.root.className = newClassName;
+  };
 
   /**
    * -----------------------------------------------------
@@ -4044,6 +4383,9 @@
       category: app.config.searchBar.get('category'),
       subCat  : app.config.searchBar.get('subCat')
     };
+    config.source = config.source || app.config.links.get('source');
+    config.category = config.category || app.config.links.get('category');
+    config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
     i = 0;
@@ -4149,9 +4491,9 @@
    * Public Method (Questions.prototype.hideElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'none' for the provided questions.
-   * @param {?nums} ids - The previous active question ids.
-   * @param {num} index - The index of the ids to hide from view.
-   * @param {string=} view - The old value of app.searchBar.vals.view.
+   * @param {!numbers} ids - The previous active question ids.
+   * @param {number} index - The index of the ids to hide from view.
+   * @param {string} view - The old value of app.searchBar.vals.view.
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
@@ -4160,8 +4502,8 @@
 
     if (index === -1) {
 
-      // No questions to hide (i.e. hide the empty message)
-      if (!ids) {
+      // Hide the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'none';
         return;
       }
@@ -4169,29 +4511,30 @@
       // Hide all of the provided ids
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
 
       return;
     }
 
-    view = view || app.searchBar.vals.view;
-
     // Hide only the index of the provided ids
     if (view === 'one') {
-      this.setStyle(ids[index], 'display', 'none');
+      this.setElemStyle(ids[ index ], 'display', 'none');
       return;
     }
 
     // Hide the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be hidden
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.setStyle(ids[i], 'display', 'none');
+        this.setElemStyle(ids[i], 'display', 'none');
       }
+
       return;
     }
   };
@@ -4201,26 +4544,22 @@
    * Public Method (Questions.prototype.showElems)
    * -----------------------------------------------------
    * @desc Updates the display to 'block' for the provided questions.
-   * @param {?nums} ids - The new active question ids.
-   * @param {num} index - The index of the ids to show.
+   * @param {!numbers} ids - The new active question ids.
+   * @param {number} index - The index of the ids to show.
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var view;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
+    /** @type {string} */
+    var newClassName;
 
     if (index === -1) {
 
-      // No questions to show (i.e. show the empty message)
-      if (!ids) {
+      // Show the empty message
+      if (!ids.length) {
         app.elems.none.style.display = 'block';
         return;
       }
@@ -4228,10 +4567,9 @@
       // Show all of the provided ids
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
 
       return;
@@ -4239,25 +4577,27 @@
 
     view = app.searchBar.vals.view;
 
-    // Hide only the index of the provided ids
+    // Show only the index of the provided ids
     if (view === 'one') {
-      this.get(ids[index]).elem.root.className = 'question shade1 hideLink';
-      this.setStyle(ids[index], 'display', 'block');
+      this.setElemClass(ids[ index ], 'question shade1 hideLink');
+      this.setElemStyle(ids[ index ], 'display', 'block');
       return;
     }
 
-    // Hide the index plus ten (or to the array end)
+    // Show the index plus ten (or to the array end)
     if (view === 'ten') {
-      ids = ( (ids.length < (index + 11)) ?
-        ids.slice(index) : ids.slice(index, (index + 11))
-      );
+
+      // Remove all ids from the array that should NOT be shown
+      i = index + 11;
+      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
       i = ids.length;
       while (i--) {
-        this.get(ids[i]).elem.root.className = ( (i % 2) ?
-          'question shade2' : 'question shade1'
-        );
-        this.setStyle(ids[i], 'display', 'block');
+        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+        this.setElemClass(ids[i], newClassName);
+        this.setElemStyle(ids[i], 'display', 'block');
       }
+
       return;
     }
   };
@@ -4280,6 +4620,23 @@
    * @constructor
    */
   var Question = function(question, id, config, sources, categories) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup & Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.elem)
+     * -----------------------------------------------
+     * @desc The question's DOM container.
+     * @type {element}
+     */
+    this.elem = new QuestionElem(id);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -4383,55 +4740,17 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.format)
+     * Protected Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
      * @type {QuestionFormat}
      */
-    this.format;
+    var format;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Question.elem)
-     * -----------------------------------------------
-     * @desc The question element.
-     * @type {elem}
-     */
-    this.elem;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Question.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
-
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        url     : url,
-        complete: complete,
-        source  : source,
-        mainCat : mainCat,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        solution: solution,
-        output  : output
-      };
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the question's element
-    this.elem = new QuestionElem(id);
-
-    // Setup the protected properties
     url = '';
     if (!!question.url && typeof question.url === 'string') {
       url = question.url.toLowerCase();
@@ -4448,33 +4767,52 @@
       source = '';
     }
 
+    // Setup main categories
     mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
       [] : (question.mainCat.length) ?
         question.mainCat.slice(0) : []
     );
+
+    // Check the main category ids accuracy
     mainCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        mainCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         mainCat.splice(i, 1);
       }
     });
-    Object.freeze(mainCat);
 
+    // Setup sub categories
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
         question.subCat.slice(0) : []
     );
+
+    // Check the sub category ids accuracy
     subCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        subCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         subCat.splice(i, 1);
       }
     });
-    Object.freeze(subCat);
 
+    // Setup links
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
                !question.links.length) ?
       [] : question.links.slice(0)
     );
+
+    // Check the link objects accuracy
     if (links.length) {
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
@@ -4484,7 +4822,6 @@
         }
       });
     }
-    Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
@@ -4515,8 +4852,7 @@
       }
     }
 
-    // Setup the question format
-    this.format = new QuestionFormat({
+    format = new QuestionFormat({
       id      : id,
       complete: complete,
       source  : source,
@@ -4525,9 +4861,62 @@
       solution: solution
     }, config, sources, categories);
 
+    // Freeze the needed protected properties
+    Object.freeze(mainCat);
+    Object.freeze(subCat);
+    Object.freeze(links);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Question.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop, formatted) {
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        url     : url,
+        complete: complete,
+        source  : source,
+        mainCat : mainCat,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        solution: solution,
+        output  : output
+      };
+
+      formatted = formatted || false;
+
+      return (formatted) ? format.get(prop) : props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Question.prototype.constructor = Question;
 
   /**
@@ -4593,27 +4982,27 @@
   Question.prototype.addElemContent = function() {
 
     this.elem.addContent({
-      id      : this.format.get('id'),
+      id      : this.get('id', true),
       url     : this.get('url'),
-      complete: this.format.get('complete'),
+      complete: this.get('complete', true),
       source  : {
         id  : this.get('source'),
-        name: this.format.get('source')
+        name: this.get('source', true)
       },
       mainCat : {
         ids  : this.get('mainCat'),
-        h3   : this.format.get('mainCat').h3,
-        names: this.format.get('mainCat').names
+        h3   : this.get('mainCat', true).h3,
+        names: this.get('mainCat', true).names
       },
       subCat  : {
         ids  : this.get('subCat'),
-        h3   : this.format.get('subCat').h3,
-        names: this.format.get('subCat').names
+        h3   : this.get('subCat', true).h3,
+        names: this.get('subCat', true).names
       },
       links   : this.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
-      solution: this.format.get('solution'),
+      solution: this.get('solution', true),
       output  : this.get('output')
     });
 
@@ -4637,8 +5026,9 @@
    */
   var QuestionFormat = function(question, config, sources, categories) {
 
-    /** @type {{ result: string, lineCount: number }} */
-    var code;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -4709,29 +5099,12 @@
      */
     var solution;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionFormat.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        source  : source,
-        complete: complete,
-        mainCat : mainCat,
-        subCat  : subCat,
-        solution: solution
-      };
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
+    /** @type {{ result: string, lineCount: number }} */
+    var code;
 
     // Format the id
     id = (config.id && question.id) ? question.id : '';
@@ -4793,13 +5166,53 @@
       solution.lineCount = code.lineCount;
     }
 
+    // Freeze all of the properties that are objects
     Object.freeze(mainCat);
     Object.freeze(subCat);
     Object.freeze(solution);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionFormat.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        source  : source,
+        complete: complete,
+        mainCat : mainCat,
+        subCat  : subCat,
+        solution: solution
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionFormat.prototype.constructor = QuestionFormat;
 
 
@@ -4817,12 +5230,16 @@
    */
   var QuestionElem = function(id) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {elem}
+     * @type {element}
      */
     this.root;
 
@@ -4831,7 +5248,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {elem}
+     * @type {element}
      */
     this.info;
 
@@ -4840,7 +5257,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {elem}
+     * @type {element}
      */
     this.solution;
 
@@ -4849,7 +5266,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {elem}
+     * @type {element}
      */
     this.pre;
 
@@ -4858,11 +5275,14 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {elem}
+     * @type {element}
      */
     this.code;
 
-    // Setup the elements
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     this.root = document.createElement('section');
     this.info = document.createElement('div');
 
@@ -4872,9 +5292,16 @@
     this.info.className = 'info';
 
     this.root.appendChild(this.info);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionElem.prototype.constructor = QuestionElem;
 
   /**
@@ -4912,9 +5339,9 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    /** @type {elem} */
+    /** @type {element} */
     var root;
-    /** @type {elem} */
+    /** @type {element} */
     var info;
     /** @type {boolean} */
     var testTextContent;
@@ -4972,13 +5399,13 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('id');
@@ -5021,12 +5448,12 @@
      * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       if (!url) {
@@ -5038,7 +5465,7 @@
       a.innerHTML = id;
       a.onclick = (function(id) {
         return function() {
-          Events.linkId(id);
+          Events.linkId( Number(id) );
           return false;
         };
       })(id);
@@ -5058,13 +5485,13 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('source');
@@ -5106,14 +5533,14 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {elem} The anchor element.
+     * @return {element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.sources.get(id, 'url');
@@ -5142,11 +5569,11 @@
      */
     function appendComplete(complete) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -5180,11 +5607,11 @@
      */
     function appendCategory(main, sub) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var mainDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var subDiv;
 
       contain = document.createElement('div');
@@ -5221,16 +5648,16 @@
      * ---------------------------------------------
      * @desc Appends the question's main categories.
      * @param {Object} main - The question's main categories.
-     * @param {elem} div - The DOM container for the main categories.
+     * @param {element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -5238,7 +5665,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -5283,16 +5710,16 @@
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
      * @param {Object} sub - The question's sub categories.
-     * @param {elem} div - The DOM container for the sub categories.
+     * @param {element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
       /** @type {number} */
       var i;
@@ -5300,7 +5727,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       config = app.config.links.get('category');
@@ -5347,14 +5774,14 @@
      * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
 
       url = app.categories.get(id, 'url');
@@ -5382,14 +5809,14 @@
      *   indexOf to find the sub category's parent.
      * @param {string} id - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {elem} The anchor link.
+     * @return {element} The anchor link.
      * @private
      */
     function makeSubCatLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {elem} */
+      /** @type {element} */
       var a;
       /** @type {string} */
       var parentId;
@@ -5435,12 +5862,12 @@
      * Private Method (makeLinkSpan)
      * ---------------------------------------------
      * @desc Creates a span element for spacing between links.
-     * @return {elem} The span element.
+     * @return {element} The span element.
      * @private
      */
     function makeLinkSpan() {
 
-      /** @type {elem} */
+      /** @type {element} */
       var span;
 
       span = document.createElement('span');
@@ -5460,11 +5887,11 @@
      */
     function appendProblem(problem, descr) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -5497,17 +5924,17 @@
      */
     function appendSolution(solution) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var contain;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var preDiv;
-      /** @type {elem} */
+      /** @type {element} */
       var pre;
-      /** @type {elem} */
+      /** @type {element} */
       var code;
-      /** @type {elem} */
+      /** @type {element} */
       var ol;
       /** @type {number} */
       var height;
@@ -5558,11 +5985,11 @@
      */
     function appendOutput(output) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -5596,11 +6023,11 @@
      */
     function appendLinks(links) {
 
-      /** @type {elem} */
+      /** @type {element} */
       var div;
-      /** @type {elem} */
+      /** @type {element} */
       var h3;
-      /** @type {elem} */
+      /** @type {element} */
       var p;
 
       div = document.createElement('div');
@@ -5620,7 +6047,7 @@
       div.appendChild(p);
 
       links.forEach(function(/** Object */ linkObj) {
-        /** @type {elem} */
+        /** @type {element} */
         var a;
 
         a = document.createElement('a');
@@ -5653,21 +6080,21 @@
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {elem} */
+    /** @type {element} */
     var code;
-    /** @type {elem} */
+    /** @type {element} */
     var ext;
-    /** @type {elem} */
+    /** @type {element} */
     var extClose;
-    /** @type {elem} */
+    /** @type {element} */
     var extOpen;
-    /** @type {elem} */
+    /** @type {element} */
     var extBG;
-    /** @type {elem} */
+    /** @type {element} */
     var extHov;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovC;
-    /** @type {elem} */
+    /** @type {element} */
     var extHovO;
     /** @type {boolean} */
     var testTextContent;
@@ -5726,7 +6153,7 @@
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elemMap} */
+      /** @type {elementMap} */
       var elems;
 
       elems = {
@@ -5790,6 +6217,8 @@
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
                                                            prettify-vars.js */
+    // The prettifier's debugger object
+    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------
@@ -7530,11 +7959,17 @@
    */
   Events.popState = function(newState) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {number} */
+    var oldIndex;
     /** @type {string} */
     var oldView;
     /** @type {boolean} */
     var flipElems;
 
+    oldIds = app.vals.get('ids').slice(0);
+    oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
     flipElems = (app.searchBar.vals.order !== newState.order);
 
@@ -7560,11 +7995,49 @@
       app.searchBar.elems.subCat.value = newState.subCat;
     }
 
-    app.updateDisplay({
-      flipElems  : flipElems,
-      oldView    : oldView,
-      noPushState: true
-    });
+    app.vals.reset(newState.ids, newState.index);
+
+    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.prev)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the previous button.
+   * @type {function}
+   */
+  Events.prev = function() {
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('prev');
+
+    app.updateDisplay(null, oldIndex);
+
+  };
+
+  /**
+   * ----------------------------------------------- 
+   * Public Method (Events.next)
+   * -----------------------------------------------
+   * @desc The onClick event handler for the next button.
+   * @type {function}
+   */
+  Events.next = function() {
+
+    /** @type {number} */
+    var oldIndex;
+
+    oldIndex = app.vals.get('index');
+
+    app.vals.move('next');
+
+    app.updateDisplay(null, oldIndex);
 
   };
 
@@ -7577,17 +8050,27 @@
    */
   Events.searchView = function(newVal) {
 
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var oldIndex;
+    /** @type {number} */
+    var newIndex;
     /** @type {string} */
-    var oldVal;
+    var oldView;
 
     if (app.searchBar.vals.view != newVal) {
 
-      oldVal = app.searchBar.vals.view;
+      len = app.vals.get('len');
+
+      oldIndex = app.vals.get('index');
+      newIndex = (newVal === 'all' || !len) ? -1 : 0;
+      oldView = app.searchBar.vals.view;
+
       app.searchBar.vals.view = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        oldView     : oldVal
-      });
+      app.vals.set(null, newIndex);
+
+      app.updateDisplay(null, oldIndex, oldView);
 
     }
   };
@@ -7601,14 +8084,21 @@
    */
   Events.searchOrder = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+
     if (app.searchBar.vals.order != newVal) {
 
+      oldIds = app.vals.get('ids');
+      newIds = oldIds.slice(0);
+      newIds.reverse();
+
       app.searchBar.vals.order = newVal;
-      app.updateDisplay({
-        noMatchReset: true,
-        flipElems   : true,
-        keepIndex   : true
-      });
+      app.vals.set(newIds);
+
+      app.updateDisplay(oldIds, null, null, true);
 
     }
   };
@@ -7622,10 +8112,25 @@
    */
   Events.searchStage = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.stage != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.stage = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7639,10 +8144,25 @@
    */
   Events.searchSource = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7656,11 +8176,26 @@
    */
   Events.searchMainCat = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = newVal;
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7674,10 +8209,25 @@
    */
   Events.searchSubCat = function(newVal) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != newVal) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.subCat = newVal;
-      app.updateDisplay();
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7691,8 +8241,19 @@
    */
   Events.linkId = function(id) {
 
+    /** @type {number} */
+    var oldIndex;
+    /** @type {string} */
+    var oldView;
+
+    oldIndex = app.vals.get('index');
+    oldView = app.searchBar.vals.view;
+
     app.searchBar.elems.view.value = 'one';
-    app.moveDisplay(id);
+
+    app.vals.move(id);
+
+    app.updateDisplay(null, oldIndex, oldView);
 
   };
 
@@ -7705,11 +8266,28 @@
    */
   Events.linkSource = function(id) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.source != id) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.source = id;
-      app.searchBar.elems.source.value = id;
-      app.updateDisplay();
+      if (app.searchBar.elems.source) {
+        app.searchBar.elems.source.value = id;
+      }
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7723,12 +8301,29 @@
    */
   Events.linkMainCat = function(id) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.mainCat != id) {
 
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
+
       app.searchBar.vals.mainCat = id;
-      app.searchBar.elems.mainCat.value = id;
+      if (app.searchBar.elems.mainCat) {
+        app.searchBar.elems.mainCat.value = id;
+      }
+
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay();
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7743,23 +8338,39 @@
    */
   Events.linkSubCat = function(id, parentId) {
 
+    /** @type {!numbers} */
+    var oldIds;
+    /** @type {!numbers} */
+    var newIds;
+    /** @type {number} */
+    var oldIndex;
+
     if (app.searchBar.vals.subCat != id) {
+
+      oldIds = app.vals.get('ids');
+      oldIndex = app.vals.get('index');
 
       // Check the main category and update the values and options
       if (app.searchBar.vals.mainCat !== 'all' &&
           app.searchBar.vals.mainCat !== parentId) {
         app.searchBar.vals.mainCat = 'all';
-        app.searchBar.elems.mainCat.value = 'all';
+        if (app.searchBar.elems.mainCat) {
+          app.searchBar.elems.mainCat.value = 'all';
+        }
         app.searchBar.updateSubCatOpts(id);
-        app.searchBar.elems.subCat.value = id;
       }
       else {
         app.searchBar.vals.subCat = id;
-        app.searchBar.elems.subCat.value = id;
+        if (app.searchBar.elems.subCat) {
+          app.searchBar.elems.subCat.value = id;
+        }
       }
 
-      // Finish the display update
-      app.updateDisplay();
+      newIds = app.findMatches();
+
+      app.vals.reset(newIds);
+
+      app.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -7962,45 +8573,21 @@
    */
   var _init = function(settings) {
 
-    /**
-     * @type {?(string|strings)}
-     * @private
-     */
+    /** @type {?(string|strings)} */
     var resourceList;
-    /**
-     * @type {?objectMap}
-     * @private
-     */
+    /** @type {objectMap} */
     var config;
-    /**
-     * @type {?stringMap}
-     * @private
-     */
+    /** @type {stringMap} */
     var sources;
-    /**
-     * @type {?(objectMap|stringMap)}
-     * @private
-     */
+    /** @type {(objectMap|stringMap)} */
     var categories;
-    /**
-     * @type {?objects}
-     * @private
-     */
+    /** @type {!objects} */
     var questions;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var setup;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var callback;
-    /**
-     * @type {number}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     // Check if app has been initialized
@@ -8034,7 +8621,7 @@
     );
     questions = ( ( settings.hasOwnProperty('questions') ) ?
       settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : null
+        settings.question : []
     );
 
     // Check the types of the arguments
@@ -8050,20 +8637,14 @@
     if ( !checkType(categories, 'stringMap|objectMap') ) {
       categories = null;
     }
-    if ( checkType(questions, '!objects') ) {
-      if (!questions.length) {
-        questions = null;
-      }
-    }
-    else {
-      questions = null;
+    if ( !checkType(questions, '!objects') ) {
+      questions = [];
     }
 
     // Setup and start the app
     setup = function() {
       Object.freeze(resources);
       app = new App(config, sources, categories, questions);
-      Object.freeze(app);
       app.setupDisplay();
     };
 
@@ -8100,6 +8681,20 @@
    * @return {val} Either the entire resources object or one of its properties.
    */
   _init.getResource = function(prop) {
+
+    /** @type {string} */
+    var errorMsg;
+
+    prop = prop || '';
+
+    if (prop && !resources.hasOwnProperty(prop)) {
+      errorMsg = 'The resource you requested does not exist. Please verify that \'';
+      errorMsg += prop + '\' is a correct json file name in the resources folder ';
+      errorMsg += 'and that the file name was included in the setup of the app ';
+      errorMsg += '(see algorithmiv.com/docs/resources).';
+      console.error(errorMsg);
+      return;
+    }
 
     return (!!prop) ? resources[ prop ] : resources;
   }

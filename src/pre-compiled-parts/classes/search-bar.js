@@ -12,8 +12,9 @@
    */
   var SearchBar = function(config, sources, categories) {
 
-    /** @type {boolean} */
-    var pass;
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -106,6 +107,13 @@
      */
     this.opts;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {boolean} */
+    var pass;
+
     // Setup the names, ids, and opts properties
     this.names = {
       view: {
@@ -191,18 +199,11 @@
       }, this);
     }
 
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-
     // Setup the question ids property
     this.ques = {};
     this.ques.stage = {};
     this.ques.stage.com = [];
     this.ques.stage.inc = [];
-
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
 
     // Setup the current values property
     this.vals = {
@@ -235,11 +236,26 @@
       document.createElement('select') : null
     );
 
+    // Freeze all of the completed properties
+    Object.freeze(this.names);
+    Object.freeze(this.ids);
+    Object.freeze(this.opts);
+    Object.freeze(this.ques.stage);
+    Object.freeze(this.ques);
     Object.freeze(this.elems);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBar.prototype.constructor = SearchBar;
 
   /**
@@ -292,6 +308,7 @@
     if (this.elems.subCat) {
       this.elems.subCat.value = subCat;
     }
+
   };
 
   /**
@@ -299,7 +316,7 @@
    * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setMainElems = function() {
 
@@ -520,7 +537,7 @@
    * Public Method (SearchBar.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Appends the search bar's elements to the selections root.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.appendElems = function() {
 
@@ -537,26 +554,30 @@
    * Public Method (SearchBar.prototype.updateSubCatOpts)
    * -----------------------------------------------------
    * @desc Updates the children appended to the sub category select element.
-   * @param {string=} val - The new value to update subCat to.
+   * @param {string=} newVal - The new value to update subCat to.
    */
-  SearchBar.prototype.updateSubCatOpts = function(val) {
+  SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
-    // Update the select value
-    val = val || 'all';
-    this.vals.subCat = val;
+    /** @type {elements} */
+    var opts;
+
+    newVal = (typeof newVal === 'string') ? newVal : 'all';
+
+    this.vals.subCat = newVal;
 
     if (this.elems.subCat) {
 
-      this.elems.subCat.value = val;
-
-      // Clear subCat's children
+      // Clear subCat's current option elements
       while (this.elems.subCat.firstChild) {
         this.elems.subCat.removeChild(this.elems.subCat.firstChild);
       }
 
-      // Append the new children
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+      // Append the new option elements
+      opts = this.opts.subCat[ this.vals.mainCat ];
+      opts.forEach(function(/** element */ elem) {
         this.elems.subCat.appendChild(elem);
       }, this);
+
+      this.elems.subCat.value = newVal;
     }
   };

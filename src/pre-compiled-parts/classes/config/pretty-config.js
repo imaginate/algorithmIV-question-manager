@@ -3,11 +3,15 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|num|boolean)>} config - The user's
-   *   prettifier config settings.
+   * @param {Object<string, (string|number|boolean)>} config - The user's
+   *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -39,28 +43,10 @@
      */
     var commentLinks;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (PrettyConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {(number|boolean)}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      /** @type {Object<string, (number|boolean)>} */
-      var settings = {
-        trimSpace   : trimSpace,
-        tabLength   : tabLength,
-        commentLinks: commentLinks
-      };
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the properties
     trimSpace = 0;
     tabLength = 2;
     commentLinks = false;
@@ -84,7 +70,44 @@
     if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
       commentLinks = true;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (PrettyConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from PrettyConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {(number|boolean)}
+     */
+    this.get = function(prop) {
+
+      /** @type {Object<string, (number|boolean)>} */
+      var props = {
+        trimSpace   : trimSpace,
+        tabLength   : tabLength,
+        commentLinks: commentLinks
+      };
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   PrettyConfig.prototype.constructor = PrettyConfig;

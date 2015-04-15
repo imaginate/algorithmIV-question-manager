@@ -12,6 +12,23 @@
    */
   var Question = function(question, id, config, sources, categories) {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup & Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Question.elem)
+     * -----------------------------------------------
+     * @desc The question's DOM container.
+     * @type {element}
+     */
+    this.elem = new QuestionElem(id);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Protected Property (Question.url)
@@ -114,55 +131,17 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (Question.format)
+     * Protected Property (Question.format)
      * -----------------------------------------------
      * @desc The formatted details for the question.
      * @type {QuestionFormat}
      */
-    this.format;
+    var format;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Question.elem)
-     * -----------------------------------------------
-     * @desc The question element.
-     * @type {elem}
-     */
-    this.elem;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (Question.get)
-     * -----------------------------------------------
-     * @desc Gets info for a question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val}
-     */
-    this.get = function(prop) {
-
-      /** @type {Object<string, val>} */
-      var details = {
-        id      : id,
-        url     : url,
-        complete: complete,
-        source  : source,
-        mainCat : mainCat,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        solution: solution,
-        output  : output
-      };
-
-      return details[prop];
-    };
-    Object.freeze(this.get);
-
-    // Setup the question's element
-    this.elem = new QuestionElem(id);
-
-    // Setup the protected properties
     url = '';
     if (!!question.url && typeof question.url === 'string') {
       url = question.url.toLowerCase();
@@ -179,33 +158,52 @@
       source = '';
     }
 
+    // Setup main categories
     mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
       [] : (question.mainCat.length) ?
         question.mainCat.slice(0) : []
     );
+
+    // Check the main category ids accuracy
     mainCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        mainCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         mainCat.splice(i, 1);
       }
     });
-    Object.freeze(mainCat);
 
+    // Setup sub categories
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
         question.subCat.slice(0) : []
     );
+
+    // Check the sub category ids accuracy
     subCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        subCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         subCat.splice(i, 1);
       }
     });
-    Object.freeze(subCat);
 
+    // Setup links
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
                !question.links.length) ?
       [] : question.links.slice(0)
     );
+
+    // Check the link objects accuracy
     if (links.length) {
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
@@ -215,7 +213,6 @@
         }
       });
     }
-    Object.freeze(links);
 
     problem = ( (!!question.problem && typeof question.problem === 'string') ?
       question.problem : ''
@@ -246,8 +243,7 @@
       }
     }
 
-    // Setup the question format
-    this.format = new QuestionFormat({
+    format = new QuestionFormat({
       id      : id,
       complete: complete,
       source  : source,
@@ -256,9 +252,62 @@
       solution: solution
     }, config, sources, categories);
 
+    // Freeze the needed protected properties
+    Object.freeze(mainCat);
+    Object.freeze(subCat);
+    Object.freeze(links);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Question.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property for the question.
+     * @param {string} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {val} The property's value.
+     */
+    this.get = function(prop, formatted) {
+
+      /** @type {Object<string, val>} */
+      var props = {
+        id      : id,
+        url     : url,
+        complete: complete,
+        source  : source,
+        mainCat : mainCat,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        solution: solution,
+        output  : output
+      };
+
+      formatted = formatted || false;
+
+      return (formatted) ? format.get(prop) : props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Question.prototype.constructor = Question;
 
   /**
@@ -324,27 +373,27 @@
   Question.prototype.addElemContent = function() {
 
     this.elem.addContent({
-      id      : this.format.get('id'),
+      id      : this.get('id', true),
       url     : this.get('url'),
-      complete: this.format.get('complete'),
+      complete: this.get('complete', true),
       source  : {
         id  : this.get('source'),
-        name: this.format.get('source')
+        name: this.get('source', true)
       },
       mainCat : {
         ids  : this.get('mainCat'),
-        h3   : this.format.get('mainCat').h3,
-        names: this.format.get('mainCat').names
+        h3   : this.get('mainCat', true).h3,
+        names: this.get('mainCat', true).names
       },
       subCat  : {
         ids  : this.get('subCat'),
-        h3   : this.format.get('subCat').h3,
-        names: this.format.get('subCat').names
+        h3   : this.get('subCat', true).h3,
+        names: this.get('subCat', true).names
       },
       links   : this.get('links'),
       problem : this.get('problem'),
       descr   : this.get('descr'),
-      solution: this.format.get('solution'),
+      solution: this.get('solution', true),
       output  : this.get('output')
     });
 
