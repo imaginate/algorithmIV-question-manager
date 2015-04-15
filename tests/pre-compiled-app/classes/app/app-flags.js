@@ -9,19 +9,15 @@
    */
   var AppFlags = function(pass) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppFlags.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppFlags class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppFlags');
 
     this.debug.start('init', pass);
+
     this.debug.args('init', pass, 'boolean');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -33,6 +29,16 @@
      */
     var initArgs;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    initArgs = pass;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
@@ -43,7 +49,6 @@
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -52,12 +57,12 @@
         initArgs: initArgs
       };
 
+      debugCheck = flags.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return flags[prop];
+      return flags[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -69,28 +74,35 @@
      */
     this.set = function(prop, val) {
 
-      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'boolean');
 
-      /** @private */
+      /** @type {Object<string, function>} */
       var flags = {
-        initArgs: function () {
-          initArgs = val;
-        }
+        initArgs: function () { initArgs = val; }
       };
 
+      debugCheck = flags.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      flags[prop]();
+      flags[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    initArgs = pass;
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppFlags.prototype.constructor = AppFlags;

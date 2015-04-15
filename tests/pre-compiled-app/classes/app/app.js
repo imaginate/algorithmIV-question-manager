@@ -139,7 +139,6 @@
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
 
-    Object.freeze(this.flags);
     Object.freeze(this.sources);
     Object.freeze(this.categories);
 
