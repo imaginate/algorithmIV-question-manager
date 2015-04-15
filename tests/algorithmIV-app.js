@@ -947,11 +947,6 @@
     this.sources = new Sources(sources);
     this.categories = new Categories(categories);
 
-    Object.freeze(this.flags);
-    Object.freeze(this.config);
-    Object.freeze(this.sources);
-    Object.freeze(this.categories);
-
     // Setup the prettifier
     tmpConfig = {
       trimSpace   : this.config.prettifier.get('trimSpace'),
@@ -968,7 +963,6 @@
       subCat  : this.config.searchBar.get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
-    Object.freeze(this.searchBar);
 
     // Setup the questions
     tmpConfig = {
@@ -1228,13 +1222,13 @@
       null : this.searchBar.ques.stage[ stage ].slice(0)
     );
     source = ( (source === 'all') ?
-      null : this.sources.get(source).get('ids').slice(0)
+      null : this.sources.get(source, 'ids').slice(0)
     );
     mainCat = ( (mainCat === 'all') ?
-      null : this.categories.get(mainCat).get('ids').slice(0)
+      null : this.categories.get(mainCat, 'ids').slice(0)
     );
     subCat = ( (subCat === 'all') ?
-      null : this.categories.get(subCat).get('ids').slice(0)
+      null : this.categories.get(subCat, 'ids').slice(0)
     );
 
     // Check for empty arrays
@@ -1439,19 +1433,15 @@
    */
   var AppFlags = function(pass) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (AppFlags.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the AppFlags class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('AppFlags');
 
     this.debug.start('init', pass);
+
     this.debug.args('init', pass, 'boolean');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -1463,6 +1453,16 @@
      */
     var initArgs;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    initArgs = pass;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
@@ -1473,7 +1473,6 @@
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
@@ -1482,12 +1481,12 @@
         initArgs: initArgs
       };
 
+      debugCheck = flags.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return flags[prop];
+      return flags[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -1499,30 +1498,37 @@
      */
     this.set = function(prop, val) {
 
-      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'boolean');
 
-      /** @private */
+      /** @type {Object<string, function>} */
       var flags = {
-        initArgs: function () {
-          initArgs = val;
-        }
+        initArgs: function () { initArgs = val; }
       };
 
+      debugCheck = flags.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', flags.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      flags[prop]();
+      flags[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    initArgs = pass;
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   AppFlags.prototype.constructor = AppFlags;
 
 
@@ -2168,7 +2174,6 @@
 // The Prototype Methods
 ////////////////////////////////////////////////////////////////////////////////
 
-  // Ensure constructor is set to this class.
   AppVals.prototype.constructor = AppVals;
 
   /**
@@ -2328,19 +2333,17 @@
    */
   var Config = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Config.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Config class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Config');
 
     this.debug.group('init', 'coll', 'config= $$', config);
+
     this.debug.start('init', config);
-    // $e$
+
+    this.debug.args('init', config, 'objectMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2381,8 +2384,11 @@
      */
     this.links;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Check the user config settings
+    // Check the given user's config object
     if (!config || typeof config !== 'object') {
       config = {};
     }
@@ -2406,16 +2412,20 @@
     this.prettifier = new PrettyConfig(config.prettifyFormat);
     this.links      = new LinksConfig(config.showLinks);
 
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
-    Object.freeze(this.prettifier);
-    Object.freeze(this.links);
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Close this debug console group
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Config.prototype.constructor = Config;
 
 
@@ -2433,19 +2443,28 @@
    */
   var SearchBarConfig = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (SearchBarConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the SearchBarConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('SearchBarConfig');
 
     this.debug.start('init', config);
+
     this.debug.args('init', config, 'object');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarConfig.defaults)
+     * -----------------------------------------------
+     * @desc The default search options to display upon app init.
+     * @type {DefaultsSearchBarConfig}
+     */
+    this.defaults = new DefaultsSearchBarConfig();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2487,46 +2506,10 @@
      */
     var subCat;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBarConfig.defaults)
-     * -----------------------------------------------
-     * @desc The default search options to display upon app init.
-     * @type {DefaultsSearchBarConfig}
-     */
-    this.defaults;
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (SearchBarConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
-
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        stage   : stage,
-        source  : source,
-        category: category,
-        subCat  : subCat
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Setup the properties
     stage    = true;
     source   = true;
     category = true;
@@ -2544,12 +2527,57 @@
     if (config.hasOwnProperty('subCat') && config.subCat === false) {
       subCat = false;
     }
+    if (!category && subCat) {
+      subCat = false;
+    }
 
-    this.defaults = new DefaultsSearchBarConfig();
-    Object.freeze(this.defaults);
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (SearchBarConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from SearchBarConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        stage   : stage,
+        source  : source,
+        category: category,
+        subCat  : subCat
+      };
+
+      debugCheck = props.hasOwnProperty(prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', debugCheck, debugMsg, prop);
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBarConfig.prototype.constructor = SearchBarConfig;
 
 
@@ -2566,18 +2594,13 @@
    */
   var DefaultsSearchBarConfig = function() {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the DefaultsSearchBarConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('DefaultsSearchBarConfig');
 
     this.debug.start('init');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
@@ -2649,22 +2672,37 @@
      */
     var subCat;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    startID = 0;
+    view    = 'one';
+    order   = 'asc';
+    stage   = 'all';
+    source  = 'all';
+    mainCat = 'all';
+    subCat  = 'all';
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.get)
      * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
+     * @desc Gets a protected property's value from DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to get.
      * @return {(string|number)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
       /** @type {Object<string, (string|number)>} */
-      var settings = {
+      var props = {
         startID: startID,
         view   : view,
         order  : order,
@@ -2674,30 +2712,28 @@
         subCat : subCat
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return settings[prop];
+      return props[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.set)
      * -----------------------------------------------
-     * @desc Sets a config setting.
-     * @param {string} prop - The name of the setting to set.
-     * @param {(string|number)} val - The value to set the
-     *   property to.
+     * @desc Sets a protected property's value for DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to set.
+     * @param {(string|number)} val - The value to set the property to.
      */
     this.set = function(prop, val) {
 
-      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'string|number');
 
-      /** @private */
-      var settings = {
+      /** @type {Object<string, function>} */
+      var props = {
         startID: function() { startID = val; },
         view   : function() { view    = val; },
         order  : function() { order   = val; },
@@ -2707,25 +2743,29 @@
         subCat : function() { subCat  = val; }
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', settings.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('set', debugCheck, debugMsg, prop);
 
-      settings[prop]();
+      props[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    startID = 0;
-    view    = 'one';
-    order   = 'asc';
-    stage   = 'all';
-    source  = 'all';
-    mainCat = 'all';
-    subCat  = 'all';
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
 
   /**
@@ -2824,19 +2864,15 @@
    */
   var QuestionsConfig = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (QuestionsConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the QuestionsConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('QuestionsConfig');
 
     this.debug.start('init', config);
+
     this.debug.args('init', config, 'object');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -2928,42 +2964,10 @@
      */
     var output;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (QuestionsConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        complete: complete,
-        source  : source,
-        category: category,
-        subCat  : subCat,
-        links   : links,
-        problem : problem,
-        descr   : descr,
-        output  : output
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Setup the properties
     id       = true;
     complete = true;
     source   = true;
@@ -3001,9 +3005,60 @@
     if (config.hasOwnProperty('output') && config.output === false) {
       output = false;
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (QuestionsConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from QuestionsConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        complete: complete,
+        source  : source,
+        category: category,
+        subCat  : subCat,
+        links   : links,
+        problem : problem,
+        descr   : descr,
+        output  : output
+      };
+
+      debugCheck = props.hasOwnProperty(prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', debugCheck, debugMsg, prop);
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   QuestionsConfig.prototype.constructor = QuestionsConfig;
 
 
@@ -3016,25 +3071,21 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|num|boolean)>} config - The user's
-   *   prettifier config settings.
+   * @param {Object<string, (string|number|boolean)>} config - The user's
+   *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (PrettyConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the PrettyConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('PrettyConfig');
 
     this.debug.start('init', config);
+
     this.debug.args('init', config, 'object');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3066,36 +3117,10 @@
      */
     var commentLinks;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (PrettyConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {(number|boolean)}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, (number|boolean)>} */
-      var settings = {
-        trimSpace   : trimSpace,
-        tabLength   : tabLength,
-        commentLinks: commentLinks
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Setup the properties
     trimSpace = 0;
     tabLength = 2;
     commentLinks = false;
@@ -3119,9 +3144,53 @@
     if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
       commentLinks = true;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (PrettyConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from PrettyConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {(number|boolean)}
+     */
+    this.get = function(prop) {
+
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, (number|boolean)>} */
+      var props = {
+        trimSpace   : trimSpace,
+        tabLength   : tabLength,
+        commentLinks: commentLinks
+      };
+
+      debugCheck = props.hasOwnProperty(prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', debugCheck, debugMsg, prop);
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   PrettyConfig.prototype.constructor = PrettyConfig;
 
 
@@ -3141,19 +3210,15 @@
    */
   var LinksConfig = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (LinksConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the LinksConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('LinksConfig');
 
     this.debug.start('init', config);
+
     this.debug.args('init', config, 'object');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3185,36 +3250,10 @@
      */
     var category;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Method (LinksConfig.get)
-     * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
-     * @return {boolean}
-     */
-    this.get = function(prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      var debugMsg;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
-      var settings = {
-        id      : id,
-        source  : source,
-        category: category
-      };
-
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
-
-      return settings[prop];
-    };
-    Object.freeze(this.get);
-
-
-    // Set the properties
     id       = true;
     source   = false;
     category = true;
@@ -3228,9 +3267,53 @@
     if (config.hasOwnProperty('category') && config.category === false) {
       category = false;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (LinksConfig.get)
+     * -----------------------------------------------
+     * @desc Gets a protected property's value from LinksConfig.
+     * @param {string} prop - The name of the property to get.
+     * @return {boolean}
+     */
+    this.get = function(prop) {
+
+      this.debug.start('get', prop);
+      this.debug.args('get', prop, 'string');
+
+      /** @type {Object<string, boolean>} */
+      var props = {
+        id      : id,
+        source  : source,
+        category: category
+      };
+
+      debugCheck = props.hasOwnProperty(prop);
+      debugMsg = 'Error: The given property does not exist. property= $$';
+      this.debug.fail('get', debugCheck, debugMsg, prop);
+
+      return props[ prop ];
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   LinksConfig.prototype.constructor = LinksConfig;
 
 
@@ -3248,30 +3331,25 @@
    */
   var Sources = function(sources) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Sources.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Sources class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Sources');
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
-    this.debug.start('init', sources);
-    this.debug.args('init', sources, 'stringMap');
-    // $e$
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Sources.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the source objects using the ids as keys.
-     * @type {Object<string, Source>}
-     * @private
-     */
-    var data;
+    this.debug.start('init', sources);
+
+    this.debug.args('init', sources, 'stringMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
+
+    if ( !checkType(sources, '!stringMap') ) {
+      sources = {};
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3291,59 +3369,100 @@
      */
     this.len;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    this.ids = Object.keys(sources);
+    this.len = this.ids.length;
+
+    // Sort the ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, sources);
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Sources.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the source objects using the ids as keys.
+     * @type {Object<string, Source>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    data = {};
+
+    // Build the data hash map
+    if (this.len) {
+      this.ids.forEach(function(/** string */ sourceId) {
+        data[ sourceId ] = new Source(sources[ sourceId ]);
+      });
+    }
+
+    Object.freeze(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source object or property.
+     * @desc Get a source's Source object or property.
      * @param {string} id - The source id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Source|string|nums)}
+     * @param {string=} prop - The property to get.
+     * @return {(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      var debugMsg;
       this.debug.start('get', id, prop);
       this.debug.args('get', id, 'string', prop, 'string=');
 
-      debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
+      /** @type {Source} */
+      var source;
 
-      return (!!prop) ? data[id].get(prop) : data[id];
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      debugCheck = data.hasOwnProperty(id);
+      debugMsg = 'Error: The given source does not exist. sourceID= $$';
+      this.debug.fail('get', debugCheck, debugMsg, id);
+
+      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? source.get(prop) : source;
     };
+
+    // Freeze all of the methods
     Object.freeze(this.get);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Check the argument data types
-    if ( !checkType(sources, '!stringMap') ) {
-      sources = {};
-    }
-
-    // Setup the properties
-    this.ids = Object.keys(sources);
-    this.len = this.ids.length;
-    data = {};
-
-    if (this.len) {
-
-      // Sort the ids
-      this.ids = sortKeys(this.ids, sources);
-
-      // Build the hash map
-      this.ids.forEach(function(/** string */ id) {
-        data[id] = new Source(sources[id]);
-      });
-    }
-
-    Object.freeze(this.ids);
-    Object.freeze(data);
-
-    // Close this debug console group
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Sources.prototype.constructor = Sources;
 
 
@@ -3361,19 +3480,15 @@
    */
   var Source = function(name) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Source.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Source class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Source');
 
     this.debug.start('init', name);
+
     this.debug.args('init', name, 'string');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3395,35 +3510,55 @@
      */
     var ids;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    ids = [];
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Source.get)
      * -----------------------------------------------
-     * @desc Gets a detail for the source.
+     * @desc Gets a protected property's value from the source.
      * @param {string} prop - The name of the property to get.
-     * @return {(string|nums)}
+     * @return {(string|numbers)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, function>} */
-      var source = {
-        name: function() { return name; },
-        url : function() { return url; },
+      /** @type {Object<string, (string|function)>} */
+      var props = {
+        name: name,
+        url : url,
         ids : function() {
           return Object.freeze( ids.slice(0) );
         }
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', source.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return source[prop]();
+      prop = props[ prop ];
+
+      return (typeof prop === 'function') ? prop() : prop;
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -3441,23 +3576,23 @@
         ids.push(id);
       }
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.addId);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    if (!name || typeof name !== 'string') {
-      name = '';
-      url  = '';
-    }
-    else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
-    }
-    ids = [];
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Source.prototype.constructor = Source;
 
 
@@ -3475,33 +3610,39 @@
    */
   var Categories = function(categories) {
 
-    /** @type {strings} */
-    var subIds;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Categories.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Categories class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Categories');
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
-    this.debug.start('init', categories);
-    this.debug.args('init', categories, 'objectMap|stringMap');
-    // $e$
 
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (Categories.data)
-     * -----------------------------------------------
-     * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
-     * @private
-     */
-    var data;
+    this.debug.start('init', categories);
+
+    this.debug.args('init', categories, 'objectMap|stringMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Prepare The User Supplied Params
+    ////////////////////////////////////////////////////////////////////////////
+
+    if ( checkType(categories, '!stringMap') ) {
+      categories = {
+        main: categories,
+        sub : {}
+      };
+    }
+    else {
+      if (!categories) {
+        categories = {};
+      }
+      if (!categories.main || !checkType(categories.main, '!stringMap')) {
+        categories.main = {};
+      }
+      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
+        categories.sub = {};
+      }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3521,63 +3662,55 @@
      */
     this.len;
 
-    /**
-     * ----------------------------------------------- 
-     * Public Property (Categories.get)
-     * -----------------------------------------------
-     * @desc Get a category object or property.
-     * @param {string} id - The category id to get.
-     * @param {string=} prop - If only one property is desired
-     *   state it here.
-     * @return {(Category|string|nums)}
-     */
-    this.get = function(id, prop) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-      var debugMsg;
-      this.debug.start('get', id, prop);
-      this.debug.args('get', id, 'string', prop, 'string=');
+    /** @type {number} */
+    var allIndex;
 
-      debugMsg = 'Error: The given category does not exist. catID= $$';
-      this.debug.fail('get', data.hasOwnProperty(id), debugMsg, id);
-
-      return ( ( !data.hasOwnProperty(id) ) ?
-        false : (!!prop) ?
-          data[id].get(prop) : data[id]
-      );
-    };
-    Object.freeze(this.get);
-
-
-    // Check the argument data types
-    if ( checkType(categories, '!stringMap') ) {
-      categories = {
-        main: categories,
-        sub : {}
-      };
-    }
-    else {
-      if (!categories) {
-        categories = {};
-      }
-      if (!categories.main || !checkType(categories.main, '!stringMap')) {
-        categories.main = {};
-      }
-      if (!categories.sub || !checkType(categories.sub, '!objectMap')) {
-        categories.sub = {};
-      }
-    }
-
-    // Setup the properties
     this.ids = Object.keys(categories.main);
     this.len = this.ids.length;
+
+    // Sort the main category ids
+    if (this.len) {
+      this.ids = sortKeys(this.ids, categories.main);
+    }
+
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
+
+    Object.freeze(this.ids);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Categories.data)
+     * -----------------------------------------------
+     * @desc Saves a hash map of the category objects using the ids as keys.
+     * @type {Object<string, Category>}
+     * @private
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {strings} */
+    var subIds;
+
     data = {};
 
     if (this.len) {
 
-      // Sort the main category ids
-      this.ids = sortKeys(this.ids, categories.main);
-
-      // Build the hash map
+      // Build the data hash map
       this.ids.forEach(function(/** string */ mainId) {
 
         // Save and sort the sub category ids if they exist
@@ -3591,26 +3724,69 @@
 
         // Add main category to the hash map
         data[ mainId ] = new Category(categories.main[ mainId ], subIds);
-        Object.freeze(data[ mainId ]);
 
         // Add the sub categories to the hash map
         if (subIds && subIds.length) {
           subIds.forEach(function(/** string */ subId) {
             data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-            Object.freeze(data[ subId ]);
           });
         } 
       });
     }
 
-    Object.freeze(this.ids);
     Object.freeze(data);
 
-    // Close this debug console group
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Categories.get)
+     * -----------------------------------------------
+     * @desc Get a catgory's Category object or property.
+     * @param {string} id - The category id to get.
+     * @param {string=} prop - The property to get.
+     * @return {(Category|string|numbers)}
+     */
+    this.get = function(id, prop) {
+
+      this.debug.start('get', id, prop);
+      this.debug.args('get', id, 'string', prop, 'string=');
+
+      /** @type {Category} */
+      var category;
+
+      if (typeof prop !== 'string') {
+        prop = '';
+      }
+
+      debugCheck = data.hasOwnProperty(id);
+      debugMsg = 'Error: The given category does not exist. catID= $$';
+      this.debug.fail('get', debugCheck, debugMsg, id);
+
+      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+
+      return (prop) ? category.get(prop) : category;
+    };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Categories.prototype.constructor = Categories;
 
 
@@ -3630,19 +3806,15 @@
    */
   var Category = function(name, subs) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Category.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Category class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Category');
 
     this.debug.start('init', name, subs);
+
     this.debug.args('init', name, 'string', subs, 'strings=');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3664,36 +3836,57 @@
      */
     var ids;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (!name || typeof name !== 'string') {
+      name = '';
+      url  = '';
+    }
+    else {
+      url = name.toLowerCase();
+      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/\s/g, '-');
+    }
+    ids = [];
+    subs = (!!subs) ? Object.freeze(subs) : null;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (Category.get)
      * -----------------------------------------------
-     * @desc Gets a property from the category.
-     * @param {string} prop - The name of the detail to get.
-     * @return {(string|nums)}
+     * @desc Gets a protected property's value from the category.
+     * @param {string} prop - The name of the property to get.
+     * @return {(string|numbers)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
-      /** @type {Object<string, function>} */
-      var category = {
-        name: function() { return name; },
-        url : function() { return url; },
+      /** @type {Object<string, (string|numbers|function)>} */
+      var props = {
+        name: name,
+        url : url,
+        subs: subs,
         ids : function() {
           return Object.freeze( ids.slice(0) );
-        },
-        subs: function() { return subs; }
+        }
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', category.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return category[prop]();
+      prop = props[ prop ];
+
+      return (typeof prop === 'function') ? prop() : prop;
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
@@ -3711,24 +3904,23 @@
         ids.push(id);
       }
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.addId);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    if (!name || typeof name !== 'string') {
-      name = '';
-      url  = '';
-    }
-    else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
-    }
-    ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Category.prototype.constructor = Category;
 
 
@@ -3750,27 +3942,20 @@
    */
   var SearchBar = function(config, sources, categories) {
 
-    /** @type {boolean} */
-    var pass;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (SearchBar.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the SearchBar class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('SearchBar');
 
-    var debugMsg, debugArgs;
     debugMsg = 'config= $$, sources= $$, categories= $$';
     this.debug.group('init', 'coll', debugMsg, config, sources, categories);
+
     this.debug.start('init', config, sources, categories);
-    debugArgs = [ 'init' ];
-    debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
+
+    debugArgs = [ 'init', config, 'booleanMap', sources, 'object' ];
+    debugArgs.push(categories, 'object');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -3863,6 +4048,12 @@
      */
     this.opts;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {boolean} */
+    var pass;
 
     // Setup the names, ids, and opts properties
     this.names = {
@@ -3953,18 +4144,11 @@
       }, this);
     }
 
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-
     // Setup the question ids property
     this.ques = {};
     this.ques.stage = {};
     this.ques.stage.com = [];
     this.ques.stage.inc = [];
-
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
 
     // Setup the current values property
     this.vals = {
@@ -3997,13 +4181,29 @@
       document.createElement('select') : null
     );
 
+    // Freeze all of the completed properties
+    Object.freeze(this.names);
+    Object.freeze(this.ids);
+    Object.freeze(this.opts);
+    Object.freeze(this.ques.stage);
+    Object.freeze(this.ques);
     Object.freeze(this.elems);
 
-    // Close this debug console group
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBar.prototype.constructor = SearchBar;
 
   /**
@@ -4069,7 +4269,7 @@
    * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setMainElems = function() {
 
@@ -4299,7 +4499,7 @@
    * Public Method (SearchBar.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Appends the search bar's elements to the selections root.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.appendElems = function() {
 
@@ -4318,30 +4518,34 @@
    * Public Method (SearchBar.prototype.updateSubCatOpts)
    * -----------------------------------------------------
    * @desc Updates the children appended to the sub category select element.
-   * @param {string=} val - The new value to update subCat to.
+   * @param {string=} newVal - The new value to update subCat to.
    */
-  SearchBar.prototype.updateSubCatOpts = function(val) {
+  SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
-    this.debug.start('updateSubCatOpts', val);
-    this.debug.args('updateSubCatOpts', val, 'string=');
+    this.debug.start('updateSubCatOpts', newVal);
+    this.debug.args('updateSubCatOpts', newVal, 'string=');
 
-    // Update the select value
-    val = val || 'all';
-    this.vals.subCat = val;
+    /** @type {elements} */
+    var opts;
+
+    newVal = (typeof newVal === 'string') ? newVal : 'all';
+
+    this.vals.subCat = newVal;
 
     if (this.elems.subCat) {
 
-      this.elems.subCat.value = val;
-
-      // Clear subCat's children
+      // Clear subCat's current option elements
       while (this.elems.subCat.firstChild) {
         this.elems.subCat.removeChild(this.elems.subCat.firstChild);
       }
 
-      // Append the new children
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+      // Append the new option elements
+      opts = this.opts.subCat[ this.vals.mainCat ];
+      opts.forEach(function(/** element */ elem) {
         this.elems.subCat.appendChild(elem);
       }, this);
+
+      this.elems.subCat.value = newVal;
     }
   };
 
@@ -4621,6 +4825,9 @@
       category: app.config.searchBar.get('category'),
       subCat  : app.config.searchBar.get('subCat')
     };
+    config.source = config.source || app.config.links.get('source');
+    config.category = config.category || app.config.links.get('category');
+    config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
     i = 0;
@@ -5065,31 +5272,52 @@
       source = '';
     }
 
+    // Setup main categories
     mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
       [] : (question.mainCat.length) ?
         question.mainCat.slice(0) : []
     );
+
+    // Check the main category ids accuracy
     mainCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        mainCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         mainCat.splice(i, 1);
       }
     });
 
+    // Setup sub categories
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
         question.subCat.slice(0) : []
     );
+
+    // Check the sub category ids accuracy
     subCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        subCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         subCat.splice(i, 1);
       }
     });
 
+    // Setup links
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
                !question.links.length) ?
       [] : question.links.slice(0)
     );
+
+    // Check the link objects accuracy
     if (links.length) {
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
@@ -6621,16 +6849,8 @@
  * | The Prettifier Vars                                                       |
  * v ------------------------------------------------------------------------- v
                                                            prettify-vars.js */
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (prettify.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the prettifier.
-     * @type {Debug}
-     */
+    // The prettifier's debugger object
     prettify.debug = aIV.debug('prettify');
-    // $e$
 
     /**
      * ---------------------------------------------
@@ -7499,16 +7719,8 @@
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
                                                    highlight-syntax-vars.js */
-      // $s$
-      /**
-       * ---------------------------------------------------
-       * Public Property (highlight.debug)
-       * ---------------------------------------------------
-       * @desc The Debug instance for the syntax highlighter.
-       * @type {Debug}
-       */
+      // The syntax highlighter's debugger object
       highlightSyntax.debug = aIV.debug('highlightSyntax');
-      // $e$
 
       /**
        * ---------------------------------------------
@@ -8891,7 +9103,9 @@
       oldIndex = app.vals.get('index');
 
       app.searchBar.vals.source = id;
-      app.searchBar.elems.source.value = id;
+      if (app.searchBar.elems.source) {
+        app.searchBar.elems.source.value = id;
+      }
 
       newIds = app.findMatches();
 
@@ -8930,7 +9144,9 @@
       oldIndex = app.vals.get('index');
 
       app.searchBar.vals.mainCat = id;
-      app.searchBar.elems.mainCat.value = id;
+      if (app.searchBar.elems.mainCat) {
+        app.searchBar.elems.mainCat.value = id;
+      }
 
       newIds = app.findMatches();
 
@@ -8974,13 +9190,16 @@
       if (app.searchBar.vals.mainCat !== 'all' &&
           app.searchBar.vals.mainCat !== parentId) {
         app.searchBar.vals.mainCat = 'all';
-        app.searchBar.elems.mainCat.value = 'all';
+        if (app.searchBar.elems.mainCat) {
+          app.searchBar.elems.mainCat.value = 'all';
+        }
         app.searchBar.updateSubCatOpts(id);
-        app.searchBar.elems.subCat.value = id;
       }
       else {
         app.searchBar.vals.subCat = id;
-        app.searchBar.elems.subCat.value = id;
+        if (app.searchBar.elems.subCat) {
+          app.searchBar.elems.subCat.value = id;
+        }
       }
 
       newIds = app.findMatches();
@@ -9209,51 +9428,28 @@
    */
   var _init = function(settings) {
 
-    var debugMsg, debugCheck;
     debug.start('init', settings);
+
     debug.args('init', settings, 'object');
+
     debugMsg = 'Error: A second attempt to init this app occurred.';
     debug.fail('init', (!_initialized), debugMsg);
 
-    /**
-     * @type {?(string|strings)}
-     * @private
-     */
+    /** @type {?(string|strings)} */
     var resourceList;
-    /**
-     * @type {?objectMap}
-     * @private
-     */
+    /** @type {objectMap} */
     var config;
-    /**
-     * @type {?stringMap}
-     * @private
-     */
+    /** @type {stringMap} */
     var sources;
-    /**
-     * @type {?(objectMap|stringMap)}
-     * @private
-     */
+    /** @type {(objectMap|stringMap)} */
     var categories;
-    /**
-     * @type {!objects}
-     * @private
-     */
+    /** @type {!objects} */
     var questions;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var setup;
-    /**
-     * @type {function}
-     * @private
-     */
+    /** @type {function} */
     var callback;
-    /**
-     * @type {number}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     // Check if app has been initialized

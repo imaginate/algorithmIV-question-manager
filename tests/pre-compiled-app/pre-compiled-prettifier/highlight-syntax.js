@@ -25,16 +25,8 @@
  * | The Syntax Highlighter Vars                                               |
  * v ------------------------------------------------------------------------- v
                                                    highlight-syntax-vars.js */
-      // $s$
-      /**
-       * ---------------------------------------------------
-       * Public Property (highlight.debug)
-       * ---------------------------------------------------
-       * @desc The Debug instance for the syntax highlighter.
-       * @type {Debug}
-       */
+      // The syntax highlighter's debugger object
       highlightSyntax.debug = aIV.debug('highlightSyntax');
-      // $e$
 
       /**
        * ---------------------------------------------
