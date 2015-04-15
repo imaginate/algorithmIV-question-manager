@@ -399,7 +399,9 @@
       oldIndex = app.vals.get('index');
 
       app.searchBar.vals.source = id;
-      app.searchBar.elems.source.value = id;
+      if (app.searchBar.elems.source) {
+        app.searchBar.elems.source.value = id;
+      }
 
       newIds = app.findMatches();
 
@@ -438,7 +440,9 @@
       oldIndex = app.vals.get('index');
 
       app.searchBar.vals.mainCat = id;
-      app.searchBar.elems.mainCat.value = id;
+      if (app.searchBar.elems.mainCat) {
+        app.searchBar.elems.mainCat.value = id;
+      }
 
       newIds = app.findMatches();
 
@@ -482,13 +486,16 @@
       if (app.searchBar.vals.mainCat !== 'all' &&
           app.searchBar.vals.mainCat !== parentId) {
         app.searchBar.vals.mainCat = 'all';
-        app.searchBar.elems.mainCat.value = 'all';
+        if (app.searchBar.elems.mainCat) {
+          app.searchBar.elems.mainCat.value = 'all';
+        }
         app.searchBar.updateSubCatOpts(id);
-        app.searchBar.elems.subCat.value = id;
       }
       else {
         app.searchBar.vals.subCat = id;
-        app.searchBar.elems.subCat.value = id;
+        if (app.searchBar.elems.subCat) {
+          app.searchBar.elems.subCat.value = id;
+        }
       }
 
       newIds = app.findMatches();
