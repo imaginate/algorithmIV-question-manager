@@ -174,7 +174,7 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-vars.js>src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-vars.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-methods.js>src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter/highlight-syntax-methods.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify.js
-sed "/\$s\$/,/\$e\$/ d;/debug\./ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify-vars.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify-vars.js
+sed "/\$s\$/,/\$e\$/ d;/debug\./ d;/Debug/ d;/\.debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify-vars.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify-vars.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/pre-compiled-prettifier/prettify-methods.js>src/pre-compiled-parts/pre-compiled-prettifier/prettify-methods.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/public-api.js>src/pre-compiled-parts/public-api.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests/pre-compiled-app/external-api.js>src/pre-compiled-parts/external-api.js
@@ -237,7 +237,7 @@ sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-vars.js>src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-vars.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-methods.js>src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter\highlight-syntax-methods.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify.js
-sed "/\$s\$/,/\$e\$/ d;/debug\./ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify-vars.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify-vars.js
+sed "/\$s\$/,/\$e\$/ d;/debug\./ d;/Debug/ d;/\.debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify-vars.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify-vars.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\pre-compiled-prettifier\prettify-methods.js>src\pre-compiled-parts\pre-compiled-prettifier\prettify-methods.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\public-api.js>src\pre-compiled-parts\public-api.js
 sed "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" <tests\pre-compiled-app\external-api.js>src\pre-compiled-parts\external-api.js

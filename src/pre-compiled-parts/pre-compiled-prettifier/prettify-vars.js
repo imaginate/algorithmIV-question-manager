@@ -1,5 +1,4 @@
     // The prettifier's debugger object
-    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------

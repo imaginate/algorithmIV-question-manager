@@ -27,7 +27,6 @@
  * v ------------------------------------------------------------------------- v
                                                            prettify-vars.js */
     // The prettifier's debugger object
-    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------
