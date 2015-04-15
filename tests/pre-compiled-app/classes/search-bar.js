@@ -12,27 +12,20 @@
    */
   var SearchBar = function(config, sources, categories) {
 
-    /** @type {boolean} */
-    var pass;
-
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (SearchBar.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the SearchBar class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('SearchBar');
 
-    var debugMsg, debugArgs;
     debugMsg = 'config= $$, sources= $$, categories= $$';
     this.debug.group('init', 'coll', debugMsg, config, sources, categories);
+
     this.debug.start('init', config, sources, categories);
-    debugArgs = [ 'init' ];
-    debugArgs.push(config, 'booleanMap', sources, 'object', categories, 'object');
+
+    debugArgs = [ 'init', config, 'booleanMap', sources, 'object' ];
+    debugArgs.push(categories, 'object');
     this.debug.args(debugArgs);
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -125,6 +118,12 @@
      */
     this.opts;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {boolean} */
+    var pass;
 
     // Setup the names, ids, and opts properties
     this.names = {
@@ -215,18 +214,11 @@
       }, this);
     }
 
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-
     // Setup the question ids property
     this.ques = {};
     this.ques.stage = {};
     this.ques.stage.com = [];
     this.ques.stage.inc = [];
-
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
 
     // Setup the current values property
     this.vals = {
@@ -259,13 +251,29 @@
       document.createElement('select') : null
     );
 
+    // Freeze all of the completed properties
+    Object.freeze(this.names);
+    Object.freeze(this.ids);
+    Object.freeze(this.opts);
+    Object.freeze(this.ques.stage);
+    Object.freeze(this.ques);
     Object.freeze(this.elems);
 
-    // Close this debug console group
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   SearchBar.prototype.constructor = SearchBar;
 
   /**
@@ -331,7 +339,7 @@
    * Public Method (SearchBar.prototype.setMainElems)
    * -----------------------------------------------------
    * @desc Creates the search bar's select elements.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.setMainElems = function() {
 
@@ -561,7 +569,7 @@
    * Public Method (SearchBar.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Appends the search bar's elements to the selections root.
-   * @type {function()}
+   * @type {function}
    */
   SearchBar.prototype.appendElems = function() {
 

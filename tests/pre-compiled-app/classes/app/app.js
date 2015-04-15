@@ -159,7 +159,6 @@
       subCat  : this.config.searchBar.get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
-    Object.freeze(this.searchBar);
 
     // Setup the questions
     tmpConfig = {
