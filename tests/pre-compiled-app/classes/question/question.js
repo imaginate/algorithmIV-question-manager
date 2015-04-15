@@ -168,31 +168,52 @@
       source = '';
     }
 
+    // Setup main categories
     mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
       [] : (question.mainCat.length) ?
         question.mainCat.slice(0) : []
     );
+
+    // Check the main category ids accuracy
     mainCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        mainCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         mainCat.splice(i, 1);
       }
     });
 
+    // Setup sub categories
     subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
       [] : (question.subCat.length) ?
         question.subCat.slice(0) : []
     );
+
+    // Check the sub category ids accuracy
     subCat.forEach(function(/** string */ catID, /** number */ i) {
+
+      if (catID === 'all') {
+        subCat[i] = '_all';
+        catID = '_all';
+      }
+
       if ( !categories.get(catID, 'name') ) {
         subCat.splice(i, 1);
       }
     });
 
+    // Setup links
     links = ( (!config.links || !question.links ||
                !checkType(question.links, 'objects') ||
                !question.links.length) ?
       [] : question.links.slice(0)
     );
+
+    // Check the link objects accuracy
     if (links.length) {
       links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
         if (!linkObj.name || !linkObj.href ||
