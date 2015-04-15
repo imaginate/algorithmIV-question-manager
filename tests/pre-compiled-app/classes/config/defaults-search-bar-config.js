@@ -7,18 +7,13 @@
    */
   var DefaultsSearchBarConfig = function() {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (DefaultsSearchBarConfig.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the DefaultsSearchBarConfig class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('DefaultsSearchBarConfig');
 
     this.debug.start('init');
-    // $e$
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
@@ -90,22 +85,37 @@
      */
     var subCat;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    startID = 0;
+    view    = 'one';
+    order   = 'asc';
+    stage   = 'all';
+    source  = 'all';
+    mainCat = 'all';
+    subCat  = 'all';
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.get)
      * -----------------------------------------------
-     * @desc Gets a config setting.
-     * @param {string} prop - The name of the setting to get.
+     * @desc Gets a protected property's value from DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to get.
      * @return {(string|number)}
      */
     this.get = function(prop) {
 
-      var debugMsg;
       this.debug.start('get', prop);
       this.debug.args('get', prop, 'string');
 
       /** @type {Object<string, (string|number)>} */
-      var settings = {
+      var props = {
         startID: startID,
         view   : view,
         order  : order,
@@ -115,30 +125,28 @@
         subCat : subCat
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', settings.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('get', debugCheck, debugMsg, prop);
 
-      return settings[prop];
+      return props[ prop ];
     };
-    Object.freeze(this.get);
 
     /**
      * ----------------------------------------------- 
      * Public Method (DefaultsSearchBarConfig.set)
      * -----------------------------------------------
-     * @desc Sets a config setting.
-     * @param {string} prop - The name of the setting to set.
-     * @param {(string|number)} val - The value to set the
-     *   property to.
+     * @desc Sets a protected property's value for DefaultsSearchBarConfig.
+     * @param {string} prop - The name of the property to set.
+     * @param {(string|number)} val - The value to set the property to.
      */
     this.set = function(prop, val) {
 
-      var debugMsg;
       this.debug.start('set', prop, val);
       this.debug.args('set', prop, 'string', val, 'string|number');
 
-      /** @private */
-      var settings = {
+      /** @type {function} */
+      var props = {
         startID: function() { startID = val; },
         view   : function() { view    = val; },
         order  : function() { order   = val; },
@@ -148,25 +156,29 @@
         subCat : function() { subCat  = val; }
       };
 
+      debugCheck = props.hasOwnProperty(prop);
       debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', settings.hasOwnProperty(prop), debugMsg, prop);
+      this.debug.fail('set', debugCheck, debugMsg, prop);
 
-      settings[prop]();
+      props[ prop ]();
     };
+
+    // Freeze all of the methods
+    Object.freeze(this.get);
     Object.freeze(this.set);
 
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Setup the properties
-    startID = 0;
-    view    = 'one';
-    order   = 'asc';
-    stage   = 'all';
-    source  = 'all';
-    mainCat = 'all';
-    subCat  = 'all';
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   DefaultsSearchBarConfig.prototype.constructor = DefaultsSearchBarConfig;
 
   /**

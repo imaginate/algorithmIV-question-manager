@@ -8,19 +8,17 @@
    */
   var Config = function(config) {
 
-    // $s$
-    /**
-     * ---------------------------------------------------
-     * Public Property (Config.debug)
-     * ---------------------------------------------------
-     * @desc The Debug instance for the Config class.
-     * @type {Debug}
-     */
     this.debug = aIV.debug('Config');
 
     this.debug.group('init', 'coll', 'config= $$', config);
+
     this.debug.start('init', config);
-    // $e$
+
+    this.debug.args('init', config, 'objectMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ----------------------------------------------- 
@@ -61,8 +59,11 @@
      */
     this.links;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Check the user config settings
+    // Check the given user's config object
     if (!config || typeof config !== 'object') {
       config = {};
     }
@@ -86,14 +87,18 @@
     this.prettifier = new PrettyConfig(config.prettifyFormat);
     this.links      = new LinksConfig(config.showLinks);
 
-    Object.freeze(this.searchBar);
-    Object.freeze(this.questions);
-    Object.freeze(this.prettifier);
-    Object.freeze(this.links);
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
 
-    // Close this debug console group
     this.debug.group('init', 'end');
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Config.prototype.constructor = Config;
