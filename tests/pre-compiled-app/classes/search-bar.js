@@ -580,29 +580,33 @@
    * Public Method (SearchBar.prototype.updateSubCatOpts)
    * -----------------------------------------------------
    * @desc Updates the children appended to the sub category select element.
-   * @param {string=} val - The new value to update subCat to.
+   * @param {string=} newVal - The new value to update subCat to.
    */
-  SearchBar.prototype.updateSubCatOpts = function(val) {
+  SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
-    this.debug.start('updateSubCatOpts', val);
-    this.debug.args('updateSubCatOpts', val, 'string=');
+    this.debug.start('updateSubCatOpts', newVal);
+    this.debug.args('updateSubCatOpts', newVal, 'string=');
 
-    // Update the select value
-    val = val || 'all';
-    this.vals.subCat = val;
+    /** @type {elements} */
+    var opts;
+
+    newVal = (typeof newVal === 'string') ? newVal : 'all';
+
+    this.vals.subCat = newVal;
 
     if (this.elems.subCat) {
 
-      this.elems.subCat.value = val;
-
-      // Clear subCat's children
+      // Clear subCat's current option elements
       while (this.elems.subCat.firstChild) {
         this.elems.subCat.removeChild(this.elems.subCat.firstChild);
       }
 
-      // Append the new children
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
+      // Append the new option elements
+      opts = this.opts.subCat[ this.vals.mainCat ];
+      opts.forEach(function(/** element */ elem) {
         this.elems.subCat.appendChild(elem);
       }, this);
+
+      this.elems.subCat.value = newVal;
     }
   };
