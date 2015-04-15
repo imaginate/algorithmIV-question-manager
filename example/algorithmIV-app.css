@@ -1,4 +1,4 @@
-/* Algorithm IV App (v1.1.0) (learn@algorithmiv.com)
+/* Algorithm IV App (v1.1.1) (learn@algorithmiv.com)
  * Section: CSS Style Guide
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
@@ -22,6 +22,7 @@
 body {
   padding:0 0 30px;
   color:#000;
+/*  font-family:"ff-tisa-sans-web-pro", "Open Sans", sans-serif; */
   font-family:"Open Sans", sans-serif;
   font-size:0;
   background:#fff;
@@ -78,6 +79,7 @@ h1 {
   padding:1px 0 1px 1px;
   margin:5px 5px;
   color:#192037;
+/*  font-family:"ff-tisa-sans-web-pro", "Open Sans", sans-serif; */
   font-family:"Open Sans", sans-serif;
   font-size:15px;
   font-weight:700;

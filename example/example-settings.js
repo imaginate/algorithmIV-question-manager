@@ -1,4 +1,4 @@
-/* Algorithm IV Question Manager (v1.1.0) (learn@algorithmiv.com)
+/* Algorithm IV Question Manager (v1.1.1) (learn@algorithmiv.com)
  * Section: Example Settings & App Initialization
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
