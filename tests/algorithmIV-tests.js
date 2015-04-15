@@ -2,13 +2,12 @@
  * -----------------------------------------------------------------------------
  * Algorithm IV Question Manager - Tests Module (v1.1.1)
  * -----------------------------------------------------------------------------
- * @file The module for testing the aIV app module.
+ * @file The module for testing the aIV question manager app.
  * @module aIVAppTests
  * @version 1.1.1
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
  * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
- **
  * @desc More details about the module for aIV.tests:
  * <ol>
  *   <li>annotations: 
@@ -30,10 +29,9 @@
  * @typedef {Array<string>} strings
  * @typedef {Array<number>} numbers
  * @typedef {Array<Object>} objects
- * @typedef {{ init: function() }} tests
  */
 
-(function(/** Window */ window, /** tests */ tests) {
+(function(/** Window */ window, /** function */ tests) {
   "use strict";
 
 
@@ -56,10 +54,10 @@
    * Global Method (aIV.tests)
    * ---------------------------------------------------
    * @desc Runs tests on aIV.app.
-   * @type {function()}
+   * @type {function}
    * @global
    */
-  aIV.tests = tests.init;
+  aIV.tests = tests;
 
 })(window, (function() {
   "use strict"; 
@@ -69,16 +67,6 @@
  * | The External API for the Module                                           |
  * v ------------------------------------------------------------------------- v
                                                             external-api.js */
-  /**
-   * -----------------------------------------------------
-   * Private Variable (_return)
-   * -----------------------------------------------------
-   * @desc Holds the public methods for the module.
-   * @typedef {tests}
-   * @struct
-   */
-  var _return = {};
-
   /**
    * -----------------------------------------------------
    * Private Variable (_initialized)
@@ -91,12 +79,12 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (_return.init)
+   * Public Method (_init)
    * -----------------------------------------------------
    * @desc Initializes the aIV.debug tests.
-   * @type {function()}
+   * @type {function}
    */
-  _return.init = function() {
+  var _init = function() {
 
     // Check if tests module has been initialized
     if (!_initialized) {
@@ -104,9 +92,8 @@
       // Save the init to prevent second init
       _initialized = true;
 
-      // Setup the dummy app
+      // Setup the tests
       app = new App();
-      Object.freeze(app);
 
       // Run the tests
       app.runTests();
@@ -122,8 +109,8 @@
    * ----------------------------------------------- 
    * Public Variable (app)
    * -----------------------------------------------
-   * @desc The instance of DummyApp for the tests.
-   * @type {DummyApp}
+   * @desc The instance of App for the tests.
+   * @type {App}
    */
   var app;
 
@@ -150,73 +137,10 @@
    * ---------------------------------------------
    * @desc A shortcut for getElementsByClassName.
    * @param {string} title - The name of the class to select.
-   * @return {elems} References to the elements with the class.
+   * @return {Array<HTMLElement>} The elements with the class name.
    */
   function getClass(title) {
     return getID('aIV-tests').getElementsByClassName(title);
-  }
-
-  /**
-   * ---------------------------------------------
-   * Public Method (generateNumbers)
-   * ---------------------------------------------
-   * @desc Generates a random number or array of numbers.
-   * @param {?number=} amount - The amount of numbers to return.
-   * @return {(number|numbers)} The random number(s).
-   */
-  function generateNumbers(amount) {
-
-    /**
-     * @type {number}
-     * @private
-     */
-    var limit;
-    /**
-     * @type {number}
-     * @private
-     */
-    var min;
-    /**
-     * @type {number}
-     * @private
-     */
-    var max;
-    /**
-     * @type {number}
-     * @private
-     */
-    var i;
-    /**
-     * @type {numbers}
-     */
-    var arr;
-
-    amount = ( (typeof amount === 'number' && amount > 1) ?
-      Math.floor(amount) : null
-    );
-
-    limit = 1000;
-
-    if (amount && amount > limit) {
-      debug.fail('generateNumbers', false, 'Error: Amount arg was over limit.');
-      amount = null;
-    }
-
-    min = 1;
-    max = 50;
-
-    if (!amount) {
-      return Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    arr = new Array(amount);
-    i = 0;
-
-    while (++i < amount) {
-      arr[i] = Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    return arr;
   }
 
 
@@ -234,15 +158,35 @@
   var Tests = {};
 
   /**
-   * -------------------------------------------------
+   * -----------------------------------------------------
    * Public Method (Tests.runApp)
-   * -------------------------------------------------
-   * @desc Runs the question manager app with the dummy data.
+   * -----------------------------------------------------
+   * @desc Runs the question manager app with test data.
    * @type {function}
    */
-  Tests.runApp = function() {
-    aIV.app(TestData);
-  };
+  Tests.runApp = (function() {
+
+    // These calls run immediately to ensure that desired
+    // settings are set before the app is processed
+
+    aIV.debug.setConfig({
+      turnOnDebuggers: 'args fail'
+    });
+
+    aIV.debug({
+      classTitle  : 'prettify',
+      turnOffTypes: 'all'
+    });
+
+    aIV.debug({
+      classTitle  : 'highlightSyntax',
+      turnOffTypes: 'all'
+    });
+
+    return function() {
+      aIV.app(TestData);
+    };
+  })();
 
   Object.freeze(Tests);
 
@@ -309,7 +253,7 @@
    */
   settings.config.searchSettings = {
     stage   : true,
-    source  : true,
+    source  : false,
     category: true,
     subCat  : true
   };
@@ -332,13 +276,13 @@
    * }}
    */
   settings.config.searchDefaults = {
-    view   : 'one',
+    view   : 'all',
     order  : 'asc',
     stage  : 'all',
     source : 'all',
     mainCat: 'all',
     subCat : 'all',
-    startID: 0
+    startID: 2
   };
 
   /**
@@ -369,7 +313,7 @@
     links   : true,
     problem : true,
     descr   : false,
-    output  : true
+    output  : false
   };
 
   /**
@@ -407,7 +351,7 @@
   settings.config.showLinks = {
     id      : true,
     source  : true,
-    category: true
+    category: false
   };
 
 
@@ -3315,20 +3259,31 @@
    */
   var App = function() {
 
-    console.log('Tests app is being setup.');
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
-     * Private Property (App.elems)
+     * Public Property (App.elems)
      * ---------------------------------------------------
      * @desc The elements for this app.
-     * @type {Object}
+     * @type {Object<string, HTMLElement>}
      */
     this.elems = new Elems();
-    Object.freeze(this.elems);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   App.prototype.constructor = App;
 
   /**
@@ -3336,18 +3291,19 @@
    * Public Method (App.prototype.runTests)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
-   * @type {function()}
+   * @type {function}
    */
   App.prototype.runTests = function() {
 
     this.elems.ui.style.opacity = '0';
 
     setTimeout(function() {
-      // Remove the body's children
+
+      // Remove the body's current elements
       while (document.body.firstChild) {
         document.body.removeChild(document.body.firstChild);
       }
-      aIV.debug.setConfig({ turnOnDebuggers: 'args fail' });
+
       Tests.runApp();
     }, 500);
   };
@@ -3366,7 +3322,9 @@
    */
   var Elems = function() {
 
-    console.log('Elems is being setup.');
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
@@ -3403,9 +3361,19 @@
      * @type {HTMLElement}
      */
     this.start = getClass('start')[0];
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   Elems.prototype.constructor = Elems;
 
 
@@ -3413,6 +3381,6 @@
  * | End of module                                                             |
  * v ------------------------------------------------------------------------- v
                                                                             */
-  return _return;
+  return _init;
 
 })());

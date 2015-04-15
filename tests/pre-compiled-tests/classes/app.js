@@ -7,20 +7,31 @@
    */
   var App = function() {
 
-    console.log('Tests app is being setup.');
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * ---------------------------------------------------
-     * Private Property (App.elems)
+     * Public Property (App.elems)
      * ---------------------------------------------------
      * @desc The elements for this app.
-     * @type {Object}
+     * @type {Object<string, HTMLElement>}
      */
     this.elems = new Elems();
-    Object.freeze(this.elems);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Freeze this class instance
+    Object.freeze(this);
   };
 
-  // Ensure constructor is set to this class.
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
   App.prototype.constructor = App;
 
   /**
@@ -28,18 +39,19 @@
    * Public Method (App.prototype.runTests)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
-   * @type {function()}
+   * @type {function}
    */
   App.prototype.runTests = function() {
 
     this.elems.ui.style.opacity = '0';
 
     setTimeout(function() {
-      // Remove the body's children
+
+      // Remove the body's current elements
       while (document.body.firstChild) {
         document.body.removeChild(document.body.firstChild);
       }
-      aIV.debug.setConfig({ turnOnDebuggers: 'args fail' });
+
       Tests.runApp();
     }, 500);
   };

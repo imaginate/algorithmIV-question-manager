@@ -56,7 +56,7 @@
    */
   settings.config.searchSettings = {
     stage   : true,
-    source  : true,
+    source  : false,
     category: true,
     subCat  : true
   };
@@ -79,13 +79,13 @@
    * }}
    */
   settings.config.searchDefaults = {
-    view   : 'one',
+    view   : 'all',
     order  : 'asc',
     stage  : 'all',
     source : 'all',
     mainCat: 'all',
     subCat : 'all',
-    startID: 0
+    startID: 2
   };
 
   /**
@@ -116,7 +116,7 @@
     links   : true,
     problem : true,
     descr   : false,
-    output  : true
+    output  : false
   };
 
   /**
@@ -153,8 +153,8 @@
    */
   settings.config.showLinks = {
     id      : true,
-    source  : false,
-    category: true
+    source  : true,
+    category: false
   };
 
 
