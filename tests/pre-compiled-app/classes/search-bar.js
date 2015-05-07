@@ -280,12 +280,12 @@
     );
 
     // Freeze all of the completed properties
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
-    Object.freeze(this.elems);
+    freezeObj(this.names);
+    freezeObj(this.ids);
+    freezeObj(this.opts);
+    freezeObj(this.ques.stage);
+    freezeObj(this.ques);
+    freezeObj(this.elems);
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -295,7 +295,7 @@
     this.debug.group('init', 'end');
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

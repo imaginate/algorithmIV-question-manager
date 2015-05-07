@@ -13,7 +13,7 @@
         highlightSyntax.debug.args('prepareLine', line, 'string');
 
         orgLine = line.split('');
-        Object.freeze(orgLine);
+        freezeObj(orgLine);
         newLine = line.split('');
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;

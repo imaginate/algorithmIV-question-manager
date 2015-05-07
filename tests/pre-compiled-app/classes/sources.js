@@ -58,7 +58,7 @@
       this.ids = sortKeys(this.ids, sources);
     }
 
-    Object.freeze(this.ids);
+    freezeObj(this.ids);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -87,7 +87,7 @@
       });
     }
 
-    Object.freeze(data);
+    freezeObj(data);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -124,7 +124,7 @@
     };
 
     // Freeze all of the methods
-    Object.freeze(this.get);
+    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
@@ -133,7 +133,7 @@
     this.debug.group('init', 'end');
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

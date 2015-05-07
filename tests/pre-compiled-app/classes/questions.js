@@ -74,7 +74,7 @@
     }
 
     // Freeze the public properties that are objects
-    Object.freeze(this.list);
+    freezeObj(this.list);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -108,7 +108,7 @@
     }
 
     // Freeze the protected properties
-    Object.freeze(data);
+    freezeObj(data);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -153,7 +153,7 @@
     };
 
     // Freeze all of the methods
-    Object.freeze(this.get);
+    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
@@ -162,7 +162,7 @@
     this.debug.group('init', 'end');
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -89,4 +89,4 @@
         '9': formatNumber,
         '/': handleSlash
       };
-      Object.freeze(router);
+      freezeObj(router);

@@ -54,7 +54,7 @@
       url = url.replace(/\s/g, '-');
     }
     ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    subs = (!!subs) ? freezeObj(subs) : null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -79,7 +79,7 @@
         url : url,
         subs: subs,
         ids : function() {
-          return Object.freeze( ids.slice(0) );
+          return freezeObj( ids.slice(0) );
         }
       };
 
@@ -110,15 +110,15 @@
     };
 
     // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.addId);
+    freezeObj(this.get);
+    freezeObj(this.addId);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

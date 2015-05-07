@@ -166,7 +166,7 @@
 
     this.scrl = {};
     this.scrl.height = elem.offsetWidth - elem.clientWidth;
-    Object.freeze(this.scrl);
+    freezeObj(this.scrl);
 
     this.debug.state('init', 'this.scrl.height= $$', this.scrl.height);
 
@@ -203,9 +203,9 @@
 
     this.root.removeChild(elem);
 
-    Object.freeze(this.code);
-    Object.freeze(this.code.ol);
-    Object.freeze(this.code.li);
+    freezeObj(this.code);
+    freezeObj(this.code.ol);
+    freezeObj(this.code.li);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
@@ -214,7 +214,7 @@
     this.debug.group('init', 'end');
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

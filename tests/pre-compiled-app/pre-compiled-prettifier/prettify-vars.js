@@ -24,7 +24,7 @@
       '<': '&lt;',
       '>': '&gt;'
     };
-    Object.freeze(htmlEntity);
+    freezeObj(htmlEntity);
 
     /**
      * ---------------------------------------------
@@ -39,7 +39,7 @@
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
-    Object.freeze(preRegex);
+    freezeObj(preRegex);
 
     /**
      * ---------------------------------------------
@@ -51,7 +51,7 @@
      * @private
      */
     var regexFlags = /[gimy]/;
-    Object.freeze(regexFlags);
+    freezeObj(regexFlags);
 
     /**
      * ---------------------------------------------
@@ -63,7 +63,7 @@
      * @private
      */
     var plainNumbers = /[0-9\.]/;
-    Object.freeze(plainNumbers);
+    freezeObj(plainNumbers);
 
     /**
      * ---------------------------------------------
@@ -75,7 +75,7 @@
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
-    Object.freeze(hexNumbers);
+    freezeObj(hexNumbers);
 
     /**
      * ---------------------------------------------
@@ -87,7 +87,7 @@
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
-    Object.freeze(identifierStart);
+    freezeObj(identifierStart);
 
     /**
      * ---------------------------------------------
@@ -99,7 +99,7 @@
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
-    Object.freeze(identifiers);
+    freezeObj(identifiers);
 
     /**
      * ---------------------------------------------
@@ -120,7 +120,7 @@
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
-    Object.freeze(commentLinks);
+    freezeObj(commentLinks);
 
     /**
      * ---------------------------------------------
@@ -139,7 +139,7 @@
       cli: 'cliKey', // Client Objects & Methods
       jqu: 'jquKey'  // jQuery Objects
     };
-    Object.freeze(keywordCategories);
+    freezeObj(keywordCategories);
 
     prettify.debug.group('makeKeywordObjects', 'coll');
 
@@ -488,7 +488,7 @@
       _jQuery: makeKeywordObj('jqu', '')
     };
 
-    Object.freeze(keywords);
+    freezeObj(keywords);
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup the keyword properties
@@ -498,23 +498,23 @@
     keywords._Array.props._isArray = makePropObj('');
     keywords._Array.props._observe = makePropObj('');
     keywords._Array.props._of      = makePropObj('');
-    Object.freeze(keywords._Array.props);
+    freezeObj(keywords._Array.props);
 
     // ArrayBuffer
     keywords._ArrayBuffer.props._isView   = makePropObj('');
     keywords._ArrayBuffer.props._transfer = makePropObj('');
-    Object.freeze(keywords._ArrayBuffer.props);
+    freezeObj(keywords._ArrayBuffer.props);
 
     // Date
     keywords._Date.props._UTC   = makePropObj('');
     keywords._Date.props._now   = makePropObj('');
     keywords._Date.props._parse = makePropObj('');
-    Object.freeze(keywords._Date.props);
+    freezeObj(keywords._Date.props);
 
     // JSON
     keywords._JSON.props._parse     = makePropObj('');
     keywords._JSON.props._stringify = makePropObj('');
-    Object.freeze(keywords._JSON.props);
+    freezeObj(keywords._JSON.props);
 
     // Math
     keywords._Math.props._abs    = makePropObj('');
@@ -535,7 +535,7 @@
     keywords._Math.props._sin    = makePropObj('');
     keywords._Math.props._sqrt   = makePropObj('');
     keywords._Math.props._tan    = makePropObj('');
-    Object.freeze(keywords._Math.props);
+    freezeObj(keywords._Math.props);
 
     // Number
     keywords._Number.props._EPSILON           = makePropObj('');
@@ -552,7 +552,7 @@
     keywords._Number.props._parseFloat        = makePropObj('');
     keywords._Number.props._parseInt          = makePropObj('');
     keywords._Number.props._POSITIVE_INFINITY = makePropObj('');
-    Object.freeze(keywords._Number.props);
+    freezeObj(keywords._Number.props);
 
     // Object
     keywords._Object.props._assign                   = makePropObj('');
@@ -573,25 +573,25 @@
     keywords._Object.props._preventExtensions        = makePropObj('');
     keywords._Object.props._seal                     = makePropObj('');
     keywords._Object.props._setPrototypeOf           = makePropObj('');
-    Object.freeze(keywords._Object.props);
+    freezeObj(keywords._Object.props);
 
     // String
     keywords._String.props._fromCharCode  = makePropObj('');
     keywords._String.props._fromCodePoint = makePropObj('');
     keywords._String.props._raw           = makePropObj('');
-    Object.freeze(keywords._String.props);
+    freezeObj(keywords._String.props);
 
     // Symbol
     keywords._Symbol.props._for    = makePropObj('');
     keywords._Symbol.props._keyFor = makePropObj('');
-    Object.freeze(keywords._Symbol.props);
+    freezeObj(keywords._Symbol.props);
 
     // TypedArray
     keywords._TypedArray.props._BYTES_PER_ELEMENT = makePropObj('');
     keywords._TypedArray.props._from              = makePropObj('');
     keywords._TypedArray.props._name              = makePropObj('');
     keywords._TypedArray.props._of                = makePropObj('');
-    Object.freeze(keywords._TypedArray.props);
+    freezeObj(keywords._TypedArray.props);
 
     // console
     keywords._console.props._assert         = makePropObj('');
@@ -600,12 +600,12 @@
     keywords._console.props._groupEnd       = makePropObj('');
     keywords._console.props._log            = makePropObj('');
     keywords._console.props._trace          = makePropObj('');
-    Object.freeze(keywords._console.props);
+    freezeObj(keywords._console.props);
 
     // ImageData
     keywords._ImageData.props._data   = makePropObj('');
     keywords._ImageData.props._height = makePropObj('');
     keywords._ImageData.props._width  = makePropObj('');
-    Object.freeze(keywords._ImageData.props);
+    freezeObj(keywords._ImageData.props);
 
     prettify.debug.group('makeKeywordObjects', 'end');

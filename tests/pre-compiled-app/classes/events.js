@@ -577,4 +577,4 @@
     this.debug.group('extCodeView.onclick', 'end');
   };
 
-  Object.freeze(Events);
+  freezeObj(Events);

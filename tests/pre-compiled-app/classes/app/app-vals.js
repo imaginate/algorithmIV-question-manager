@@ -77,7 +77,7 @@
     index = -1;
 
     // Freeze the needed protected properties
-    Object.freeze(allIds);
+    freezeObj(allIds);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -135,15 +135,15 @@
     };
 
     // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
+    freezeObj(this.get);
+    freezeObj(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

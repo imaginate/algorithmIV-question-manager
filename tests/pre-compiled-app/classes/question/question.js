@@ -267,9 +267,9 @@
     }, config, sources, categories);
 
     // Freeze the needed protected properties
-    Object.freeze(mainCat);
-    Object.freeze(subCat);
-    Object.freeze(links);
+    freezeObj(mainCat);
+    freezeObj(subCat);
+    freezeObj(links);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -317,7 +317,7 @@
     };
 
     // Freeze all of the methods
-    Object.freeze(this.get);
+    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
@@ -326,7 +326,7 @@
     this.debug.group('init', 'end');
 
     // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

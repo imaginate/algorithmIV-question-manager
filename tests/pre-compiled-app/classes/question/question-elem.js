@@ -871,7 +871,7 @@
         extHovO : extHovO,
         extHovC : extHovC
       };
-      Object.freeze(elems);
+      freezeObj(elems);
 
       return function() {
         Events.extCodeView(overflow, elems);

@@ -123,7 +123,7 @@
 
     // Setup and start the app
     setup = function() {
-      Object.freeze(resources);
+      freezeObj(resources);
       app = new App(config, sources, categories, questions);
       app.setupDisplay();
     };
@@ -184,5 +184,5 @@
     return (!!prop) ? resources[ prop ] : resources;
   }
 
-  Object.freeze(_init);
-  Object.freeze(_init.getResource);
+  freezeObj(_init);
+  freezeObj(_init.getResource);

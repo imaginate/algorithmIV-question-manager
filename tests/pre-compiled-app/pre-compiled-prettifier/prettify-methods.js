@@ -13,7 +13,7 @@
       prettify.debug.args('setConfig', newConfig, 'object');
 
       config = newConfig;
-      Object.freeze(config);
+      freezeObj(config);
     }
 
     /**
@@ -193,7 +193,7 @@
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return Object.freeze(obj);
+      return freezeObj(obj);
     }
 
     /**
@@ -218,5 +218,5 @@
       obj = {};
       obj.href = href;
 
-      return Object.freeze(obj);
+      return freezeObj(obj);
     }
