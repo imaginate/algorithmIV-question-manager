@@ -40,212 +40,160 @@
 
   /**
    * ---------------------------------------------
-   * Public Method (getID)
+   * Public Method (getElemById)
    * ---------------------------------------------
-   * @desc A shortcut for getElementById.
-   * @param {string} title - The name of the id of the element to select.
-   * @return {elem} A reference to element with the given id.
+   * @desc A shortcut for the native DOM method - document.getElementById.
+   * @param {string} id - The id of the element to select.
+   * @return {!HTMLElement} The DOM element with the given id.
    */
-  function getID(title) {
-
-    debug.start('getID', title);
-    debug.args('getID', title, 'string');
-
-    return document.getElementById(title);
-  }
+  var getElemById = aIV.utils.getElemById;
 
   /**
-   * ---------------------------------------------
-   * Public Method (getTag)
-   * ---------------------------------------------
-   * @desc A shortcut for getElementsByTagName.
-   * @param {string} title - The name of the tags to select.
-   * @param {elem=} root - The root element to use.
-   * @return {elems} References to the elements with the tag.
+   * ---------------------------------------------------
+   * Public Method (getElemByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName[ [index] ].
+   * @param {string} classname - The class name of the element to select.
+   * @param {number=} index - The index of the array of found elements to
+   *   select. The default is 0.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemByClassRoot: [DOM Node] }).
+   * @return {!HTMLElement} The selected DOM element.
    */
-  function getTag(title, root) {
-
-    debug.start('getTag', title, root);
-    debug.args('getTag', title, 'string', root, 'elem=');
-
-    root = root || app.elems.root;
-
-    return root.getElementsByTagName(title);
-  }
+  var getElemByClass = aIV.utils.getElemByClass;
 
   /**
-   * ---------------------------------------------
-   * Public Method (getClass)
-   * ---------------------------------------------
-   * @desc A shortcut for getElementsByClassName.
-   * @param {string} title - The name of the class to select.
-   * @param {elem=} root - The root element to use.
-   * @return {elems} References to the elements with the class.
+   * ---------------------------------------------------
+   * Public Method (getElemsByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName.
+   * @param {string} classname - The class name of the elements to select.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemsByClassRoot: [DOM Node] }).
+   * @return {!Array<HTMLElement>} The selected DOM elements.
    */
-  function getClass(title, root) {
+  var getElemsByClass = aIV.utils.getElemsByClass;
 
-    debug.start('getClass', title, root);
-    debug.args('getClass', title, 'string', root, 'elem=');
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemByTag)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByTagName[ [index] ].
+   * @param {string} tag - The tag name of the element to select.
+   * @param {number=} index - The index of the array of found elements to
+   *   select. The default is 0.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemByTagRoot: [DOM Node] }).
+   * @return {!HTMLElement} The selected DOM element.
+   */
+  var getElemByTag = aIV.utils.getElemByTag;
 
-    root = root || app.elems.root;
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemsByTag)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByTagName.
+   * @param {string} tag - The tag name of the elements to select.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemsByTagRoot: [DOM Node] }).
+   * @return {!Array<HTMLElement>} The selected DOM elements.
+   */
+  var getElemsByTag = aIV.utils.getElemsByTag;
 
-    return root.getElementsByClassName(title);
-  }
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeElem)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method - document.createElement.
+   * @param {(string|!Object<string, string>)=} settings - A string of the
+   *   element's tag name or an object hash map of the element's details.
+   *   The default tag name is 'div'.
+   * @param {string=} settings.tag - The element's tag name.
+   * @param {string=} settings.tagName - The element's tag name.
+   * @param {string=} settings.text - The element's textContent or innerText.
+   * @param {string=} settings.html - The element's innerHTML.
+   * @param {string=} settings.id - The element's id.
+   * @param {string=} settings.className - The element's class name.
+   * @return {!HTMLElement} The DOM element with the given id.
+   */
+  var makeElem = aIV.utils.makeElem;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (addElemText)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM methods - Element.textContent
+   *   or Element.innerText.
+   * @param {!Element} elem - The element.
+   * @param {string} text - The element's textContent or innerText.
+   * @return {!Element} The DOM element with the given text.
+   */
+  var addElemText = aIV.utils.addElemText;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (freezeObj)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.freeze method with a deep freeze option.
+   * @param {!(Object|function)} obj - The object to freeze.
+   * @param {boolean=} deep - Deep freeze the object. The default is false.
+   * @return {!(Object|function)} The frozen object.
+   */
+  var freezeObj = aIV.utils.freezeObj;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (hasOwnProp)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.prototype.hasOwnProperty method.
+   * @param {!(Object|function)} obj - The object to check.
+   * @param {string} prop - The property to check.
+   * @return {boolean} The result of the check.
+   */
+  var hasOwnProp = aIV.utils.hasOwnProp;
 
   /**
    * ---------------------------------------------------
    * Public Method (checkType)
    * ---------------------------------------------------
-   * @param {val} val - The value to be evaluated.
-   * @param {string} type - The type to evaluate the value against. The
-   *   optional types are 'string', 'number', 'boolean', 'object',
-   *   'function', 'elem', 'undefined', 'array', 'strings', 'numbers',
-   *   'booleans', 'objects', 'functions', 'arrays', 'elems', 'stringMap',
-   *   'numberMap', 'booleanMap', 'objectMap', 'functionMap', 'arrayMap', and
-   *   'elemMap'. Use '|' as the separator for multiple types (e.g.
-   *   'strings|numbers'). Use '=' to indicate the value is optional (e.g.
-   *   'array=' or 'string|number='). Use '!' to indicate that null is not a
-   *   possibility (e.g. '!string').
+   * @desc Checks a value's data type against the given optional types.
+   * @param {*} val - The value to be evaluated.
+   * @param {string} type - A string of the data types to evaluate the value
+   *   against. For a complete list of acceptable strings
+   *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
+   * @param {boolean=} noTypeValCheck - If true skips the data type string checks.
+   *   The default is false. Use to avoid duplicating checks.
    * @return {boolean} The evaluation result.
    */
-  function checkType(val, type) {
+  var checkType = aIV.utils.checkType;
 
-    var debugMsg, debugCheck;
-    debug.start('checkType', val, type);
-    debug.args('checkType', type, 'string');
-    // Debug message for checking the type value of each input
-    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
-    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
-
-    /**
-     * @type {strings}
-     * @private
-     */
-    var types;
-
-    type = type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
-
-    types = ( /\|/.test(type) ) ? type.split('|') : [ type ];
-
-    return types.some(function(/** string */ type) {
-      /**
-       * @type {string}
-       * @private
-       */
-      var cleanType;
-
-      cleanType = type.replace(/\!|\=/g, '');
-
-      debugCheck = regexps.types.all.test(cleanType);
-      debug.fail('checkType', debugCheck, debugMsg, type);
-
-      // Handle undefined val
-      if (val === undefined) {
-        type = type.replace(/\!/g, '');
-        return /\=|^undefined$/.test(type);
-      }
-      else {
-
-        // Evaluate null
-        if (val === null) {
-          return !(/\!/.test(type));
-        }
-
-        if (cleanType === 'undefined') {
-          return false;
-        }
-
-        // Evaluate array types
-        if ( regexps.types.arrays.test(cleanType) ) {
-
-          if ( !Array.isArray(val) ) {
-            return false;
-          }
-
-          // Evaluate a basic array
-          if (cleanType === 'array') {
-            return true;
-          }
-
-          // Evaluate an array of arrays
-          if (cleanType === 'arrays') {
-            return val.every(function(subVal) {
-              return ( Array.isArray(subVal) );
-            });
-          }
-
-          // Evaluate an array of elements
-          if (cleanType === 'elems') {
-            return val.every(function(subVal) {
-              return (subVal instanceof HTMLElement);
-            });
-          }
-
-          // Evaluate each value of the array
-          cleanType = cleanType.replace(/s$/, '');
-          return val.every(function(subVal) {
-            return (typeof subVal === cleanType);
-          });
-        }
-
-        // Evaluate element
-        if (cleanType === 'elem') {
-          return (val instanceof HTMLElement);
-        }
-
-        // Evaluate string, number, boolean, object, and function types
-        if ( regexps.types.basic.test(cleanType) ) {
-          return (typeof val === cleanType);
-        }
-
-        // Evaluate hash map types
-        if ( regexps.types.maps.test(cleanType) ) {
-
-          if (typeof val !== 'object') {
-            return false;
-          }
-
-          // Evaluate a hash map of arrays
-          if (cleanType === 'arraymap') {
-            return Object.keys(val).every(function(subVal) {
-              return ( Array.isArray(val[ subVal ]) );
-            });
-          }
-
-          // Evaluate a hash map of elements
-          if (cleanType === 'elemmap') {
-            return Object.keys(val).every(function(subVal) {
-              return (val[ subVal ] instanceof HTMLElement);
-            });
-          }
-
-          // Evaluate each value of the hash map
-          cleanType = cleanType.replace(/map$/, '');
-          return Object.keys(val).every(function(subVal) {
-            return (typeof val[ subVal ] === cleanType);
-          });
-        }
-      }
-
-      return false;
-    });
-  }
+  /**
+   * ---------------------------------------------------
+   * Public Method (isValidTypeString)
+   * ---------------------------------------------------
+   * @desc Evaluates whether a string is a valid data type string.
+   * @param {string} type - The string to evaluate.
+   * @return {boolean} The evaluation result.
+   */
+  var isValidTypeString = aIV.utils.isValidTypeString;
 
   /**
    * ---------------------------------------------------
    * Public Method (checkTypes)
    * ---------------------------------------------------
-   * @param {vals} vals - An array of the value(s) to be evaluated.
+   * @param {!Array<*>} vals - An array of the value(s) to be evaluated.
    *   Note that the values must be provided in an array.
    * @param {(string|strings)} types - The type(s) to evaluate the value(s)
-   *   against. The optional types are 'string', 'number', 'boolean', 'object',
-   *   'function', 'elem', 'undefined', 'array', 'strings', 'numbers',
-   *   'booleans', 'objects', 'functions', 'arrays', 'elems', 'stringMap',
-   *   'numberMap', 'booleanMap', 'objectMap', 'functionMap', 'arrayMap', and
-   *   'elemMap'. Use '|' as the separator for multiple types (e.g.
-   *   'strings|numbers'). Use '=' to indicate the value is optional (e.g.
-   *   'array=' or 'string|number='). Use '!' to indicate that null is not a
-   *   possibility (e.g. '!string').
+   *   against. For a complete list of acceptable strings
+   *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
    * @return {boolean} The evaluation result.
    */
   function checkTypes(vals, types) {
@@ -254,16 +202,22 @@
     debug.start('checkTypes', vals, types);
     debug.args('checkTypes', vals, 'array', types, 'string|strings');
 
-    /**
-     * @type {val}
-     * @private
-     */
+    /** @type {number} */
+    var i;
+    /** @type {*} */
     var val;
+    /** @type {string} */
+    var type;
+    /** @type {boolean} */
+    var pass;
 
-    if (typeof types === 'string') {
-      types = vals.map(function() {
-        return types;
-      });
+    if ( checkType(types, 'string') ) {
+      type = types;
+      types = new Array(vals.length);
+      i = types.length;
+      while (i--) {
+        types[i] = type;
+      }
     }
 
     debugMsg = 'Error: The length of the arguments to be checked ';
@@ -271,124 +225,15 @@
     debugCheck = (vals.length === types.length);
     debug.fail('checkTypes', debugCheck, debugMsg, vals, types);
 
-    // Debug message for checking the type value of each input
-    debugMsg = 'Error: A given type was the wrong value. The incorrect ';
-    debugMsg += 'value was \'$$\'. See the docs for acceptable values.';
+    i = vals.length;
+    while (i--) {
+      pass = checkType(vals[i], types[i]);
+      if (!pass) {
+        break;
+      }
+    }
 
-    return types.every(function(/** string */ _type, /** number */ i) {
-      /**
-       * @type {strings}
-       * @private
-       */
-      var _types;
-
-      val = vals[i];
-      _type = _type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
-      _types = ( /\|/.test(_type) ) ? _type.split('|') : [ _type ];
-
-      return _types.some(function(/** string */ type) {
-        /**
-         * @type {string}
-         * @private
-         */
-        var cleanType;
-
-        cleanType = type.replace(/\!|\=/g, '');
-
-        debugCheck = regexps.types.all.test(cleanType);
-        debug.fail('checkTypes', debugCheck, debugMsg, type);
-
-        // Handle undefined val
-        if (val === undefined) {
-          type = type.replace(/\!/g, '');
-          return /\=|^undefined$/.test(type);
-        }
-        else {
-
-          // Evaluate null
-          if (val === null) {
-            return !(/\!/.test(type));
-          }
-
-          if (cleanType === 'undefined') {
-            return false;
-          }
-
-          // Evaluate array types
-          if ( regexps.types.arrays.test(cleanType) ) {
-
-            if ( !Array.isArray(val) ) {
-              return false;
-            }
-
-            // Evaluate a basic array
-            if (cleanType === 'array') {
-              return true;
-            }
-
-            // Evaluate an array of arrays
-            if (cleanType === 'arrays') {
-              return val.every(function(subVal) {
-                return ( Array.isArray(subVal) );
-              });
-            }
-
-            // Evaluate an array of elements
-            if (cleanType === 'elems') {
-              return val.every(function(subVal) {
-                return (subVal instanceof HTMLElement);
-              });
-            }
-
-            // Evaluate each value of the array
-            cleanType = cleanType.replace(/s$/, '');
-            return val.every(function(subVal) {
-              return (typeof subVal === cleanType);
-            });
-          }
-
-          // Evaluate element
-          if (cleanType === 'elem') {
-            return (val instanceof HTMLElement);
-          }
-
-          // Evaluate string, number, boolean, object, and function types
-          if ( regexps.types.basic.test(cleanType) ) {
-            return (typeof val === cleanType);
-          }
-
-          // Evaluate hash map types
-          if ( regexps.types.maps.test(cleanType) ) {
-
-            if (typeof val !== 'object') {
-              return false;
-            }
-
-            // Evaluate a hash map of arrays
-            if (cleanType === 'arraymap') {
-              return Object.keys(val).every(function(subVal) {
-                return ( Array.isArray(val[ subVal ]) );
-              });
-            }
-
-            // Evaluate a hash map of elements
-            if (cleanType === 'elemmap') {
-              return Object.keys(val).every(function(subVal) {
-                return (val[ subVal ] instanceof HTMLElement);
-              });
-            }
-
-            // Evaluate each value of the hash map
-            cleanType = cleanType.replace(/map$/, '');
-            return Object.keys(val).every(function(subVal) {
-              return (typeof val[ subVal ] === cleanType);
-            });
-          }
-        }
-
-        return false;
-      });
-    });
+    return pass;
   }
 
   /**
