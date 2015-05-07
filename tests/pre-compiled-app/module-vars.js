@@ -1,15 +1,15 @@
   // The debugging vars
-  var debug = aIV.debug('module');
+  var debug = aIV.debug('appModule');
   var debugArgs, debugMsg, debugCheck;
 
   /**
    * -----------------------------------------------------
-   * Public Variable (hasAppBeenInitialized)
+   * Public Variable (appHasBeenInitialized)
    * -----------------------------------------------------
    * @desc Indicates whether the app has been initialized.
    * @type {boolean}
    */
-  var hasAppBeenInitialized = false;
+  var appHasBeenInitialized = false;
 
   /**
    * ----------------------------------------------- 
