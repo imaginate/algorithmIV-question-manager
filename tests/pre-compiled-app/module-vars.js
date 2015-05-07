@@ -1,5 +1,9 @@
   // The debugging vars
-  var debug = aIV.debug('appModule');
+  var debug = aIV.debug({
+    classTitle  : 'appModule',
+    turnOnGroups: true,
+    turnOnTimers: true
+  });
   var debugArgs, debugMsg, debugCheck;
 
   /**
