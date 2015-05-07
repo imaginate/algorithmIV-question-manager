@@ -544,7 +544,7 @@
       setTimeout(function() {
         elems.extOpen.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'open';
+          addElemText(elems.extOpen, 'open');
           elems.extHovC.style.display = 'none';
           elems.extHovO.style.display = 'block';
         }, 600);
@@ -567,7 +567,7 @@
       setTimeout(function() {
         elems.extClose.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'close';
+          addElemText(elems.extOpen, 'close');
           elems.extHovO.style.display = 'none';
           elems.extHovC.style.display = 'block';
         }, 600);

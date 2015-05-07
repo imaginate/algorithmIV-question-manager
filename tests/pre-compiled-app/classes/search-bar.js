@@ -232,23 +232,51 @@
 
     // Setup the select elements property
     this.elems = {};
-    this.elems.view = document.createElement('select');
-    this.elems.order = document.createElement('select');
+    this.elems.view = makeElem({
+      tag      : 'select',
+      id       : 'aIV-view',
+      className: 'showView'
+    });
+    this.elems.order = makeElem({
+      tag      : 'select',
+      id       : 'aIV-order',
+      className: 'showOrder'
+    });
     this.elems.stage = ( (config.stage) ?
-      document.createElement('select') : null
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-stage',
+        className: 'showStage'
+      })
+      : null
     );
     this.elems.source = ( (config.source && sources.len) ?
-      document.createElement('select') : null
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-source',
+        className: 'showSource'
+      })
+      : null
     );
     this.elems.mainCat = ( (config.category && categories.len) ?
-      document.createElement('select') : null
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-mainCat',
+        className: 'showMainCat'
+      })
+      : null
     );
     pass = (this.elems.mainCat && config.subCat);
     pass = pass && categories.ids.some(function(/** string */ id) {
       return !!this.ids.subCat[id];
     }, this);
     this.elems.subCat = ( (pass) ?
-      document.createElement('select') : null
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-subCat',
+        className: 'showSubCat'
+      })
+      : null
     );
 
     // Freeze all of the completed properties
@@ -350,23 +378,17 @@
     var pass;
 
     // Set view search element
-    this.elems.view.id = 'aIV-view';
-    this.elems.view.className = 'showView';
     this.elems.view.onchange = function(event) {
       Events.searchView(event.target.value);
     };
 
     // Set order search element
-    this.elems.order.id = 'aIV-order';
-    this.elems.order.className = 'showOrder';
     this.elems.order.onchange = function(event) {
       Events.searchOrder(event.target.value);
     };
 
     // Set stage search element
     if (this.elems.stage) {
-      this.elems.stage.id = 'aIV-stage';
-      this.elems.stage.className = 'showStage';
       this.elems.stage.onchange = function(event) {
         Events.searchStage(event.target.value);
       };
@@ -374,8 +396,6 @@
 
     // Set source search element
     if (this.elems.source) {
-      this.elems.source.id = 'aIV-source';
-      this.elems.source.className = 'showSource';
       this.elems.source.onchange = function(event) {
         Events.searchSource(event.target.value);
       };
@@ -383,8 +403,6 @@
 
     // Set main category search element
     if (this.elems.mainCat) {
-      this.elems.mainCat.id = 'aIV-mainCat';
-      this.elems.mainCat.className = 'showMainCat';
       this.elems.mainCat.onchange = function(event) {
         Events.searchMainCat(event.target.value);
       };
@@ -392,8 +410,6 @@
 
     // Set sub category search element
     if (this.elems.subCat) {
-      this.elems.subCat.id = 'aIV-subCat';
-      this.elems.subCat.className = 'showSubCat';
       this.elems.subCat.onchange = function(event) {
         Events.searchSubCat(event.target.value);
       };
@@ -429,8 +445,10 @@
       /** @type {elem} */
       var elem;
 
-      elem = document.createElement('option');
-      elem.textContent = name;
+      elem = makeElem({
+        tag : 'option',
+        text: name
+      });
       if (id) {
         elem.value = id;
       }

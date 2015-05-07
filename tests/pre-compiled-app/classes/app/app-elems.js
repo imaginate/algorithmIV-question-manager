@@ -116,28 +116,37 @@
     /** @type {element} */
     var li;
 
-    this.root = document.createElement('div');
-    this.sel  = document.createElement('nav');
-    this.main = document.createElement('div');
-    this.nav  = document.createElement('nav');
-    this.ques = document.createElement('section');
-    this.hold = document.createElement('img');
-    this.none = document.createElement('section');
-
-    this.root.id = 'aIV';
-    this.sel.id  = 'aIV-selections';
-    this.main.id = 'aIV-main';
-    this.nav.id  = 'aIV-nav';
-    this.ques.id = 'aIV-questions';
-
-    this.sel.className  = 'selections';
-    this.main.className = 'main';
-    this.ques.className = 'questions';
-    this.hold.className = 'loader';
-    this.none.className = 'empty';
-
-    this.root.innerHTML = '<h1>Algorithm IV</h1>';
-    this.none.innerHTML = 'No question(s) found.';
+    this.root = makeElem({
+      id  : 'aIV',
+      html: '<h1>Algorithm IV</h1>'
+    });
+    this.sel  = makeElem({
+      tag      : 'nav',
+      id       : 'aIV-selections',
+      className: 'selections'
+    });
+    this.main = makeElem({
+      id       : 'aIV-main',
+      className: 'main'
+    });
+    this.nav  = makeElem({
+      tag: 'nav',
+      id : 'aIV-nav'
+    });
+    this.ques = makeElem({
+      tag      : 'section',
+      id       : 'aIV-questions',
+      className: 'questions'
+    });
+    this.hold = makeElem({
+      tag      : 'img',
+      className: 'loader'
+    });
+    this.none = makeElem({
+      tag      : 'section',
+      text     : 'No question(s) found.',
+      className: 'empty'
+    });
 
     this.hold.src = 'images/loading.gif';
 
@@ -152,8 +161,7 @@
     document.body.appendChild(this.root);
 
     // Setup the scrollbar details
-    elem = document.createElement('div');
-    elem.className = 'aIV-scrollbar';
+    elem = makeElem({ className: 'aIV-scrollbar' });
     document.body.appendChild(elem);
 
     this.scrl = {};
@@ -165,14 +173,14 @@
     document.body.removeChild(elem);
 
     // Setup the code element details
-    elem = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-    li   = document.createElement('li');
+    elem = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem('ol');
+    li   = makeElem('li');
 
     elem.style.opacity = '0';
 
-    li.innerHTML = 'test';
+    addElemText(li, 'test');
 
     elem.appendChild(code);
     code.appendChild(ol);
@@ -243,31 +251,28 @@
     /** @type {element} */
     var nTitle;
 
-    prev   = document.createElement('div');
-    pArrow = document.createElement('div');
-    pBG    = document.createElement('div');
-    pTitle = document.createElement('div');
-    next   = document.createElement('div');
-    nArrow = document.createElement('div');
-    nBG    = document.createElement('div');
-    nTitle = document.createElement('div');
-
-    pArrow.id = 'aIV-prev';
-    nArrow.id = 'aIV-next';
-
-    prev.className = 'prev';
-    next.className = 'next';
-    pArrow.className = 'arrow';
-    nArrow.className = 'arrow';
-    pBG.className = 'bg';
-    nBG.className = 'bg';
-    pTitle.className = 'title';
-    nTitle.className = 'title';
-
-    pTitle.innerHTML = 'Previous';
-    pArrow.innerHTML = 'Previous';
-    nTitle.innerHTML = 'Next';
-    nArrow.innerHTML = 'Next';
+    prev = makeElem({ className: 'prev' });
+    next = makeElem({ className: 'next' });
+    pBG  = makeElem({ className: 'bg' });
+    nBG  = makeElem({ className: 'bg' });
+    pTitle = makeElem({
+      text     : 'Previous',
+      className: 'title'
+    });
+    nTitle = makeElem({
+      text     : 'Next',
+      className: 'title'
+    });
+    pArrow = makeElem({
+      id       : 'aIV-prev',
+      text     : 'Previous',
+      className: 'arrow'
+    });
+    nArrow = makeElem({
+      id       : 'aIV-next',
+      text     : 'Next',
+      className: 'arrow'
+    });
 
     pArrow.onclick = function() {
       Events.prev();
@@ -436,28 +441,17 @@
     divHeight += app.elems.code.ol.height;
 
     // Create the error elements
-    errorDiv = document.createElement('div');
-    h2 = document.createElement('h2');
-    p  = document.createElement('p');
+    errorDiv = makeElem({ className: 'initError' });
+    h2 = makeElem({ tag: 'h2', text: 'Initialization Error' });
+    p  = makeElem({ tag: 'p' , html: errorMsg });
 
     // Create the example elements
-    exampleDiv = document.createElement('div');
-    h3   = document.createElement('h3');
-    div  = document.createElement('div');
-    pre  = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-
-    // Assign the class names
-    errorDiv.className   = 'initError';
-    exampleDiv.className = 'initExample';
-    div.className = 'containExample';
-
-    // Add the content
-    h2.innerHTML = 'Initialization Error';
-    p.innerHTML  = errorMsg;
-    h3.innerHTML = 'Correct Initialization Example';
-    ol.innerHTML = example;
+    exampleDiv = makeElem({ className: 'initExample' });
+    h3   = makeElem({ tag: 'h3', text: 'Correct Initialization Example' });
+    div  = makeElem({ className: 'containExample' });
+    pre  = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem({ tag: 'ol', html: example });
 
     // Complete all dynamic formatting
     div.style.height = divHeight + 'px';
