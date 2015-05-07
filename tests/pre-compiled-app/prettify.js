@@ -31,9 +31,9 @@
     };
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Vars                                                       |
- * v ------------------------------------------------------------------------- v
-                                                           prettify-vars.js */
+ * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-vars
     // The prettifier's debugger object
     prettify.debug = aIV.debug('prettify');
 
@@ -647,9 +647,9 @@
     prettify.debug.group('makeKeywordObjects', 'end');
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Methods                                                    |
- * v ------------------------------------------------------------------------- v
-                                                        prettify-methods.js */
+ * The Prettifier Module Methods (pre-compiled-prettifier/prettify-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-methods
     /**
      * ---------------------------------------------
      * Public Method (prettify.setConfig)
@@ -874,9 +874,9 @@
     }
 
 /* -----------------------------------------------------------------------------
- * | The Highlight Syntax Method                                               |
- * v ------------------------------------------------------------------------- v
-                                                        highlight-syntax.js */
+ * The Highlight Syntax Method (pre-compiled-prettifier/highlight-syntax.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax
     /**
      * ---------------------------------------------
      * Private Method (highlightSyntax)
@@ -901,9 +901,11 @@
       };
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Vars                                               |
- * v ------------------------------------------------------------------------- v
-                                                   highlight-syntax-vars.js */
+ * The Highlight Syntax Variables (pre-compiled-prettifier/
+ *                                 pre-compiled-syntax-highlighter/
+ *                                 highlight-syntax-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-vars
       // The syntax highlighter's debugger object
       highlightSyntax.debug = aIV.debug('highlightSyntax');
 
@@ -998,9 +1000,11 @@
       freezeObj(router);
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Methods                                            |
- * v ------------------------------------------------------------------------- v
-                                                highlight-syntax-methods.js */
+ * The Highlight Syntax Methods (pre-compiled-prettifier/
+ *                               pre-compiled-syntax-highlighter/
+ *                               highlight-syntax-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-methods
       /**
        * ---------------------------------------------
        * Private Method (prepareLine)
@@ -1877,7 +1881,9 @@
       }
 
       return highlightSyntax;
+
     })();
 
     return prettify;
+
   })();

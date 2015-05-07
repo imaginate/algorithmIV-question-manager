@@ -22,9 +22,11 @@
       };
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Vars                                               |
- * v ------------------------------------------------------------------------- v
-                                                   highlight-syntax-vars.js */
+ * The Highlight Syntax Variables (pre-compiled-prettifier/
+ *                                 pre-compiled-syntax-highlighter/
+ *                                 highlight-syntax-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-vars
       // The syntax highlighter's debugger object
       highlightSyntax.debug = aIV.debug('highlightSyntax');
 
@@ -119,9 +121,11 @@
       freezeObj(router);
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Methods                                            |
- * v ------------------------------------------------------------------------- v
-                                                highlight-syntax-methods.js */
+ * The Highlight Syntax Methods (pre-compiled-prettifier/
+ *                               pre-compiled-syntax-highlighter/
+ *                               highlight-syntax-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-methods
       /**
        * ---------------------------------------------
        * Private Method (prepareLine)
@@ -998,4 +1002,5 @@
       }
 
       return highlightSyntax;
+
     })();
