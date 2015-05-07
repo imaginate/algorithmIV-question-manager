@@ -21,4 +21,15 @@
    * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
-  aIV.app = core;
+  aIV.app = appModuleAPI.startApp;
+
+  /**
+   * ---------------------------------------------------
+   * Global Method (aIV.app.getResource)
+   * ---------------------------------------------------
+   * @desc Makes the app's resources publically available.
+   * @param {string=} prop - The specific resource to retrieve.
+   * @return {*} Either the entire resources object or one of its properties.
+   * @global
+   */
+  aIV.app.getResource = appModuleAPI.getResource;
