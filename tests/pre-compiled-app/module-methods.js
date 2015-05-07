@@ -250,40 +250,19 @@
     debug.start('sortKeys', ids, data);
     debug.args('sortKeys', ids, 'strings', data, 'stringMap');
 
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var keys;
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var names;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var name;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var id;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var ii;
 
     keys  = [];
@@ -356,15 +335,9 @@
     debug.start('camelCase', str);
     debug.args('camelCase', str, 'string');
 
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {strings} */
     var arr;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
 
     arr = str.split('-');
