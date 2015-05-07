@@ -93,7 +93,6 @@
       freezeObj(resources);
       app = new App(config, sources, categories, questions);
       app.setupDisplay();
-      debug.end('startApp');
     };
 
     // Save the resources

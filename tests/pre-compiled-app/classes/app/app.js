@@ -271,6 +271,7 @@
         // $s$
         setTimeout(function() {
           app.debug.group('setupDisplay', 'end');
+          debug.end('startApp');
         }, 520);
         // $e$
 
@@ -279,6 +280,7 @@
     else {
       this.elems.appendError();
       this.debug.group('setupDisplay', 'end');
+      debug.end('startApp');
     }
   };
 

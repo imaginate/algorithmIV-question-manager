@@ -116,11 +116,11 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes the aIV question management app.
-   * @param {Object} settings - The app's settings.
+   * @param {!Object} settings - The app's settings.
    * @param {objectMap=} settings.config - The app's configuration.
    * @param {stringMap=} settings.sources - The app's sources.
    * @param {(objectMap|stringMap)=} settings.categories - The app's categories.
-   * @param {objects} settings.questions - The app's questions.
+   * @param {!objects} settings.questions - The app's questions.
    * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
@@ -169,12 +169,8 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
    */
   appModuleAPI.startApp = function(settings) {
 
-    debug.start('init', settings);
-
-    debug.args('init', settings, 'object');
-
-    debugMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!hasAppBeenInitialized), debugMsg);
+    debug.start('startApp', settings);
+    debug.args('startApp', settings, 'object');
 
     /** @type {?(string|strings)} */
     var resourceList;
@@ -193,12 +189,12 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
     /** @type {number} */
     var i;
 
-    if (hasAppBeenInitialized) {
+    if (appHasBeenInitialized) {
       return;
     }
 
     // Save the init of this app to prevent second init
-    hasAppBeenInitialized = true;
+    appHasBeenInitialized = true;
 
     if ( !checkType(settings, '!object') ) {
       settings = {};
@@ -225,34 +221,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
         settings.question : []
     );
 
-    debugCheck = checkType(resourceList, 'string|strings');
-    debugMsg = 'Error: The given resources property was an ';
-    debugMsg += 'incorrect data type. resources= $$';
-    debug.fail('init', debugCheck, debugMsg, resourceList);
-
-    debugCheck = checkType(config, 'objectMap');
-    debugMsg = 'Error: The given config property was an ';
-    debugMsg += 'incorrect data type. config= $$';
-    debug.fail('init', debugCheck, debugMsg, config);
-
-    debugCheck = checkType(sources, 'stringMap');
-    debugMsg = 'Error: The given sources property was an ';
-    debugMsg += 'incorrect data type. sources= $$';
-    debug.fail('init', debugCheck, debugMsg, sources);
-
-    debugCheck = checkType(categories, 'stringMap|objectMap');
-    debugMsg = 'Error: The given categories property was an ';
-    debugMsg += 'incorrect data type. categories= $$';
-    debug.fail('init', debugCheck, debugMsg, categories);
-
-    debugCheck = checkType(questions, '!objects');
-    debugMsg = 'Error: The given questions property was an ';
-    debugMsg += 'incorrect data type. questions= $$';
-    debug.fail('init', debugCheck, debugMsg, questions);
-
-    debugCheck = (questions.length > 0);
-    debugMsg = 'Error: No questions were provided.';
-    debug.fail('init', debugCheck, debugMsg);
+    logAppInitTypeErrors(resourceList, config, sources, categories, questions);
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
@@ -308,16 +277,18 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
    * -----------------------------------------------------
    * @desc Makes the app's resources publically available.
    * @param {string=} prop - The specific resource to retrieve.
-   * @return {val} Either the entire resources object or one of its properties.
+   * @return {*} Either the entire resources object or one of its properties.
    */
   appModuleAPI.getResource = function(prop) {
 
-    debug.start('init.getResource', prop);
-    debug.args('init.getResource', prop, 'string=');
-    debug.state('init.getResource', 'resources= $$', resources);
+    debug.start('getResource', prop);
+    debug.args('getResource', prop, 'string=');
+    debug.state('getResource', 'resources= $$', resources);
 
     /** @type {string} */
     var errorMsg;
+    /** @type {*} */
+    var result;
 
     prop = prop || '';
 
@@ -328,10 +299,14 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
       errorMsg += '(see algorithmiv.com/docs/resources).';
       console.error(errorMsg);
       debugger;
-      return;
+    }
+    else {
+      result = (!!prop) ? resources[ prop ] : resources;
     }
 
-    return (!!prop) ? resources[ prop ] : resources;
+    debug.end('getResource', result);
+
+    return result;
   }
 
   aIV.utils.freezeObj(appModuleAPI);
@@ -341,17 +316,21 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
  * -------------------------------------------------------------------------- */
 
   // The debugging vars
-  var debug = aIV.debug('module');
+  var debug = aIV.debug({
+    classTitle  : 'appModule',
+    turnOnGroups: true,
+    turnOnTimers: true
+  });
   var debugArgs, debugMsg, debugCheck;
 
   /**
    * -----------------------------------------------------
-   * Public Variable (hasAppBeenInitialized)
+   * Public Variable (appHasBeenInitialized)
    * -----------------------------------------------------
    * @desc Indicates whether the app has been initialized.
    * @type {boolean}
    */
-  var hasAppBeenInitialized = false;
+  var appHasBeenInitialized = false;
 
   /**
    * ----------------------------------------------- 
@@ -408,6 +387,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
           msg += 'XMLHttpRequest.statusText= ' + http.statusText;
           console.error(msg);
         }
+        debug.end('getResource');
         callback();
       }
     };
@@ -568,7 +548,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
    * ---------------------------------------------------
    * @param {!Array<*>} vals - An array of the value(s) to be evaluated.
    *   Note that the values must be provided in an array.
-   * @param {(string|strings)} types - The type(s) to evaluate the value(s)
+   * @param {!(string|strings)} types - The type(s) to evaluate the value(s)
    *   against. For a complete list of acceptable strings
    *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
    * @return {boolean} The evaluation result.
@@ -577,7 +557,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
 
     var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
-    debug.args('checkTypes', vals, 'array', types, 'string|strings');
+    debug.args('checkTypes', vals, '!array', types, '!string|strings');
 
     /** @type {number} */
     var i;
@@ -610,6 +590,8 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
       }
     }
 
+    debug.end('checkTypes', pass);
+
     return pass;
   }
 
@@ -618,18 +600,18 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
    * Public Method (sortKeys)
    * ---------------------------------------------------
    * @desc A helper method that sorts the keys of an object.
-   * @param {strings} ids - The unsorted keys.
-   * @param {stringMap} data - A hash map of ids and names.
-   * @return {strings} The sorted keys.
+   * @param {!strings} ids - The unsorted keys.
+   * @param {!stringMap} data - A hash map of ids and names.
+   * @return {!strings} The sorted keys.
    */
   function sortKeys(ids, data) {
 
     debug.start('sortKeys', ids, data);
-    debug.args('sortKeys', ids, 'strings', data, 'stringMap');
+    debug.args('sortKeys', ids, '!strings', data, '!stringMap');
 
-    /** @type {strings} */
+    /** @type {!strings} */
     var keys;
-    /** @type {strings} */
+    /** @type {!strings} */
     var names;
     /** @type {string} */
     var name;
@@ -679,6 +661,8 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
       }
     }
 
+    debug.end('sortKeys', keys);
+
     return keys;
   }
 
@@ -695,7 +679,11 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
     debug.start('capFirst', str);
     debug.args('capFirst', str, 'string');
 
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    str = str.charAt(0).toUpperCase() + str.slice(1);
+
+    debug.end('capFirst', str);
+
+    return str;
   }
 
   /**
@@ -712,7 +700,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
     debug.start('camelCase', str);
     debug.args('camelCase', str, 'string');
 
-    /** @type {strings} */
+    /** @type {!strings} */
     var arr;
     /** @type {number} */
     var i;
@@ -725,7 +713,11 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
       arr[i] = capFirst(arr[i]);
     }
 
-    return arr.join('');
+    str = arr.join('');
+
+    debug.end('camelCase', str);
+
+    return str;
   }
 
   /**
@@ -746,17 +738,17 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
     funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
     endCheck = /[\r\n]{1,2}\s*\}\;?$/;
 
-    return function(str) {
+    return function trimFunctionWrapper(str) {
 
-      debug.group('trimFunctionWrapper', 'coll');
       debug.start('trimFunctionWrapper', str);
-      debug.group('trimFunctionWrapper', 'end');
       debug.args('trimFunctionWrapper', str, 'string');
 
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
         str = str.replace(endCheck, '');
       }
+
+      debug.end('trimFunctionWrapper', str);
 
       return str;
     };
@@ -777,14 +769,90 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
 
     http = /^https?\:\/\//;
 
-    return function(str) {
+    return function isLink(str) {
 
       debug.start('isLink', str);
       debug.args('isLink', str, 'string');
 
-      return http.test(str);
+      /** @type {boolean} */
+      var result;
+
+      result = http.test(str);
+
+      debug.end('isLink', result);
+
+      return result;
     };
   })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (logAppInitTypeErrors)
+   * ---------------------------------------------------
+   * @desc A helper method that checks the user's supplied app settings and
+   *   logs any type errors it finds.
+   * @param {*} resourceList
+   * @param {*} config
+   * @param {*} sources
+   * @param {*} categories
+   * @param {*} questions
+   */
+  function logAppInitTypeErrors(resourceList, config, sources,
+                                categories, questions) {
+
+    debugArgs = [ 'logAppInitTypeErrors', resourceList, config, sources ];
+    debugArgs.push(categories, questions);
+    debug.start(debugArgs);
+
+    /** @type {string} */
+    var errorMsg;
+
+    if ( !checkType(resourceList, '?(string|strings)') ) {
+      errorMsg = 'Your aIV.app settings property, resources, was an incorrect ';
+      errorMsg += 'data type. It should be null, a string, or an array of ';
+      errorMsg += 'strings. The given typeof resources was \'';
+      errorMsg += typeof resourceList + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(config, 'objectMap') ) {
+      errorMsg = 'Your aIV.app settings property, config, was an incorrect ';
+      errorMsg += 'data type. It should be null or an object with string => ';
+      errorMsg += 'object pairs. The given typeof config was \'';
+      errorMsg += typeof config + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(sources, 'stringMap') ) {
+      errorMsg = 'Your aIV.app settings property, sources, was an incorrect ';
+      errorMsg += 'data type. It should be null or an object with string => ';
+      errorMsg += 'string pairs. The given typeof sources was \'';
+      errorMsg += typeof sources + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(categories, 'stringMap|objectMap') ) {
+      errorMsg = 'Your aIV.app settings property, categories, was an ';
+      errorMsg += 'incorrect data type. It should be null or an object with ';
+      errorMsg += 'string => object or string => string pairs. The given ';
+      errorMsg += 'typeof categories was \'' + typeof categories + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(questions, '!objects') ) {
+      errorMsg = 'Your aIV.app settings property, questions, was an ';
+      errorMsg += 'incorrect data type. It should be an array of question ';
+      errorMsg += 'objects. The given typeof questions was \'';
+      errorMsg += ( (questions === null) ?
+        'null' : ( checkType(questions, '!array') ) ?
+          'array' : typeof questions
+      );
+      errorMsg += '\'.';
+      console.error(errorMsg);
+    }
+
+    debug.end('logAppInitTypeErrors');
+  }
 
 /* -----------------------------------------------------------------------------
  * The App Class (classes/app/app.js)
@@ -1063,6 +1131,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
         // $s$
         setTimeout(function() {
           app.debug.group('setupDisplay', 'end');
+          debug.end('startApp');
         }, 520);
         // $e$
 
@@ -1071,6 +1140,7 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
     else {
       this.elems.appendError();
       this.debug.group('setupDisplay', 'end');
+      debug.end('startApp');
     }
   };
 
@@ -1855,13 +1925,14 @@ pipe:/\|/,lowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(g,!0);(function(a){var b;Ob
       'initialized without any questions. Please ensure you correctly gave ' +
       'your settings to this app. The app should be initialized with '       +
       'an object that contains properties for all of your settings (see '    +
-      'below). If this error persists please open an issue with '            +
+      'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
-      'class="dark">aIV on GitHub</a> or send an email to <a href="mailto:'  +
-      'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
-      'will solve your problem or answer your question as quickly as we '    +
-      'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
-      'maximize your development skills and projects!<br />'                 +
+      'class="dark">GitHub repository</a> or send an email to '              +
+      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
+      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
+      'libraries are able to help you maximize your development skills and ' +
+      'projects!<br />'                                                      +
       '<span>Best,<br />'                                                    +
       '&ndash; Adam from Algorithm IV</span>';
 
