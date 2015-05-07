@@ -408,3 +408,70 @@
       return http.test(str);
     };
   })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (logAppInitTypeErrors)
+   * ---------------------------------------------------
+   * @desc A helper method that checks the user's supplied app settings and
+   *   logs any type errors it finds.
+   * @param {*} resourceList
+   * @param {*} config
+   * @param {*} sources
+   * @param {*} categories
+   * @param {*} questions
+   */
+  function logAppInitTypeErrors(resourceList, config, sources,
+                                categories, questions) {
+
+    debugArgs = [ 'logAppInitTypeErrors', resourceList, config, sources ];
+    debugArgs.push(categories, questions);
+    debug.start(debugArgs);
+
+    /** @type {string} */
+    var errorMsg;
+
+    if ( !checkType(resourceList, '?(string|strings)') ) {
+      errorMsg = 'Your aIV.app settings property, resources, was an incorrect ';
+      errorMsg += 'data type. It should be null, a string, or an array of ';
+      errorMsg += 'strings. The given typeof resources was \'';
+      errorMsg += typeof resourceList + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(config, 'objectMap') ) {
+      errorMsg = 'Your aIV.app settings property, config, was an incorrect ';
+      errorMsg += 'data type. It should be null or an object with string => ';
+      errorMsg += 'object pairs. The given typeof config was \'';
+      errorMsg += typeof config + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(sources, 'stringMap') ) {
+      errorMsg = 'Your aIV.app settings property, sources, was an incorrect ';
+      errorMsg += 'data type. It should be null or an object with string => ';
+      errorMsg += 'string pairs. The given typeof sources was \'';
+      errorMsg += typeof sources + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(categories, 'stringMap|objectMap') ) {
+      errorMsg = 'Your aIV.app settings property, categories, was an ';
+      errorMsg += 'incorrect data type. It should be null or an object with ';
+      errorMsg += 'string => object or string => string pairs. The given ';
+      errorMsg += 'typeof categories was \'' + typeof categories + '\'.';
+      console.error(errorMsg);
+    }
+
+    if ( !checkType(questions, '!objects') ) {
+      errorMsg = 'Your aIV.app settings property, questions, was an ';
+      errorMsg += 'incorrect data type. It should be an array of question ';
+      errorMsg += 'objects. The given typeof questions was \'';
+      errorMsg += ( (questions === null) ?
+        'null' : ( checkType(questions, '!array') ) ?
+          'array' : typeof questions
+      );
+      errorMsg += '\'.';
+      console.error(errorMsg);
+    }
+  }
