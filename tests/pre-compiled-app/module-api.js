@@ -1,28 +1,28 @@
   /**
    * -----------------------------------------------------
-   * Private Variable (_initialized)
+   * Public Variable (appModuleAPI)
    * -----------------------------------------------------
-   * @desc Indicates whether the app has been initialized.
-   * @type {boolean}
-   * @private
+   * @desc Holds the app module's public properties and methods.
+   * @type {!Object<string, function>}
+   * @struct
    */
-  var _initialized = false;
+  var appModuleAPI = {};
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init)
+   * Public Method (appModuleAPI.startApp)
    * -----------------------------------------------------
    * @desc Initializes the app.
    * @param {Object} settings - The app's settings.
    */
-  var _init = function(settings) {
+  appModuleAPI.startApp = function(settings) {
 
     debug.start('init', settings);
 
     debug.args('init', settings, 'object');
 
     debugMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!_initialized), debugMsg);
+    debug.fail('init', (!hasAppBeenInitialized), debugMsg);
 
     /** @type {?(string|strings)} */
     var resourceList;
@@ -41,37 +41,35 @@
     /** @type {number} */
     var i;
 
-    // Check if app has been initialized
-    if (_initialized) {
+    if (hasAppBeenInitialized) {
       return;
     }
 
     // Save the init of this app to prevent second init
-    _initialized = true;
+    hasAppBeenInitialized = true;
 
-    // Check the settings arg
-    if (!settings || !checkType(settings, 'object')) {
+    if ( !checkType(settings, '!object') ) {
       settings = {};
     }
 
     // Setup the app arguments
-    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
+    resourceList = ( ( hasOwnProp(settings, 'resources') ) ?
       settings.resources : null
     );
-    config = ( ( settings.hasOwnProperty('config') ) ?
-      settings.config : ( settings.hasOwnProperty('configuration') ) ?
+    config = ( ( hasOwnProp(settings, 'config') ) ?
+      settings.config : ( hasOwnProp(settings, 'configuration') ) ?
         settings.configuration : null
     );
-    sources = ( ( settings.hasOwnProperty('sources') ) ?
-      settings.sources : ( settings.hasOwnProperty('source') ) ?
+    sources = ( ( hasOwnProp(settings, 'sources') ) ?
+      settings.sources : ( hasOwnProp(settings, 'source') ) ?
         settings.source : null
     );
-    categories = ( ( settings.hasOwnProperty('categories') ) ?
-      settings.categories : ( settings.hasOwnProperty('category') ) ?
+    categories = ( ( hasOwnProp(settings, 'categories') ) ?
+      settings.categories : ( hasOwnProp(settings, 'category') ) ?
         settings.category : null
     );
-    questions = ( ( settings.hasOwnProperty('questions') ) ?
-      settings.questions : ( settings.hasOwnProperty('question') ) ?
+    questions = ( ( hasOwnProp(settings, 'questions') ) ?
+      settings.questions : ( hasOwnProp(settings, 'question') ) ?
         settings.question : []
     );
 
@@ -131,7 +129,7 @@
     // Save the resources
     if (resourceList) {
 
-      if (typeof resourceList === 'string') {
+      if ( checkType(resourceList, 'string') ) {
         getResource(resourceList, setup);
         return;
       }
@@ -154,13 +152,13 @@
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init.getResource)
+   * Public Method (appModuleAPI.getResource)
    * -----------------------------------------------------
    * @desc Makes the app's resources publically available.
    * @param {string=} prop - The specific resource to retrieve.
    * @return {val} Either the entire resources object or one of its properties.
    */
-  _init.getResource = function(prop) {
+  appModuleAPI.getResource = function(prop) {
 
     debug.start('init.getResource', prop);
     debug.args('init.getResource', prop, 'string=');
@@ -171,7 +169,7 @@
 
     prop = prop || '';
 
-    if (prop && !resources.hasOwnProperty(prop)) {
+    if (prop && !hasOwnProp(resources, prop)) {
       errorMsg = 'The resource you requested does not exist. Please verify that \'';
       errorMsg += prop + '\' is a correct json file name in the resources folder ';
       errorMsg += 'and that the file name was included in the setup of the app ';
@@ -184,5 +182,4 @@
     return (!!prop) ? resources[ prop ] : resources;
   }
 
-  freezeObj(_init);
-  freezeObj(_init.getResource);
+  freezeObj(appModuleAPI, true);
