@@ -182,4 +182,4 @@
     return (!!prop) ? resources[ prop ] : resources;
   }
 
-  freezeObj(appModuleAPI, true);
+  aIV.utils.freezeObj(appModuleAPI);
