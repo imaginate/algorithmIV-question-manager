@@ -31,19 +31,20 @@
     };
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Vars                                                       |
- * v ------------------------------------------------------------------------- v
-                                                           prettify-vars.js */
+ * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-vars
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Methods                                                    |
- * v ------------------------------------------------------------------------- v
-                                                        prettify-methods.js */
+ * The Prettifier Module Methods (pre-compiled-prettifier/prettify-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-methods
 
 /* -----------------------------------------------------------------------------
- * | The Highlight Syntax Method                                               |
- * v ------------------------------------------------------------------------- v
-                                                        highlight-syntax.js */
+ * The Highlight Syntax Method (pre-compiled-prettifier/highlight-syntax.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax
 
     return prettify;
+
   })();
