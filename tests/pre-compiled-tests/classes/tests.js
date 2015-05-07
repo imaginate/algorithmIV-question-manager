@@ -19,18 +19,21 @@
     // These calls run immediately to ensure that desired
     // settings are set before the app is processed
 
-    aIV.debug.setConfig({
-      turnOnDebuggers: 'args fail'
+    aIV.debug.set({
+      addBreakpoints: 'args fail',
+      turnOnGroups  : false,
+      turnOnProfiles: false,
+      turnOnTimers  : false
     });
 
     aIV.debug({
-      classTitle  : 'prettify',
-      turnOffTypes: 'all'
+      classTitle    : 'prettify',
+      turnOffMethods: 'all'
     });
 
     aIV.debug({
-      classTitle  : 'highlightSyntax',
-      turnOffTypes: 'all'
+      classTitle    : 'highlightSyntax',
+      turnOffMethods: 'all'
     });
 
     return function() {
