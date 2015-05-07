@@ -31,6 +31,7 @@
           msg += 'XMLHttpRequest.statusText= ' + http.statusText;
           console.error(msg);
         }
+        debug.end('getResource');
         callback();
       }
     };
@@ -191,7 +192,7 @@
    * ---------------------------------------------------
    * @param {!Array<*>} vals - An array of the value(s) to be evaluated.
    *   Note that the values must be provided in an array.
-   * @param {(string|strings)} types - The type(s) to evaluate the value(s)
+   * @param {!(string|strings)} types - The type(s) to evaluate the value(s)
    *   against. For a complete list of acceptable strings
    *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
    * @return {boolean} The evaluation result.
@@ -200,7 +201,7 @@
 
     var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
-    debug.args('checkTypes', vals, 'array', types, 'string|strings');
+    debug.args('checkTypes', vals, '!array', types, '!string|strings');
 
     /** @type {number} */
     var i;
@@ -233,6 +234,8 @@
       }
     }
 
+    debug.end('checkTypes', pass);
+
     return pass;
   }
 
@@ -241,18 +244,18 @@
    * Public Method (sortKeys)
    * ---------------------------------------------------
    * @desc A helper method that sorts the keys of an object.
-   * @param {strings} ids - The unsorted keys.
-   * @param {stringMap} data - A hash map of ids and names.
-   * @return {strings} The sorted keys.
+   * @param {!strings} ids - The unsorted keys.
+   * @param {!stringMap} data - A hash map of ids and names.
+   * @return {!strings} The sorted keys.
    */
   function sortKeys(ids, data) {
 
     debug.start('sortKeys', ids, data);
-    debug.args('sortKeys', ids, 'strings', data, 'stringMap');
+    debug.args('sortKeys', ids, '!strings', data, '!stringMap');
 
-    /** @type {strings} */
+    /** @type {!strings} */
     var keys;
-    /** @type {strings} */
+    /** @type {!strings} */
     var names;
     /** @type {string} */
     var name;
@@ -302,6 +305,8 @@
       }
     }
 
+    debug.end('sortKeys', keys);
+
     return keys;
   }
 
@@ -318,7 +323,11 @@
     debug.start('capFirst', str);
     debug.args('capFirst', str, 'string');
 
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    str = str.charAt(0).toUpperCase() + str.slice(1);
+
+    debug.end('capFirst', str);
+
+    return str;
   }
 
   /**
@@ -335,7 +344,7 @@
     debug.start('camelCase', str);
     debug.args('camelCase', str, 'string');
 
-    /** @type {strings} */
+    /** @type {!strings} */
     var arr;
     /** @type {number} */
     var i;
@@ -348,7 +357,11 @@
       arr[i] = capFirst(arr[i]);
     }
 
-    return arr.join('');
+    str = arr.join('');
+
+    debug.end('camelCase', str);
+
+    return str;
   }
 
   /**
@@ -369,17 +382,17 @@
     funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
     endCheck = /[\r\n]{1,2}\s*\}\;?$/;
 
-    return function(str) {
+    return function trimFunctionWrapper(str) {
 
-      debug.group('trimFunctionWrapper', 'coll');
       debug.start('trimFunctionWrapper', str);
-      debug.group('trimFunctionWrapper', 'end');
       debug.args('trimFunctionWrapper', str, 'string');
 
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
         str = str.replace(endCheck, '');
       }
+
+      debug.end('trimFunctionWrapper', str);
 
       return str;
     };
@@ -400,12 +413,19 @@
 
     http = /^https?\:\/\//;
 
-    return function(str) {
+    return function isLink(str) {
 
       debug.start('isLink', str);
       debug.args('isLink', str, 'string');
 
-      return http.test(str);
+      /** @type {boolean} */
+      var result;
+
+      result = http.test(str);
+
+      debug.end('isLink', result);
+
+      return result;
     };
   })();
 
@@ -474,4 +494,6 @@
       errorMsg += '\'.';
       console.error(errorMsg);
     }
+
+    debug.end('logAppInitTypeErrors');
   }
