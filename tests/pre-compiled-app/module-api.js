@@ -17,12 +17,8 @@
    */
   appModuleAPI.startApp = function(settings) {
 
-    debug.start('init', settings);
-
-    debug.args('init', settings, 'object');
-
-    debugMsg = 'Error: A second attempt to init this app occurred.';
-    debug.fail('init', (!hasAppBeenInitialized), debugMsg);
+    debug.start('startApp', settings);
+    debug.args('startApp', settings, 'object');
 
     /** @type {?(string|strings)} */
     var resourceList;
@@ -41,12 +37,12 @@
     /** @type {number} */
     var i;
 
-    if (hasAppBeenInitialized) {
+    if (appHasBeenInitialized) {
       return;
     }
 
     // Save the init of this app to prevent second init
-    hasAppBeenInitialized = true;
+    appHasBeenInitialized = true;
 
     if ( !checkType(settings, '!object') ) {
       settings = {};
@@ -73,34 +69,7 @@
         settings.question : []
     );
 
-    debugCheck = checkType(resourceList, 'string|strings');
-    debugMsg = 'Error: The given resources property was an ';
-    debugMsg += 'incorrect data type. resources= $$';
-    debug.fail('init', debugCheck, debugMsg, resourceList);
-
-    debugCheck = checkType(config, 'objectMap');
-    debugMsg = 'Error: The given config property was an ';
-    debugMsg += 'incorrect data type. config= $$';
-    debug.fail('init', debugCheck, debugMsg, config);
-
-    debugCheck = checkType(sources, 'stringMap');
-    debugMsg = 'Error: The given sources property was an ';
-    debugMsg += 'incorrect data type. sources= $$';
-    debug.fail('init', debugCheck, debugMsg, sources);
-
-    debugCheck = checkType(categories, 'stringMap|objectMap');
-    debugMsg = 'Error: The given categories property was an ';
-    debugMsg += 'incorrect data type. categories= $$';
-    debug.fail('init', debugCheck, debugMsg, categories);
-
-    debugCheck = checkType(questions, '!objects');
-    debugMsg = 'Error: The given questions property was an ';
-    debugMsg += 'incorrect data type. questions= $$';
-    debug.fail('init', debugCheck, debugMsg, questions);
-
-    debugCheck = (questions.length > 0);
-    debugMsg = 'Error: No questions were provided.';
-    debug.fail('init', debugCheck, debugMsg);
+    logAppInitTypeErrors(resourceList, config, sources, categories, questions);
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
@@ -124,6 +93,7 @@
       freezeObj(resources);
       app = new App(config, sources, categories, questions);
       app.setupDisplay();
+      debug.end('startApp');
     };
 
     // Save the resources
@@ -156,16 +126,18 @@
    * -----------------------------------------------------
    * @desc Makes the app's resources publically available.
    * @param {string=} prop - The specific resource to retrieve.
-   * @return {val} Either the entire resources object or one of its properties.
+   * @return {*} Either the entire resources object or one of its properties.
    */
   appModuleAPI.getResource = function(prop) {
 
-    debug.start('init.getResource', prop);
-    debug.args('init.getResource', prop, 'string=');
-    debug.state('init.getResource', 'resources= $$', resources);
+    debug.start('getResource', prop);
+    debug.args('getResource', prop, 'string=');
+    debug.state('getResource', 'resources= $$', resources);
 
     /** @type {string} */
     var errorMsg;
+    /** @type {*} */
+    var result;
 
     prop = prop || '';
 
@@ -176,10 +148,14 @@
       errorMsg += '(see algorithmiv.com/docs/resources).';
       console.error(errorMsg);
       debugger;
-      return;
+    }
+    else {
+      result = (!!prop) ? resources[ prop ] : resources;
     }
 
-    return (!!prop) ? resources[ prop ] : resources;
+    debug.end('getResource', result);
+
+    return result;
   }
 
   aIV.utils.freezeObj(appModuleAPI);
