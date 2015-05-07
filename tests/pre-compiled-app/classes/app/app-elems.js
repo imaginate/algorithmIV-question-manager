@@ -335,13 +335,14 @@
       'initialized without any questions. Please ensure you correctly gave ' +
       'your settings to this app. The app should be initialized with '       +
       'an object that contains properties for all of your settings (see '    +
-      'below). If this error persists please open an issue with '            +
+      'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
-      'class="dark">aIV on GitHub</a> or send an email to <a href="mailto:'  +
-      'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
-      'will solve your problem or answer your question as quickly as we '    +
-      'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
-      'maximize your development skills and projects!<br />'                 +
+      'class="dark">GitHub repository</a> or send an email to '              +
+      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
+      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
+      'libraries are able to help you maximize your development skills and ' +
+      'projects!<br />'                                                      +
       '<span>Best,<br />'                                                    +
       '&ndash; Adam from Algorithm IV</span>';
 
