@@ -82,6 +82,14 @@
   "use strict"; 
 
 /* -----------------------------------------------------------------------------
+ * Set The TypeError Message For Invalid Arguments
+ * -------------------------------------------------------------------------- */
+
+aIV.utils.set({
+  checkArgsErrorMsg: 'An aIV.app internal call received an invalid parameter.'
+});
+
+/* -----------------------------------------------------------------------------
  * The App Module API (module-api.js)
  * -------------------------------------------------------------------------- */
 // insert-module-api

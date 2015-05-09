@@ -149,6 +149,14 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   "use strict"; 
 
 /* -----------------------------------------------------------------------------
+ * Set The TypeError Message For Invalid Arguments
+ * -------------------------------------------------------------------------- */
+
+aIV.utils.set({
+  checkArgsErrorMsg: 'An aIV.app internal call received an invalid parameter.'
+});
+
+/* -----------------------------------------------------------------------------
  * The App Module API (module-api.js)
  * -------------------------------------------------------------------------- */
 
