@@ -1,5 +1,9 @@
     // The prettifier's debugger object
-    prettify.debug = aIV.debug('prettify');
+    prettify.debug = aIV.debug({
+      classTitle  : 'prettify',
+      turnOnGroups: true,
+      turnOnTimers: true
+    });
 
     /**
      * ---------------------------------------------
@@ -24,6 +28,7 @@
       '<': '&lt;',
       '>': '&gt;'
     };
+
     freezeObj(htmlEntity);
 
     /**
@@ -35,10 +40,11 @@
      *   evaluated for the following possible keywords 'return',
      *   'case', 'typeof', 'instanceof', and 'in'.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
+
     freezeObj(preRegex);
 
     /**
@@ -47,10 +53,11 @@
      * ---------------------------------------------
      * @desc The flags for js regular expressions.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var regexFlags = /[gimy]/;
+
     freezeObj(regexFlags);
 
     /**
@@ -59,10 +66,11 @@
      * ---------------------------------------------
      * @desc List of valid plain number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
+
     freezeObj(plainNumbers);
 
     /**
@@ -71,10 +79,11 @@
      * ---------------------------------------------
      * @desc List of valid hex number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
+
     freezeObj(hexNumbers);
 
     /**
@@ -83,10 +92,11 @@
      * ---------------------------------------------
      * @desc List of valid starting identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
+
     freezeObj(identifierStart);
 
     /**
@@ -95,10 +105,11 @@
      * ---------------------------------------------
      * @desc List of valid identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
+
     freezeObj(identifiers);
 
     /**
@@ -116,11 +127,26 @@
      * Private Variable (commentLinks)
      * ---------------------------------------------
      * @desc Valid link syntax within comments.
-     * @type {RegExp}
+     * @const
+     * @type {!RegExp}
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
+
     freezeObj(commentLinks);
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (notSpace)
+     * ---------------------------------------------
+     * @desc A regex that catches anything that is not a space.
+     * @const
+     * @type {!RegExp}
+     * @private
+     */
+    var notSpace = /[^\s]/;
+
+    freezeObj(notSpace);
 
     /**
      * ---------------------------------------------
@@ -139,6 +165,7 @@
       cli: 'cliKey', // Client Objects & Methods
       jqu: 'jquKey'  // jQuery Objects
     };
+
     freezeObj(keywordCategories);
 
     prettify.debug.group('makeKeywordObjects', 'coll');

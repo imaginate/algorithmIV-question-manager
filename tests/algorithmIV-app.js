@@ -7925,11 +7925,11 @@ aIV.utils.set({
 
     var prettify = function(solution) {
 
-      prettify.debug.group('init', 'coll');
       prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('init', solution);
       prettify.debug.group('init', 'end');
-      prettify.debug.args('init', solution, 'string');
+
+      checkArgs(solution, 'string');
 
       /** @type {{ result: string, lineCount: number }} */
       var result;
@@ -7937,7 +7937,7 @@ aIV.utils.set({
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
 
-      prettify.debug.group('init', 'end');
+      prettify.debug.end('init', result);
 
       return result;
     };
@@ -7947,7 +7947,11 @@ aIV.utils.set({
  * -------------------------------------------------------------------------- */
 
     // The prettifier's debugger object
-    prettify.debug = aIV.debug('prettify');
+    prettify.debug = aIV.debug({
+      classTitle  : 'prettify',
+      turnOnGroups: true,
+      turnOnTimers: true
+    });
 
     /**
      * ---------------------------------------------
@@ -7972,6 +7976,7 @@ aIV.utils.set({
       '<': '&lt;',
       '>': '&gt;'
     };
+
     freezeObj(htmlEntity);
 
     /**
@@ -7983,10 +7988,11 @@ aIV.utils.set({
      *   evaluated for the following possible keywords 'return',
      *   'case', 'typeof', 'instanceof', and 'in'.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
+
     freezeObj(preRegex);
 
     /**
@@ -7995,10 +8001,11 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc The flags for js regular expressions.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var regexFlags = /[gimy]/;
+
     freezeObj(regexFlags);
 
     /**
@@ -8007,10 +8014,11 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc List of valid plain number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
+
     freezeObj(plainNumbers);
 
     /**
@@ -8019,10 +8027,11 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc List of valid hex number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
+
     freezeObj(hexNumbers);
 
     /**
@@ -8031,10 +8040,11 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc List of valid starting identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
+
     freezeObj(identifierStart);
 
     /**
@@ -8043,10 +8053,11 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc List of valid identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
+
     freezeObj(identifiers);
 
     /**
@@ -8064,11 +8075,26 @@ aIV.utils.set({
      * Private Variable (commentLinks)
      * ---------------------------------------------
      * @desc Valid link syntax within comments.
-     * @type {RegExp}
+     * @const
+     * @type {!RegExp}
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
+
     freezeObj(commentLinks);
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (notSpace)
+     * ---------------------------------------------
+     * @desc A regex that catches anything that is not a space.
+     * @const
+     * @type {!RegExp}
+     * @private
+     */
+    var notSpace = /[^\s]/;
+
+    freezeObj(notSpace);
 
     /**
      * ---------------------------------------------
@@ -8087,6 +8113,7 @@ aIV.utils.set({
       cli: 'cliKey', // Client Objects & Methods
       jqu: 'jquKey'  // jQuery Objects
     };
+
     freezeObj(keywordCategories);
 
     prettify.debug.group('makeKeywordObjects', 'coll');
@@ -8567,17 +8594,20 @@ aIV.utils.set({
      * Public Method (prettify.setConfig)
      * ---------------------------------------------
      * @desc Sets the config settings for the prettifier.
-     * @param {Object<string, (number|boolean)>} newConfig - The config
+     * @param {!Object<string, (number|boolean)>} newConfig - The config
      *   settings for the prettifier.
      * @private
      */
     prettify.setConfig = function(newConfig) {
 
       prettify.debug.start('setConfig', newConfig);
-      prettify.debug.args('setConfig', newConfig, 'object');
+
+      checkArgs(newConfig, '!object');
 
       config = newConfig;
       freezeObj(config);
+
+      prettify.debug.end('setConfig');
     }
 
     /**
@@ -8586,7 +8616,7 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
-     * @return {strings}
+     * @return {!strings}
      * @private
      */
     function prepareLines(solution) {
@@ -8594,8 +8624,11 @@ aIV.utils.set({
       prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('prepareLines', solution);
       prettify.debug.group('init', 'end');
-      prettify.debug.args('prepareLines', solution, 'string');
 
+      checkArgs(solution, 'string');
+
+      /** @type {!strings} */
+      var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
@@ -8614,7 +8647,11 @@ aIV.utils.set({
         solution = solution.replace(/\t/g, '  ');
       }
 
-      return solution.split('\n');
+      lines = solution.split('\n');
+
+      prettify.debug.end('prepareLines', lines);
+
+      return lines;
     }
 
     /**
@@ -8622,8 +8659,8 @@ aIV.utils.set({
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of code lines.
-     * @return {{
+     * @param {!strings} lines - An array of code lines.
+     * @return {!{
      *   result   : string,
      *   lineCount: number
      * }}
@@ -8631,16 +8668,18 @@ aIV.utils.set({
      */
     function applyFormatting(lines) {
 
-      var debugMsg;
       prettify.debug.start('applyFormatting', lines);
-      prettify.debug.args('applyFormatting', lines, 'strings');
+
+      checkArgs(lines, '!strings');
 
       /** @type {number} */
       var i;
       /** @type {number} */
       var len;
-      /** @type {} */
+      /** @type {string} */
       var line;
+      /** @type {!Object} */
+      var result;
 
       commentOpen = false;
       len = lines.length;
@@ -8663,10 +8702,14 @@ aIV.utils.set({
         prettify.debug.group('applyFormatting', 'end');
       }
 
-      return {
+      result = {
         result   : lines.join(''),
         lineCount: len
       };
+
+      prettify.debug.end('applyFormatting', result);
+
+      return result;
     }
 
     /**
@@ -8681,7 +8724,8 @@ aIV.utils.set({
     function prepareLine(line) {
 
       prettify.debug.start('prepareLine', line);
-      prettify.debug.args('prepareLine', line, 'string');
+
+      checkArgs(line, 'string');
 
       /** @type {number} */
       var i;
@@ -8709,7 +8753,7 @@ aIV.utils.set({
         trimPart = ( (frontTrimCount < line.length) ?
           line.substr(0, frontTrimCount) : ''
         );
-        if (trimPart && !/[^\s]/.test(trimPart)) {
+        if (trimPart && !notSpace.test(trimPart)) {
           // Trim full count
           line = line.substr(frontTrimCount);
         }
@@ -8723,6 +8767,8 @@ aIV.utils.set({
         }
       }
 
+      prettify.debug.end('prepareLine', line);
+
       return line;
     }
 
@@ -8734,18 +8780,16 @@ aIV.utils.set({
      * @param {string} cat - The keyword's category.
      * @param {string=} href - The keyword's details link.
      * @param {boolean=} props - Whether the keyword has properties.
-     * @return {Object<string, (string|numberMap)>}
+     * @return {!Object<string, (string|numberMap)>}
      * @private
      */
     function makeKeywordObj(cat, href, props) {
 
-      var debugArgs;
       prettify.debug.start('makeKeywordObj', cat, href, props);
-      debugArgs = [ 'makeKeywordObj' ];
-      debugArgs.push(cat, 'string', href, 'string=', props, 'boolean=');
-      prettify.debug.args(debugArgs);
 
-      /** @type {Object<string, (string|numberMap)>} */
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
+
+      /** @type {!Object<string, (string|numberMap)>} */
       var obj;
 
       href = href || '';
@@ -8757,7 +8801,11 @@ aIV.utils.set({
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return freezeObj(obj);
+      freezeObj(obj);
+
+      prettify.debug.end('makeKeywordObj', obj);
+
+      return obj;
     }
 
     /**
@@ -8766,15 +8814,16 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc Creates a keyword property object.
      * @param {string=} href - The keyword's details link.
-     * @return {stringMap}
+     * @return {!stringMap}
      * @private
      */
     function makePropObj(href) {
 
       prettify.debug.start('makePropObj', href);
-      prettify.debug.args('makePropObj', href, 'string=');
 
-      /** @type {stringMap} */
+      checkArgs(href, 'string=');
+
+      /** @type {!stringMap} */
       var obj;
 
       href = href || '';
@@ -8782,7 +8831,11 @@ aIV.utils.set({
       obj = {};
       obj.href = href;
 
-      return freezeObj(obj);
+      freezeObj(obj);
+
+      prettify.debug.end('makePropObj', obj);
+
+      return obj;
     }
 
 /* -----------------------------------------------------------------------------

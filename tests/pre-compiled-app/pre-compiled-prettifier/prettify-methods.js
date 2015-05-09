@@ -3,17 +3,20 @@
      * Public Method (prettify.setConfig)
      * ---------------------------------------------
      * @desc Sets the config settings for the prettifier.
-     * @param {Object<string, (number|boolean)>} newConfig - The config
+     * @param {!Object<string, (number|boolean)>} newConfig - The config
      *   settings for the prettifier.
      * @private
      */
     prettify.setConfig = function(newConfig) {
 
       prettify.debug.start('setConfig', newConfig);
-      prettify.debug.args('setConfig', newConfig, 'object');
+
+      checkArgs(newConfig, '!object');
 
       config = newConfig;
       freezeObj(config);
+
+      prettify.debug.end('setConfig');
     }
 
     /**
@@ -22,7 +25,7 @@
      * ---------------------------------------------
      * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
-     * @return {strings}
+     * @return {!strings}
      * @private
      */
     function prepareLines(solution) {
@@ -30,8 +33,11 @@
       prettify.debug.group('init', 'coll', 'Open to see original string');
       prettify.debug.start('prepareLines', solution);
       prettify.debug.group('init', 'end');
-      prettify.debug.args('prepareLines', solution, 'string');
 
+      checkArgs(solution, 'string');
+
+      /** @type {!strings} */
+      var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
@@ -50,7 +56,11 @@
         solution = solution.replace(/\t/g, '  ');
       }
 
-      return solution.split('\n');
+      lines = solution.split('\n');
+
+      prettify.debug.end('prepareLines', lines);
+
+      return lines;
     }
 
     /**
@@ -58,8 +68,8 @@
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of code lines.
-     * @return {{
+     * @param {!strings} lines - An array of code lines.
+     * @return {!{
      *   result   : string,
      *   lineCount: number
      * }}
@@ -67,16 +77,18 @@
      */
     function applyFormatting(lines) {
 
-      var debugMsg;
       prettify.debug.start('applyFormatting', lines);
-      prettify.debug.args('applyFormatting', lines, 'strings');
+
+      checkArgs(lines, '!strings');
 
       /** @type {number} */
       var i;
       /** @type {number} */
       var len;
-      /** @type {} */
+      /** @type {string} */
       var line;
+      /** @type {!Object} */
+      var result;
 
       commentOpen = false;
       len = lines.length;
@@ -99,10 +111,14 @@
         prettify.debug.group('applyFormatting', 'end');
       }
 
-      return {
+      result = {
         result   : lines.join(''),
         lineCount: len
       };
+
+      prettify.debug.end('applyFormatting', result);
+
+      return result;
     }
 
     /**
@@ -117,7 +133,8 @@
     function prepareLine(line) {
 
       prettify.debug.start('prepareLine', line);
-      prettify.debug.args('prepareLine', line, 'string');
+
+      checkArgs(line, 'string');
 
       /** @type {number} */
       var i;
@@ -145,7 +162,7 @@
         trimPart = ( (frontTrimCount < line.length) ?
           line.substr(0, frontTrimCount) : ''
         );
-        if (trimPart && !/[^\s]/.test(trimPart)) {
+        if (trimPart && !notSpace.test(trimPart)) {
           // Trim full count
           line = line.substr(frontTrimCount);
         }
@@ -159,6 +176,8 @@
         }
       }
 
+      prettify.debug.end('prepareLine', line);
+
       return line;
     }
 
@@ -170,18 +189,16 @@
      * @param {string} cat - The keyword's category.
      * @param {string=} href - The keyword's details link.
      * @param {boolean=} props - Whether the keyword has properties.
-     * @return {Object<string, (string|numberMap)>}
+     * @return {!Object<string, (string|numberMap)>}
      * @private
      */
     function makeKeywordObj(cat, href, props) {
 
-      var debugArgs;
       prettify.debug.start('makeKeywordObj', cat, href, props);
-      debugArgs = [ 'makeKeywordObj' ];
-      debugArgs.push(cat, 'string', href, 'string=', props, 'boolean=');
-      prettify.debug.args(debugArgs);
 
-      /** @type {Object<string, (string|numberMap)>} */
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
+
+      /** @type {!Object<string, (string|numberMap)>} */
       var obj;
 
       href = href || '';
@@ -193,7 +210,11 @@
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return freezeObj(obj);
+      freezeObj(obj);
+
+      prettify.debug.end('makeKeywordObj', obj);
+
+      return obj;
     }
 
     /**
@@ -202,15 +223,16 @@
      * ---------------------------------------------
      * @desc Creates a keyword property object.
      * @param {string=} href - The keyword's details link.
-     * @return {stringMap}
+     * @return {!stringMap}
      * @private
      */
     function makePropObj(href) {
 
       prettify.debug.start('makePropObj', href);
-      prettify.debug.args('makePropObj', href, 'string=');
 
-      /** @type {stringMap} */
+      checkArgs(href, 'string=');
+
+      /** @type {!stringMap} */
       var obj;
 
       href = href || '';
@@ -218,5 +240,9 @@
       obj = {};
       obj.href = href;
 
-      return freezeObj(obj);
+      freezeObj(obj);
+
+      prettify.debug.end('makePropObj', obj);
+
+      return obj;
     }
