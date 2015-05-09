@@ -34,11 +34,13 @@
     var setup;
     /** @type {function} */
     var callback;
+    /** @type {string} */
+    var types;
     /** @type {number} */
     var i;
 
     if (appHasBeenInitialized) {
-      return;
+      throw new Error('The aIV.app init call was made a second time.');
     }
 
     // Save the init of this app to prevent second init
@@ -69,22 +71,31 @@
         settings.question : []
     );
 
-    logAppInitTypeErrors(resourceList, config, sources, categories, questions);
-
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
+      types = 'null, a string, or an array of strings';
+      logStartAppTypeError('resources', types, getTypeOf(resourceList));
       resourceList = null;
     }
     if ( !checkType(config, 'objectMap') ) {
+      types = 'null or an object with string => object pairs';
+      logStartAppTypeError('config', types, getTypeOf(config));
       config = null;
     }
     if ( !checkType(sources, 'stringMap') ) {
+      types = 'null or an object with string => string pairs';
+      logStartAppTypeError('sources', types, getTypeOf(sources));
       sources = null;
     }
     if ( !checkType(categories, 'stringMap|objectMap') ) {
+      types = 'null or an object with string => object or ';
+      types += 'string => string pairs';
+      logStartAppTypeError('categories', types, getTypeOf(categories));
       categories = null;
     }
     if ( !checkType(questions, '!objects') ) {
+      types = 'an array of question objects';
+      logStartAppTypeError('questions', types, getTypeOf(questions));
       questions = [];
     }
 
@@ -113,10 +124,10 @@
         })(resourceList[i], callback);
       }
       getResource(resourceList[0], callback);
-      return;
     }
-
-    setup();
+    else {
+      setup();
+    }
   };
 
   /**

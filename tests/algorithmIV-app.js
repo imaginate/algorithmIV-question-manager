@@ -69,7 +69,7 @@ g.length;d--;)k=a[g[d]],a[g[d]]=c.call(k,a);else for(d=l.length;d--;)k=a[l[d]],f
 typeof e)throw new TypeError("An Object.keys call received an invalid object parameter. Note: It only accepts non-null objects and functions.");f=[];for(c in e)e.hasOwnProperty(c)&&f.push(c);if(a)for(c=b.length;c--;)e.hasOwnProperty(b[c])&&f.push(b[c]);return f}}());Object.freeze||(Object.freeze=function(a){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An Object.freeze call received an invalid object parameter. Note: It only accepts non-null objects and functions.");return a});
 try{Object.freeze(function(){})}catch(p){Object.freeze=function(a){return function(b){return"function"===typeof b?b:a(b)}}(Object.freeze)}Object.isFrozen||(Object.isFrozen=function(a){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An Object.isFrozen call received an invalid object parameter. Note: It only accepts non-null objects and functions.");return!0});Array.isArray||(Array.isArray=function(a){return"[object Array]"===Object.prototype.toString.call(a)})})(window,document);
 
-/* Algorithm IV JavaScript Shortcuts (v1.0.3) (learn@algorithmiv.com)
+/* Algorithm IV JavaScript Shortcuts (v1.0.4) (learn@algorithmiv.com)
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
  * The Apache License (algorithmiv.com/docs/license) */
@@ -81,11 +81,11 @@ document:9}[b]:!1};return function(h,d,r){var p,v,q,g;if(!f(d,"string"))throw ne
 t}q=p||!g||k.test(d)?!1:m.test(d);p=p||q&&g;if(!r||!p)if(d=d.toLowerCase(),d=d.replace(w.exceptLowerAlphaAndPipe,""),v=d.split("|"),!r)for(d=v,t=!0,r=d.length;t&&r--;)if(t=w.allDataTypes.test(d[r]),!t)throw h=void 0,h="An aIV.utils.checkType call received an invalid type ",h+="string. The value '"+d[r]+"' was incorrect. ",h+="Check aIV.utils.checkType's documentation for a ",h+="list of acceptable type strings.",Error(h);if(!p){if(null===h){h=v;p=q;d=!1;for(v=h.length;!d&&v--;)g||(p=!a.test(h[v])),
 d=p;h=d}else{p=v;g=!1;for(v=p.length;!g&&v--;){d=p[v];if("any"===d){g=!0;break}if(b.test(d))g=f(h,d);else if(c.test(d))g=u(h,d);else if(e.test(d))if(g=h,t=q=r=void 0,Array.isArray(g))if("array"===d)g=!0;else{d=d.slice(0,-1);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r=g.length;q&&r--;)q=t(g[r],d);g=q}else g=!1;else if(z.test(d))if(g=h,t=q=r=void 0,f(g,"object")){d=d.slice(0,-3);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r in g)if(g.hasOwnProperty(r)&&(q=t(g[r],d),!q))break;g=q}else g=
 !1}h=g}p=h}return p}}();e.isValidTypeString=function(a){var b,c;if("string"!==typeof a)throw new TypeError("An aIV.utils.isValidTypeString call received an invalid (a non-string) typeString parameter.");a=a.toLowerCase();a=a.replace(w.exceptLowerAlphaAndPipe,"");c=a.split("|");b=!0;for(a=c.length;b&&a--;)b=w.allDataTypes.test(c[a]);return b};e.checkArgs=function(){var a=e.checkType,b=e.isValidTypeString;return function(){var c,e,f,k,n,l,u;e=arguments.length;if(2>e||e%2)throw Error("An aIV.utils.checkArgs call was missing parameters.");
-n=Array.prototype.slice.call(arguments,0);l=!0;for(c=-1;++c<e;)if(c%2){k=n[c];u=(u=a(k,"string",!0))&&b(k);if(!u)throw l=void 0,l="An aIV.utils.checkArgs call received an invalid type ",l+="string. The value '"+k+"' was incorrect. ",l+="Check aIV.utils.checkType's documentation for a ",l+="list of acceptable type strings.",Error(l);l=l&&a(f,k,!0)}else f=n[c];if(!l&&(k=m.checkArgsErrorMsg,(k=a(k,"string")?k:k())&&a(k,"string")))throw new TypeError(k);return l}}();e.freezeObj=function(){var a=function(b){var c;
-Object.freeze(b);for(c in b)b.hasOwnProperty(c)&&b[c]&&("object"===typeof b[c]||"function"===typeof b[c])&&a(b[c])};return function(b,c){if(!b||"object"!==typeof b&&"function"!==typeof b)throw new TypeError("An aIV.utils.freezeObj call received an invalid obj parameter.");"boolean"!==typeof c&&(c=!1);c?a(b):Object.freeze(b);return b}}();e.hasOwnProp=function(a,b){var c;if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An aIV.utils.hasOwnProp call received an invalid obj parameter.");
-if(!b||"string"!==typeof b)throw c="An aIV.utils.hasOwnProp call received an invalid prop parameter.",new TypeError(c);return a.hasOwnProperty(b)};var w={allDataTypes:/^any$|^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|^element$|^undefined$|^null$|^document$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,exceptLowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(w,
-!0);e.getElemById=function(a){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemById call received an invalid id parameter (should be a string).");a=n.getElementById(a);if(!a)throw a="An aIV.utils.getElemById call received an invalid id parameter (i.e. no element with the id was found).",new RangeError(a);return a};e.getElemByClass=function(a,b,c){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemByClass call received an invalid class name parameter.");b="number"!==
-typeof b||-1>b?0:Math.floor(b);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByClassRoot);a=c.getElementsByClassName?c.getElementsByClassName(a):x.getElementsByClassNameAlt(a,c);if(0>b||b>=a.length)b=a.length-1;b=a[b];if(!b)throw b="An aIV.utils.getElemByClass call received an invalid class name parameter ",b+="(i.e. no element with the class name was found).",new RangeError(b);return b};e.getElemsByClass=function(a,b){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemsByClass call received an invalid class name parameter.");
+n=Array.prototype.slice.call(arguments,0);l=!0;for(c=-1;++c<e;)if(c%2){k=n[c];u=(u=a(k,"string",!0))&&b(k);if(!u)throw l=void 0,l="An aIV.utils.checkArgs call received an invalid type ",l+="string. The value '"+k+"' was incorrect. ",l+="Check aIV.utils.checkType's documentation for a ",l+="list of acceptable type strings.",Error(l);l=l&&a(f,k,!0)}else f=n[c];if(!l&&(k=m.checkArgsErrorMsg,(k=a(k,"string")?k:k())&&a(k,"string")))throw new TypeError(k);return l}}();e.getTypeOf=function(){var a=e.checkType;
+return function(b){var c;c=typeof b;"object"===c&&a(b,"document|element|array")&&(c=null===b?"null":Array.isArray(b)?"array":1===b.nodeType?"element":"document");return c}}();e.freezeObj=function(){var a=function(b){var c;Object.freeze(b);for(c in b)b.hasOwnProperty(c)&&b[c]&&("object"===typeof b[c]||"function"===typeof b[c])&&a(b[c])};return function(b,c){if(!b||"object"!==typeof b&&"function"!==typeof b)throw new TypeError("An aIV.utils.freezeObj call received an invalid obj parameter.");"boolean"!==
+typeof c&&(c=!1);c?a(b):Object.freeze(b);return b}}();e.hasOwnProp=function(a,b){var c;if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An aIV.utils.hasOwnProp call received an invalid obj parameter.");if(!b||"string"!==typeof b)throw c="An aIV.utils.hasOwnProp call received an invalid prop parameter.",new TypeError(c);return a.hasOwnProperty(b)};var w={allDataTypes:/^any$|^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|^element$|^undefined$|^null$|^document$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,
+exceptLowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(w,!0);e.getElemById=function(a){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemById call received an invalid id parameter (should be a string).");a=n.getElementById(a);if(!a)throw a="An aIV.utils.getElemById call received an invalid id parameter (i.e. no element with the id was found).",new RangeError(a);return a};e.getElemByClass=function(a,b,c){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemByClass call received an invalid class name parameter.");
+b="number"!==typeof b||-1>b?0:Math.floor(b);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByClassRoot);a=c.getElementsByClassName?c.getElementsByClassName(a):x.getElementsByClassNameAlt(a,c);if(0>b||b>=a.length)b=a.length-1;b=a[b];if(!b)throw b="An aIV.utils.getElemByClass call received an invalid class name parameter ",b+="(i.e. no element with the class name was found).",new RangeError(b);return b};e.getElemsByClass=function(a,b){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemsByClass call received an invalid class name parameter.");
 b&&"object"===typeof b&&(b instanceof Element||b instanceof Document)||(b=m.getElemsByClassRoot);return b.getElementsByClassName?b.getElementsByClassName(a):x.getElementsByClassNameAlt(a,b)};e.getElemByTag=function(a,b,c){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemByTag call received an invalid tag name parameter.");b="number"!==typeof b||-1>b?0:Math.floor(b);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByTagRoot);a=c.getElementsByTagName(a);
 if(0>b||b>=a.length)b=a.length-1;b=a[b];if(!b)throw b="An aIV.utils.getElemByTag call received an invalid tag name parameter ",b+="(i.e. no element with the tag name was found).",new RangeError(b);return b};e.getElemsByTag=function(a,b){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemsByTag call received an invalid tag name parameter.");b&&"object"===typeof b&&(b instanceof Element||b instanceof Document)||(b=m.getElemsByTagRoot);return b.getElementsByTagName(a)};e.makeElem=function(a){var b;
 a&&"string"===typeof a?(b=a,a=null):a&&"object"===typeof a?a.hasOwnProperty("tag")&&a.tag&&"string"===typeof a.tag?b=a.tag:a.hasOwnProperty("tagName")&&a.tagName&&"string"===typeof a.tagName&&(b=a.tagName):a=null;b||(b="div");b=n.createElement(b);a&&(a.hasOwnProperty("text")&&a.text&&"string"===typeof a.text&&(b.textContent?b.textContent=a.text:b.innerText=a.text),a.hasOwnProperty("html")&&a.html&&"string"===typeof a.html&&(b.innerHTML=a.html),a.hasOwnProperty("id")&&a.id&&"string"===typeof a.id&&
@@ -188,11 +188,13 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
     var setup;
     /** @type {function} */
     var callback;
+    /** @type {string} */
+    var types;
     /** @type {number} */
     var i;
 
     if (appHasBeenInitialized) {
-      return;
+      throw new Error('The aIV.app init call was made a second time.');
     }
 
     // Save the init of this app to prevent second init
@@ -223,22 +225,31 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
         settings.question : []
     );
 
-    logAppInitTypeErrors(resourceList, config, sources, categories, questions);
-
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
+      types = 'null, a string, or an array of strings';
+      logStartAppTypeError('resources', types, getTypeOf(resourceList));
       resourceList = null;
     }
     if ( !checkType(config, 'objectMap') ) {
+      types = 'null or an object with string => object pairs';
+      logStartAppTypeError('config', types, getTypeOf(config));
       config = null;
     }
     if ( !checkType(sources, 'stringMap') ) {
+      types = 'null or an object with string => string pairs';
+      logStartAppTypeError('sources', types, getTypeOf(sources));
       sources = null;
     }
     if ( !checkType(categories, 'stringMap|objectMap') ) {
+      types = 'null or an object with string => object or ';
+      types += 'string => string pairs';
+      logStartAppTypeError('categories', types, getTypeOf(categories));
       categories = null;
     }
     if ( !checkType(questions, '!objects') ) {
+      types = 'an array of question objects';
+      logStartAppTypeError('questions', types, getTypeOf(questions));
       questions = [];
     }
 
@@ -267,10 +278,10 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
         })(resourceList[i], callback);
       }
       getResource(resourceList[0], callback);
-      return;
     }
-
-    setup();
+    else {
+      setup();
+    }
   };
 
   /**
@@ -368,12 +379,13 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   function getResource(jsonFile, callback) {
 
     debug.start('getResource', jsonFile, callback);
-    debug.args('getResource', jsonFile, 'string', callback, 'function');
+
+    checkArgs(jsonFile, 'string', callback, 'function');
 
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
-    var msg;
+    var errorMsg;
 
     http = new XMLHttpRequest();
     http.onreadystatechange = function() {
@@ -383,11 +395,11 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
           debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
-          msg = 'Your resource - resources/' + jsonFile + '.json - ';
-          msg += 'failed to load. Please ensure your resources folder ';
-          msg += 'is in the same directory as algorithmIV-app.js. ';
-          msg += 'XMLHttpRequest.statusText= ' + http.statusText;
-          console.error(msg);
+          errorMsg = 'Your resource - resources/' + jsonFile + '.json - ';
+          errorMsg += 'failed to load. Please ensure your resources folder ';
+          errorMsg += 'is in the same directory as algorithmIV-app.js. ';
+          errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
+          throw new Error(errorMsg);
         }
         debug.end('getResource');
         callback();
@@ -520,6 +532,18 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   var hasOwnProp = aIV.utils.hasOwnProp;
 
   /**
+   * ---------------------------------------------
+   * Public Method (getTypeOf)
+   * ---------------------------------------------
+   * @desc A shortcut for the native typeof operator that additionally
+   *   distinguishes null, array, document, and element types from an
+   *   object type.
+   * @param {*} val - The value to get the typeof.
+   * @return {string} The value's type.
+   */
+  var getTypeOf = aIV.utils.getTypeOf;
+
+  /**
    * ---------------------------------------------------
    * Public Method (checkType)
    * ---------------------------------------------------
@@ -533,6 +557,23 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
    * @return {boolean} The evaluation result.
    */
   var checkType = aIV.utils.checkType;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkArgs)
+   * ---------------------------------------------------
+   * @desc Catches invalid argument data types and throws an error.
+   * @param {...*} val - Each argument passed to the method.
+   * @param {...string} type -  Each argument's optional data types.
+   *   [See aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}
+   *   for the available data type strings.
+   * @return {boolean} The evaluation result.
+   * @example
+   *   exampleMethod = function(arg1, arg2) {
+   *     checkArgs(arg1, '!object', arg2, 'number=');
+   *   };
+   */
+  var checkArgs = aIV.utils.checkArgs;
 
   /**
    * ---------------------------------------------------
@@ -557,9 +598,9 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
    */
   function checkTypes(vals, types) {
 
-    var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
-    debug.args('checkTypes', vals, '!array', types, '!string|strings');
+
+    checkArgs(vals, '!array', types, '!string|strings');
 
     /** @type {number} */
     var i;
@@ -569,6 +610,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
     var type;
     /** @type {boolean} */
     var pass;
+    /** @type {string} */
+    var errorMsg;
 
     if ( checkType(types, 'string') ) {
       type = types;
@@ -579,17 +622,17 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
       }
     }
 
-    debugMsg = 'Error: The length of the arguments to be checked ';
-    debugMsg += 'were not the same. vals= $$, types= $$';
-    debugCheck = (vals.length === types.length);
-    debug.fail('checkTypes', debugCheck, debugMsg, vals, types);
+    if (vals.length !== types.length) {
+      errorMsg = 'An aIV.app checkTypes call received an invalid parameter. ';
+      errorMsg += 'The length of the vals and types arrays did not match.';
+      throw new Error(errorMsg);
+      return;
+    }
 
+    pass = true;
     i = vals.length;
-    while (i--) {
+    while (pass && i--) {
       pass = checkType(vals[i], types[i]);
-      if (!pass) {
-        break;
-      }
     }
 
     debug.end('checkTypes', pass);
@@ -609,7 +652,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   function sortKeys(ids, data) {
 
     debug.start('sortKeys', ids, data);
-    debug.args('sortKeys', ids, '!strings', data, '!stringMap');
+
+    checkArgs(ids, '!strings', data, '!stringMap');
 
     /** @type {!strings} */
     var keys;
@@ -679,7 +723,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   function capFirst(str) {
 
     debug.start('capFirst', str);
-    debug.args('capFirst', str, 'string');
+
+    checkArgs(str, 'string');
 
     str = str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -700,7 +745,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
   function camelCase(str) {
 
     debug.start('camelCase', str);
-    debug.args('camelCase', str, 'string');
+
+    checkArgs(str, 'string');
 
     /** @type {!strings} */
     var arr;
@@ -743,7 +789,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
     return function trimFunctionWrapper(str) {
 
       debug.start('trimFunctionWrapper', str);
-      debug.args('trimFunctionWrapper', str, 'string');
+
+      checkArgs(str, 'string');
 
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
@@ -774,7 +821,8 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
     return function isLink(str) {
 
       debug.start('isLink', str);
-      debug.args('isLink', str, 'string');
+
+      checkArgs(str, 'string');
 
       /** @type {boolean} */
       var result;
@@ -789,69 +837,27 @@ b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.
 
   /**
    * ---------------------------------------------------
-   * Public Method (logAppInitTypeErrors)
+   * Public Method (logStartAppTypeError)
    * ---------------------------------------------------
-   * @desc A helper method that checks the user's supplied app settings and
-   *   logs any type errors it finds.
-   * @param {*} resourceList
-   * @param {*} config
-   * @param {*} sources
-   * @param {*} categories
-   * @param {*} questions
+   * @desc Logs appModuleAPI.startApp type errors for settings properties.
+   * @param {string} prop - The failed settings property's name.
+   * @param {string} shouldBeType - The property's acceptable data types.
+   * @param {string} wasType - The property's actual data type.
    */
-  function logAppInitTypeErrors(resourceList, config, sources,
-                                categories, questions) {
+  function logStartAppTypeError(prop, shouldBeType, wasType) {
 
-    debugArgs = [ 'logAppInitTypeErrors', resourceList, config, sources ];
-    debugArgs.push(categories, questions);
-    debug.start(debugArgs);
+    debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
+
+    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
 
     /** @type {string} */
     var errorMsg;
 
-    if ( !checkType(resourceList, '?(string|strings)') ) {
-      errorMsg = 'Your aIV.app settings property, resources, was an incorrect ';
-      errorMsg += 'data type. It should be null, a string, or an array of ';
-      errorMsg += 'strings. The given typeof resources was \'';
-      errorMsg += typeof resourceList + '\'.';
-      console.error(errorMsg);
-    }
+    errorMsg = 'Your aIV.app settings property, ' + prop + ', was an ';
+    errorMsg += 'incorrect data type. It should be ' + shouldBeType + '. ';
+    errorMsg += 'The given typeof ' + prop + ' was \'' + wasType + '\'.';
 
-    if ( !checkType(config, 'objectMap') ) {
-      errorMsg = 'Your aIV.app settings property, config, was an incorrect ';
-      errorMsg += 'data type. It should be null or an object with string => ';
-      errorMsg += 'object pairs. The given typeof config was \'';
-      errorMsg += typeof config + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(sources, 'stringMap') ) {
-      errorMsg = 'Your aIV.app settings property, sources, was an incorrect ';
-      errorMsg += 'data type. It should be null or an object with string => ';
-      errorMsg += 'string pairs. The given typeof sources was \'';
-      errorMsg += typeof sources + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(categories, 'stringMap|objectMap') ) {
-      errorMsg = 'Your aIV.app settings property, categories, was an ';
-      errorMsg += 'incorrect data type. It should be null or an object with ';
-      errorMsg += 'string => object or string => string pairs. The given ';
-      errorMsg += 'typeof categories was \'' + typeof categories + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(questions, '!objects') ) {
-      errorMsg = 'Your aIV.app settings property, questions, was an ';
-      errorMsg += 'incorrect data type. It should be an array of question ';
-      errorMsg += 'objects. The given typeof questions was \'';
-      errorMsg += ( (questions === null) ?
-        'null' : ( checkType(questions, '!array') ) ?
-          'array' : typeof questions
-      );
-      errorMsg += '\'.';
-      console.error(errorMsg);
-    }
+    console.error(errorMsg);
 
     debug.end('logAppInitTypeErrors');
   }

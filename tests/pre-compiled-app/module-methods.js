@@ -10,12 +10,13 @@
   function getResource(jsonFile, callback) {
 
     debug.start('getResource', jsonFile, callback);
-    debug.args('getResource', jsonFile, 'string', callback, 'function');
+
+    checkArgs(jsonFile, 'string', callback, 'function');
 
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
-    var msg;
+    var errorMsg;
 
     http = new XMLHttpRequest();
     http.onreadystatechange = function() {
@@ -25,11 +26,11 @@
           debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
-          msg = 'Your resource - resources/' + jsonFile + '.json - ';
-          msg += 'failed to load. Please ensure your resources folder ';
-          msg += 'is in the same directory as algorithmIV-app.js. ';
-          msg += 'XMLHttpRequest.statusText= ' + http.statusText;
-          console.error(msg);
+          errorMsg = 'Your resource - resources/' + jsonFile + '.json - ';
+          errorMsg += 'failed to load. Please ensure your resources folder ';
+          errorMsg += 'is in the same directory as algorithmIV-app.js. ';
+          errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
+          throw new Error(errorMsg);
         }
         debug.end('getResource');
         callback();
@@ -162,6 +163,18 @@
   var hasOwnProp = aIV.utils.hasOwnProp;
 
   /**
+   * ---------------------------------------------
+   * Public Method (getTypeOf)
+   * ---------------------------------------------
+   * @desc A shortcut for the native typeof operator that additionally
+   *   distinguishes null, array, document, and element types from an
+   *   object type.
+   * @param {*} val - The value to get the typeof.
+   * @return {string} The value's type.
+   */
+  var getTypeOf = aIV.utils.getTypeOf;
+
+  /**
    * ---------------------------------------------------
    * Public Method (checkType)
    * ---------------------------------------------------
@@ -175,6 +188,23 @@
    * @return {boolean} The evaluation result.
    */
   var checkType = aIV.utils.checkType;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkArgs)
+   * ---------------------------------------------------
+   * @desc Catches invalid argument data types and throws an error.
+   * @param {...*} val - Each argument passed to the method.
+   * @param {...string} type -  Each argument's optional data types.
+   *   [See aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}
+   *   for the available data type strings.
+   * @return {boolean} The evaluation result.
+   * @example
+   *   exampleMethod = function(arg1, arg2) {
+   *     checkArgs(arg1, '!object', arg2, 'number=');
+   *   };
+   */
+  var checkArgs = aIV.utils.checkArgs;
 
   /**
    * ---------------------------------------------------
@@ -199,9 +229,9 @@
    */
   function checkTypes(vals, types) {
 
-    var debugMsg, debugCheck;
     debug.start('checkTypes', vals, types);
-    debug.args('checkTypes', vals, '!array', types, '!string|strings');
+
+    checkArgs(vals, '!array', types, '!string|strings');
 
     /** @type {number} */
     var i;
@@ -211,6 +241,8 @@
     var type;
     /** @type {boolean} */
     var pass;
+    /** @type {string} */
+    var errorMsg;
 
     if ( checkType(types, 'string') ) {
       type = types;
@@ -221,17 +253,17 @@
       }
     }
 
-    debugMsg = 'Error: The length of the arguments to be checked ';
-    debugMsg += 'were not the same. vals= $$, types= $$';
-    debugCheck = (vals.length === types.length);
-    debug.fail('checkTypes', debugCheck, debugMsg, vals, types);
+    if (vals.length !== types.length) {
+      errorMsg = 'An aIV.app checkTypes call received an invalid parameter. ';
+      errorMsg += 'The length of the vals and types arrays did not match.';
+      throw new Error(errorMsg);
+      return;
+    }
 
+    pass = true;
     i = vals.length;
-    while (i--) {
+    while (pass && i--) {
       pass = checkType(vals[i], types[i]);
-      if (!pass) {
-        break;
-      }
     }
 
     debug.end('checkTypes', pass);
@@ -251,7 +283,8 @@
   function sortKeys(ids, data) {
 
     debug.start('sortKeys', ids, data);
-    debug.args('sortKeys', ids, '!strings', data, '!stringMap');
+
+    checkArgs(ids, '!strings', data, '!stringMap');
 
     /** @type {!strings} */
     var keys;
@@ -321,7 +354,8 @@
   function capFirst(str) {
 
     debug.start('capFirst', str);
-    debug.args('capFirst', str, 'string');
+
+    checkArgs(str, 'string');
 
     str = str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -342,7 +376,8 @@
   function camelCase(str) {
 
     debug.start('camelCase', str);
-    debug.args('camelCase', str, 'string');
+
+    checkArgs(str, 'string');
 
     /** @type {!strings} */
     var arr;
@@ -385,7 +420,8 @@
     return function trimFunctionWrapper(str) {
 
       debug.start('trimFunctionWrapper', str);
-      debug.args('trimFunctionWrapper', str, 'string');
+
+      checkArgs(str, 'string');
 
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
@@ -416,7 +452,8 @@
     return function isLink(str) {
 
       debug.start('isLink', str);
-      debug.args('isLink', str, 'string');
+
+      checkArgs(str, 'string');
 
       /** @type {boolean} */
       var result;
@@ -431,69 +468,27 @@
 
   /**
    * ---------------------------------------------------
-   * Public Method (logAppInitTypeErrors)
+   * Public Method (logStartAppTypeError)
    * ---------------------------------------------------
-   * @desc A helper method that checks the user's supplied app settings and
-   *   logs any type errors it finds.
-   * @param {*} resourceList
-   * @param {*} config
-   * @param {*} sources
-   * @param {*} categories
-   * @param {*} questions
+   * @desc Logs appModuleAPI.startApp type errors for settings properties.
+   * @param {string} prop - The failed settings property's name.
+   * @param {string} shouldBeType - The property's acceptable data types.
+   * @param {string} wasType - The property's actual data type.
    */
-  function logAppInitTypeErrors(resourceList, config, sources,
-                                categories, questions) {
+  function logStartAppTypeError(prop, shouldBeType, wasType) {
 
-    debugArgs = [ 'logAppInitTypeErrors', resourceList, config, sources ];
-    debugArgs.push(categories, questions);
-    debug.start(debugArgs);
+    debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
+
+    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
 
     /** @type {string} */
     var errorMsg;
 
-    if ( !checkType(resourceList, '?(string|strings)') ) {
-      errorMsg = 'Your aIV.app settings property, resources, was an incorrect ';
-      errorMsg += 'data type. It should be null, a string, or an array of ';
-      errorMsg += 'strings. The given typeof resources was \'';
-      errorMsg += typeof resourceList + '\'.';
-      console.error(errorMsg);
-    }
+    errorMsg = 'Your aIV.app settings property, ' + prop + ', was an ';
+    errorMsg += 'incorrect data type. It should be ' + shouldBeType + '. ';
+    errorMsg += 'The given typeof ' + prop + ' was \'' + wasType + '\'.';
 
-    if ( !checkType(config, 'objectMap') ) {
-      errorMsg = 'Your aIV.app settings property, config, was an incorrect ';
-      errorMsg += 'data type. It should be null or an object with string => ';
-      errorMsg += 'object pairs. The given typeof config was \'';
-      errorMsg += typeof config + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(sources, 'stringMap') ) {
-      errorMsg = 'Your aIV.app settings property, sources, was an incorrect ';
-      errorMsg += 'data type. It should be null or an object with string => ';
-      errorMsg += 'string pairs. The given typeof sources was \'';
-      errorMsg += typeof sources + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(categories, 'stringMap|objectMap') ) {
-      errorMsg = 'Your aIV.app settings property, categories, was an ';
-      errorMsg += 'incorrect data type. It should be null or an object with ';
-      errorMsg += 'string => object or string => string pairs. The given ';
-      errorMsg += 'typeof categories was \'' + typeof categories + '\'.';
-      console.error(errorMsg);
-    }
-
-    if ( !checkType(questions, '!objects') ) {
-      errorMsg = 'Your aIV.app settings property, questions, was an ';
-      errorMsg += 'incorrect data type. It should be an array of question ';
-      errorMsg += 'objects. The given typeof questions was \'';
-      errorMsg += ( (questions === null) ?
-        'null' : ( checkType(questions, '!array') ) ?
-          'array' : typeof questions
-      );
-      errorMsg += '\'.';
-      console.error(errorMsg);
-    }
+    console.error(errorMsg);
 
     debug.end('logAppInitTypeErrors');
   }
