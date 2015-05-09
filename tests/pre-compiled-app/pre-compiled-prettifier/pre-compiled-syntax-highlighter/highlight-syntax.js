@@ -13,7 +13,8 @@
       var highlightSyntax = function(line) {
 
         highlightSyntax.debug.start('init', line);
-        highlightSyntax.debug.args('init', line, 'string');
+
+        checkArgs(line, 'string');
 
         prepareLine(line);
         formatLine();

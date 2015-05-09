@@ -8857,7 +8857,8 @@ aIV.utils.set({
       var highlightSyntax = function(line) {
 
         highlightSyntax.debug.start('init', line);
-        highlightSyntax.debug.args('init', line, 'string');
+
+        checkArgs(line, 'string');
 
         prepareLine(line);
         formatLine();
@@ -8920,7 +8921,7 @@ aIV.utils.set({
        * ---------------------------------------------
        * @desc A hash map that stores the matching character
        *  formatting methods.
-       * @type {objectMap}
+       * @type {!objectMap}
        * @private
        */
       var router = {
@@ -8962,6 +8963,7 @@ aIV.utils.set({
         '9': formatNumber,
         '/': handleSlash
       };
+
       freezeObj(router);
 
 /* -----------------------------------------------------------------------------
@@ -8980,9 +8982,9 @@ aIV.utils.set({
        */
       function prepareLine(line) {
 
-        var debugMsg;
         highlightSyntax.debug.start('prepareLine', line);
-        highlightSyntax.debug.args('prepareLine', line, 'string');
+
+        checkArgs(line, 'string');
 
         orgLine = line.split('');
         freezeObj(orgLine);
@@ -8992,6 +8994,8 @@ aIV.utils.set({
 
         debugMsg = 'lineLen= $$, lastIndex= $$';
         highlightSyntax.debug.state('prepareLine', debugMsg, lineLen, lastIndex);
+
+        highlightSyntax.debug.end('prepareLine');
       }
 
       /**
@@ -9025,6 +9029,8 @@ aIV.utils.set({
           );
           i = format(i);
         }
+
+        highlightSyntax.debug.end('formatLine');
       }
 
       /**
@@ -9039,38 +9045,48 @@ aIV.utils.set({
       function handleSlash(i) {
 
         highlightSyntax.debug.start('handleSlash', i);
-        highlightSyntax.debug.args('handleSlash', i, 'number');
 
-        /** @type {val} */
+        checkArgs(i, 'number');
+
+        /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
+        /** @type {number} */
+        var ii;
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
-          return formatLineComment(i);
+          ii = formatLineComment(i);
         }
-
         // Handle comment opening
-        if (orgLine[i + 1] === '*') {
-          return formatCommentOpen(i);
+        else if (orgLine[i + 1] === '*') {
+          ii = formatCommentOpen(i);
         }
+        else {
 
-        // Save preceding character
-        preceding = ( (orgLine[i - 1] === ' ') ?
-          orgLine[i - 2] : orgLine[i - 1]
-        );
+          // Save preceding character
+          preceding = ( (orgLine[i - 1] === ' ') ?
+            orgLine[i - 2] : orgLine[i - 1]
+          );
 
-        // Handle RegExp
-        if (i === 0 || preRegex.test(preceding)) {
-          end = isRegex(i);
-          if (end) {
-            return formatRegex(i, end);
+          // Handle RegExp
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end) {
+              ii = formatRegex(i, end);
+            }
           }
         }
 
         // Handle operator
-        return formatOperator(i);
+        if (!ii) {
+          ii = formatOperator(i);
+        }
+
+        highlightSyntax.debug.end('handleSlash', ii);
+
+        return ii;
       }
 
       /**
@@ -9085,40 +9101,29 @@ aIV.utils.set({
        */
       function isRegex(i) {
 
-        var debugMsg;
         highlightSyntax.debug.start('isRegex', i);
-        highlightSyntax.debug.args('isRegex', i, 'number');
+
+        checkArgs(i, 'number');
 
         /** @type {number} */
         var end;
         /** @type {string} */
         var regexBody;
 
-        end = i + 1;
-
-        if (orgLine[end] === '/') {
-          return 0;
-        }
+        end = (orgLine[i + 1] === '/') ? -1 : i;
 
         // Find regex end index
-        while (true) {
-
-          if (end >= lineLen) {
-            return 0;
-          }
+        while (++end && end < lineLen && orgLine[end] !== '/') {
 
           sanitizeCharacter(end);
 
           if (orgLine[end] === '\\') {
             ++end;
-            continue;
           }
+        }
 
-          if (orgLine[end] === '/') {
-            break;
-          }
-
-          ++end;
+        if (end >= lineLen) {
+          end = 0;
         }
 
         regexBody = orgLine.slice(++i, end).join('');
@@ -9128,9 +9133,11 @@ aIV.utils.set({
         }
         catch (e) {
           debugMsg = 'new RegExp(regexBody) error= $$';
-          highlightSyntax.debug.state('isRegex', debugMsg, e);
+          highlightSyntax.debug.state('isRegex', debugMsg, e.toString());
           end = 0;
         }
+
+        highlightSyntax.debug.end('isRegex', end);
 
         return end;
       }
@@ -9146,11 +9153,14 @@ aIV.utils.set({
       function sanitizeCharacter(i) {
 
         highlightSyntax.debug.start('sanitizeCharacter', i);
-        highlightSyntax.debug.args('sanitizeCharacter', i, 'number');
 
-        if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
+        checkArgs(i, 'number');
+
+        if ( hasOwnProp(htmlEntity, orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
+
+        highlightSyntax.debug.end('sanitizeCharacter');
       }
 
       /**
@@ -9165,21 +9175,22 @@ aIV.utils.set({
       function skipComment(i) {
 
         highlightSyntax.debug.start('skipComment', i);
-        highlightSyntax.debug.args('skipComment', i, 'number');
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (i >= lineLen) {
-            return i;
-          }
+        while (++i < lineLen) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '*' && i !== lastIndex && orgLine[i + 1] === '/') {
-            return ++i;
+            ++i;
+            break;
           }
         }
+
+        highlightSyntax.debug.end('skipComment', i);
+
+        return i;
       }
 
       /**
@@ -9194,31 +9205,30 @@ aIV.utils.set({
       function skipString(i) {
 
         highlightSyntax.debug.start('skipString', i);
-        highlightSyntax.debug.args('skipString', i, 'number');
+
+        checkArgs(i, 'number');
 
         /** @type {string} */
-        var stringType;
+        var strCharacter;
 
-        stringType = orgLine[i];
+        strCharacter = orgLine[i];
 
-        while (true) {
-          ++i;
-
-          if (i >= lineLen) {
-            return lastIndex;
-          }
+        while (++i < lineLen && orgLine[i] !== strCharacter) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '\\') {
             ++i;
-            continue;
-          }
-
-          if (orgLine[i] === stringType) {
-            return i;
           }
         }
+
+        if (i >= lineLen) {
+          i = lastIndex;
+        }
+
+        highlightSyntax.debug.end('skipString', i);
+
+        return i;
       }
 
       /**
@@ -9233,15 +9243,16 @@ aIV.utils.set({
       function skipSpace(i) {
 
         highlightSyntax.debug.start('skipSpace', i);
-        highlightSyntax.debug.args('skipSpace', i, 'number');
 
-        while (true) {
+        checkArgs(i, 'number');
+
+        while (orgLine[i + 1] === ' ') {
           ++i;
-
-          if (orgLine[i] !== ' ') {
-            return --i;
-          }
         }
+
+        highlightSyntax.debug.end('skipSpace', i);
+
+        return i;
       }
 
       /**
@@ -9256,7 +9267,8 @@ aIV.utils.set({
       function skipNumber(i) {
 
         highlightSyntax.debug.start('skipNumber', i);
-        highlightSyntax.debug.args('skipNumber', i, 'number');
+
+        checkArgs(i, 'number');
 
         /** @type {string} */
         var hexStart;
@@ -9268,17 +9280,12 @@ aIV.utils.set({
           hexNumbers : plainNumbers
         );
 
-        while (true) {
-          ++i;
+        while (++i < lineLen && numberOpts.test(orgLine[i])) {}
+        --i;
 
-          if (i === lineLen) {
-            return lastIndex;
-          }
+        highlightSyntax.debug.end('skipNumber', i);
 
-          if ( !numberOpts.test(orgLine[i]) ) {
-            return --i;
-          }
-        }
+        return i;
       }
 
       /**
@@ -9287,44 +9294,42 @@ aIV.utils.set({
        * ---------------------------------------------
        * @desc Moves the index to the end of the identifier.
        * @param {number} i - The starting line index.
-       * @return {number} The end index.
+       * @return {!{
+       *   endIndex   : number,
+       *   name       : string,
+       *   propFollows: boolean
+       * }}
        * @private
        */
       function skipIdentifier(i) {
 
         highlightSyntax.debug.start('skipIdentifier', i);
-        highlightSyntax.debug.args('skipIdentifier', i, 'number');
+
+        checkArgs(i, 'number');
 
         /** @type {string} */
         var name;
+        /** @type {!Object} */
+        var result;
         /** @type {boolean} */
         var propFollows;
 
         name = '_' + orgLine[i];
 
-        while (true) {
-          ++i;
-
-          if (i === lineLen) {
-            return {
-              endIndex   : --i,
-              name       : name,
-              propFollows: false
-            };
-          }
-
-          if ( identifiers.test(orgLine[i]) ) {
-            name += orgLine[i];
-            continue;
-          }
-
-          propFollows = (orgLine[i] === '.');
-          return {
-            endIndex   : --i,
-            name       : name,
-            propFollows: propFollows
-          };
+        while (++i < lineLen && identifiers.test(orgLine[i])) {
+          name += orgLine[i];
         }
+
+        propFollows = (i !== lineLen && orgLine[i] === '.');
+        result = {
+          endIndex   : --i,
+          name       : name,
+          propFollows: propFollows
+        };
+
+        highlightSyntax.debug.end('skipIdentifier', result);
+
+        return result;
       }
 
       /**
@@ -9338,36 +9343,33 @@ aIV.utils.set({
        */
       function formatCommentLinks(start, end) {
 
-        var debugArgs;
         highlightSyntax.debug.start('formatCommentLinks', start, end);
-        debugArgs = [ 'formatCommentLinks' ];
-        debugArgs.push(start, 'number', end, 'number');
-        highlightSyntax.debug.args(debugArgs);
 
-        /** @type {string} */
-        var comment;
+        checkArgs(start, 'number', end, 'number');
+
         /** @type {number} */
         var i;
+        /** @type {boolean} */
+        var pass;
         /** @type {string} */
         var href;
         /** @type {string} */
         var content;
+        /** @type {string} */
+        var comment;
 
         if (end === lastIndex) {
           ++end;
         }
 
         comment = orgLine.slice(start, end).join('');
+        pass = commentLinks.test(comment);
 
-        if ( !commentLinks.test(comment) ) {
-          return;
-        }
-
-        while (true) {
+        while (pass) {
           i = comment.search(commentLinks);
 
           if (i === -1) {
-            return;
+            break;
           }
 
           i += start + 1;
@@ -9409,6 +9411,8 @@ aIV.utils.set({
           comment = comment.substr(i);
           start = i;
         }
+
+        highlightSyntax.debug.end('formatCommentLinks');
       }
 
       /**
@@ -9424,16 +9428,15 @@ aIV.utils.set({
       function formatCommentOpen(i) {
 
         highlightSyntax.debug.start('formatCommentOpen', i);
-        highlightSyntax.debug.args('formatCommentOpen', i, 'number');
+
+        checkArgs(i, 'number');
 
         /** @type {number} */
         var start;
 
         start = i;
-
         newLine[i] = '<span class="cmt">/';
-        ++i;
-        i = (i < lastIndex) ? skipComment(i) : ++i;
+        i = (++i < lastIndex) ? skipComment(i) : ++i;
 
         if (i >= lineLen) {
           commentOpen = true;
@@ -9445,6 +9448,8 @@ aIV.utils.set({
         if (config.commentLinks) {
           formatCommentLinks(start, i);
         }
+
+        highlightSyntax.debug.end('formatCommentOpen', i);
 
         return i;
       }
@@ -9471,21 +9476,25 @@ aIV.utils.set({
         if (orgLine[0] === '*' && orgLine[1] === '/') {
           commentOpen = false;
           newLine[1] += '</span>';
-          return 3;
+          i = 3;
+        }
+        else {
+
+          i = skipComment(0);
+          commentOpen = (i > lastIndex);
+
+          if (commentOpen) {
+            i = lastIndex;
+          }
+
+          newLine[i] += '</span>';
+
+          if (config.commentLinks) {
+            formatCommentLinks(0, i);
+          }
         }
 
-        i = skipComment(0);
-        commentOpen = (i < lineLen) ? false : true;
-
-        if (i > lastIndex) {
-          i = lastIndex;
-        }
-
-        newLine[i] += '</span>';
-
-        if (config.commentLinks) {
-          formatCommentLinks(0, i);
-        }
+        highlightSyntax.debug.end('formatCommentStart', i);
 
         return i;
       }
@@ -9502,7 +9511,8 @@ aIV.utils.set({
       function formatLineComment(i) {
 
         highlightSyntax.debug.start('formatLineComment', i);
-        highlightSyntax.debug.args('formatLineComment', i, 'number');
+
+        checkArgs(i, 'number');
 
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
@@ -9511,6 +9521,8 @@ aIV.utils.set({
         newLine[i] = '<span class="cmt">/';
         i = lastIndex;
         newLine[i] += '</span>';
+
+        highlightSyntax.debug.end('formatLineComment', i);
 
         return i;
       }
@@ -9528,13 +9540,14 @@ aIV.utils.set({
       function formatString(i) {
 
         highlightSyntax.debug.start('formatString', i);
-        highlightSyntax.debug.args('formatString', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="str">' + orgLine[i];
-
         i = skipString(i);
-
         newLine[i] += '</span>';
+
+        highlightSyntax.debug.end('formatString', i);
 
         return i;
       }
@@ -9553,7 +9566,8 @@ aIV.utils.set({
       function formatRegex(i, end) {
 
         highlightSyntax.debug.start('formatRegex', i, end);
-        highlightSyntax.debug.args('formatRegex', i, 'number', end, 'number');
+
+        checkArgs(i, 'number', end, 'number');
 
         /** @type {string} */
         var usedFlags;
@@ -9566,9 +9580,7 @@ aIV.utils.set({
         usedFlags = '';
 
         // Check for RegExp flags
-        while (true) {
-          ++i;
-
+        while (++i) {
           character = orgLine[i];
 
           if (regexFlags.test(character) &&
@@ -9585,6 +9597,8 @@ aIV.utils.set({
 
         newLine[i] += '</span>';
 
+        highlightSyntax.debug.end('formatRegex', i);
+
         return i;
       }
 
@@ -9600,13 +9614,14 @@ aIV.utils.set({
       function formatSpace(i) {
 
         highlightSyntax.debug.start('formatSpace', i);
-        highlightSyntax.debug.args('formatSpace', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="spc"> ';
-
         i = skipSpace(i);
-
         newLine[i] += '</span>';
+
+        highlightSyntax.debug.end('formatSpace', i);
 
         return i;
       }
@@ -9623,9 +9638,12 @@ aIV.utils.set({
       function formatBracket(i) {
 
         highlightSyntax.debug.start('formatBracket', i);
-        highlightSyntax.debug.args('formatBracket', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
+
+        highlightSyntax.debug.end('formatBracket', i);
 
         return i;
       }
@@ -9642,11 +9660,14 @@ aIV.utils.set({
       function formatOperator(i) {
 
         highlightSyntax.debug.start('formatOperator', i);
-        highlightSyntax.debug.args('formatOperator', i, 'number');
+
+        checkArgs(i, 'number');
 
         sanitizeCharacter(i);
 
         newLine[i] = '<span class="opr">' + newLine[i] + '</span>';
+
+        highlightSyntax.debug.end('formatOperator', i);
 
         return i;
       }
@@ -9663,9 +9684,12 @@ aIV.utils.set({
       function formatComma(i) {
 
         highlightSyntax.debug.start('formatComma', i);
-        highlightSyntax.debug.args('formatComma', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="cmm">,</span>';
+
+        highlightSyntax.debug.end('formatComma', i);
 
         return i;
       }
@@ -9682,9 +9706,12 @@ aIV.utils.set({
       function formatSemicolon(i) {
 
         highlightSyntax.debug.start('formatSemicolon', i);
-        highlightSyntax.debug.args('formatSemicolon', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="smc">;</span>';
+
+        highlightSyntax.debug.end('formatSemicolon', i);
 
         return i;
       }
@@ -9701,9 +9728,12 @@ aIV.utils.set({
       function formatColon(i) {
 
         highlightSyntax.debug.start('formatColon', i);
-        highlightSyntax.debug.args('formatColon', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="cln">:</span>';
+
+        highlightSyntax.debug.end('formatColon', i);
 
         return i;
       }
@@ -9720,9 +9750,12 @@ aIV.utils.set({
       function formatPeriod(i) {
 
         highlightSyntax.debug.start('formatPeriod', i);
-        highlightSyntax.debug.args('formatPeriod', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="per">.</span>';
+
+        highlightSyntax.debug.end('formatPeriod', i);
 
         return i;
       }
@@ -9740,13 +9773,14 @@ aIV.utils.set({
       function formatNumber(i) {
 
         highlightSyntax.debug.start('formatNumber', i);
-        highlightSyntax.debug.args('formatNumber', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="num">' + orgLine[i];
-
         i = skipNumber(i);
-
         newLine[i] += '</span>';
+
+        highlightSyntax.debug.end('formatNumber', i);
 
         return i;
       }
@@ -9766,13 +9800,11 @@ aIV.utils.set({
        */
       function formatIdentifier(i, extras) {
 
-        var debugArgs;
         highlightSyntax.debug.start('formatIdentifier', i, extras);
-        debugArgs = [ 'formatIdentifier' ];
-        debugArgs.push(i, 'number', extras, 'string=');
-        highlightSyntax.debug.args(debugArgs);
 
-        /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
+        checkArgs(i, 'number', extras, 'string=');
+
+        /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
@@ -9782,24 +9814,24 @@ aIV.utils.set({
         identifier = skipIdentifier(i);
 
         // Setup the keyword category and class name
-        if ( keywords.hasOwnProperty(identifier.name) ) {
+        if ( hasOwnProp(keywords, identifier.name) ) {
 
-          catID = keywords[identifier.name].cat;
-          keyClassName = keywordCategories[catID];
+          catID = keywords[ identifier.name ].cat;
+          keyClassName = keywordCategories[ catID ];
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
               (orgLine[identifier.endIndex + 1] === '(' ||
                (orgLine[identifier.endIndex + 1] === ' ' &&
                 orgLine[identifier.endIndex + 2] === '('))) {
-            keyClassName = keywordCategories['res'];
+            keyClassName = keywordCategories[ 'res' ];
           }
         }
 
         if (!keyClassName && !!extras) {
-          if ( keywords[extras].props.hasOwnProperty(identifier.name) ) {
-            catID = keywords[extras].cat;
-            keyClassName = keywordCategories[catID];
+          if ( hasOwnProp(keywords[ extras ].props, identifier.name) ) {
+            catID = keywords[ extras ].cat;
+            keyClassName = keywordCategories[ catID ];
           }
         }
 
@@ -9816,12 +9848,14 @@ aIV.utils.set({
         // Format the identifier's property (dot notation only)
         if (identifier.propFollows) {
           formatPeriod(++i);
-          extras = ( ( !keywords.hasOwnProperty(identifier.name) ) ?
-            '' : (!keywords[identifier.name].props) ?
+          extras = ( (!hasOwnProp(keywords, identifier.name)) ?
+            '' : (!keywords[ identifier.name ].props) ?
               '' : identifier.name
           );
           i = formatIdentifier(++i, extras);
         }
+
+        highlightSyntax.debug.end('formatIdentifier', i);
 
         return i;
       }
@@ -9838,9 +9872,12 @@ aIV.utils.set({
       function formatMisc(i) {
 
         highlightSyntax.debug.start('formatMisc', i);
-        highlightSyntax.debug.args('formatMisc', i, 'number');
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
+
+        highlightSyntax.debug.end('formatMisc', i);
 
         return i;
       }

@@ -47,7 +47,7 @@
        * ---------------------------------------------
        * @desc A hash map that stores the matching character
        *  formatting methods.
-       * @type {objectMap}
+       * @type {!objectMap}
        * @private
        */
       var router = {
@@ -89,4 +89,5 @@
         '9': formatNumber,
         '/': handleSlash
       };
+
       freezeObj(router);
