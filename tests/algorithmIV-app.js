@@ -337,14 +337,9 @@ aIV.utils.set({
  * The Public Module Variables (module-vars.js)
  * -------------------------------------------------------------------------- */
 
-  // $s$
-  var debug = aIV.debug({
-    classTitle  : 'appModule',
-    turnOnGroups: true,
-    turnOnTimers: true
-  });
+
+  var debug = aIV.debug('appModule');
   var debugArgs, debugMsg, debugCheck;
-  // $e$
 
   /**
    * -----------------------------------------------------
@@ -405,7 +400,7 @@ aIV.utils.set({
           debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
-          errorMsg = 'Your resource - resources/' + jsonFile + '.json - ';
+          errorMsg = 'Your aIV.app resource - resources/' + jsonFile + '.json - ';
           errorMsg += 'failed to load. Please ensure your resources folder ';
           errorMsg += 'is in the same directory as algorithmIV-app.js. ';
           errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
@@ -647,10 +642,10 @@ aIV.utils.set({
     }
 
     if (vals.length !== types.length) {
-      errorMsg = 'An aIV.app checkTypes call received an invalid parameter. ';
-      errorMsg += 'The length of the vals and types arrays did not match.';
+      errorMsg = 'An aIV.app internal error occurred. A checkTypes call ';
+      errorMsg += 'received an invalid parameter. The length of the vals ';
+      errorMsg += 'and types arrays did not match.';
       throw new Error(errorMsg);
-      return;
     }
 
     pass = true;
@@ -898,6 +893,81 @@ aIV.utils.set({
 
   /**
    * ---------------------------------------------------
+   * Public Method (getter)
+   * ---------------------------------------------------
+   * @desc The basic getter function for all the classes.
+   * @this {!Object<string, *>} A hash map of the protected property names
+   *   and current values for the class calling the getter.
+   * @param {string} propName - The name of the protected property to get.
+   * @return {*}
+   */
+  function getter(propName) {
+
+    this.debug.start('get', propName);
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {*} */
+    var propVal;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A getter was given an ';
+      errorMsg += 'invalid given property name. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    propVal = this[ propName ];
+
+    this.debug.end('get', propVal);
+
+    return propVal;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setter)
+   * ---------------------------------------------------
+   * @desc The basic setter function for all the classes.
+   * @this {!Object<string, function(*)>} A hash map of the protected property
+   *   names and setting functions for the class calling the setter.
+   * @param {string} propName - The name of the protected property to set.
+   * @param {*} propVal - The value to set the property to.
+   * @return {boolean} The success of the setter.
+   */
+  function setter(propName, propVal) {
+
+    this.debug.start('set', propName, propVal);
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {boolean} */
+    var pass;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid property name. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    pass = this[ propName ](propVal);
+
+    if (!pass) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid new property value. value= ' + propVal;
+      throw new Error(errorMsg);
+    }
+
+    this.debug.end('set', pass);
+
+    return pass;
+  }
+
+  /**
+   * ---------------------------------------------------
    * Public Method (logStartAppTypeError)
    * ---------------------------------------------------
    * @desc Logs appModuleAPI.startApp type errors for settings properties.
@@ -940,13 +1010,7 @@ aIV.utils.set({
    */
   var App = function(config, sources, categories, questions) {
 
-    // $s$
-    this.debug = aIV.debug({
-      classTitle  : 'App',
-      turnOnGroups: true,
-      turnOnTimers: true
-    });
-    // $e$
+    this.debug = aIV.debug('App');
 
     this.debug.start('init', config, sources, categories, questions);
 
@@ -1512,14 +1576,17 @@ aIV.utils.set({
    */
   var AppFlags = function(pass) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('AppFlags');
+    thisDebug = this.debug;
 
     this.debug.start('init', pass);
 
-    this.debug.args('init', pass, 'boolean');
+    checkArgs(pass, 'boolean');
 
     ////////////////////////////////////////////////////////////////////////////
-    // Define The Protected Properties
+    // Define & Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1530,13 +1597,7 @@ aIV.utils.set({
      * @type {boolean}
      * @private
      */
-    var initArgs;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Setup The Protected Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    initArgs = pass;
+    var initArgs = pass;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -1546,62 +1607,51 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
      * -----------------------------------------------
-     * @desc Gets a flag.
+     * @desc Gets an AppFlags protected property.
      * @param {string} prop - The name of the flag to get.
-     * @return {boolean}
+     * @return {boolean} The flag's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, boolean>} */
-      var flags = {
+      var props = {
+        debug   : thisDebug,
         initArgs: initArgs
       };
 
-      debugCheck = flags.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return flags[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.set)
      * -----------------------------------------------
-     * @desc Sets a flag.
+     * @desc Sets an AppFlags protected property.
      * @param {string} prop - The name of the flag to set.
      * @param {boolean} val - The value to set the flag to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      this.debug.start('set', prop, val);
-      this.debug.args('set', prop, 'string', val, 'boolean');
-
-      /** @type {Object<string, function>} */
-      var flags = {
-        initArgs: function () { initArgs = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        debug   : thisDebug,
+        initArgs: function(val) {
+          initArgs = val;
+          return checkType(val, 'boolean');
+        }
       };
 
-      debugCheck = flags.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      flags[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    freezeObj(this, true);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1625,8 +1675,6 @@ aIV.utils.set({
 
     this.debug = aIV.debug('AppElems');
 
-    this.debug.group('init', 'coll');
-
     this.debug.start('init');
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1638,7 +1686,7 @@ aIV.utils.set({
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -1647,7 +1695,7 @@ aIV.utils.set({
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {element}
+     * @type {Element}
      */
     this.sel;
 
@@ -1656,7 +1704,7 @@ aIV.utils.set({
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {element}
+     * @type {Element}
      */
     this.main;
 
@@ -1665,7 +1713,7 @@ aIV.utils.set({
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {element}
+     * @type {Element}
      */
     this.nav;
 
@@ -1674,7 +1722,7 @@ aIV.utils.set({
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {element}
+     * @type {Element}
      */
     this.ques;
 
@@ -1683,7 +1731,7 @@ aIV.utils.set({
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {element}
+     * @type {Element}
      */
     this.hold;
 
@@ -1692,7 +1740,7 @@ aIV.utils.set({
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {element}
+     * @type {Element}
      */
     this.none;
 
@@ -1723,41 +1771,29 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {element} */
+    /** @type {Element} */
     var elem;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
-    /** @type {element} */
+    /** @type {Element} */
     var li;
 
-    this.root = makeElem({
-      id  : 'aIV',
-      html: '<h1>Algorithm IV</h1>'
-    });
+    this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
     this.sel  = makeElem({
       tag      : 'nav',
       id       : 'aIV-selections',
       className: 'selections'
     });
-    this.main = makeElem({
-      id       : 'aIV-main',
-      className: 'main'
-    });
-    this.nav  = makeElem({
-      tag: 'nav',
-      id : 'aIV-nav'
-    });
+    this.main = makeElem({ id: 'aIV-main', className: 'main' });
+    this.nav  = makeElem({ tag: 'nav', id: 'aIV-nav' });
     this.ques = makeElem({
       tag      : 'section',
       id       : 'aIV-questions',
       className: 'questions'
     });
-    this.hold = makeElem({
-      tag      : 'img',
-      className: 'loader'
-    });
+    this.hold = makeElem({ tag: 'img', className: 'loader' });
     this.none = makeElem({
       tag      : 'section',
       text     : 'No question(s) found.',
@@ -1827,10 +1863,9 @@ aIV.utils.set({
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1850,21 +1885,21 @@ aIV.utils.set({
 
     this.debug.start('appendNav');
 
-    /** @type {element} */
+    /** @type {Element} */
     var prev;
-    /** @type {element} */
+    /** @type {Element} */
     var pArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var pBG;
-    /** @type {element} */
+    /** @type {Element} */
     var pTitle;
-    /** @type {element} */
+    /** @type {Element} */
     var next;
-    /** @type {element} */
+    /** @type {Element} */
     var nArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var nBG;
-    /** @type {element} */
+    /** @type {Element} */
     var nTitle;
 
     prev = makeElem({ className: 'prev' });
@@ -1906,6 +1941,8 @@ aIV.utils.set({
 
     this.nav.appendChild(prev);
     this.nav.appendChild(next);
+
+    this.debug.end('appendNav');
   };
 
   /**
@@ -1927,23 +1964,23 @@ aIV.utils.set({
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {element} */
+    /** @type {Element} */
     var errorDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h2;
-    /** @type {element} */
+    /** @type {Element} */
     var p;
-    /** @type {element} */
+    /** @type {Element} */
     var exampleDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h3;
-    /** @type {element} */
+    /** @type {Element} */
     var div;
-    /** @type {element} */
+    /** @type {Element} */
     var pre;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
 
     errorMsg = '' +
@@ -2088,6 +2125,8 @@ aIV.utils.set({
 
     // Hide the loader
     this.hold.style.display = 'none';
+
+    this.debug.end('appendError');
   };
 
 /* -----------------------------------------------------------------------------
@@ -2104,11 +2143,14 @@ aIV.utils.set({
    */
   var AppVals = function(questionsLen) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('AppVals');
+    thisDebug = this.debug;
 
     this.debug.start('init', questionsLen);
 
-    this.debug.args('init', questionsLen, 'number');
+    checkArgs(questionsLen, 'number');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -2183,28 +2225,22 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Method (AppVals.get)
      * -----------------------------------------------
-     * @desc Gets an app value.
-     * @param {string} prop - The name of the value to get.
+     * @desc Gets an AppVals protected property.
+     * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (number|numbers)>} */
       var props = {
+        debug : thisDebug,
         allIds: allIds,
         ids   : ids,
         len   : len,
         index : index
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -2218,28 +2254,28 @@ aIV.utils.set({
     this.set = function(newIds, newIndex) {
 
       this.debug.start('set', newIds, newIndex);
-      this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
+
+      checkArgs(newIds, 'numbers', newIndex, 'number=');
 
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (typeof newIndex === 'number') {
+      if ( checkType(newIndex, 'number') ) {
         index = newIndex;
       }
-    };
 
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
+      this.debug.end('set');
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    freezeObj(this, true);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2259,16 +2295,15 @@ aIV.utils.set({
   AppVals.prototype.reset = function(ids, index) {
 
     this.debug.start('reset', ids, index);
-    this.debug.args('reset', ids, 'numbers', index, 'number=');
 
     /** @type {number} */
     var len;
 
+    checkArgs(ids, 'numbers', index, 'number=');
+
     index = index || 0;
 
-    if (!ids) {
-      ids = this.get('allIds');
-    }
+    ids = ids || this.get('allIds');
     len = ids.length;
 
     // Check the new index value
@@ -2281,6 +2316,8 @@ aIV.utils.set({
 
     // Reset the values
     this.set(ids, index);
+
+    this.debug.end('reset');
   };
 
   /**
@@ -2292,103 +2329,99 @@ aIV.utils.set({
    *   The options are 'prev', 'next', or a question id.
    * @return {number} The new index.
    */
-  AppVals.prototype.move = function(way) {
+  AppVals.prototype.move = (function setupAppVals_move() {
 
-    this.debug.start('move', way);
-    this.debug.args('move', way, 'string|number');
+    /** function(string) */
+    var throwParamError = function(way) {
 
-    /** @type {number} */
-    var id;
-    /** @type {string} */
-    var view;
-    /** @type {number} */
-    var index;
-    /** @type {number} */
-    var last;
+      /** @type {string} */
+      var errorMsg;
 
-    id = (typeof way === 'number') ? way : 0;
-    index = this.get('index');
+      errorMsg = 'An aIV.app internal error occurred. An AppVals.move call ';
+      errorMsg += 'received an invalid way parameter. way= ' + way;
+      throw new Error(errorMsg);
+    };
 
-    // Check the value for way
-    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
-      try {
-        id = Number( way.replace(/[^0-9]/g, '') );
+    return function move(way) {
+
+      this.debug.start('move', way);
+
+      /** @type {number} */
+      var id;
+      /** @type {string} */
+      var view;
+      /** @type {number} */
+      var index;
+      /** @type {number} */
+      var last;
+
+      checkArgs(way, 'string|number');
+
+      if ( checkType(way, 'number') ) {
+        id  = way;
+        way = null;
       }
-      catch (e) {
-        debugMsg = 'Error: An incorrect value was given for way. way= $$';
-        this.debug.fail('move', false, debugMsg, way);
-        return;
-      }
-    }
-
-    view = app.searchBar.vals.view;
-
-    // Handle moving to a specific question id
-    if (id) {
-
-      debugCheck = (id > 0 && id <= app.questions.len);
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-      this.debug.fail('move', debugCheck, debugMsg, way);
-
-      if (view !== 'one') {
-        app.searchBar.vals.view = 'one';
+      else {
+        id = 0;
       }
 
-      index = this.get('ids').indexOf(way);
+      index = this.get('index');
 
-      this.set(null, index);
-
-      debugCheck = (index !== -1);
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-      this.debug.fail('move', debugCheck, debugMsg, way);
-
-      return index;
-    }
-
-    // Save the last index
-    last = this.get('len') - 1;
-
-    // Handle moving the index one spot
-    if (view === 'one') {
-
-      this.debug.state('move', 'index= $$', index);
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : --index;
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : ++index;
+      // Check the value for way & convert number strings to a number
+      if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+        id = way.replace(/[^0-9]/g, '');
+        id = id || Number(id);
+        id || throwParamError(way);
+        way = null;
       }
 
-      this.debug.state('move', 'index= $$', index);
+      view = app.searchBar.vals.view;
 
-      this.set(null, index);
+      if (way) {
 
-      return index;
-    }
+        // Save the last index
+        last = this.get('len') - 1;
 
-    // Handle moving the index ten spots
-    if (view === 'ten') {
+        if (view === 'one') {
 
-      // Update the last index
-      last = last - (last % 10);
+          // Handle moving the index one spot
+          if (way === 'prev') {
+            index = (index === 0) ? last : --index;
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : ++index;
+          }
+        }
+        else if (view === 'ten') {
 
-      if (way === 'prev') {
-        index = (index === 0) ? last : (index - 10);
+          // Handle moving the index ten spots
+          last = last - (last % 10);
+          if (way === 'prev') {
+            index = (index === 0) ? last : (index - 10);
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : (index + 10);
+          }
+        }
       }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : (index + 10);
+      else {
+
+        // Handle moving to a specific question id
+        (id) || (id <= app.questions.len) || throwParamError(id);
+        if (view !== 'one') {
+          app.searchBar.vals.view = 'one';
+        }
+        index = this.get('ids').indexOf(id);
+        (index !== -1) || throwParamError(id);
       }
 
       this.set(null, index);
 
-      return index;
-    }
+      this.debug.end('move', index);
 
-    debugMsg = 'Error: An incorrect view was parsed. ';
-    debugMsg += 'app.searchBar.vals.view= $$';
-    this.debug.fail('move', false, debugMsg, view);
-  };
+      return index;
+    };
+  })();
 
 /* -----------------------------------------------------------------------------
  * The Config Class (classes/config/config.js)
@@ -7956,13 +7989,8 @@ aIV.utils.set({
  * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
  * -------------------------------------------------------------------------- */
 
-    // $s$
-    prettify.debug = aIV.debug({
-      classTitle  : 'prettify',
-      turnOnGroups: true,
-      turnOnTimers: true
-    });
-    // $e$
+
+    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------
