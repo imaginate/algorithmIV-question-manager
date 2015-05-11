@@ -3,18 +3,16 @@
    * Public Class (Config)
    * -----------------------------------------------------
    * @desc The configuration settings for this app.
-   * @param {?Object} config - The user's config settings.
+   * @param {Object<string, Object>} config - The user's config settings.
    * @constructor
    */
   var Config = function(config) {
 
     this.debug = aIV.debug('Config');
 
-    this.debug.group('init', 'coll', 'config= $$', config);
-
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'objectMap');
+    checkArgs(config, 'objectMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -64,20 +62,20 @@
     ////////////////////////////////////////////////////////////////////////////
 
     // Check the given user's config object
-    if (!config || typeof config !== 'object') {
+    if ( !checkType(config, '!object') ) {
       config = {};
     }
 
-    if (!config.searchSettings || typeof config.searchSettings !== 'object') {
+    if ( !checkType(config.searchSettings, '!object') ) {
       config.searchSettings = {};
     }
-    if (!config.questionFormat || typeof config.questionFormat !== 'object') {
+    if ( !checkType(config.questionFormat, '!object') ) {
       config.questionFormat = {};
     }
-    if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
+    if ( !checkType(config.prettifyFormat, '!object') ) {
       config.prettifyFormat = {};
     }
-    if (!config.showLinks || typeof config.showLinks !== 'object') {
+    if ( !checkType(config.showLinks, '!object') ) {
       config.showLinks = {};
     }
 
@@ -91,10 +89,9 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
