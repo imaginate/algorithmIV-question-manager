@@ -34,13 +34,8 @@
  * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
  * -------------------------------------------------------------------------- */
 // insert-prettify-vars
-    // $s$
-    prettify.debug = aIV.debug({
-      classTitle  : 'prettify',
-      turnOnGroups: true,
-      turnOnTimers: true
-    });
-    // $e$
+
+    prettify.debug = aIV.debug('prettify');
 
     /**
      * ---------------------------------------------

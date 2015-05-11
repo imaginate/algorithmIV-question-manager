@@ -11,13 +11,7 @@
    */
   var App = function(config, sources, categories, questions) {
 
-    // $s$
-    this.debug = aIV.debug({
-      classTitle  : 'App',
-      turnOnGroups: true,
-      turnOnTimers: true
-    });
-    // $e$
+    this.debug = aIV.debug('App');
 
     this.debug.start('init', config, sources, categories, questions);
 
