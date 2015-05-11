@@ -3,17 +3,20 @@
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|number|boolean)>} config - The user's
+   * @param {!Object<string, (string|number|boolean)>} config - The user's
    *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('PrettyConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -55,26 +58,30 @@
 
     trimSpace = 0;
     tabLength = 2;
-    commentLinks = false;
+    commentLinks = (config.commentLinks === true);
 
-    if ( config.hasOwnProperty('trimSpace') ) {
-      if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
+    if ( hasOwnProp(config, 'trimSpace') ) {
+      if (checkType(config.trimSpace, 'number') && config.trimSpace >= 0) {
         trimSpace = Math.floor(config.trimSpace);
       }
-      else if (typeof config.trimSpace === 'string') {
-        trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.trimSpace, 'string') ) {
+        config.trimSpace = config.trimSpace.replace(/[^0-9]/g, '');
+        if (config.trimSpace) {
+          trimSpace = Number(config.trimSpace);
+        }
       }
     }
-    if ( config.hasOwnProperty('tabLength') ) {
-      if (typeof config.tabLength === 'number') {
-        tabLength = config.tabLength;
+
+    if ( hasOwnProp(config, 'tabLength') ) {
+      if (checkType(config.tabLength, 'number') && config.tabLength >= 0) {
+        tabLength = Math.floor(config.tabLength);
       }
-      else if (typeof config.tabLength === 'string') {
-        tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.tabLength, 'string') ) {
+        config.tabLength = config.tabLength.replace(/[^0-9]/g, '');
+        if (config.tabLength) {
+          tabLength = Number(config.tabLength);
+        }
       }
-    }
-    if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
-      commentLinks = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -87,36 +94,26 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from PrettyConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(number|boolean)}
+     * @return {(number|boolean)} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (number|boolean)>} */
       var props = {
+        debug       : thisDebug,
         trimSpace   : trimSpace,
         tabLength   : tabLength,
         commentLinks: commentLinks
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
