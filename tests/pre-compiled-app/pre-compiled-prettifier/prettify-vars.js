@@ -1,9 +1,10 @@
-    // The prettifier's debugger object
+    // $s$
     prettify.debug = aIV.debug({
       classTitle  : 'prettify',
       turnOnGroups: true,
       turnOnTimers: true
     });
+    // $e$
 
     /**
      * ---------------------------------------------
