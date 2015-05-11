@@ -1613,7 +1613,7 @@ aIV.utils.set({
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         debug   : thisDebug,
         initArgs: initArgs
@@ -2370,7 +2370,7 @@ aIV.utils.set({
       // Check the value for way & convert number strings to a number
       if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
         id = way.replace(/[^0-9]/g, '');
-        id = id || Number(id);
+        id = id && Number(id);
         id || throwParamError(way);
         way = null;
       }
@@ -2432,18 +2432,16 @@ aIV.utils.set({
    * Public Class (Config)
    * -----------------------------------------------------
    * @desc The configuration settings for this app.
-   * @param {?Object} config - The user's config settings.
+   * @param {Object<string, Object>} config - The user's config settings.
    * @constructor
    */
   var Config = function(config) {
 
     this.debug = aIV.debug('Config');
 
-    this.debug.group('init', 'coll', 'config= $$', config);
-
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'objectMap');
+    checkArgs(config, 'objectMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -2493,20 +2491,20 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     // Check the given user's config object
-    if (!config || typeof config !== 'object') {
+    if ( !checkType(config, '!object') ) {
       config = {};
     }
 
-    if (!config.searchSettings || typeof config.searchSettings !== 'object') {
+    if ( !checkType(config.searchSettings, '!object') ) {
       config.searchSettings = {};
     }
-    if (!config.questionFormat || typeof config.questionFormat !== 'object') {
+    if ( !checkType(config.questionFormat, '!object') ) {
       config.questionFormat = {};
     }
-    if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
+    if ( !checkType(config.prettifyFormat, '!object') ) {
       config.prettifyFormat = {};
     }
-    if (!config.showLinks || typeof config.showLinks !== 'object') {
+    if ( !checkType(config.showLinks, '!object') ) {
       config.showLinks = {};
     }
 
@@ -2520,10 +2518,9 @@ aIV.utils.set({
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2541,16 +2538,19 @@ aIV.utils.set({
    * Public Class (SearchBarConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the search bar in this app.
-   * @param {Object} config - The user's search bar config settings.
+   * @param {!Object} config - The user's search bar config settings.
    * @constructor
    */
   var SearchBarConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('SearchBarConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Properties
@@ -2613,23 +2613,11 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    stage    = true;
-    source   = true;
-    category = true;
-    subCat   = true;
+    stage    = !(config.stage    === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
 
-    if (config.hasOwnProperty('stage') && config.stage === false) {
-      stage = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
     if (!category && subCat) {
       subCat = false;
     }
@@ -2644,37 +2632,27 @@ aIV.utils.set({
      * -----------------------------------------------
      * @desc Gets a protected property's value from SearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
+        debug   : thisDebug,
         stage   : stage,
         source  : source,
         category: category,
         subCat  : subCat
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3334,7 +3312,10 @@ aIV.utils.set({
    */
   var DefaultsSearchBarConfig = function() {
 
+    var thisDebug;
+
     this.debug = aIV.debug('DefaultsSearchBarConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init');
 
@@ -3434,15 +3415,13 @@ aIV.utils.set({
      * -----------------------------------------------
      * @desc Gets a protected property's value from DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(string|number)}
+     * @return {(string|number)} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (string|number)>} */
       var props = {
+        debug  : thisDebug,
         startID: startID,
         view   : view,
         order  : order,
@@ -3452,11 +3431,7 @@ aIV.utils.set({
         subCat : subCat
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -3466,40 +3441,30 @@ aIV.utils.set({
      * @desc Sets a protected property's value for DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to set.
      * @param {(string|number)} val - The value to set the property to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      this.debug.start('set', prop, val);
-      this.debug.args('set', prop, 'string', val, 'string|number');
-
-      /** @type {Object<string, function>} */
-      var props = {
-        startID: function() { startID = val; },
-        view   : function() { view    = val; },
-        order  : function() { order   = val; },
-        stage  : function() { stage   = val; },
-        source : function() { source  = val; },
-        mainCat: function() { mainCat = val; },
-        subCat : function() { subCat  = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        debug  : thisDebug,
+        startID: function(val) { startID = val; return true; },
+        view   : function(val) { view    = val; return true; },
+        order  : function(val) { order   = val; return true; },
+        stage  : function(val) { stage   = val; return true; },
+        source : function(val) { source  = val; return true; },
+        mainCat: function(val) { mainCat = val; return true; },
+        subCat : function(val) { subCat  = val; return true; }
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', debugCheck, debugMsg, prop);
-
-      props[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3514,79 +3479,75 @@ aIV.utils.set({
    * ---------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search ids and names.
-   * @param {Object} ids - The available sub category ids.
+   * @param {!Object<string, stringMap>} names - The available search ids and names.
+   * @param {!Object} ids - The available sub category ids.
    * @param {number} quesLen - The number of user's questions.
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
 
-    debugMsg = 'defaults= $$, names= $$, ids= $$, quesLen= $$';
-    debugArgs = [ 'update', 'coll', debugMsg, defaults, names ];
-    debugArgs.push(ids, quesLen);
-    this.debug.group(debugArgs);
-
     this.debug.start('update', defaults, names, ids, quesLen);
 
-    debugArgs = [ 'update', defaults, 'object', names, 'object' ];
-    debugArgs.push(ids, 'object', quesLen, 'number');
-    this.debug.args(debugArgs);
+    /** @type {number} */
+    var i;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {string} */
+    var prop;
+    /** @type {!Array<string>} */
+    var props;
+    /** @type {(number|string)} */
+    var startID;
+    /** @type {string} */
+    var mainCat;
+
+    args = [ defaults, 'object', names, 'object', ids, 'object' ];
+    args.push(quesLen, 'number');
+    checkArgs.apply(null, args);
 
     // Check the user supplied defaults
-    if (!defaults || typeof defaults !== 'object') {
+    if ( !checkType(defaults, '!object') ) {
       defaults = {};
     }
 
+    // Set the view, order, stage, source, & main category
+    props = 'view order stage source mainCat'.split(' ');
+    i = props.length;
+    while (i--) {
+      prop = props[i];
+      if (checkType(defaults[ prop ], 'string') &&
+          hasOwnProp(names[ prop ], defaults[ prop ])) {
+        this.set(prop, defaults[ prop ]);
+      }
+    }
+
     // Set the startID
-    if (!!defaults.startID && typeof defaults.startID === 'number' &&
-        defaults.startID <= quesLen) {
-      this.set('startID', defaults.startID);
-    }
-
-    // Set the view
-    if (!!defaults.view && typeof defaults.view === 'string' &&
-        !!names.view[defaults.view]) {
-      this.set('view', defaults.view);
-    }
-
-    // Set the order
-    if (!!defaults.order && typeof defaults.order === 'string' &&
-        !!names.order[defaults.order]) {
-      this.set('order', defaults.order);
-    }
-
-    // Set the stage
-    if (!!defaults.stage && typeof defaults.stage === 'string' &&
-        !!names.stage[defaults.stage]) {
-      this.set('stage', defaults.stage);
-    }
-
-    // Set the source
-    if (!!defaults.source && typeof defaults.source === 'string' &&
-        !!names.source[defaults.source]) {
-      this.set('source', defaults.source);
-    }
-
-    // Set the main category
-    if (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
-        !!names.mainCat[defaults.mainCat]) {
-      this.set('mainCat', defaults.mainCat);
+    if ( checkType(defaults.startID, 'number|string') ) {
+      startID = defaults.startID;
+      if ( checkType(startID, 'string') ) {
+        startID = startID.replace(/[^0-9]/g, '');
+        startID = startID && Number(startID);
+      }
+      if (startID && startID <= quesLen) {
+        this.set('startID', startID);
+      }
     }
 
     // Set the sub category
-    if (!!defaults.subCat && typeof defaults.subCat === 'string' &&
-        defaults.subCat !== 'all' && !!names.subCat[defaults.subCat]) {
-      if (this.get('mainCat') === 'all') {
+    if (checkType(defaults.subCat, 'string') && defaults.subCat !== 'all' &&
+        hasOwnProp(names.subCat, defaults.subCat)) {
+      mainCat = this.get('mainCat');
+      if (mainCat === 'all') {
         this.set('subCat', defaults.subCat);
       }
       else {
-        if (ids.subCat[this.get('mainCat')].indexOf(defaults.subCat) !== -1) {
+        if (ids.subCat[ mainCat ].indexOf(defaults.subCat) !== -1) {
           this.set('subCat', defaults.subCat);
         }
       }
     }
 
-    this.debug.group('update', 'end');
+    this.debug.end('update');
   };
 
 /* -----------------------------------------------------------------------------
@@ -3598,16 +3559,19 @@ aIV.utils.set({
    * Public Class (QuestionsConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for formatting questions in this app.
-   * @param {Object} config - The user's question format config settings.
+   * @param {!Object} config - The user's question format config settings.
    * @constructor
    */
   var QuestionsConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('QuestionsConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -3707,44 +3671,15 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    complete = true;
-    source   = true;
-    category = true;
-    subCat   = true;
-    links    = true;
-    problem  = true;
-    descr    = false;
-    output   = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('complete') && config.complete === false) {
-      complete = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
-    if (config.hasOwnProperty('links') && config.links === false) {
-      links = false;
-    }
-    if (config.hasOwnProperty('problem') && config.problem === false) {
-      problem = false;
-    }
-    if (config.hasOwnProperty('descr') && config.descr === true) {
-      descr = true;
-    }
-    if (config.hasOwnProperty('output') && config.output === false) {
-      output = false;
-    }
-
+    id       = !(config.id       === false);
+    complete = !(config.complete === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
+    links    = !(config.links    === false);
+    problem  = !(config.problem  === false);
+    descr    =  (config.descr    === true );
+    output   = !(config.output   === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -3756,15 +3691,13 @@ aIV.utils.set({
      * -----------------------------------------------
      * @desc Gets a protected property's value from QuestionsConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
+        debug   : thisDebug,
         id      : id,
         complete: complete,
         source  : source,
@@ -3776,22 +3709,14 @@ aIV.utils.set({
         output  : output
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4351,17 +4276,20 @@ aIV.utils.set({
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|number|boolean)>} config - The user's
+   * @param {!Object<string, (string|number|boolean)>} config - The user's
    *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('PrettyConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -4403,26 +4331,30 @@ aIV.utils.set({
 
     trimSpace = 0;
     tabLength = 2;
-    commentLinks = false;
+    commentLinks = (config.commentLinks === true);
 
-    if ( config.hasOwnProperty('trimSpace') ) {
-      if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
+    if ( hasOwnProp(config, 'trimSpace') ) {
+      if (checkType(config.trimSpace, 'number') && config.trimSpace >= 0) {
         trimSpace = Math.floor(config.trimSpace);
       }
-      else if (typeof config.trimSpace === 'string') {
-        trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.trimSpace, 'string') ) {
+        config.trimSpace = config.trimSpace.replace(/[^0-9]/g, '');
+        if (config.trimSpace) {
+          trimSpace = Number(config.trimSpace);
+        }
       }
     }
-    if ( config.hasOwnProperty('tabLength') ) {
-      if (typeof config.tabLength === 'number') {
-        tabLength = config.tabLength;
+
+    if ( hasOwnProp(config, 'tabLength') ) {
+      if (checkType(config.tabLength, 'number') && config.tabLength >= 0) {
+        tabLength = Math.floor(config.tabLength);
       }
-      else if (typeof config.tabLength === 'string') {
-        tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.tabLength, 'string') ) {
+        config.tabLength = config.tabLength.replace(/[^0-9]/g, '');
+        if (config.tabLength) {
+          tabLength = Number(config.tabLength);
+        }
       }
-    }
-    if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
-      commentLinks = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -4435,36 +4367,26 @@ aIV.utils.set({
      * -----------------------------------------------
      * @desc Gets a protected property's value from PrettyConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(number|boolean)}
+     * @return {(number|boolean)} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (number|boolean)>} */
       var props = {
+        debug       : thisDebug,
         trimSpace   : trimSpace,
         tabLength   : tabLength,
         commentLinks: commentLinks
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4483,17 +4405,20 @@ aIV.utils.set({
    * -----------------------------------------------------
    * @desc The configuration settings for whether to show search links for
    *   portions of each question.
-   * @param {Object} config - The user's config settings for search link
-   *   formatting.
+   * @param {!Object<string, boolean>} config - The user's config settings
+   *   for search link formatting.
    * @constructor
    */
   var LinksConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('LinksConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -4533,19 +4458,9 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    source   = false;
-    category = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === true) {
-      source = true;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
+    id       = !(config.id       === false);
+    source   =  (config.source   === true );
+    category = !(config.category === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -4557,36 +4472,26 @@ aIV.utils.set({
      * -----------------------------------------------
      * @desc Gets a protected property's value from LinksConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
+        debug   : thisDebug,
         id      : id,
         source  : source,
         category: category
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
