@@ -235,7 +235,7 @@
       // Check the value for way & convert number strings to a number
       if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
         id = way.replace(/[^0-9]/g, '');
-        id = id || Number(id);
+        id = id && Number(id);
         id || throwParamError(way);
         way = null;
       }
