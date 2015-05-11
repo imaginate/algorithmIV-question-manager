@@ -11,22 +11,22 @@
    */
   var App = function(config, sources, categories, questions) {
 
-    this.debug = aIV.debug('App');
-
-    debugMsg = 'Error: No questions were provided to this app\'s init.';
-    debugCheck = (questions.length > 0);
-    this.debug.fail('init', debugCheck, debugMsg);
-
-    debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
-    debugArgs = [ 'init', 'open', debugMsg ];
-    debugArgs.push(config, sources, categories, questions);
-    this.debug.group(debugArgs);
+    // $s$
+    this.debug = aIV.debug({
+      classTitle  : 'App',
+      turnOnGroups: true,
+      turnOnTimers: true
+    });
+    // $e$
 
     this.debug.start('init', config, sources, categories, questions);
 
-    debugArgs = [ 'init', config, 'objectMap', sources, 'stringMap' ];
-    debugArgs.push(categories, 'objectMap|stringMap', questions, '!objects');
-    this.debug.args(debugArgs);
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ config, 'objectMap', sources, 'stringMap' ];
+    args.push(categories, 'objectMap|stringMap', questions, '!objects');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -115,10 +115,12 @@
 
     /** @type {booleanMap} */
     var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
+    /** @type {?Object<string, (string|number)>} */
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
+    /** @type {function} */
+    var get;
     /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
@@ -140,37 +142,40 @@
     this.categories = new Categories(categories);
 
     // Setup the prettifier
+    get = this.config.prettifier.get;
     tmpConfig = {
-      trimSpace   : this.config.prettifier.get('trimSpace'),
-      tabLength   : this.config.prettifier.get('tabLength'),
-      commentLinks: this.config.prettifier.get('commentLinks')
+      trimSpace   : get('trimSpace'),
+      tabLength   : get('tabLength'),
+      commentLinks: get('commentLinks')
     };
     prettify.setConfig(tmpConfig);
 
     // Setup the search bar
+    get = this.config.searchBar.get;
     tmpConfig = {
-      stage   : this.config.searchBar.get('stage'),
-      source  : this.config.searchBar.get('source'),
-      category: this.config.searchBar.get('category'),
-      subCat  : this.config.searchBar.get('subCat')
+      stage   : get('stage'),
+      source  : get('source'),
+      category: get('category'),
+      subCat  : get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
 
     // Setup the questions
+    get = this.config.questions.get;
     tmpConfig = {
-      id      : this.config.questions.get('id'),
-      complete: this.config.questions.get('complete'),
-      source  : this.config.questions.get('source'),
-      category: this.config.questions.get('category'),
-      subCat  : this.config.questions.get('subCat'),
-      links   : this.config.questions.get('links'),
-      output  : this.config.questions.get('output')
+      id      : get('id'),
+      complete: get('complete'),
+      source  : get('source'),
+      category: get('category'),
+      subCat  : get('subCat'),
+      links   : get('links'),
+      output  : get('output')
     };
     this.questions = new Questions(questions, tmpConfig, this.sources,
                                    this.categories);
 
     // Set the search defaults
-    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
+    defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -204,10 +209,10 @@
       window.history.replaceState( this.getStateObj() );
     }
     catch (e) {
-      debugCheck = 'Oi, an old browser. Just let it die.';
-      this.debug.fail('init', false, debugCheck);
       this.isHistory = false;
     }
+
+    this.debug.state('init', 'isHistory= $$', this.isHistory);
 
     // Setup the onpopstate event
     if (this.isHistory) {
@@ -220,10 +225,9 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,23 +245,22 @@
    */
   App.prototype.setupDisplay = function() {
 
-    this.debug.group('setupDisplay', 'open');
-    this.debug.start('setupDisplay');
+    app.debug.start('setupDisplay');
 
     /** @type {number} */
     var renderTime;
 
-    if ( this.flags.get('initArgs') ) {
+    if ( app.flags.get('initArgs') ) {
 
-      this.elems.appendNav();
-      this.searchBar.setMainElems();
-      this.searchBar.setOptElems();
-      this.searchBar.appendElems();
-      this.questions.addIdsToSearch();
-      this.questions.appendElems();
+      app.elems.appendNav();
+      app.searchBar.setMainElems();
+      app.searchBar.setOptElems();
+      app.searchBar.appendElems();
+      app.questions.addIdsToSearch();
+      app.questions.appendElems();
 
-      renderTime = this.questions.len * 32;
-      this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
+      renderTime = app.questions.len * 50;
+      app.debug.state('setupDisplay', 'renderTime= $$', renderTime);
       setTimeout(function() {
 
         /** @type {boolean} */
@@ -270,7 +273,7 @@
 
         // $s$
         setTimeout(function() {
-          app.debug.group('setupDisplay', 'end');
+          app.debug.end('setupDisplay');
           debug.end('startApp');
         }, 520);
         // $e$
@@ -278,8 +281,8 @@
       }, renderTime);
     }
     else {
-      this.elems.appendError();
-      this.debug.group('setupDisplay', 'end');
+      app.elems.appendError();
+      app.debug.end('setupDisplay');
       debug.end('startApp');
     }
   };
@@ -301,21 +304,12 @@
   App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
                                          flipElems, noPushState) {
 
-    debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
-    debugMsg += 'flipElems= $$, noPushState= $$';
-    debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
-    debugArgs.push(oldIndex, oldView, flipElems, noPushState);
-    this.debug.group(debugArgs);
+    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView, flipElems ];
+    debugArgs.push(noPushState);
+    app.debug.start(debugArgs);
 
-    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView ];
-    debugArgs.push(flipElems, noPushState);
-    this.debug.start(debugArgs);
-
-    debugArgs = [ 'updateDisplay', oldIds, 'numbers=' ];
-    debugArgs.push(oldIndex, '?number=', oldView, '?string=');
-    debugArgs.push(flipElems, 'boolean=', noPushState, 'boolean=');
-    this.debug.args(debugArgs);
-
+    /** @type {!Array<*>} */
+    var args;
     /** @type {!numbers} */
     var newIds;
     /** @type {number} */
@@ -323,9 +317,13 @@
     /** @type {string} */
     var newView;
 
-    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    args = [ oldIds, 'numbers=', oldIndex, '?number=', oldView, '?string=' ];
+    args.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    checkArgs.apply(null, args);
+
+    oldIds = (!!oldIds) ? oldIds : app.vals.get('ids').slice(0);
     oldIndex = ( ( checkType(oldIndex, '!number') ) ?
-      oldIndex : this.vals.get('index')
+      oldIndex : app.vals.get('index')
     );
 
     newView = app.searchBar.vals.view;
@@ -335,11 +333,11 @@
     noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('ids').slice(0);
-    newIndex = this.vals.get('index');
+    newIds = app.vals.get('ids').slice(0);
+    newIndex = app.vals.get('index');
 
     // Hide the question's main element
-    this.elems.main.style.opacity = '0';
+    app.elems.main.style.opacity = '0';
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
@@ -370,7 +368,7 @@
       // Show the question's main element
       app.elems.main.style.opacity = '1';
 
-      app.debug.group('updateDisplay', 'end');
+      app.debug.end('updateDisplay');
     }, 520);
   };
 
@@ -378,13 +376,13 @@
    * -----------------------------------------------
    * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Finds the matching question ids for the current
-   *   selected search values.
+   * @desc Finds the matching question ids for the current selected search
+   *   values.
    * @return {numbers} An array of the matching ids.
    */
   App.prototype.findMatches = function() {
 
-    this.debug.start('findMatches');
+    app.debug.start('findMatches');
 
     /** @type {nums} */
     var stage;
@@ -406,23 +404,23 @@
     var checkForValue;
 
     // Save the current values
-    stage   = this.searchBar.vals.stage;
-    source  = this.searchBar.vals.source;
-    mainCat = this.searchBar.vals.mainCat;
-    subCat  = this.searchBar.vals.subCat;
+    stage   = app.searchBar.vals.stage;
+    source  = app.searchBar.vals.source;
+    mainCat = app.searchBar.vals.mainCat;
+    subCat  = app.searchBar.vals.subCat;
 
     // Save the matching ids
     stage = ( (stage === 'all') ?
-      null : this.searchBar.ques.stage[ stage ].slice(0)
+      null : app.searchBar.ques.stage[ stage ].slice(0)
     );
     source = ( (source === 'all') ?
-      null : this.sources.get(source, 'ids').slice(0)
+      null : app.sources.get(source, 'ids').slice(0)
     );
     mainCat = ( (mainCat === 'all') ?
-      null : this.categories.get(mainCat, 'ids').slice(0)
+      null : app.categories.get(mainCat, 'ids').slice(0)
     );
     subCat = ( (subCat === 'all') ?
-      null : this.categories.get(subCat, 'ids').slice(0)
+      null : app.categories.get(subCat, 'ids').slice(0)
     );
 
     // Check for empty arrays
@@ -430,26 +428,23 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.debug.state('findMatches', 'newIds= $$', []);
-      return [];
+      newIds = [];
+      app.debug.end('findMatches', newIds);
+      return newIds;
     }
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-
-      newIds = this.vals.get('allIds').slice(0);
-
-      if (this.searchBar.vals.order === 'desc') {
+      newIds = app.vals.get('allIds').slice(0);
+      if (app.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
-      this.debug.state('findMatches', 'newIds= $$', newIds);
-
+      app.debug.end('findMatches', newIds);
       return newIds;
     }
 
     // Find the min length array
-    len = (stage) ? stage.length : this.questions.len;
+    len = (stage) ? stage.length : app.questions.len;
     if (source && source.length < len) {
       len = source.length;
     }
@@ -480,49 +475,12 @@
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-
-      if (this.searchBar.vals.order === 'desc') {
+      if (app.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
-      this.debug.state('findMatches', 'newIds= $$', newIds);
-
+      app.debug.end('findMatches', newIds);
       return newIds;
     }
-
-    // The helper function that checks each array for the
-    // current value being checked & removes the checked
-    // values from the array
-    checkForValue = function(/** number */ val, /** numbers */ arr) {
-
-      /** @type {boolean} */
-      var pass;
-      /** @type {number} */
-      var i;
-      /** @type {number} */
-      var compareVal;
-
-      pass = false;
-
-      i = arr.length;
-      while (i--) {
-
-        compareVal = arr[i];
-
-        if (compareVal >= val) {
-          arr.pop();
-          if (compareVal === val) {
-            pass = true;
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-
-      return pass;
-    };
 
     // Remove the question ids that do not exist in all other arrays
     i = newIds.length;
@@ -574,11 +532,11 @@
       }
     }
 
-    if (this.searchBar.vals.order === 'desc') {
+    if (app.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
-    this.debug.state('findMatches', 'newIds= $$', newIds);
+    app.debug.end('findMatches', newIds);
 
     return newIds;
   };
@@ -592,21 +550,25 @@
    */
   App.prototype.getStateObj = function() {
 
-    this.debug.start('getStateObj');
+    app.debug.start('getStateObj');
 
     /** @type {Object<string, (string|number|numbers)>} */
     var vals;
 
     vals = {
-      ids    : this.vals.get('ids').slice(0),
-      index  : this.vals.get('index'),
-      view   : this.searchBar.vals.view,
-      order  : this.searchBar.vals.order,
-      stage  : this.searchBar.vals.stage,
-      source : this.searchBar.vals.source,
-      mainCat: this.searchBar.vals.mainCat,
-      subCat : this.searchBar.vals.subCat
+      ids    : app.vals.get('ids').slice(0),
+      index  : app.vals.get('index'),
+      view   : app.searchBar.vals.view,
+      order  : app.searchBar.vals.order,
+      stage  : app.searchBar.vals.stage,
+      source : app.searchBar.vals.source,
+      mainCat: app.searchBar.vals.mainCat,
+      subCat : app.searchBar.vals.subCat
     };
 
-    return JSON.stringify(vals);
+    vals = JSON.stringify(vals);
+
+    app.debug.end('getStateObj', vals);
+
+    return vals;
   };
