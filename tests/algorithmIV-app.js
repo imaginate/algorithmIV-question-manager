@@ -1159,8 +1159,8 @@ aIV.utils.set({
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources,
-                                   this.categories);
+    this.questions = new Questions(questions, tmpConfig, this.sources.get,
+                                   this.categories.get);
 
     // Set the search defaults
     defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
@@ -3731,21 +3731,21 @@ aIV.utils.set({
    * @desc The questions for this app.
    * @param {objects} questions - The user's questions.
    * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, sources, categories) {
+  var Questions = function(questions, config, getSource, getCategory) {
 
     this.debug = aIV.debug('Questions');
 
     debugMsg = 'questions= $$, config= $$';
     this.debug.group('init', 'open', debugMsg, questions, config);
 
-    this.debug.start('init', questions, config, sources, categories);
+    this.debug.start('init', questions, config, getSource, getCategory);
 
     debugArgs = [ 'init', questions, 'objects', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
+    debugArgs.push(getSource, 'function', getCategory, 'function');
     this.debug.args(debugArgs);
 
     ////////////////////////////////////////////////////////////////////////////
@@ -3796,7 +3796,8 @@ aIV.utils.set({
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+      this.list[ id ] = new Question(questions[i], id, config,
+                                     getSource, getCategory);
     }
 
     // Freeze the public properties that are objects
@@ -4514,7 +4515,10 @@ aIV.utils.set({
    */
   var Sources = function(sources) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Sources');
+    thisDebug = this.debug;
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
 
@@ -4610,8 +4614,8 @@ aIV.utils.set({
      */
     this.get = function(id, prop) {
 
-      this.debug.start('get', id, prop);
-      this.debug.args('get', id, 'string', prop, 'string=');
+      thisDebug.start('get', id, prop);
+      thisDebug.args('get', id, 'string', prop, 'string=');
 
       /** @type {Source} */
       var source;
@@ -4622,7 +4626,7 @@ aIV.utils.set({
 
       debugCheck = data.hasOwnProperty(id);
       debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', debugCheck, debugMsg, id);
+      thisDebug.fail('get', debugCheck, debugMsg, id);
 
       source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
 
@@ -4791,7 +4795,10 @@ aIV.utils.set({
    */
   var Categories = function(categories) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Categories');
+    thisDebug = this.debug;
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
 
@@ -4932,8 +4939,8 @@ aIV.utils.set({
      */
     this.get = function(id, prop) {
 
-      this.debug.start('get', id, prop);
-      this.debug.args('get', id, 'string', prop, 'string=');
+      thisDebug.start('get', id, prop);
+      thisDebug.args('get', id, 'string', prop, 'string=');
 
       /** @type {Category} */
       var category;
@@ -4944,7 +4951,7 @@ aIV.utils.set({
 
       debugCheck = data.hasOwnProperty(id);
       debugMsg = 'Error: The given category does not exist. catID= $$';
-      this.debug.fail('get', debugCheck, debugMsg, id);
+      thisDebug.fail('get', debugCheck, debugMsg, id);
 
       category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
 
@@ -5757,21 +5764,21 @@ aIV.utils.set({
    * @desc The questions for this app.
    * @param {objects} questions - The user's questions.
    * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, sources, categories) {
+  var Questions = function(questions, config, getSource, getCategory) {
 
     this.debug = aIV.debug('Questions');
 
     debugMsg = 'questions= $$, config= $$';
     this.debug.group('init', 'open', debugMsg, questions, config);
 
-    this.debug.start('init', questions, config, sources, categories);
+    this.debug.start('init', questions, config, getSource, getCategory);
 
     debugArgs = [ 'init', questions, 'objects', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
+    debugArgs.push(getSource, 'function', getCategory, 'function');
     this.debug.args(debugArgs);
 
     ////////////////////////////////////////////////////////////////////////////
@@ -5822,7 +5829,8 @@ aIV.utils.set({
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+      this.list[ id ] = new Question(questions[i], id, config,
+                                     getSource, getCategory);
     }
 
     // Freeze the public properties that are objects
@@ -6302,24 +6310,27 @@ aIV.utils.set({
    * Public Class (Question)
    * -----------------------------------------------------
    * @desc An object containing the details of a question.
-   * @param {Object} question - The details of a new question.
+   * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, sources, categories) {
+  var Question = function(question, id, config, getSource, getCategory) {
 
     this.debug = aIV.debug('Question');
 
     this.debug.group('init', 'coll', 'questionID= $$', id);
 
-    this.debug.start('init', question, id, config, sources, categories);
+    this.debug.start('init', question, id, config, getSource, getCategory);
 
-    debugArgs = [ 'init', question, 'object', id, 'number', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
-    this.debug.args(debugArgs);
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties
@@ -6451,107 +6462,98 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {!stringMap} */
+    var linkObj;
+    /** @type {string} */
+    var catId;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
+
     url = '';
-    if (!!question.url && typeof question.url === 'string') {
+    if ( checkType(question.url, 'string') ) {
       url = question.url.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
+      url = url.replace(/[^0-9a-z\-\s\_]/g, '');
       url = url.replace(/\s/g, '-');
     }
 
-    complete = (!!question.complete && question.complete === true);
+    complete = (question.complete === true);
 
-    source = ( (!!question.source && typeof question.source === 'string') ?
-      question.source : ''
+    source = ( (!checkType(question.source, 'string')) ?
+      '' : (question.source === 'all') ?
+        '_all' : question.source
     );
-    if ( !sources.get(source, 'name') ) {
+    if ( !getSource(source, 'name') ) {
       source = '';
     }
 
-    // Setup main categories
-    mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
-      [] : (question.mainCat.length) ?
-        question.mainCat.slice(0) : []
-    );
-
-    // Check the main category ids accuracy
-    mainCat.forEach(function(/** string */ catID, /** number */ i) {
-
-      if (catID === 'all') {
-        mainCat[i] = '_all';
-        catID = '_all';
-      }
-
-      if ( !categories.get(catID, 'name') ) {
-        mainCat.splice(i, 1);
-      }
-    });
-
-    // Setup sub categories
-    subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
-      [] : (question.subCat.length) ?
-        question.subCat.slice(0) : []
-    );
-
-    // Check the sub category ids accuracy
-    subCat.forEach(function(/** string */ catID, /** number */ i) {
-
-      if (catID === 'all') {
-        subCat[i] = '_all';
-        catID = '_all';
-      }
-
-      if ( !categories.get(catID, 'name') ) {
-        subCat.splice(i, 1);
-      }
-    });
-
-    // Setup links
-    links = ( (!config.links || !question.links ||
-               !checkType(question.links, 'objects') ||
-               !question.links.length) ?
-      [] : question.links.slice(0)
-    );
-
-    // Check the link objects accuracy
-    if (links.length) {
-      links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
-        if (!linkObj.name || !linkObj.href ||
-            !checkTypes([ linkObj.name, linkObj.href ], 'string') ||
-            !isLink(linkObj.href)) {
-          links.splice(i, 1);
+    mainCat = [];
+    if ( checkType(question.mainCat, '!strings') ) {
+      len = question.mainCat.length;
+      i = -1;
+      while (++i < len) {
+        catId = question.mainCat[i];
+        if (catId === 'all') {
+          catId = '_all';
         }
-      });
+        if ( getCategory(catId, 'name') ) {
+          mainCat.push(catId);
+        }
+      }
     }
 
-    problem = ( (!!question.problem && typeof question.problem === 'string') ?
-      question.problem : ''
-    );
+    subCat = [];
+    if ( checkType(question.subCat, '!strings') ) {
+      len = question.subCat.length;
+      i = -1;
+      while (++i < len) {
+        catId = question.subCat[i];
+        if (catId === 'all') {
+          catId = '_all';
+        }
+        if ( getCategory(catId, 'name') ) {
+          subCat.push(catId);
+        }
+      }
+    }
 
-    descr = ( (!!question.descr && typeof question.descr === 'string') ?
-      question.descr : ''
-    );
+    links = [];
+    if (config.links && checkType(question.links, '!objects')) {
+      len = question.links.length;
+      i = -1;
+      while (++i < len) {
+        linkObj = question.links[i];
+        if (checkType(linkObj, '!object') &&
+            checkType(linkObj.name, 'string') &&
+            checkType(linkObj.href, 'string') &&
+            isLink(linkObj.href)) {
+          links.push(linkObj);
+        }
+      }
+    }
+
+    problem = ( checkType(question.problem, 'string') ) ? question.problem : '';
+
+    descr = ( checkType(question.descr, 'string') ) ? question.descr : '';
 
     solution = '';
     output = '';
-    if (!!question.solution && typeof question.solution === 'function') {
+    if ( checkType(question.solution, 'function') ) {
 
       solution = String(question.solution);
-
-      if (solution) {
-        solution = trimFunctionWrapper(solution);
-      }
+      solution = solution && trimFunctionWrapper(solution);
 
       if (solution && config.output) {
         try {
           output = String( question.solution() );
         }
-        catch (errorMsg) {
-          debugArgs = [ 'init', false ];
-          debugArgs.push('The question\'s solution produced an error. questionID= $$, error= $$');
-          debugArgs.push(id, errorMsg);
-          this.debug.fail(debugArgs);
-
-          output = 'The solution returned an error.';
+        catch (error) {
+          debugMsg = 'The question\'s solution produced an error. ';
+          debugMsg += 'questionID= $$, error= $$';
+          this.debug.fail('init', false, debugMsg, id, error.toString());
+          output = 'The solution returned the following error - ';
+          output += error.toString();
         }
       }
     }
@@ -6563,9 +6565,9 @@ aIV.utils.set({
       mainCat : mainCat,
       subCat  : subCat,
       solution: solution
-    }, config, sources, categories);
+    }, config, getSource, getCategory);
 
-    // Freeze the needed protected properties
+    // Freeze some of the protected properties
     freezeObj(mainCat);
     freezeObj(subCat);
     freezeObj(links);
@@ -6578,20 +6580,26 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Method (Question.get)
      * -----------------------------------------------
-     * @desc Gets a protected property for the question.
-     * @param {string} prop - The name of the property to get.
+     * @desc Gets a protected property's value from a Question.
+     * @param {string} propName - The name of the property to get.
      * @param {boolean=} formatted - If true then gets the
      *   formatted property.
-     * @return {val} The property's value.
+     * @return {*} The property's value.
      */
-    this.get = function(prop, formatted) {
+    this.get = function(propName, formatted) {
 
-      var debugMsg, debugCheck;
-      this.debug.start('get', prop, formatted);
-      this.debug.args('get', prop, 'string', formatted, 'boolean=');
+      this.debug.start('get', propName, formatted);
 
-      /** @type {Object<string, val>} */
-      var props = {
+      /** @type {string} */
+      var errorMsg;
+      /** @type {*} */
+      var propVal;
+      /** @type {!Object<string, *>} */
+      var props;
+
+      checkArgs(propName, 'string', formatted, 'boolean=');
+
+      props = {
         id      : id,
         url     : url,
         complete: complete,
@@ -6605,27 +6613,28 @@ aIV.utils.set({
         output  : output
       };
 
-      debugMsg = 'Error: The given property does not exist. ';
-      debugMsg += 'property= $$, formatted= $$';
-      debugCheck = props.hasOwnProperty(prop);
-      this.debug.fail('get', debugCheck, debugMsg, prop, formatted);
+      if ( !hasOwnProp(props, propName) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Question.get call was ';
+        errorMsg += 'given an invalid given property name. property= ' + propName;
+        throw new Error(errorMsg);
+      }
 
-      formatted = formatted || false;
+      propVal = (formatted) ? format.get(propName) : props[ propName ];
 
-      return (formatted) ? format.get(prop) : props[ prop ];
+      this.debug.end('get', propVal);
+
+      return propVal;
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
+    freezeObj(this.get);
     freezeObj(this);
+
+    this.debug.end('init');
+    this.debug.group('init', 'end');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -6639,12 +6648,14 @@ aIV.utils.set({
    * Public Method (Question.prototype.addToSearch)
    * -----------------------------------------------------
    * @desc Adds the question id to its matching search properties.
-   * @param {booleanMap} config - The needed format config.
+   * @param {!booleanMap} config - The needed format config.
    */
   Question.prototype.addToSearch = function(config) {
 
     this.debug.start('addToSearch');
 
+    /** @type {number} */
+    var i;
     /** @type {number} */
     var id;
     /** @type {boolean} */
@@ -6656,14 +6667,16 @@ aIV.utils.set({
     /** @type {strings} */
     var subCat;
 
+    checkArgs(config, '!booleanMap');
+
     id       = this.get('id');
     complete = this.get('complete');
     source   = this.get('source');
     mainCat  = this.get('mainCat');
     subCat   = this.get('subCat');
 
+    // Add the Question's id to the stage ids
     if (config.stage) {
-
       if (complete) {
         app.searchBar.ques.stage['com'].push(id);
       }
@@ -6672,21 +6685,28 @@ aIV.utils.set({
       }
     }
 
+    // Add the Question's id to the source ids
     if (config.source && source) {
       app.sources.get(source).addId(id);
     }
 
-    if (config.category && mainCat.length) {
-      mainCat.forEach(function(/** string */ catId) {
-        app.categories.get(catId).addId(id);
-      });
+    // Add the Question's id to the main category ids
+    if (config.category) {
+      i = mainCat.length;
+      while (i--) {
+        app.categories.get(mainCat[i]).addId(id);
+      }
     }
 
-    if (config.category && config.subCat && subCat.length) {
-      subCat.forEach(function(/** string */ catId) {
-        app.categories.get(catId).addId(id);
-      });
+    // Add the Question's id to the sub category ids
+    if (config.category && config.subCat) {
+      i = subCat.length;
+      while (i--) {
+        app.categories.get(subCat[i]).addId(id);
+      }
     }
+
+    this.debug.end('addToSearch');
   };
 
   /**
@@ -6726,6 +6746,7 @@ aIV.utils.set({
       output  : this.get('output')
     });
 
+    this.debug.end('addElemContent');
     this.debug.group('addElemContent', 'end');
   };
 
@@ -6738,25 +6759,27 @@ aIV.utils.set({
    * Public Class (QuestionFormat)
    * -----------------------------------------------------
    * @desc An object containing the formatted details of a question.
-   * @param {Object} question - The pre-formatted details of the question.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!Object} question - The pre-formatted details of the question.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config, sources, categories) {
+  var QuestionFormat = function(question, config, getSource, getCategory) {
+
+    var thisDebug;
 
     this.debug = aIV.debug('QuestionFormat');
+    thisDebug = this.debug;
 
-    debugArgs = [ 'init', 'coll', 'id= $$, question= $$' ];
-    debugArgs.push(question.id, question);
-    this.debug.group(debugArgs);
+    this.debug.start('init', question, config, getSource, getCategory);
 
-    this.debug.start('init', question, config, sources, categories);
+    /** @type {!Array<*>} */
+    var args;
 
-    debugArgs = [ 'init', question, 'object', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
-    this.debug.args(debugArgs);
+    args = [ question, '!object', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -6835,10 +6858,13 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {{ result: string, lineCount: number }} */
+    /** @type {!{ result: string, lineCount: number }} */
     var code;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-    // Format the id
     id = (config.id && question.id) ? question.id : '';
     if (id) {
       id = ( (id < 10) ?
@@ -6847,12 +6873,10 @@ aIV.utils.set({
       );
     }
 
-    // Format the source
-    source = ( (sources.len && config.source && question.source) ?
-      sources.get(question.source, 'name') : ''
+    source = ( (config.source && question.source) ?
+      getSource(question.source, 'name') : ''
     );
 
-    // Format the completion status
     complete = ( (!config.complete) ?
       '' : (question.complete) ?
         'Yes' : 'No'
@@ -6867,16 +6891,19 @@ aIV.utils.set({
       h3   : null,
       names: null
     };
-    if (categories.len && config.category) {
+    if (config.category) {
 
       // Format the main category
       if (question.mainCat.length) {
         mainCat.h3 = ( (question.mainCat.length > 1) ?
           'Main Categories:' : 'Main Category:'
         );
-        mainCat.names = question.mainCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.mainCat.length;
+        mainCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          mainCat.names[i] = getCategory(question.mainCat[i], 'name');
+        }
       }
 
       // Format the sub category
@@ -6884,9 +6911,12 @@ aIV.utils.set({
         subCat.h3 = ( (question.subCat.length > 1) ?
           'Sub Categories:' : 'Sub Category:'
         );
-        subCat.names = question.subCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.subCat.length;
+        subCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          subCat.names[i] = getCategory(question.subCat[i], 'name');
+        }
       }
     }
 
@@ -6898,7 +6928,7 @@ aIV.utils.set({
       solution.lineCount = code.lineCount;
     }
 
-    // Freeze all of the properties that are objects
+    // Freeze all of the protected properties that are objects
     freezeObj(mainCat);
     freezeObj(subCat);
     freezeObj(solution);
@@ -6911,18 +6941,15 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Method (QuestionFormat.get)
      * -----------------------------------------------
-     * @desc Gets a protected property for the question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val} The property's value.
+     * @desc Gets a protected property's value from the QuestionFormat.
+     * @param {string} propName - The name of the property to get.
+     * @return {*} The property's value.
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      var debugMsg, debugCheck;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, val>} */
+      /** @type {Object<string, *>} */
       var props = {
+        debug   : thisDebug,
         id      : id,
         source  : source,
         complete: complete,
@@ -6931,24 +6958,16 @@ aIV.utils.set({
         solution: solution
       };
 
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      debugCheck = props.hasOwnProperty(prop);
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, propName);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
