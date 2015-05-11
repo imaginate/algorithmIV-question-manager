@@ -180,7 +180,7 @@
 
     elem.style.opacity = '0';
 
-    addElemText(li, 'test');
+    setElemText(li, 'test');
 
     elem.appendChild(code);
     code.appendChild(ol);

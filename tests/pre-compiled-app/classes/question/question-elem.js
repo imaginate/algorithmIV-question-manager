@@ -205,7 +205,7 @@
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, id);
+        setElemText(p, id);
       }
 
 
@@ -288,7 +288,7 @@
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, source.name);
+        setElemText(p, source.name);
       }
 
       info.appendChild(div);
@@ -442,7 +442,7 @@
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, main.names.join(', '));
+        setElemText(p, main.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -499,7 +499,7 @@
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, sub.names.join(', '));
+        setElemText(p, sub.names.join(', '));
       }
 
       div.appendChild(h3);

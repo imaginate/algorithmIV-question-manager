@@ -130,13 +130,27 @@
 
   /**
    * ---------------------------------------------------
+   * Public Method (setElemText)
+   * ---------------------------------------------------
+   * @desc A shortcut that sets the native DOM property - Element.textContent
+   *   or Element.innerText.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to set the DOM element's textContent or
+   *   innerText to.
+   * @return {!Element} The updated DOM element.
+   */
+  var setElemText = aIV.utils.setElemText;
+
+  /**
+   * ---------------------------------------------------
    * Public Method (addElemText)
    * ---------------------------------------------------
-   * @desc A shortcut for the native DOM methods - Element.textContent
+   * @desc A shortcut that adds to the native DOM property - Element.textContent
    *   or Element.innerText.
-   * @param {!Element} elem - The element.
-   * @param {string} text - The element's textContent or innerText.
-   * @return {!Element} The DOM element with the given text.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to add to the DOM element's textContent or
+   *   innerText.
+   * @return {!Element} The updated DOM element.
    */
   var addElemText = aIV.utils.addElemText;
 
