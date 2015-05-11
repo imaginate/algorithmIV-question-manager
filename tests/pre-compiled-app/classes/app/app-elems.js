@@ -9,8 +9,6 @@
 
     this.debug = aIV.debug('AppElems');
 
-    this.debug.group('init', 'coll');
-
     this.debug.start('init');
 
     ////////////////////////////////////////////////////////////////////////////
@@ -22,7 +20,7 @@
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -31,7 +29,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {element}
+     * @type {Element}
      */
     this.sel;
 
@@ -40,7 +38,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {element}
+     * @type {Element}
      */
     this.main;
 
@@ -49,7 +47,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {element}
+     * @type {Element}
      */
     this.nav;
 
@@ -58,7 +56,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {element}
+     * @type {Element}
      */
     this.ques;
 
@@ -67,7 +65,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {element}
+     * @type {Element}
      */
     this.hold;
 
@@ -76,7 +74,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {element}
+     * @type {Element}
      */
     this.none;
 
@@ -107,41 +105,29 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {element} */
+    /** @type {Element} */
     var elem;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
-    /** @type {element} */
+    /** @type {Element} */
     var li;
 
-    this.root = makeElem({
-      id  : 'aIV',
-      html: '<h1>Algorithm IV</h1>'
-    });
+    this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
     this.sel  = makeElem({
       tag      : 'nav',
       id       : 'aIV-selections',
       className: 'selections'
     });
-    this.main = makeElem({
-      id       : 'aIV-main',
-      className: 'main'
-    });
-    this.nav  = makeElem({
-      tag: 'nav',
-      id : 'aIV-nav'
-    });
+    this.main = makeElem({ id: 'aIV-main', className: 'main' });
+    this.nav  = makeElem({ tag: 'nav', id: 'aIV-nav' });
     this.ques = makeElem({
       tag      : 'section',
       id       : 'aIV-questions',
       className: 'questions'
     });
-    this.hold = makeElem({
-      tag      : 'img',
-      className: 'loader'
-    });
+    this.hold = makeElem({ tag: 'img', className: 'loader' });
     this.none = makeElem({
       tag      : 'section',
       text     : 'No question(s) found.',
@@ -211,10 +197,9 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,21 +219,21 @@
 
     this.debug.start('appendNav');
 
-    /** @type {element} */
+    /** @type {Element} */
     var prev;
-    /** @type {element} */
+    /** @type {Element} */
     var pArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var pBG;
-    /** @type {element} */
+    /** @type {Element} */
     var pTitle;
-    /** @type {element} */
+    /** @type {Element} */
     var next;
-    /** @type {element} */
+    /** @type {Element} */
     var nArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var nBG;
-    /** @type {element} */
+    /** @type {Element} */
     var nTitle;
 
     prev = makeElem({ className: 'prev' });
@@ -290,6 +275,8 @@
 
     this.nav.appendChild(prev);
     this.nav.appendChild(next);
+
+    this.debug.end('appendNav');
   };
 
   /**
@@ -311,23 +298,23 @@
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {element} */
+    /** @type {Element} */
     var errorDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h2;
-    /** @type {element} */
+    /** @type {Element} */
     var p;
-    /** @type {element} */
+    /** @type {Element} */
     var exampleDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h3;
-    /** @type {element} */
+    /** @type {Element} */
     var div;
-    /** @type {element} */
+    /** @type {Element} */
     var pre;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
 
     errorMsg = '' +
@@ -472,4 +459,6 @@
 
     // Hide the loader
     this.hold.style.display = 'none';
+
+    this.debug.end('appendError');
   };
