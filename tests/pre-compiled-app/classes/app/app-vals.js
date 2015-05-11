@@ -8,11 +8,14 @@
    */
   var AppVals = function(questionsLen) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('AppVals');
+    thisDebug = this.debug;
 
     this.debug.start('init', questionsLen);
 
-    this.debug.args('init', questionsLen, 'number');
+    checkArgs(questionsLen, 'number');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -87,28 +90,22 @@
      * ----------------------------------------------- 
      * Public Method (AppVals.get)
      * -----------------------------------------------
-     * @desc Gets an app value.
-     * @param {string} prop - The name of the value to get.
+     * @desc Gets an AppVals protected property.
+     * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (number|numbers)>} */
       var props = {
+        debug : thisDebug,
         allIds: allIds,
         ids   : ids,
         len   : len,
         index : index
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -122,28 +119,28 @@
     this.set = function(newIds, newIndex) {
 
       this.debug.start('set', newIds, newIndex);
-      this.debug.args('set', newIds, 'numbers', newIndex, 'number=');
+
+      checkArgs(newIds, 'numbers', newIndex, 'number=');
 
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (typeof newIndex === 'number') {
+      if ( checkType(newIndex, 'number') ) {
         index = newIndex;
       }
-    };
 
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
+      this.debug.end('set');
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    freezeObj(this, true);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,16 +160,15 @@
   AppVals.prototype.reset = function(ids, index) {
 
     this.debug.start('reset', ids, index);
-    this.debug.args('reset', ids, 'numbers', index, 'number=');
 
     /** @type {number} */
     var len;
 
+    checkArgs(ids, 'numbers', index, 'number=');
+
     index = index || 0;
 
-    if (!ids) {
-      ids = this.get('allIds');
-    }
+    ids = ids || this.get('allIds');
     len = ids.length;
 
     // Check the new index value
@@ -185,6 +181,8 @@
 
     // Reset the values
     this.set(ids, index);
+
+    this.debug.end('reset');
   };
 
   /**
@@ -196,100 +194,96 @@
    *   The options are 'prev', 'next', or a question id.
    * @return {number} The new index.
    */
-  AppVals.prototype.move = function(way) {
+  AppVals.prototype.move = (function setupAppVals_move() {
 
-    this.debug.start('move', way);
-    this.debug.args('move', way, 'string|number');
+    /** function(string) */
+    var throwParamError = function(way) {
 
-    /** @type {number} */
-    var id;
-    /** @type {string} */
-    var view;
-    /** @type {number} */
-    var index;
-    /** @type {number} */
-    var last;
+      /** @type {string} */
+      var errorMsg;
 
-    id = (typeof way === 'number') ? way : 0;
-    index = this.get('index');
+      errorMsg = 'An aIV.app internal error occurred. An AppVals.move call ';
+      errorMsg += 'received an invalid way parameter. way= ' + way;
+      throw new Error(errorMsg);
+    };
 
-    // Check the value for way
-    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
-      try {
-        id = Number( way.replace(/[^0-9]/g, '') );
+    return function move(way) {
+
+      this.debug.start('move', way);
+
+      /** @type {number} */
+      var id;
+      /** @type {string} */
+      var view;
+      /** @type {number} */
+      var index;
+      /** @type {number} */
+      var last;
+
+      checkArgs(way, 'string|number');
+
+      if ( checkType(way, 'number') ) {
+        id  = way;
+        way = null;
       }
-      catch (e) {
-        debugMsg = 'Error: An incorrect value was given for way. way= $$';
-        this.debug.fail('move', false, debugMsg, way);
-        return;
-      }
-    }
-
-    view = app.searchBar.vals.view;
-
-    // Handle moving to a specific question id
-    if (id) {
-
-      debugCheck = (id > 0 && id <= app.questions.len);
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-      this.debug.fail('move', debugCheck, debugMsg, way);
-
-      if (view !== 'one') {
-        app.searchBar.vals.view = 'one';
+      else {
+        id = 0;
       }
 
-      index = this.get('ids').indexOf(way);
+      index = this.get('index');
 
-      this.set(null, index);
-
-      debugCheck = (index !== -1);
-      debugMsg = 'Error: An incorrect value was given for way. way= $$';
-      this.debug.fail('move', debugCheck, debugMsg, way);
-
-      return index;
-    }
-
-    // Save the last index
-    last = this.get('len') - 1;
-
-    // Handle moving the index one spot
-    if (view === 'one') {
-
-      this.debug.state('move', 'index= $$', index);
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : --index;
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : ++index;
+      // Check the value for way & convert number strings to a number
+      if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+        id = way.replace(/[^0-9]/g, '');
+        id = id || Number(id);
+        id || throwParamError(way);
+        way = null;
       }
 
-      this.debug.state('move', 'index= $$', index);
+      view = app.searchBar.vals.view;
 
-      this.set(null, index);
+      if (way) {
 
-      return index;
-    }
+        // Save the last index
+        last = this.get('len') - 1;
 
-    // Handle moving the index ten spots
-    if (view === 'ten') {
+        if (view === 'one') {
 
-      // Update the last index
-      last = last - (last % 10);
+          // Handle moving the index one spot
+          if (way === 'prev') {
+            index = (index === 0) ? last : --index;
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : ++index;
+          }
+        }
+        else if (view === 'ten') {
 
-      if (way === 'prev') {
-        index = (index === 0) ? last : (index - 10);
+          // Handle moving the index ten spots
+          last = last - (last % 10);
+          if (way === 'prev') {
+            index = (index === 0) ? last : (index - 10);
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : (index + 10);
+          }
+        }
       }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : (index + 10);
+      else {
+
+        // Handle moving to a specific question id
+        (id) || (id <= app.questions.len) || throwParamError(id);
+        if (view !== 'one') {
+          app.searchBar.vals.view = 'one';
+        }
+        index = this.get('ids').indexOf(id);
+        (index !== -1) || throwParamError(id);
       }
 
       this.set(null, index);
 
-      return index;
-    }
+      this.debug.end('move', index);
 
-    debugMsg = 'Error: An incorrect view was parsed. ';
-    debugMsg += 'app.searchBar.vals.view= $$';
-    this.debug.fail('move', false, debugMsg, view);
-  };
+      return index;
+    };
+  })();
