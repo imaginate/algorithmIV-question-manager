@@ -3,16 +3,19 @@
    * Public Class (SearchBarConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the search bar in this app.
-   * @param {Object} config - The user's search bar config settings.
+   * @param {!Object} config - The user's search bar config settings.
    * @constructor
    */
   var SearchBarConfig = function(config) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('SearchBarConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init', config);
 
-    this.debug.args('init', config, 'object');
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Properties
@@ -75,23 +78,11 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    stage    = true;
-    source   = true;
-    category = true;
-    subCat   = true;
+    stage    = !(config.stage    === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
 
-    if (config.hasOwnProperty('stage') && config.stage === false) {
-      stage = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
     if (!category && subCat) {
       subCat = false;
     }
@@ -106,37 +97,27 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from SearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
+        debug   : thisDebug,
         stage   : stage,
         source  : source,
         category: category,
         subCat  : subCat
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
