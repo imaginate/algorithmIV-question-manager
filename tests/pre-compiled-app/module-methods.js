@@ -11,12 +11,12 @@
 
     debug.start('getResource', jsonFile, callback);
 
-    checkArgs(jsonFile, 'string', callback, 'function');
-
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(jsonFile, 'string', callback, 'function');
 
     http = new XMLHttpRequest();
     http.onreadystatechange = function() {
@@ -245,8 +245,6 @@
 
     debug.start('checkTypes', vals, types);
 
-    checkArgs(vals, '!array', types, '!string|strings');
-
     /** @type {number} */
     var i;
     /** @type {*} */
@@ -257,6 +255,8 @@
     var pass;
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(vals, '!array', types, '!string|strings');
 
     if ( checkType(types, 'string') ) {
       type = types;
@@ -298,8 +298,6 @@
 
     debug.start('sortKeys', ids, data);
 
-    checkArgs(ids, '!strings', data, '!stringMap');
-
     /** @type {!strings} */
     var keys;
     /** @type {!strings} */
@@ -314,6 +312,8 @@
     var len;
     /** @type {number} */
     var ii;
+
+    checkArgs(ids, '!strings', data, '!stringMap');
 
     keys  = [];
     names = [];
@@ -391,12 +391,12 @@
 
     debug.start('camelCase', str);
 
-    checkArgs(str, 'string');
-
     /** @type {!strings} */
     var arr;
     /** @type {number} */
     var i;
+
+    checkArgs(str, 'string');
 
     arr = str.split('-');
 
@@ -467,10 +467,10 @@
 
       debug.start('isLink', str);
 
-      checkArgs(str, 'string');
-
       /** @type {boolean} */
       var result;
+
+      checkArgs(str, 'string');
 
       result = http.test(str);
 
@@ -493,10 +493,10 @@
 
     debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
 
-    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
-
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
 
     errorMsg = 'Your aIV.app settings property, ' + prop + ', was an ';
     errorMsg += 'incorrect data type. It should be ' + shouldBeType + '. ';

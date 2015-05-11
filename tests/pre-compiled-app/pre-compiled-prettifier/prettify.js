@@ -17,10 +17,10 @@
       prettify.debug.start('init', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {{ result: string, lineCount: number }} */
       var result;
+
+      checkArgs(solution, 'string');
 
       // Format the solution
       result = applyFormatting( prepareLines(solution) );

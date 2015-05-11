@@ -34,14 +34,14 @@
       prettify.debug.start('prepareLines', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {!strings} */
       var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -79,8 +79,6 @@
 
       prettify.debug.start('applyFormatting', lines);
 
-      checkArgs(lines, '!strings');
-
       /** @type {number} */
       var i;
       /** @type {number} */
@@ -89,6 +87,8 @@
       var line;
       /** @type {!Object} */
       var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -134,14 +134,14 @@
 
       prettify.debug.start('prepareLine', line);
 
-      checkArgs(line, 'string');
-
       /** @type {number} */
       var i;
       /** @type {number} */
       var frontTrimCount;
       /** @type {string} */
       var trimPart;
+
+      checkArgs(line, 'string');
 
       // Trim ending whitespaces
       if (line) {
@@ -196,10 +196,10 @@
 
       prettify.debug.start('makeKeywordObj', cat, href, props);
 
-      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
-
       /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -230,10 +230,10 @@
 
       prettify.debug.start('makePropObj', href);
 
-      checkArgs(href, 'string=');
-
       /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
