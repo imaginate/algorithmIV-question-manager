@@ -9,14 +9,17 @@
    */
   var AppFlags = function(pass) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('AppFlags');
+    thisDebug = this.debug;
 
     this.debug.start('init', pass);
 
-    this.debug.args('init', pass, 'boolean');
+    checkArgs(pass, 'boolean');
 
     ////////////////////////////////////////////////////////////////////////////
-    // Define The Protected Properties
+    // Define & Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -27,13 +30,7 @@
      * @type {boolean}
      * @private
      */
-    var initArgs;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Setup The Protected Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    initArgs = pass;
+    var initArgs = pass;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -43,62 +40,51 @@
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
      * -----------------------------------------------
-     * @desc Gets a flag.
+     * @desc Gets an AppFlags protected property.
      * @param {string} prop - The name of the flag to get.
-     * @return {boolean}
+     * @return {boolean} The flag's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, boolean>} */
-      var flags = {
+      var props = {
+        debug   : thisDebug,
         initArgs: initArgs
       };
 
-      debugCheck = flags.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return flags[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.set)
      * -----------------------------------------------
-     * @desc Sets a flag.
+     * @desc Sets an AppFlags protected property.
      * @param {string} prop - The name of the flag to set.
      * @param {boolean} val - The value to set the flag to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      this.debug.start('set', prop, val);
-      this.debug.args('set', prop, 'string', val, 'boolean');
-
-      /** @type {Object<string, function>} */
-      var flags = {
-        initArgs: function () { initArgs = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        debug   : thisDebug,
+        initArgs: function(val) {
+          initArgs = val;
+          return checkType(val, 'boolean');
+        }
       };
 
-      debugCheck = flags.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      flags[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    freezeObj(this, true);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
