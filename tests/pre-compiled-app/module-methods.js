@@ -482,6 +482,43 @@
 
   /**
    * ---------------------------------------------------
+   * Public Method (checkForValue)
+   * ---------------------------------------------------
+   * @desc A helper function that checks an array for a value & removes each
+   *   value that is greater than or equal to given value from the array.
+   * @param {number} checkVal - The value to check for.
+   * @param {numbers} arr - The array to check & update.
+   * @return {boolean} The result of the check.
+   */
+  function checkForValue(checkVal, arr) {
+
+    debug.start('checkForValue', checkVal, arr);
+
+    /** @type {number} */
+    var arrVal;
+    /** @type {boolean} */
+    var pass;
+    /** @type {number} */
+    var i;
+
+    pass = false;
+
+    i = arr.length;
+    while (i-- && arr[i] >= checkVal) {
+      arrVal = arr.pop();
+      if (arrVal === checkVal) {
+        pass = true;
+        break;
+      }
+    }
+
+    debug.end('findMatches.checkForValue', pass);
+
+    return pass;
+  }
+
+  /**
+   * ---------------------------------------------------
    * Public Method (logStartAppTypeError)
    * ---------------------------------------------------
    * @desc Logs appModuleAPI.startApp type errors for settings properties.
