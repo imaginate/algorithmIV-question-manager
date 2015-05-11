@@ -26,7 +26,7 @@
           debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
-          errorMsg = 'Your resource - resources/' + jsonFile + '.json - ';
+          errorMsg = 'Your aIV.app resource - resources/' + jsonFile + '.json - ';
           errorMsg += 'failed to load. Please ensure your resources folder ';
           errorMsg += 'is in the same directory as algorithmIV-app.js. ';
           errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
@@ -268,10 +268,10 @@
     }
 
     if (vals.length !== types.length) {
-      errorMsg = 'An aIV.app checkTypes call received an invalid parameter. ';
-      errorMsg += 'The length of the vals and types arrays did not match.';
+      errorMsg = 'An aIV.app internal error occurred. A checkTypes call ';
+      errorMsg += 'received an invalid parameter. The length of the vals ';
+      errorMsg += 'and types arrays did not match.';
       throw new Error(errorMsg);
-      return;
     }
 
     pass = true;
@@ -513,6 +513,81 @@
     }
 
     debug.end('findMatches.checkForValue', pass);
+
+    return pass;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getter)
+   * ---------------------------------------------------
+   * @desc The basic getter function for all the classes.
+   * @this {!Object<string, *>} A hash map of the protected property names
+   *   and current values for the class calling the getter.
+   * @param {string} propName - The name of the protected property to get.
+   * @return {*}
+   */
+  function getter(propName) {
+
+    this.debug.start('get', propName);
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {*} */
+    var propVal;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A getter was given an ';
+      errorMsg += 'invalid given property name. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    propVal = this[ propName ];
+
+    this.debug.end('get', propVal);
+
+    return propVal;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setter)
+   * ---------------------------------------------------
+   * @desc The basic setter function for all the classes.
+   * @this {!Object<string, function(*)>} A hash map of the protected property
+   *   names and setting functions for the class calling the setter.
+   * @param {string} propName - The name of the protected property to set.
+   * @param {*} propVal - The value to set the property to.
+   * @return {boolean} The success of the setter.
+   */
+  function setter(propName, propVal) {
+
+    this.debug.start('set', propName, propVal);
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {boolean} */
+    var pass;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid property name. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    pass = this[ propName ](propVal);
+
+    if (!pass) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid new property value. value= ' + propVal;
+      throw new Error(errorMsg);
+    }
+
+    this.debug.end('set', pass);
 
     return pass;
   }
