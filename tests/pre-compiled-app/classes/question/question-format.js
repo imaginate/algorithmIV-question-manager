@@ -3,25 +3,27 @@
    * Public Class (QuestionFormat)
    * -----------------------------------------------------
    * @desc An object containing the formatted details of a question.
-   * @param {Object} question - The pre-formatted details of the question.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!Object} question - The pre-formatted details of the question.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config, sources, categories) {
+  var QuestionFormat = function(question, config, getSource, getCategory) {
+
+    var thisDebug;
 
     this.debug = aIV.debug('QuestionFormat');
+    thisDebug = this.debug;
 
-    debugArgs = [ 'init', 'coll', 'id= $$, question= $$' ];
-    debugArgs.push(question.id, question);
-    this.debug.group(debugArgs);
+    this.debug.start('init', question, config, getSource, getCategory);
 
-    this.debug.start('init', question, config, sources, categories);
+    /** @type {!Array<*>} */
+    var args;
 
-    debugArgs = [ 'init', question, 'object', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
-    this.debug.args(debugArgs);
+    args = [ question, '!object', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -100,10 +102,13 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {{ result: string, lineCount: number }} */
+    /** @type {!{ result: string, lineCount: number }} */
     var code;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-    // Format the id
     id = (config.id && question.id) ? question.id : '';
     if (id) {
       id = ( (id < 10) ?
@@ -112,12 +117,10 @@
       );
     }
 
-    // Format the source
-    source = ( (sources.len && config.source && question.source) ?
-      sources.get(question.source, 'name') : ''
+    source = ( (config.source && question.source) ?
+      getSource(question.source, 'name') : ''
     );
 
-    // Format the completion status
     complete = ( (!config.complete) ?
       '' : (question.complete) ?
         'Yes' : 'No'
@@ -132,16 +135,19 @@
       h3   : null,
       names: null
     };
-    if (categories.len && config.category) {
+    if (config.category) {
 
       // Format the main category
       if (question.mainCat.length) {
         mainCat.h3 = ( (question.mainCat.length > 1) ?
           'Main Categories:' : 'Main Category:'
         );
-        mainCat.names = question.mainCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.mainCat.length;
+        mainCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          mainCat.names[i] = getCategory(question.mainCat[i], 'name');
+        }
       }
 
       // Format the sub category
@@ -149,9 +155,12 @@
         subCat.h3 = ( (question.subCat.length > 1) ?
           'Sub Categories:' : 'Sub Category:'
         );
-        subCat.names = question.subCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.subCat.length;
+        subCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          subCat.names[i] = getCategory(question.subCat[i], 'name');
+        }
       }
     }
 
@@ -163,7 +172,7 @@
       solution.lineCount = code.lineCount;
     }
 
-    // Freeze all of the properties that are objects
+    // Freeze all of the protected properties that are objects
     freezeObj(mainCat);
     freezeObj(subCat);
     freezeObj(solution);
@@ -176,18 +185,15 @@
      * ----------------------------------------------- 
      * Public Method (QuestionFormat.get)
      * -----------------------------------------------
-     * @desc Gets a protected property for the question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val} The property's value.
+     * @desc Gets a protected property's value from the QuestionFormat.
+     * @param {string} propName - The name of the property to get.
+     * @return {*} The property's value.
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      var debugMsg, debugCheck;
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, val>} */
+      /** @type {Object<string, *>} */
       var props = {
+        debug   : thisDebug,
         id      : id,
         source  : source,
         complete: complete,
@@ -196,24 +202,16 @@
         solution: solution
       };
 
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      debugCheck = props.hasOwnProperty(prop);
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, propName);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
