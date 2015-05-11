@@ -31,23 +31,23 @@
  * -----------------------------------------------------------------------------
  * @typedef {*} val
  * @typedef {number} num
- * @typedef {HTMLElement} elem
- * @typedef {HTMLElement} element
+ * @typedef {Element} elem
+ * @typedef {Element} element
  * @typedef {Array<*>} vals
  * @typedef {Array<number>} nums
  * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
  * @typedef {Array<Question>} questions
- * @typedef {Array<HTMLElement>} elems
- * @typedef {Array<HTMLElement>} elements
+ * @typedef {Array<Element>} elems
+ * @typedef {Array<Element>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
- * @typedef {Object<string, HTMLElement>} elemMap
- * @typedef {Object<string, HTMLElement>} elementMap
+ * @typedef {Object<string, Element>} elemMap
+ * @typedef {Object<string, Element>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
@@ -74,23 +74,24 @@ try{Object.freeze(function(){})}catch(p){Object.freeze=function(a){return functi
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
  * The Apache License (algorithmiv.com/docs/license) */
 (function(u,n){u.aIV=u.aIV||{};aIV.utils=aIV.utils||n})(window,function(u,n,y){var e={},f={checkArgsErrorMsg:"A function call had an invalid parameter data type.",getElemByClassRoot:n,getElemsByClassRoot:n,getElemByTagRoot:n,getElemsByTagRoot:n,types:{checkArgsErrorMsg:"string|function",getElemByClassRoot:"!(Document|Element)",getElemsByClassRoot:"!(Document|Element)",getElemByTagRoot:"!(Document|Element)",getElemsByTagRoot:"!(Document|Element)"}};Object.freeze(f);Object.freeze(f.types);var m={checkArgsErrorMsg:f.checkArgsErrorMsg,
-getElemByClassRoot:f.getElemByClassRoot,getElemsByClassRoot:f.getElemsByClassRoot,getElemByTagRoot:f.getElemByTagRoot,getElemsByTagRoot:f.getElemsByTagRoot};e.set=function(){return function(a){var b=e.checkType,c;if(!a||"object"!==typeof a)throw new TypeError("An aIV.utils.set call received an invalid settings parameter (should be an object).");for(c in m)if(m.hasOwnProperty(c)&&a.hasOwnProperty(c))if(b(a[c],f.types[c]))m[c]=a[c];else throw a=void 0,a="An aIV.utils.set call received an invalid "+
-c,a+=" settings parameter (should be a "+f.types[c],a+=").",new TypeError(a);return!0}}();e.reset=function(){var a,b,c;a=(a=arguments.length)?1<a?Array.prototype.slice.call(arguments,0):Array.isArray(arguments[0])?arguments[0]:[arguments[0]]:Object.keys(m);if(!e.checkType(a,"!strings"))throw new TypeError("An aIV.utils.reset call received an invalid setting parameter (should be a string or an array of strings).");for(c=a.length;c--;)b=a[c],m.hasOwnProperty(b)&&(m[b]=f[b]);return!0};e.checkType=function(){var a=
-/^string$|^number$|^boolean$|^function$|^undefined$/,b=/^string$|^number$|^boolean$|^object$|^function$|^undefined$/,c=/^elem$|^element$|^document$/,e=/^array$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$/,z=/^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,k=/\!/,m=/\?/,l=/\=/,n=/\*/,f=function(a,b){return null===a?!1:typeof a===b},u=function(a,b){return a&&f(a,"object")&&a.nodeType?a.nodeType==={elem:1,element:1,
-document:9}[b]:!1};return function(h,d,r){var p,v,q,g;if(!f(d,"string"))throw new TypeError("An aIV.utils.checkType call received an invalid (a non-string) type parameter.");if(p=n.test(d)){if(1<d.length)throw h="An aIV.utils.checkType call received an invalid type string. When using an asterisk, '*', no other values should be given as the asterisk guarantees the check will ",h+="pass.",Error(h);return!0}if(p=h===y&&l.test(d))g=!0;else{g=d;var t;t=(q=null===h)?k.test(g):!0;q&&m.test(g)&&(t=!t);g=
-t}q=p||!g||k.test(d)?!1:m.test(d);p=p||q&&g;if(!r||!p)if(d=d.toLowerCase(),d=d.replace(w.exceptLowerAlphaAndPipe,""),v=d.split("|"),!r)for(d=v,t=!0,r=d.length;t&&r--;)if(t=w.allDataTypes.test(d[r]),!t)throw h=void 0,h="An aIV.utils.checkType call received an invalid type ",h+="string. The value '"+d[r]+"' was incorrect. ",h+="Check aIV.utils.checkType's documentation for a ",h+="list of acceptable type strings.",Error(h);if(!p){if(null===h){h=v;p=q;d=!1;for(v=h.length;!d&&v--;)g||(p=!a.test(h[v])),
-d=p;h=d}else{p=v;g=!1;for(v=p.length;!g&&v--;){d=p[v];if("any"===d){g=!0;break}if(b.test(d))g=f(h,d);else if(c.test(d))g=u(h,d);else if(e.test(d))if(g=h,t=q=r=void 0,Array.isArray(g))if("array"===d)g=!0;else{d=d.slice(0,-1);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r=g.length;q&&r--;)q=t(g[r],d);g=q}else g=!1;else if(z.test(d))if(g=h,t=q=r=void 0,f(g,"object")){d=d.slice(0,-3);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r in g)if(g.hasOwnProperty(r)&&(q=t(g[r],d),!q))break;g=q}else g=
-!1}h=g}p=h}return p}}();e.isValidTypeString=function(a){var b,c;if("string"!==typeof a)throw new TypeError("An aIV.utils.isValidTypeString call received an invalid (a non-string) typeString parameter.");a=a.toLowerCase();a=a.replace(w.exceptLowerAlphaAndPipe,"");c=a.split("|");b=!0;for(a=c.length;b&&a--;)b=w.allDataTypes.test(c[a]);return b};e.checkArgs=function(){var a=e.checkType,b=e.isValidTypeString;return function(){var c,e,f,k,n,l,u;e=arguments.length;if(2>e||e%2)throw Error("An aIV.utils.checkArgs call was missing parameters.");
-n=Array.prototype.slice.call(arguments,0);l=!0;for(c=-1;++c<e;)if(c%2){k=n[c];u=(u=a(k,"string",!0))&&b(k);if(!u)throw l=void 0,l="An aIV.utils.checkArgs call received an invalid type ",l+="string. The value '"+k+"' was incorrect. ",l+="Check aIV.utils.checkType's documentation for a ",l+="list of acceptable type strings.",Error(l);l=l&&a(f,k,!0)}else f=n[c];if(!l&&(k=m.checkArgsErrorMsg,(k=a(k,"string")?k:k())&&a(k,"string")))throw new TypeError(k);return l}}();e.getTypeOf=function(){var a=e.checkType;
-return function(b){var c;c=typeof b;"object"===c&&a(b,"document|element|array")&&(c=null===b?"null":Array.isArray(b)?"array":1===b.nodeType?"element":"document");return c}}();e.freezeObj=function(){var a=function(b){var c;Object.freeze(b);for(c in b)b.hasOwnProperty(c)&&b[c]&&("object"===typeof b[c]||"function"===typeof b[c])&&a(b[c])};return function(b,c){if(!b||"object"!==typeof b&&"function"!==typeof b)throw new TypeError("An aIV.utils.freezeObj call received an invalid obj parameter.");"boolean"!==
-typeof c&&(c=!1);c?a(b):Object.freeze(b);return b}}();e.hasOwnProp=function(a,b){var c;if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An aIV.utils.hasOwnProp call received an invalid obj parameter.");if(!b||"string"!==typeof b)throw c="An aIV.utils.hasOwnProp call received an invalid prop parameter.",new TypeError(c);return a.hasOwnProperty(b)};var w={allDataTypes:/^any$|^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|^element$|^undefined$|^null$|^document$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,
-exceptLowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(w,!0);e.getElemById=function(a){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemById call received an invalid id parameter (should be a string).");a=n.getElementById(a);if(!a)throw a="An aIV.utils.getElemById call received an invalid id parameter (i.e. no element with the id was found).",new RangeError(a);return a};e.getElemByClass=function(a,b,c){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemByClass call received an invalid class name parameter.");
-b="number"!==typeof b||-1>b?0:Math.floor(b);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByClassRoot);a=c.getElementsByClassName?c.getElementsByClassName(a):x.getElementsByClassNameAlt(a,c);if(0>b||b>=a.length)b=a.length-1;b=a[b];if(!b)throw b="An aIV.utils.getElemByClass call received an invalid class name parameter ",b+="(i.e. no element with the class name was found).",new RangeError(b);return b};e.getElemsByClass=function(a,b){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemsByClass call received an invalid class name parameter.");
-b&&"object"===typeof b&&(b instanceof Element||b instanceof Document)||(b=m.getElemsByClassRoot);return b.getElementsByClassName?b.getElementsByClassName(a):x.getElementsByClassNameAlt(a,b)};e.getElemByTag=function(a,b,c){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemByTag call received an invalid tag name parameter.");b="number"!==typeof b||-1>b?0:Math.floor(b);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByTagRoot);a=c.getElementsByTagName(a);
-if(0>b||b>=a.length)b=a.length-1;b=a[b];if(!b)throw b="An aIV.utils.getElemByTag call received an invalid tag name parameter ",b+="(i.e. no element with the tag name was found).",new RangeError(b);return b};e.getElemsByTag=function(a,b){if(!a||"string"!==typeof a)throw new TypeError("An aIV.utils.getElemsByTag call received an invalid tag name parameter.");b&&"object"===typeof b&&(b instanceof Element||b instanceof Document)||(b=m.getElemsByTagRoot);return b.getElementsByTagName(a)};e.makeElem=function(a){var b;
-a&&"string"===typeof a?(b=a,a=null):a&&"object"===typeof a?a.hasOwnProperty("tag")&&a.tag&&"string"===typeof a.tag?b=a.tag:a.hasOwnProperty("tagName")&&a.tagName&&"string"===typeof a.tagName&&(b=a.tagName):a=null;b||(b="div");b=n.createElement(b);a&&(a.hasOwnProperty("text")&&a.text&&"string"===typeof a.text&&(b.textContent?b.textContent=a.text:b.innerText=a.text),a.hasOwnProperty("html")&&a.html&&"string"===typeof a.html&&(b.innerHTML=a.html),a.hasOwnProperty("id")&&a.id&&"string"===typeof a.id&&
-(b.id=a.id),a.hasOwnProperty("className")&&a.className&&"string"===typeof a.className&&(b.className=a.className));return b};e.addElemText=function(a,b){var c;if(!(a&&"object"===typeof a&&a instanceof Element))throw new TypeError("An aIV.utils.addElemText call received an invalid elem parameter (should be a DOM Element).");if(!b||"string"!==typeof b)throw c="An aIV.utils.addElemText call received an invalid text parameter (should be a string).",new TypeError(c);a.textContent?a.textContent=b:a.innerText=
-b;return a};var x={getElementsByClassNameAlt:function(a,b){var c,e,f,k,m,l;if(b.querySelectorAll)k=b.querySelectorAll("."+a);else if(n.evaluate)for(k=[],f='"'+(" "+a+" ")+'")]',c=n.evaluate(f,b,null,0,null),f=c.iterateNext();f;)k.push(f),f=c.iterateNext();else for(l=new RegExp("(^|s)"+a+"(s|$)"),m=b.getElementsByTagName("*"),k=[],e=m.length,c=-1;++c<e;)f=m[c],l.test(f.className)&&k.push(f);return k}};e.freezeObj(x,!0);e.freezeObj(e,!0);return e}(window,document));
+getElemByClassRoot:f.getElemByClassRoot,getElemsByClassRoot:f.getElemsByClassRoot,getElemByTagRoot:f.getElemByTagRoot,getElemsByTagRoot:f.getElemsByTagRoot};e.checkType=function(){var b=/^string$|^number$|^boolean$|^function$|^undefined$/,a=/^string$|^number$|^boolean$|^object$|^function$|^undefined$/,c=/^elem$|^element$|^document$/,e=/^array$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$/,z=/^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,
+k=/\!/,m=/\?/,l=/\=/,n=/\*/,f=function(a,b){return null===a?!1:typeof a===b},u=function(a,b){return a&&f(a,"object")&&a.nodeType?a.nodeType==={elem:1,element:1,document:9}[b]:!1};return function(h,d,r){var p,v,q,g;if(!f(d,"string"))throw new TypeError("An aIV.utils.checkType call received an invalid (a non-string) type parameter.");if(p=n.test(d)){if(1<d.length)throw h="An aIV.utils.checkType call received an invalid type string. When using an asterisk, '*', no other values should be given as the asterisk guarantees the check will ",
+h+="pass.",Error(h);return!0}if(p=h===y&&l.test(d))g=!0;else{g=d;var t;t=(q=null===h)?k.test(g):!0;q&&m.test(g)&&(t=!t);g=t}q=p||!g||k.test(d)?!1:m.test(d);p=p||q&&g;if(!r||!p)if(d=d.toLowerCase(),d=d.replace(w.exceptLowerAlphaAndPipe,""),v=d.split("|"),!r)for(d=v,t=!0,r=d.length;t&&r--;)if(t=w.allDataTypes.test(d[r]),!t)throw h=void 0,h="An aIV.utils.checkType call received an invalid type ",h+="string. The value '"+d[r]+"' was incorrect. ",h+="Check aIV.utils.checkType's documentation for a ",h+=
+"list of acceptable type strings.",Error(h);if(!p){if(null===h){h=v;p=q;d=!1;for(v=h.length;!d&&v--;)g||(p=!b.test(h[v])),d=p;h=d}else{p=v;g=!1;for(v=p.length;!g&&v--;){d=p[v];if("any"===d){g=!0;break}if(a.test(d))g=f(h,d);else if(c.test(d))g=u(h,d);else if(e.test(d))if(g=h,t=q=r=void 0,Array.isArray(g))if("array"===d)g=!0;else{d=d.slice(0,-1);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r=g.length;q&&r--;)q=t(g[r],d);g=q}else g=!1;else if(z.test(d))if(g=h,t=q=r=void 0,f(g,"object")){d=d.slice(0,
+-3);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r in g)if(g.hasOwnProperty(r)&&(q=t(g[r],d),!q))break;g=q}else g=!1}h=g}p=h}return p}}();e.isValidTypeString=function(b){var a,c;if("string"!==typeof b)throw new TypeError("An aIV.utils.isValidTypeString call received an invalid (a non-string) typeString parameter.");b=b.toLowerCase();b=b.replace(w.exceptLowerAlphaAndPipe,"");c=b.split("|");a=!0;for(b=c.length;a&&b--;)a=w.allDataTypes.test(c[b]);return a};e.checkArgs=function(){var b=e.checkType,
+a=e.isValidTypeString;return function(){var c,e,f,k,n,l,u;e=arguments.length;if(2>e||e%2)throw Error("An aIV.utils.checkArgs call was missing parameters.");n=Array.prototype.slice.call(arguments,0);l=!0;for(c=-1;++c<e;)if(c%2){k=n[c];u=(u=b(k,"string",!0))&&a(k);if(!u)throw l=void 0,l="An aIV.utils.checkArgs call received an invalid type ",l+="string. The value '"+k+"' was incorrect. ",l+="Check aIV.utils.checkType's documentation for a ",l+="list of acceptable type strings.",Error(l);l=l&&b(f,k,
+!0)}else f=n[c];if(!l&&(k=m.checkArgsErrorMsg,(k=b(k,"string")?k:k())&&b(k,"string")))throw new TypeError(k);return l}}();e.getTypeOf=function(){var b=e.checkType;return function(a){var c;c=typeof a;"object"===c&&b(a,"document|element|array")&&(c=null===a?"null":Array.isArray(a)?"array":1===a.nodeType?"element":"document");return c}}();e.freezeObj=function(){var b=function(a){var c;Object.freeze(a);for(c in a)a.hasOwnProperty(c)&&a[c]&&("object"===typeof a[c]||"function"===typeof a[c])&&b(a[c])};
+return function(a,c){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An aIV.utils.freezeObj call received an invalid obj parameter.");"boolean"!==typeof c&&(c=!1);c?b(a):Object.freeze(a);return a}}();e.hasOwnProp=function(b,a){var c;if(!b||"object"!==typeof b&&"function"!==typeof b)throw new TypeError("An aIV.utils.hasOwnProp call received an invalid obj parameter.");if(!a||"string"!==typeof a)throw c="An aIV.utils.hasOwnProp call received an invalid prop parameter.",new TypeError(c);
+return b.hasOwnProperty(a)};var w={allDataTypes:/^any$|^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|^element$|^undefined$|^null$|^document$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,exceptLowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(w,!0);e.getElemById=function(b){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemById call received an invalid id parameter (should be a string).");
+b=n.getElementById(b);if(!b)throw b="An aIV.utils.getElemById call received an invalid id parameter (i.e. no element with the id was found).",new RangeError(b);return b};e.getElemByClass=function(b,a,c){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemByClass call received an invalid class name parameter.");a="number"!==typeof a||-1>a?0:Math.floor(a);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByClassRoot);b=c.getElementsByClassName?c.getElementsByClassName(b):
+x.getElementsByClassNameAlt(b,c);if(0>a||a>=b.length)a=b.length-1;a=b[a];if(!a)throw a="An aIV.utils.getElemByClass call received an invalid class name parameter ",a+="(i.e. no element with the class name was found).",new RangeError(a);return a};e.getElemsByClass=function(b,a){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemsByClass call received an invalid class name parameter.");a&&"object"===typeof a&&(a instanceof Element||a instanceof Document)||(a=m.getElemsByClassRoot);
+return a.getElementsByClassName?a.getElementsByClassName(b):x.getElementsByClassNameAlt(b,a)};e.getElemByTag=function(b,a,c){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemByTag call received an invalid tag name parameter.");a="number"!==typeof a||-1>a?0:Math.floor(a);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByTagRoot);b=c.getElementsByTagName(b);if(0>a||a>=b.length)a=b.length-1;a=b[a];if(!a)throw a="An aIV.utils.getElemByTag call received an invalid tag name parameter ",
+a+="(i.e. no element with the tag name was found).",new RangeError(a);return a};e.getElemsByTag=function(b,a){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemsByTag call received an invalid tag name parameter.");a&&"object"===typeof a&&(a instanceof Element||a instanceof Document)||(a=m.getElemsByTagRoot);return a.getElementsByTagName(b)};e.makeElem=function(b){var a;b&&"string"===typeof b?(a=b,b=null):b&&"object"===typeof b?b.hasOwnProperty("tag")&&b.tag&&"string"===typeof b.tag?
+a=b.tag:b.hasOwnProperty("tagName")&&b.tagName&&"string"===typeof b.tagName&&(a=b.tagName):b=null;a||(a="div");a=n.createElement(a);b&&(b.hasOwnProperty("text")&&b.text&&"string"===typeof b.text&&(a.textContent?a.textContent=b.text:a.innerText=b.text),b.hasOwnProperty("html")&&b.html&&"string"===typeof b.html&&(a.innerHTML=b.html),b.hasOwnProperty("id")&&b.id&&"string"===typeof b.id&&(a.id=b.id),b.hasOwnProperty("className")&&b.className&&"string"===typeof b.className&&(a.className=b.className));
+return a};e.setElemText=function(b,a){var c;if(!(b&&"object"===typeof b&&b instanceof Element))throw new TypeError("An aIV.utils.setElemText call received an invalid elem parameter (should be a DOM Element).");if(!a||"string"!==typeof a)throw c="An aIV.utils.setElemText call received an invalid text parameter (should be a string).",new TypeError(c);b.textContent?b.textContent=a:b.innerText=a;return b};e.addElemText=function(b,a){var c;if(!(b&&"object"===typeof b&&b instanceof Element))throw new TypeError("An aIV.utils.addElemText call received an invalid elem parameter (should be a DOM Element).");
+if(!a||"string"!==typeof a)throw c="An aIV.utils.addElemText call received an invalid text parameter (should be a string).",new TypeError(c);b.textContent?b.textContent+=a:b.innerText+=a;return b};var x={getElementsByClassNameAlt:function(b,a){var c,e,f,k,m,l;if(a.querySelectorAll)k=a.querySelectorAll("."+b);else if(n.evaluate)for(k=[],f='"'+(" "+b+" ")+'")]',c=n.evaluate(f,a,null,0,null),f=c.iterateNext();f;)k.push(f),f=c.iterateNext();else for(l=new RegExp("(^|s)"+b+"(s|$)"),m=a.getElementsByTagName("*"),
+k=[],e=m.length,c=-1;++c<e;)f=m[c],l.test(f.className)&&k.push(f);return k}};e.freezeObj(x,!0);e.set=function(){var b=e.checkType;return function(a){var c;if(!a||"object"!==typeof a)throw new TypeError("An aIV.utils.set call received an invalid settings parameter (should be an object).");for(c in m)if(m.hasOwnProperty(c)&&a.hasOwnProperty(c))if(b(a[c],f.types[c]))m[c]=a[c];else throw a=void 0,a="An aIV.utils.set call received an invalid "+c,a+=" settings parameter (should be a "+f.types[c],a+=").",
+new TypeError(a);return!0}}();e.reset=function(){var b,a,c;b=(b=arguments.length)?1<b?Array.prototype.slice.call(arguments,0):Array.isArray(arguments[0])?arguments[0]:[arguments[0]]:Object.keys(m);if(!e.checkType(b,"!strings"))throw new TypeError("An aIV.utils.reset call received an invalid setting parameter (should be a string or an array of strings).");for(c=b.length;c--;)a=b[c],m.hasOwnProperty(a)&&(m[a]=f[a]);return!0};e.freezeObj(e,!0);return e}(window,document));
 
 ////////////////////////////////////////////////////////////////////////////////
 // The Public API
@@ -336,13 +337,14 @@ aIV.utils.set({
  * The Public Module Variables (module-vars.js)
  * -------------------------------------------------------------------------- */
 
-  // The debugging vars
+  // $s$
   var debug = aIV.debug({
     classTitle  : 'appModule',
     turnOnGroups: true,
     turnOnTimers: true
   });
   var debugArgs, debugMsg, debugCheck;
+  // $e$
 
   /**
    * -----------------------------------------------------
@@ -388,12 +390,12 @@ aIV.utils.set({
 
     debug.start('getResource', jsonFile, callback);
 
-    checkArgs(jsonFile, 'string', callback, 'function');
-
     /** @type {XMLHttpRequest} */
     var http;
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(jsonFile, 'string', callback, 'function');
 
     http = new XMLHttpRequest();
     http.onreadystatechange = function() {
@@ -507,13 +509,27 @@ aIV.utils.set({
 
   /**
    * ---------------------------------------------------
+   * Public Method (setElemText)
+   * ---------------------------------------------------
+   * @desc A shortcut that sets the native DOM property - Element.textContent
+   *   or Element.innerText.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to set the DOM element's textContent or
+   *   innerText to.
+   * @return {!Element} The updated DOM element.
+   */
+  var setElemText = aIV.utils.setElemText;
+
+  /**
+   * ---------------------------------------------------
    * Public Method (addElemText)
    * ---------------------------------------------------
-   * @desc A shortcut for the native DOM methods - Element.textContent
+   * @desc A shortcut that adds to the native DOM property - Element.textContent
    *   or Element.innerText.
-   * @param {!Element} elem - The element.
-   * @param {string} text - The element's textContent or innerText.
-   * @return {!Element} The DOM element with the given text.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to add to the DOM element's textContent or
+   *   innerText.
+   * @return {!Element} The updated DOM element.
    */
   var addElemText = aIV.utils.addElemText;
 
@@ -608,8 +624,6 @@ aIV.utils.set({
 
     debug.start('checkTypes', vals, types);
 
-    checkArgs(vals, '!array', types, '!string|strings');
-
     /** @type {number} */
     var i;
     /** @type {*} */
@@ -620,6 +634,8 @@ aIV.utils.set({
     var pass;
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(vals, '!array', types, '!string|strings');
 
     if ( checkType(types, 'string') ) {
       type = types;
@@ -661,8 +677,6 @@ aIV.utils.set({
 
     debug.start('sortKeys', ids, data);
 
-    checkArgs(ids, '!strings', data, '!stringMap');
-
     /** @type {!strings} */
     var keys;
     /** @type {!strings} */
@@ -677,6 +691,8 @@ aIV.utils.set({
     var len;
     /** @type {number} */
     var ii;
+
+    checkArgs(ids, '!strings', data, '!stringMap');
 
     keys  = [];
     names = [];
@@ -754,12 +770,12 @@ aIV.utils.set({
 
     debug.start('camelCase', str);
 
-    checkArgs(str, 'string');
-
     /** @type {!strings} */
     var arr;
     /** @type {number} */
     var i;
+
+    checkArgs(str, 'string');
 
     arr = str.split('-');
 
@@ -830,10 +846,10 @@ aIV.utils.set({
 
       debug.start('isLink', str);
 
-      checkArgs(str, 'string');
-
       /** @type {boolean} */
       var result;
+
+      checkArgs(str, 'string');
 
       result = http.test(str);
 
@@ -842,6 +858,43 @@ aIV.utils.set({
       return result;
     };
   })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkForValue)
+   * ---------------------------------------------------
+   * @desc A helper function that checks an array for a value & removes each
+   *   value that is greater than or equal to given value from the array.
+   * @param {number} checkVal - The value to check for.
+   * @param {numbers} arr - The array to check & update.
+   * @return {boolean} The result of the check.
+   */
+  function checkForValue(checkVal, arr) {
+
+    debug.start('checkForValue', checkVal, arr);
+
+    /** @type {number} */
+    var arrVal;
+    /** @type {boolean} */
+    var pass;
+    /** @type {number} */
+    var i;
+
+    pass = false;
+
+    i = arr.length;
+    while (i-- && arr[i] >= checkVal) {
+      arrVal = arr.pop();
+      if (arrVal === checkVal) {
+        pass = true;
+        break;
+      }
+    }
+
+    debug.end('findMatches.checkForValue', pass);
+
+    return pass;
+  }
 
   /**
    * ---------------------------------------------------
@@ -856,10 +909,10 @@ aIV.utils.set({
 
     debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
 
-    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
-
     /** @type {string} */
     var errorMsg;
+
+    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
 
     errorMsg = 'Your aIV.app settings property, ' + prop + ', was an ';
     errorMsg += 'incorrect data type. It should be ' + shouldBeType + '. ';
@@ -887,22 +940,22 @@ aIV.utils.set({
    */
   var App = function(config, sources, categories, questions) {
 
-    this.debug = aIV.debug('App');
-
-    debugMsg = 'Error: No questions were provided to this app\'s init.';
-    debugCheck = (questions.length > 0);
-    this.debug.fail('init', debugCheck, debugMsg);
-
-    debugMsg = 'config= $$, sources= $$, categories= $$, questions= $$';
-    debugArgs = [ 'init', 'open', debugMsg ];
-    debugArgs.push(config, sources, categories, questions);
-    this.debug.group(debugArgs);
+    // $s$
+    this.debug = aIV.debug({
+      classTitle  : 'App',
+      turnOnGroups: true,
+      turnOnTimers: true
+    });
+    // $e$
 
     this.debug.start('init', config, sources, categories, questions);
 
-    debugArgs = [ 'init', config, 'objectMap', sources, 'stringMap' ];
-    debugArgs.push(categories, 'objectMap|stringMap', questions, '!objects');
-    this.debug.args(debugArgs);
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ config, 'objectMap', sources, 'stringMap' ];
+    args.push(categories, 'objectMap|stringMap', questions, '!objects');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -991,7 +1044,7 @@ aIV.utils.set({
 
     /** @type {booleanMap} */
     var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
+    /** @type {?Object<string, (string|number)>} */
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
@@ -1046,7 +1099,7 @@ aIV.utils.set({
                                    this.categories);
 
     // Set the search defaults
-    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
+    defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -1080,10 +1133,10 @@ aIV.utils.set({
       window.history.replaceState( this.getStateObj() );
     }
     catch (e) {
-      debugCheck = 'Oi, an old browser. Just let it die.';
-      this.debug.fail('init', false, debugCheck);
       this.isHistory = false;
     }
+
+    this.debug.state('init', 'isHistory= $$', this.isHistory);
 
     // Setup the onpopstate event
     if (this.isHistory) {
@@ -1096,10 +1149,9 @@ aIV.utils.set({
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1117,23 +1169,22 @@ aIV.utils.set({
    */
   App.prototype.setupDisplay = function() {
 
-    this.debug.group('setupDisplay', 'open');
-    this.debug.start('setupDisplay');
+    app.debug.start('setupDisplay');
 
     /** @type {number} */
     var renderTime;
 
-    if ( this.flags.get('initArgs') ) {
+    if ( app.flags.get('initArgs') ) {
 
-      this.elems.appendNav();
-      this.searchBar.setMainElems();
-      this.searchBar.setOptElems();
-      this.searchBar.appendElems();
-      this.questions.addIdsToSearch();
-      this.questions.appendElems();
+      app.elems.appendNav();
+      app.searchBar.setMainElems();
+      app.searchBar.setOptElems();
+      app.searchBar.appendElems();
+      app.questions.addIdsToSearch();
+      app.questions.appendElems();
 
-      renderTime = this.questions.len * 32;
-      this.debug.state('setupDisplay', 'renderTime= $$', renderTime);
+      renderTime = app.questions.len * 50;
+      app.debug.state('setupDisplay', 'renderTime= $$', renderTime);
       setTimeout(function() {
 
         /** @type {boolean} */
@@ -1146,7 +1197,7 @@ aIV.utils.set({
 
         // $s$
         setTimeout(function() {
-          app.debug.group('setupDisplay', 'end');
+          app.debug.end('setupDisplay');
           debug.end('startApp');
         }, 520);
         // $e$
@@ -1154,8 +1205,8 @@ aIV.utils.set({
       }, renderTime);
     }
     else {
-      this.elems.appendError();
-      this.debug.group('setupDisplay', 'end');
+      app.elems.appendError();
+      app.debug.end('setupDisplay');
       debug.end('startApp');
     }
   };
@@ -1177,21 +1228,12 @@ aIV.utils.set({
   App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
                                          flipElems, noPushState) {
 
-    debugMsg = 'oldIds= $$, oldIndex= $$, oldView= $$, ';
-    debugMsg += 'flipElems= $$, noPushState= $$';
-    debugArgs = [ 'updateDisplay', 'coll', debugMsg, oldIds ];
-    debugArgs.push(oldIndex, oldView, flipElems, noPushState);
-    this.debug.group(debugArgs);
+    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView, flipElems ];
+    debugArgs.push(noPushState);
+    app.debug.start(debugArgs);
 
-    debugArgs = [ 'updateDisplay', oldIds, oldIndex, oldView ];
-    debugArgs.push(flipElems, noPushState);
-    this.debug.start(debugArgs);
-
-    debugArgs = [ 'updateDisplay', oldIds, 'numbers=' ];
-    debugArgs.push(oldIndex, '?number=', oldView, '?string=');
-    debugArgs.push(flipElems, 'boolean=', noPushState, 'boolean=');
-    this.debug.args(debugArgs);
-
+    /** @type {!Array<*>} */
+    var args;
     /** @type {!numbers} */
     var newIds;
     /** @type {number} */
@@ -1199,9 +1241,13 @@ aIV.utils.set({
     /** @type {string} */
     var newView;
 
-    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    args = [ oldIds, 'numbers=', oldIndex, '?number=', oldView, '?string=' ];
+    args.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    checkArgs.apply(null, args);
+
+    oldIds = (!!oldIds) ? oldIds : app.vals.get('ids').slice(0);
     oldIndex = ( ( checkType(oldIndex, '!number') ) ?
-      oldIndex : this.vals.get('index')
+      oldIndex : app.vals.get('index')
     );
 
     newView = app.searchBar.vals.view;
@@ -1211,11 +1257,11 @@ aIV.utils.set({
     noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('ids').slice(0);
-    newIndex = this.vals.get('index');
+    newIds = app.vals.get('ids').slice(0);
+    newIndex = app.vals.get('index');
 
     // Hide the question's main element
-    this.elems.main.style.opacity = '0';
+    app.elems.main.style.opacity = '0';
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
@@ -1246,7 +1292,7 @@ aIV.utils.set({
       // Show the question's main element
       app.elems.main.style.opacity = '1';
 
-      app.debug.group('updateDisplay', 'end');
+      app.debug.end('updateDisplay');
     }, 520);
   };
 
@@ -1254,8 +1300,8 @@ aIV.utils.set({
    * -----------------------------------------------
    * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Finds the matching question ids for the current
-   *   selected search values.
+   * @desc Finds the matching question ids for the current selected search
+   *   values.
    * @return {numbers} An array of the matching ids.
    */
   App.prototype.findMatches = function() {
@@ -1306,21 +1352,18 @@ aIV.utils.set({
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      this.debug.state('findMatches', 'newIds= $$', []);
-      return [];
+      newIds = [];
+      this.debug.end('findMatches', newIds);
+      return newIds;
     }
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-
       newIds = this.vals.get('allIds').slice(0);
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
-      this.debug.state('findMatches', 'newIds= $$', newIds);
-
+      this.debug.end('findMatches', newIds);
       return newIds;
     }
 
@@ -1356,49 +1399,12 @@ aIV.utils.set({
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
-      this.debug.state('findMatches', 'newIds= $$', newIds);
-
+      this.debug.end('findMatches', newIds);
       return newIds;
     }
-
-    // The helper function that checks each array for the
-    // current value being checked & removes the checked
-    // values from the array
-    checkForValue = function(/** number */ val, /** numbers */ arr) {
-
-      /** @type {boolean} */
-      var pass;
-      /** @type {number} */
-      var i;
-      /** @type {number} */
-      var compareVal;
-
-      pass = false;
-
-      i = arr.length;
-      while (i--) {
-
-        compareVal = arr[i];
-
-        if (compareVal >= val) {
-          arr.pop();
-          if (compareVal === val) {
-            pass = true;
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-
-      return pass;
-    };
 
     // Remove the question ids that do not exist in all other arrays
     i = newIds.length;
@@ -1454,7 +1460,7 @@ aIV.utils.set({
       newIds.reverse();
     }
 
-    this.debug.state('findMatches', 'newIds= $$', newIds);
+    this.debug.end('findMatches', newIds);
 
     return newIds;
   };
@@ -1484,7 +1490,11 @@ aIV.utils.set({
       subCat : this.searchBar.vals.subCat
     };
 
-    return JSON.stringify(vals);
+    vals = JSON.stringify(vals);
+
+    this.debug.end('getStateObj', vals);
+
+    return vals;
   };
 
 /* -----------------------------------------------------------------------------
@@ -1786,7 +1796,7 @@ aIV.utils.set({
 
     elem.style.opacity = '0';
 
-    addElemText(li, 'test');
+    setElemText(li, 'test');
 
     elem.appendChild(code);
     code.appendChild(ol);
@@ -7220,7 +7230,7 @@ aIV.utils.set({
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, id);
+        setElemText(p, id);
       }
 
 
@@ -7303,7 +7313,7 @@ aIV.utils.set({
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, source.name);
+        setElemText(p, source.name);
       }
 
       info.appendChild(div);
@@ -7457,7 +7467,7 @@ aIV.utils.set({
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, main.names.join(', '));
+        setElemText(p, main.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -7514,7 +7524,7 @@ aIV.utils.set({
       p   = makeElem('p');
 
       if (!config) {
-        addElemText(p, sub.names.join(', '));
+        setElemText(p, sub.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -7929,10 +7939,10 @@ aIV.utils.set({
       prettify.debug.start('init', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {{ result: string, lineCount: number }} */
       var result;
+
+      checkArgs(solution, 'string');
 
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
@@ -7946,12 +7956,13 @@ aIV.utils.set({
  * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
  * -------------------------------------------------------------------------- */
 
-    // The prettifier's debugger object
+    // $s$
     prettify.debug = aIV.debug({
       classTitle  : 'prettify',
       turnOnGroups: true,
       turnOnTimers: true
     });
+    // $e$
 
     /**
      * ---------------------------------------------
@@ -8625,14 +8636,14 @@ aIV.utils.set({
       prettify.debug.start('prepareLines', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {!strings} */
       var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -8670,8 +8681,6 @@ aIV.utils.set({
 
       prettify.debug.start('applyFormatting', lines);
 
-      checkArgs(lines, '!strings');
-
       /** @type {number} */
       var i;
       /** @type {number} */
@@ -8680,6 +8689,8 @@ aIV.utils.set({
       var line;
       /** @type {!Object} */
       var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -8725,14 +8736,14 @@ aIV.utils.set({
 
       prettify.debug.start('prepareLine', line);
 
-      checkArgs(line, 'string');
-
       /** @type {number} */
       var i;
       /** @type {number} */
       var frontTrimCount;
       /** @type {string} */
       var trimPart;
+
+      checkArgs(line, 'string');
 
       // Trim ending whitespaces
       if (line) {
@@ -8787,10 +8798,10 @@ aIV.utils.set({
 
       prettify.debug.start('makeKeywordObj', cat, href, props);
 
-      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
-
       /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -8821,10 +8832,10 @@ aIV.utils.set({
 
       prettify.debug.start('makePropObj', href);
 
-      checkArgs(href, 'string=');
-
       /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
@@ -9046,14 +9057,14 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('handleSlash', i);
 
-        checkArgs(i, 'number');
-
         /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
         /** @type {number} */
         var ii;
+
+        checkArgs(i, 'number');
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
@@ -9103,12 +9114,12 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('isRegex', i);
 
-        checkArgs(i, 'number');
-
         /** @type {number} */
         var end;
         /** @type {string} */
         var regexBody;
+
+        checkArgs(i, 'number');
 
         end = (orgLine[i + 1] === '/') ? -1 : i;
 
@@ -9206,10 +9217,10 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('skipString', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var strCharacter;
+
+        checkArgs(i, 'number');
 
         strCharacter = orgLine[i];
 
@@ -9268,12 +9279,12 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('skipNumber', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var hexStart;
         /** @type {RegExp} */
         var numberOpts;
+
+        checkArgs(i, 'number');
 
         hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
         numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
@@ -9305,14 +9316,14 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('skipIdentifier', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var name;
         /** @type {!Object} */
         var result;
         /** @type {boolean} */
         var propFollows;
+
+        checkArgs(i, 'number');
 
         name = '_' + orgLine[i];
 
@@ -9345,8 +9356,6 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('formatCommentLinks', start, end);
 
-        checkArgs(start, 'number', end, 'number');
-
         /** @type {number} */
         var i;
         /** @type {boolean} */
@@ -9357,6 +9366,8 @@ aIV.utils.set({
         var content;
         /** @type {string} */
         var comment;
+
+        checkArgs(start, 'number', end, 'number');
 
         if (end === lastIndex) {
           ++end;
@@ -9429,10 +9440,10 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('formatCommentOpen', i);
 
-        checkArgs(i, 'number');
-
         /** @type {number} */
         var start;
+
+        checkArgs(i, 'number');
 
         start = i;
         newLine[i] = '<span class="cmt">/';
@@ -9567,12 +9578,12 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('formatRegex', i, end);
 
-        checkArgs(i, 'number', end, 'number');
-
         /** @type {string} */
         var usedFlags;
         /** @type {string} */
         var character;
+
+        checkArgs(i, 'number', end, 'number');
 
         newLine[i] = '<span class="rgx">/';
 
@@ -9802,14 +9813,14 @@ aIV.utils.set({
 
         highlightSyntax.debug.start('formatIdentifier', i, extras);
 
-        checkArgs(i, 'number', extras, 'string=');
-
         /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
         /** @type {string} */
         var keyClassName;
+
+        checkArgs(i, 'number', extras, 'string=');
 
         identifier = skipIdentifier(i);
 
@@ -10440,7 +10451,7 @@ aIV.utils.set({
       setTimeout(function() {
         elems.extOpen.style.opacity = '0.8';
         setTimeout(function() {
-          addElemText(elems.extOpen, 'open');
+          setElemText(elems.extOpen, 'open');
           elems.extHovC.style.display = 'none';
           elems.extHovO.style.display = 'block';
         }, 600);
@@ -10463,7 +10474,7 @@ aIV.utils.set({
       setTimeout(function() {
         elems.extClose.style.opacity = '0.8';
         setTimeout(function() {
-          addElemText(elems.extOpen, 'close');
+          setElemText(elems.extOpen, 'close');
           elems.extHovO.style.display = 'none';
           elems.extHovC.style.display = 'block';
         }, 600);

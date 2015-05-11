@@ -119,8 +119,6 @@
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
-    /** @type {function} */
-    var get;
     /** @type {Object<string, strings>} */
     var ids;
     /** @type {number} */
@@ -142,34 +140,31 @@
     this.categories = new Categories(categories);
 
     // Setup the prettifier
-    get = this.config.prettifier.get;
     tmpConfig = {
-      trimSpace   : get('trimSpace'),
-      tabLength   : get('tabLength'),
-      commentLinks: get('commentLinks')
+      trimSpace   : this.config.prettifier.get('trimSpace'),
+      tabLength   : this.config.prettifier.get('tabLength'),
+      commentLinks: this.config.prettifier.get('commentLinks')
     };
     prettify.setConfig(tmpConfig);
 
     // Setup the search bar
-    get = this.config.searchBar.get;
     tmpConfig = {
-      stage   : get('stage'),
-      source  : get('source'),
-      category: get('category'),
-      subCat  : get('subCat')
+      stage   : this.config.searchBar.get('stage'),
+      source  : this.config.searchBar.get('source'),
+      category: this.config.searchBar.get('category'),
+      subCat  : this.config.searchBar.get('subCat')
     };
     this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
 
     // Setup the questions
-    get = this.config.questions.get;
     tmpConfig = {
-      id      : get('id'),
-      complete: get('complete'),
-      source  : get('source'),
-      category: get('category'),
-      subCat  : get('subCat'),
-      links   : get('links'),
-      output  : get('output')
+      id      : this.config.questions.get('id'),
+      complete: this.config.questions.get('complete'),
+      source  : this.config.questions.get('source'),
+      category: this.config.questions.get('category'),
+      subCat  : this.config.questions.get('subCat'),
+      links   : this.config.questions.get('links'),
+      output  : this.config.questions.get('output')
     };
     this.questions = new Questions(questions, tmpConfig, this.sources,
                                    this.categories);
@@ -382,7 +377,7 @@
    */
   App.prototype.findMatches = function() {
 
-    app.debug.start('findMatches');
+    this.debug.start('findMatches');
 
     /** @type {nums} */
     var stage;
@@ -404,23 +399,23 @@
     var checkForValue;
 
     // Save the current values
-    stage   = app.searchBar.vals.stage;
-    source  = app.searchBar.vals.source;
-    mainCat = app.searchBar.vals.mainCat;
-    subCat  = app.searchBar.vals.subCat;
+    stage   = this.searchBar.vals.stage;
+    source  = this.searchBar.vals.source;
+    mainCat = this.searchBar.vals.mainCat;
+    subCat  = this.searchBar.vals.subCat;
 
     // Save the matching ids
     stage = ( (stage === 'all') ?
-      null : app.searchBar.ques.stage[ stage ].slice(0)
+      null : this.searchBar.ques.stage[ stage ].slice(0)
     );
     source = ( (source === 'all') ?
-      null : app.sources.get(source, 'ids').slice(0)
+      null : this.sources.get(source, 'ids').slice(0)
     );
     mainCat = ( (mainCat === 'all') ?
-      null : app.categories.get(mainCat, 'ids').slice(0)
+      null : this.categories.get(mainCat, 'ids').slice(0)
     );
     subCat = ( (subCat === 'all') ?
-      null : app.categories.get(subCat, 'ids').slice(0)
+      null : this.categories.get(subCat, 'ids').slice(0)
     );
 
     // Check for empty arrays
@@ -429,22 +424,22 @@
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
       newIds = [];
-      app.debug.end('findMatches', newIds);
+      this.debug.end('findMatches', newIds);
       return newIds;
     }
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-      newIds = app.vals.get('allIds').slice(0);
-      if (app.searchBar.vals.order === 'desc') {
+      newIds = this.vals.get('allIds').slice(0);
+      if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      app.debug.end('findMatches', newIds);
+      this.debug.end('findMatches', newIds);
       return newIds;
     }
 
     // Find the min length array
-    len = (stage) ? stage.length : app.questions.len;
+    len = (stage) ? stage.length : this.questions.len;
     if (source && source.length < len) {
       len = source.length;
     }
@@ -475,10 +470,10 @@
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-      if (app.searchBar.vals.order === 'desc') {
+      if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      app.debug.end('findMatches', newIds);
+      this.debug.end('findMatches', newIds);
       return newIds;
     }
 
@@ -532,11 +527,11 @@
       }
     }
 
-    if (app.searchBar.vals.order === 'desc') {
+    if (this.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
-    app.debug.end('findMatches', newIds);
+    this.debug.end('findMatches', newIds);
 
     return newIds;
   };
@@ -550,25 +545,25 @@
    */
   App.prototype.getStateObj = function() {
 
-    app.debug.start('getStateObj');
+    this.debug.start('getStateObj');
 
     /** @type {Object<string, (string|number|numbers)>} */
     var vals;
 
     vals = {
-      ids    : app.vals.get('ids').slice(0),
-      index  : app.vals.get('index'),
-      view   : app.searchBar.vals.view,
-      order  : app.searchBar.vals.order,
-      stage  : app.searchBar.vals.stage,
-      source : app.searchBar.vals.source,
-      mainCat: app.searchBar.vals.mainCat,
-      subCat : app.searchBar.vals.subCat
+      ids    : this.vals.get('ids').slice(0),
+      index  : this.vals.get('index'),
+      view   : this.searchBar.vals.view,
+      order  : this.searchBar.vals.order,
+      stage  : this.searchBar.vals.stage,
+      source : this.searchBar.vals.source,
+      mainCat: this.searchBar.vals.mainCat,
+      subCat : this.searchBar.vals.subCat
     };
 
     vals = JSON.stringify(vals);
 
-    app.debug.end('getStateObj', vals);
+    this.debug.end('getStateObj', vals);
 
     return vals;
   };

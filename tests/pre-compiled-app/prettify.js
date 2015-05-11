@@ -17,10 +17,10 @@
       prettify.debug.start('init', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {{ result: string, lineCount: number }} */
       var result;
+
+      checkArgs(solution, 'string');
 
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
@@ -34,12 +34,13 @@
  * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
  * -------------------------------------------------------------------------- */
 // insert-prettify-vars
-    // The prettifier's debugger object
+    // $s$
     prettify.debug = aIV.debug({
       classTitle  : 'prettify',
       turnOnGroups: true,
       turnOnTimers: true
     });
+    // $e$
 
     /**
      * ---------------------------------------------
@@ -713,14 +714,14 @@
       prettify.debug.start('prepareLines', solution);
       prettify.debug.group('init', 'end');
 
-      checkArgs(solution, 'string');
-
       /** @type {!strings} */
       var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -758,8 +759,6 @@
 
       prettify.debug.start('applyFormatting', lines);
 
-      checkArgs(lines, '!strings');
-
       /** @type {number} */
       var i;
       /** @type {number} */
@@ -768,6 +767,8 @@
       var line;
       /** @type {!Object} */
       var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -813,14 +814,14 @@
 
       prettify.debug.start('prepareLine', line);
 
-      checkArgs(line, 'string');
-
       /** @type {number} */
       var i;
       /** @type {number} */
       var frontTrimCount;
       /** @type {string} */
       var trimPart;
+
+      checkArgs(line, 'string');
 
       // Trim ending whitespaces
       if (line) {
@@ -875,10 +876,10 @@
 
       prettify.debug.start('makeKeywordObj', cat, href, props);
 
-      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
-
       /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -909,10 +910,10 @@
 
       prettify.debug.start('makePropObj', href);
 
-      checkArgs(href, 'string=');
-
       /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
@@ -1134,14 +1135,14 @@
 
         highlightSyntax.debug.start('handleSlash', i);
 
-        checkArgs(i, 'number');
-
         /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
         /** @type {number} */
         var ii;
+
+        checkArgs(i, 'number');
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
@@ -1191,12 +1192,12 @@
 
         highlightSyntax.debug.start('isRegex', i);
 
-        checkArgs(i, 'number');
-
         /** @type {number} */
         var end;
         /** @type {string} */
         var regexBody;
+
+        checkArgs(i, 'number');
 
         end = (orgLine[i + 1] === '/') ? -1 : i;
 
@@ -1294,10 +1295,10 @@
 
         highlightSyntax.debug.start('skipString', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var strCharacter;
+
+        checkArgs(i, 'number');
 
         strCharacter = orgLine[i];
 
@@ -1356,12 +1357,12 @@
 
         highlightSyntax.debug.start('skipNumber', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var hexStart;
         /** @type {RegExp} */
         var numberOpts;
+
+        checkArgs(i, 'number');
 
         hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
         numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
@@ -1393,14 +1394,14 @@
 
         highlightSyntax.debug.start('skipIdentifier', i);
 
-        checkArgs(i, 'number');
-
         /** @type {string} */
         var name;
         /** @type {!Object} */
         var result;
         /** @type {boolean} */
         var propFollows;
+
+        checkArgs(i, 'number');
 
         name = '_' + orgLine[i];
 
@@ -1433,8 +1434,6 @@
 
         highlightSyntax.debug.start('formatCommentLinks', start, end);
 
-        checkArgs(start, 'number', end, 'number');
-
         /** @type {number} */
         var i;
         /** @type {boolean} */
@@ -1445,6 +1444,8 @@
         var content;
         /** @type {string} */
         var comment;
+
+        checkArgs(start, 'number', end, 'number');
 
         if (end === lastIndex) {
           ++end;
@@ -1517,10 +1518,10 @@
 
         highlightSyntax.debug.start('formatCommentOpen', i);
 
-        checkArgs(i, 'number');
-
         /** @type {number} */
         var start;
+
+        checkArgs(i, 'number');
 
         start = i;
         newLine[i] = '<span class="cmt">/';
@@ -1655,12 +1656,12 @@
 
         highlightSyntax.debug.start('formatRegex', i, end);
 
-        checkArgs(i, 'number', end, 'number');
-
         /** @type {string} */
         var usedFlags;
         /** @type {string} */
         var character;
+
+        checkArgs(i, 'number', end, 'number');
 
         newLine[i] = '<span class="rgx">/';
 
@@ -1890,14 +1891,14 @@
 
         highlightSyntax.debug.start('formatIdentifier', i, extras);
 
-        checkArgs(i, 'number', extras, 'string=');
-
         /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
         /** @type {string} */
         var keyClassName;
+
+        checkArgs(i, 'number', extras, 'string=');
 
         identifier = skipIdentifier(i);
 
