@@ -46,7 +46,7 @@
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         debug   : thisDebug,
         initArgs: initArgs
