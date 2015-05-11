@@ -8,7 +8,10 @@
    */
   var Sources = function(sources) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Sources');
+    thisDebug = this.debug;
 
     this.debug.group('init', 'coll', 'sources= $$', sources);
 
@@ -104,8 +107,8 @@
      */
     this.get = function(id, prop) {
 
-      this.debug.start('get', id, prop);
-      this.debug.args('get', id, 'string', prop, 'string=');
+      thisDebug.start('get', id, prop);
+      thisDebug.args('get', id, 'string', prop, 'string=');
 
       /** @type {Source} */
       var source;
@@ -116,7 +119,7 @@
 
       debugCheck = data.hasOwnProperty(id);
       debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      this.debug.fail('get', debugCheck, debugMsg, id);
+      thisDebug.fail('get', debugCheck, debugMsg, id);
 
       source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
 

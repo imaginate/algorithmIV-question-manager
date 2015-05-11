@@ -5,21 +5,21 @@
    * @desc The questions for this app.
    * @param {objects} questions - The user's questions.
    * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, sources, categories) {
+  var Questions = function(questions, config, getSource, getCategory) {
 
     this.debug = aIV.debug('Questions');
 
     debugMsg = 'questions= $$, config= $$';
     this.debug.group('init', 'open', debugMsg, questions, config);
 
-    this.debug.start('init', questions, config, sources, categories);
+    this.debug.start('init', questions, config, getSource, getCategory);
 
     debugArgs = [ 'init', questions, 'objects', config, 'booleanMap' ];
-    debugArgs.push(sources, 'object', categories, 'object');
+    debugArgs.push(getSource, 'function', getCategory, 'function');
     this.debug.args(debugArgs);
 
     ////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,8 @@
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+      this.list[ id ] = new Question(questions[i], id, config,
+                                     getSource, getCategory);
     }
 
     // Freeze the public properties that are objects

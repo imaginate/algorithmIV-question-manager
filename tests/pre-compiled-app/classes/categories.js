@@ -8,7 +8,10 @@
    */
   var Categories = function(categories) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Categories');
+    thisDebug = this.debug;
 
     this.debug.group('init', 'coll', 'categories= $$', categories);
 
@@ -149,8 +152,8 @@
      */
     this.get = function(id, prop) {
 
-      this.debug.start('get', id, prop);
-      this.debug.args('get', id, 'string', prop, 'string=');
+      thisDebug.start('get', id, prop);
+      thisDebug.args('get', id, 'string', prop, 'string=');
 
       /** @type {Category} */
       var category;
@@ -161,7 +164,7 @@
 
       debugCheck = data.hasOwnProperty(id);
       debugMsg = 'Error: The given category does not exist. catID= $$';
-      this.debug.fail('get', debugCheck, debugMsg, id);
+      thisDebug.fail('get', debugCheck, debugMsg, id);
 
       category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
 

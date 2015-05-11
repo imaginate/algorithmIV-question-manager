@@ -160,8 +160,8 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources,
-                                   this.categories);
+    this.questions = new Questions(questions, tmpConfig, this.sources.get,
+                                   this.categories.get);
 
     // Set the search defaults
     defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
