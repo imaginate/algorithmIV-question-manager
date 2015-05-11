@@ -7,7 +7,10 @@
    */
   var DefaultsSearchBarConfig = function() {
 
+    var thisDebug;
+
     this.debug = aIV.debug('DefaultsSearchBarConfig');
+    thisDebug = this.debug;
 
     this.debug.start('init');
 
@@ -107,15 +110,13 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(string|number)}
+     * @return {(string|number)} The property's value.
      */
     this.get = function(prop) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
       /** @type {Object<string, (string|number)>} */
       var props = {
+        debug  : thisDebug,
         startID: startID,
         view   : view,
         order  : order,
@@ -125,11 +126,7 @@
         subCat : subCat
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -139,40 +136,30 @@
      * @desc Sets a protected property's value for DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to set.
      * @param {(string|number)} val - The value to set the property to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      this.debug.start('set', prop, val);
-      this.debug.args('set', prop, 'string', val, 'string|number');
-
-      /** @type {Object<string, function>} */
-      var props = {
-        startID: function() { startID = val; },
-        view   : function() { view    = val; },
-        order  : function() { order   = val; },
-        stage  : function() { stage   = val; },
-        source : function() { source  = val; },
-        mainCat: function() { mainCat = val; },
-        subCat : function() { subCat  = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        debug  : thisDebug,
+        startID: function(val) { startID = val; return true; },
+        view   : function(val) { view    = val; return true; },
+        order  : function(val) { order   = val; return true; },
+        stage  : function(val) { stage   = val; return true; },
+        source : function(val) { source  = val; return true; },
+        mainCat: function(val) { mainCat = val; return true; },
+        subCat : function(val) { subCat  = val; return true; }
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('set', debugCheck, debugMsg, prop);
-
-      props[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,77 +174,73 @@
    * ---------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search ids and names.
-   * @param {Object} ids - The available sub category ids.
+   * @param {!Object<string, stringMap>} names - The available search ids and names.
+   * @param {!Object} ids - The available sub category ids.
    * @param {number} quesLen - The number of user's questions.
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
 
-    debugMsg = 'defaults= $$, names= $$, ids= $$, quesLen= $$';
-    debugArgs = [ 'update', 'coll', debugMsg, defaults, names ];
-    debugArgs.push(ids, quesLen);
-    this.debug.group(debugArgs);
-
     this.debug.start('update', defaults, names, ids, quesLen);
 
-    debugArgs = [ 'update', defaults, 'object', names, 'object' ];
-    debugArgs.push(ids, 'object', quesLen, 'number');
-    this.debug.args(debugArgs);
+    /** @type {number} */
+    var i;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {string} */
+    var prop;
+    /** @type {!Array<string>} */
+    var props;
+    /** @type {(number|string)} */
+    var startID;
+    /** @type {string} */
+    var mainCat;
+
+    args = [ defaults, 'object', names, 'object', ids, 'object' ];
+    args.push(quesLen, 'number');
+    checkArgs.apply(null, args);
 
     // Check the user supplied defaults
-    if (!defaults || typeof defaults !== 'object') {
+    if ( !checkType(defaults, '!object') ) {
       defaults = {};
     }
 
+    // Set the view, order, stage, source, & main category
+    props = 'view order stage source mainCat'.split(' ');
+    i = props.length;
+    while (i--) {
+      prop = props[i];
+      if (checkType(defaults[ prop ], 'string') &&
+          hasOwnProp(names[ prop ], defaults[ prop ])) {
+        this.set(prop, defaults[ prop ]);
+      }
+    }
+
     // Set the startID
-    if (!!defaults.startID && typeof defaults.startID === 'number' &&
-        defaults.startID <= quesLen) {
-      this.set('startID', defaults.startID);
-    }
-
-    // Set the view
-    if (!!defaults.view && typeof defaults.view === 'string' &&
-        !!names.view[defaults.view]) {
-      this.set('view', defaults.view);
-    }
-
-    // Set the order
-    if (!!defaults.order && typeof defaults.order === 'string' &&
-        !!names.order[defaults.order]) {
-      this.set('order', defaults.order);
-    }
-
-    // Set the stage
-    if (!!defaults.stage && typeof defaults.stage === 'string' &&
-        !!names.stage[defaults.stage]) {
-      this.set('stage', defaults.stage);
-    }
-
-    // Set the source
-    if (!!defaults.source && typeof defaults.source === 'string' &&
-        !!names.source[defaults.source]) {
-      this.set('source', defaults.source);
-    }
-
-    // Set the main category
-    if (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
-        !!names.mainCat[defaults.mainCat]) {
-      this.set('mainCat', defaults.mainCat);
+    if ( checkType(defaults.startID, 'number|string') ) {
+      startID = defaults.startID;
+      if ( checkType(startID, 'string') ) {
+        startID = startID.replace(/[^0-9]/g, '');
+        startID = startID && Number(startID);
+      }
+      if (startID && startID <= quesLen) {
+        this.set('startID', startID);
+      }
     }
 
     // Set the sub category
-    if (!!defaults.subCat && typeof defaults.subCat === 'string' &&
-        defaults.subCat !== 'all' && !!names.subCat[defaults.subCat]) {
-      if (this.get('mainCat') === 'all') {
+    if (checkType(defaults.subCat, 'string') && defaults.subCat !== 'all' &&
+        hasOwnProp(names.subCat, defaults.subCat)) {
+      mainCat = this.get('mainCat');
+      if (mainCat === 'all') {
         this.set('subCat', defaults.subCat);
       }
       else {
-        if (ids.subCat[this.get('mainCat')].indexOf(defaults.subCat) !== -1) {
+        if (ids.subCat[ mainCat ].indexOf(defaults.subCat) !== -1) {
           this.set('subCat', defaults.subCat);
         }
       }
     }
 
-    this.debug.group('update', 'end');
+    this.debug.end('update');
   };
