@@ -540,7 +540,7 @@
 
     if ( !hasOwnProp(this, propName) ) {
       errorMsg = 'An aIV.app internal error occurred. A getter was given an ';
-      errorMsg += 'invalid given property name. property= ' + propName;
+      errorMsg += 'invalid property name to get. property= ' + propName;
       throw new Error(errorMsg);
     }
 
