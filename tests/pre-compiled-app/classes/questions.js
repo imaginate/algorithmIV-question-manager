@@ -3,8 +3,8 @@
    * Public Class (Questions)
    * -----------------------------------------------------
    * @desc The questions for this app.
-   * @param {objects} questions - The user's questions.
-   * @param {booleanMap} config - The settings for question formatting.
+   * @param {!objects} questions - The user's questions.
+   * @param {!booleanMap} config - The settings for question formatting.
    * @param {function} getSource - The getter for the app's sources.
    * @param {function} getCategory - The getter for the app's categories.
    * @constructor
@@ -13,14 +13,14 @@
 
     this.debug = aIV.debug('Questions');
 
-    debugMsg = 'questions= $$, config= $$';
-    this.debug.group('init', 'open', debugMsg, questions, config);
-
     this.debug.start('init', questions, config, getSource, getCategory);
 
-    debugArgs = [ 'init', questions, 'objects', config, 'booleanMap' ];
-    debugArgs.push(getSource, 'function', getCategory, 'function');
-    this.debug.args(debugArgs);
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ questions, '!objects', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -57,8 +57,8 @@
 
     this.len = questions.length;
 
-    len = this.len + 1;
-    this.list = (this.len) ? new Array(len) : [];
+    i = this.len + 1;
+    this.list = (this.len) ? new Array(i) : [];
 
     // Add blank to beginning of list so ids and indexes match
     if (this.len) {
@@ -66,7 +66,7 @@
     }
 
     // Add the Question object references to the list
-    --len;
+    len = this.len;
     i = -1;
     while (++i < len) {
       id = i + 1;
@@ -100,7 +100,7 @@
     data = {};
 
     // Build the data hash map
-    ++i;
+    i = this.len + 1;
     while (--i) {
       url = this.list[i].get('url');
       if (url) {
@@ -119,51 +119,56 @@
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question's object or property.
+     * @desc Gets a question's object or property value.
      * @param {(number|string)} id - The question id to get.
      * @param {string=} prop - The name of the property to get.
      * @param {boolean=} formatted - If true then gets the
      *   formatted property.
-     * @return {val}
+     * @return {*} The Question or property value.
      */
     this.get = function(id, prop, formatted) {
 
-      var debugArgs, debugMsg, debugCheck;
       this.debug.start('get', id, prop, formatted);
 
-      debugArgs = [ 'get', id, 'number|string', prop, 'string=' ];
-      debugArgs.push(formatted, 'boolean=');
-      this.debug.args(debugArgs);
-
-      debugMsg = 'Error: This question id does not exist. id= $$';
-      debugCheck = (this.list.hasOwnProperty(id) || data.hasOwnProperty(id));
-      this.debug.fail('get', debugCheck, debugMsg, id);
-
-      /** @type {Question} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Question} */
       var question;
+      /** @type {*} */
+      var result;
+
+      checkArgs(id, 'number|string', prop, 'string=', formatted, 'boolean=');
+
+      if (!hasOwnProp(this.list, String(id)) && !hasOwnProp(data, String(id))) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.get call was ';
+        errorMsg += 'given an invalid question id to get. id= ' + id;
+        throw new Error(errorMsg);
+      }
 
       prop = prop || '';
       formatted = formatted || false;
 
-      question = (typeof id === 'number') ? this.list[ id ] : data[ id ];
-
-      return ( (!prop) ?
+      question = ( checkType(id, 'number') ) ? this.list[ id ] : data[ id ];
+      result = ( (!prop) ?
         question : (prop === 'elem') ?
-          question.elem : question.get(prop, formatted)
+          question.elem : (prop === 'rootElem') ?
+            question.elem.root : question.get(prop, formatted)
       );
+
+      this.debug.end('get', result);
+
+      return result;
     };
 
-    // Freeze all of the methods
     freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +183,7 @@
    * ---------------------------------------------------
    * @desc Sets the style for a question's container element.
    * @param {(number|string)} id - The question id to set.
-   * @param {!(string|stringMap)} type - The style setting to set.
+   * @param {(string|!Object)} type - The style setting to set.
    *   If a string is given then another param with the value is
    *   required. If an object is provided then use key => value
    *   pairs like styleType => newValue (see below example).
@@ -193,37 +198,85 @@
 
     this.debug.start('setElemStyle', id, type, val);
 
-    debugArgs = [ 'setElemStyle', id, 'number|string' ];
-    debugArgs.push(type, '!string|stringMap', val, 'string|number=');
-    this.debug.args(debugArgs);
+    /** @type {string} */
+    var errorMsg;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {!RegExp} */
+    var dash;
+    /** @type {string} */
+    var prop;
+    /** @type {number} */
+    var i;
+
+    args = [ id, 'number|string', type, '!string|object' ];
+    args.push(val, 'string|number=');
+    checkArgs.apply(null, args);
+
+    dash = /\-/;
 
     // Handle one update
-    if (typeof type === 'string') {
+    if ( checkType(type, 'string') ) {
 
-      debugMsg = 'Error: A third param (val) is required when the given type ';
-      debugMsg += 'is a string. It should be a string or number. val= $$';
-      debugCheck = checkType(val, 'string|number');
-      this.debug.fail('setElemStyle', debugCheck, debugMsg, val);
+      if ( !checkType(val, 'string|number') ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'value to set the style to. val= ' + val;
+        throw new TypeError(errorMsg);
+      }
 
       // Replace dashes with camel case
-      if ( /\-/.test(type) ) {
+      if ( dash.test(type) ) {
         type = camelCase(type);
       }
 
-      this.get(id).elem.root.style[ type ] = val;
-      return;
-    }
+      elem = this.get(id, 'rootElem');
 
-    // Handle multiple updates
-    Object.keys(type).forEach(function(/** string */ key) {
-
-      // Replace dashes with camel case
-      if ( /\-/.test(key) ) {
-        key = camelCase(key);
+      if ( !(type in elem.style) ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'style property to set. prop= ' + type;
+        throw new Error(errorMsg);
       }
 
-      this.get(id).elem.root.style[ key ] = type[ key ];
-    }, this);
+      elem.style[ type ] = val;
+    }
+    // Handle multiple updates
+    else {
+
+      elem = this.get(id, 'rootElem');
+
+      for (prop in type) {
+        if ( hasOwnProp(type, prop) ) {
+
+          // Replace dashes with camel case
+          if ( dash.test(prop) ) {
+            prop = camelCase(prop);
+          }
+
+          if ( !(prop in elem.style) ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'style property to set. prop= ' + prop;
+            throw new Error(errorMsg);
+          }
+
+          val = type[ prop ];
+
+          if ( !checkType(val, 'string|number') ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'value to set a style to. prop= ' + prop + ', ';
+            errorMsg += 'val= ' + val;
+            throw new TypeError(errorMsg);
+          }
+
+          elem.style[ prop ] = val;
+        }
+      }
+    }
   };
 
   /**
@@ -238,11 +291,11 @@
 
     this.debug.start('setElemClass', id, newClassName);
 
-    debugArgs = [ 'setElemClass', id, 'number|string' ];
-    debugArgs.push(newClassName, 'string');
-    this.debug.args(debugArgs);
+    checkArgs(id, 'number|string', newClassName, 'string');
 
-    this.get(id).elem.root.className = newClassName;
+    this.get(id, 'rootElem').className = newClassName;
+
+    this.debug.end('setElemClass');
   };
 
   /**
@@ -254,15 +307,14 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
-    this.debug.group('addIdsToSearch', 'coll');
     this.debug.start('addIdsToSearch');
 
-    /** @type {booleanMap} */
+    /** @type {!booleanMap} */
     var config;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     config = {
       stage   : app.config.searchBar.get('stage'),
@@ -275,12 +327,12 @@
     config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
-    i = 0;
-    while (++i < len) {
-      this.get(i).addToSearch(config);
+    id = 0;
+    while (++id < len) {
+      this.get(id).addToSearch(config);
     }
 
-    this.debug.group('addIdsToSearch', 'end');
+    this.debug.end('addIdsToSearch');
   };
 
   /**
@@ -288,30 +340,28 @@
    * Public Method (Questions.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Sets and appends the elements for all of the questions.
-   * @type {function()}
+   * @type {function}
    */
   Questions.prototype.appendElems = function() {
 
-    this.debug.group('appendElems', 'open');
     this.debug.start('appendElems');
 
+    /** @type {!Question} */
+    var question;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
-    /** @type {Question} */
-    var question;
+    var id;
 
     len = this.len + 1;
-
-    i = 0;
-    while (++i < len) {
-      question = this.get(i);
+    id = 0;
+    while (++id < len) {
+      question = this.get(id);
       app.elems.ques.appendChild(question.elem.root);
       question.addElemContent();
     }
 
-    this.debug.group('appendElems', 'end');
+    this.debug.end('appendElems');
   };
 
   /**
@@ -324,24 +374,22 @@
    */
   Questions.prototype.addCodeExts = function() {
 
-    this.debug.group('addCodeExts', 'open');
     this.debug.start('addCodeExts');
 
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     len = this.len + 1;
-
-    i = 0;
-    while (++i < len) {
-      this.debug.group('addCodeExts', 'coll', 'questionID= $$', i);
-      this.get(i).elem.addCodeExt();
+    id = 0;
+    while (++id < len) {
+      this.debug.group('addCodeExts', 'coll', 'questionID= $$', id);
+      this.get(id, 'elem').addCodeExt();
       this.debug.group('addCodeExts', 'end');
     }
 
-    this.debug.group('addCodeExts', 'end');
+    this.debug.end('addCodeExts');
   };
 
   /**
@@ -350,7 +398,7 @@
    * -----------------------------------------------------
    * @desc Appends each question's element to #aIV-questions in the direction
    *   of the current search order.
-   * @type {function()}
+   * @type {function}
    */
   Questions.prototype.reverseElems = function() {
 
@@ -358,32 +406,34 @@
 
     /** @type {string} */
     var direction;
-    /** @type {Question} */
-    var question;
+    /** @type {!Element} */
+    var elem;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     direction = app.searchBar.vals.order;
     len = this.len + 1;
 
     // Appends in asc order
     if (direction === 'asc') {
-      i = 0;
-      while (++i < len) {
-        question = this.get(i);
-        app.elems.ques.appendChild(question.elem.root);
+      id = 0;
+      while (++id < len) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
       }
     }
     // Appends in desc order
     else {
-      i = len;
-      while (--i) {
-        question = this.get(i);
-        app.elems.ques.appendChild(question.elem.root);
+      id = len;
+      while (--id) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
       }
     }
+
+    this.debug.end('reverseElems');
   };
 
   /**
@@ -397,67 +447,64 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
-    debugMsg = 'ids= $$, index= $$, view= $$';
-    this.debug.group('hideElems', 'coll', debugMsg, ids, index, view);
-
     this.debug.start('hideElems', ids, index, view);
 
-    debugArgs = [ 'hideElems', ids, '!numbers', index, 'number' ];
-    debugArgs.push(view, 'string');
-    this.debug.args(debugArgs);
-
+    /** @type {string} */
+    var errorMsg;
     /** @type {number} */
     var i;
+
+    checkArgs(ids, '!numbers', index, 'number', view, 'string');
 
     if (index === -1) {
 
       // Hide the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'none';
-        this.debug.group('hideElems', 'end');
-        return;
       }
-
       // Hide all of the provided ids
-      i = ids.length;
-      while (i--) {
-        this.setElemStyle(ids[i], 'display', 'none');
+      else {
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
       }
 
-      this.debug.group('hideElems', 'end');
-      return;
-    }
-
-    debugMsg = 'Error: No ids were provided with a non-negative index.';
-    debugCheck = (ids.length > 0);
-    this.debug.fail('hideElems', debugCheck, debugMsg);
-
-    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    debugCheck = (index > -1 && index < ids.length);
-    this.debug.fail('hideElems', debugCheck, debugMsg, ids, index);
-
-    // Hide only the index of the provided ids
-    if (view === 'one') {
-      this.setElemStyle(ids[ index ], 'display', 'none');
-      this.debug.group('hideElems', 'end');
-      return;
-    }
-
-    // Hide the index plus ten (or to the array end)
-    if (view === 'ten') {
-
-      // Remove all ids from the array that should NOT be hidden
-      i = index + 11;
-      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
-
-      i = ids.length;
-      while (i--) {
-        this.setElemStyle(ids[i], 'display', 'none');
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
       }
 
-      this.debug.group('hideElems', 'end');
-      return;
+      // Hide only the index of the provided ids
+      if (view === 'one') {
+        this.setElemStyle(ids[ index ], 'display', 'none');
+      }
+      // Hide the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be hidden
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
     }
+
+    this.debug.end('hideElems');
   };
 
   /**
@@ -470,74 +517,73 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    debugMsg = 'ids= $$, index= $$';
-    this.debug.group('showElems', 'coll', debugMsg, ids, index);
-
     this.debug.start('showElems', ids, index);
 
-    this.debug.args('showElems', ids, '!numbers', index, 'number');
-
-    /** @type {string} */
-    var view;
     /** @type {number} */
     var i;
     /** @type {string} */
+    var view;
+    /** @type {string} */
+    var errorMsg;
+    /** @type {string} */
     var newClassName;
+
+    checkArgs(ids, '!numbers', index, 'number');
 
     if (index === -1) {
 
       // Show the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'block';
-        this.debug.group('showElems', 'end');
-        return;
       }
-
       // Show all of the provided ids
-      i = ids.length;
-      while (i--) {
-        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
-        this.setElemClass(ids[i], newClassName);
-        this.setElemStyle(ids[i], 'display', 'block');
+      else {
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
       }
 
-      this.debug.group('showElems', 'end');
-      return;
-    }
-
-    debugMsg = 'Error: No ids were provided with a non-negative index.';
-    debugCheck = (ids.length > 0);
-    this.debug.fail('showElems', debugCheck, debugMsg);
-
-    debugMsg = 'Error: An incorrect index was provided. ids= $$, index= $$';
-    debugCheck = (index > -1 && index < ids.length);
-    this.debug.fail('showElems', debugCheck, debugMsg, ids, index);
-
-    view = app.searchBar.vals.view;
-
-    // Show only the index of the provided ids
-    if (view === 'one') {
-      this.setElemClass(ids[ index ], 'question shade1 hideLink');
-      this.setElemStyle(ids[ index ], 'display', 'block');
-      this.debug.group('showElems', 'end');
-      return;
-    }
-
-    // Show the index plus ten (or to the array end)
-    if (view === 'ten') {
-
-      // Remove all ids from the array that should NOT be shown
-      i = index + 11;
-      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
-
-      i = ids.length;
-      while (i--) {
-        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
-        this.setElemClass(ids[i], newClassName);
-        this.setElemStyle(ids[i], 'display', 'block');
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
       }
 
-      this.debug.group('showElems', 'end');
-      return;
+      view = app.searchBar.vals.view;
+
+      // Show only the index of the provided ids
+      if (view === 'one') {
+        this.setElemClass(ids[ index ], 'question shade1 hideLink');
+        this.setElemStyle(ids[ index ], 'display', 'block');
+      }
+      // Show the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be shown
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
     }
+
+    this.debug.end('showElems');
   };
