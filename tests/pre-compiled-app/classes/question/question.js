@@ -308,7 +308,7 @@
 
       if ( !hasOwnProp(props, propName) ) {
         errorMsg = 'An aIV.app internal error occurred. A Question.get call was ';
-        errorMsg += 'given an invalid given property name. property= ' + propName;
+        errorMsg += 'given an invalid property name to get. property= ' + propName;
         throw new Error(errorMsg);
       }
 
