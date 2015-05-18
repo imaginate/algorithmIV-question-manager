@@ -795,11 +795,11 @@ aIV.utils.set({
    * @param {string} str - The original string.
    * @return {string} The trimmed string.
    */
-  var trimFunctionWrapper = (function() {
+  var trimFunctionWrapper = (function setup_trimFunctionWrapper() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var funcCheck;
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var endCheck;
 
     funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
@@ -830,9 +830,9 @@ aIV.utils.set({
    * @param {string} str - The string to check.
    * @return {boolean} The evaluation result.
    */
-  var isLink = (function() {
+  var isLink = (function setup_isLink() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var http;
 
     http = /^https?\:\/\//;
@@ -851,6 +851,43 @@ aIV.utils.set({
       debug.end('isLink', result);
 
       return result;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeUrl)
+   * ---------------------------------------------------
+   * @desc A helper method that converts a name into a valid URL string.
+   * @param {string} name - The name.
+   * @return {string} The url string.
+   */
+  var makeUrl = (function setup_makeUrl() {
+
+    /** @type{!RegExp} */
+    var invalidCharacters;
+    /** @type{!RegExp} */
+    var spaces;
+
+    invalidCharacters = /[^0-9a-z\-\s\_]/g;
+    spaces = /\s/g;
+
+    return function makeUrl(name) {
+
+      debug.start('makeUrl', name);
+
+      /** @type {string} */
+      var url;
+
+      checkArgs(url, 'string');
+
+      url = name.toLowerCase();
+      url = url.replace(invalidCharacters, '');
+      url = url.replace(spaces, '-');
+
+      debug.end('makeUrl', url);
+
+      return url;
     };
   })();
 
@@ -4061,6 +4098,9 @@ aIV.utils.set({
       this.get(id).addToSearch(config);
     }
 
+    app.sources.freezeIds();
+    app.categories.freezeIds();
+
     this.debug.end('addIdsToSearch');
   };
 
@@ -4569,11 +4609,9 @@ aIV.utils.set({
     this.debug = aIV.debug('Sources');
     thisDebug = this.debug;
 
-    this.debug.group('init', 'coll', 'sources= $$', sources);
-
     this.debug.start('init', sources);
 
-    this.debug.args('init', sources, 'stringMap');
+    checkArgs(sources, 'stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -4609,6 +4647,9 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {number} */
+    var allIndex;
+
     this.ids = Object.keys(sources);
     this.len = this.ids.length;
 
@@ -4617,7 +4658,11 @@ aIV.utils.set({
       this.ids = sortKeys(this.ids, sources);
     }
 
-    freezeObj(this.ids);
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -4637,16 +4682,22 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {number} */
+    var i;
+
     data = {};
 
     // Build the data hash map
-    if (this.len) {
-      this.ids.forEach(function(/** string */ sourceId) {
-        data[ sourceId ] = new Source(sources[ sourceId ]);
-      });
+    i = this.len;
+    while (i--) {
+      sourceId = this.ids[i];
+      data[ sourceId ] = new Source(sources[ sourceId ]);
     }
 
-    freezeObj(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -4656,43 +4707,47 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source's Source object or property.
+     * @desc Get a Source's object or protected property.
      * @param {string} id - The source id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Source|string|numbers)}
+     * @return {!(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
       thisDebug.start('get', id, prop);
-      thisDebug.args('get', id, 'string', prop, 'string=');
 
-      /** @type {Source} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Source} */
       var source;
+      /** @type {!(Source|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Sources.get call ';
+        errorMsg += 'was given an invalid source id to get. sourceID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      debugCheck = data.hasOwnProperty(id);
-      debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      thisDebug.fail('get', debugCheck, debugMsg, id);
+      prop = prop || '';
+      source = data[ id ];
+      result = (prop) ? source.get(prop) : source;
 
-      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      thisDebug.end('get', result);
 
-      return (prop) ? source.get(prop) : source;
+      return result;
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    // Deep freeze
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4700,6 +4755,31 @@ aIV.utils.set({
 ////////////////////////////////////////////////////////////////////////////////
 
   Sources.prototype.constructor = Sources;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Sources.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each source.
+   * @type {function}
+   */
+  Sources.prototype.freezeIds = function() {
+
+    this.debug.start('freezeIds');
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+    this.debug.end('freezeIds');
+  };
 
 /* -----------------------------------------------------------------------------
  * The Source Class (classes/source.js)
@@ -4715,11 +4795,14 @@ aIV.utils.set({
    */
   var Source = function(name) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Source');
+    thisDebug = this.debug;
 
     this.debug.start('init', name);
 
-    this.debug.args('init', name, 'string');
+    checkArgs(name, 'string');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -4740,7 +4823,7 @@ aIV.utils.set({
      * Protected Property (Source.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this source.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -4749,14 +4832,12 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
 
@@ -4769,30 +4850,20 @@ aIV.utils.set({
      * Public Method (Source.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the source.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, (string|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
+        debug: thisDebug,
         name: name,
         url : url,
-        ids : function() {
-          return freezeObj( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -4805,23 +4876,44 @@ aIV.utils.set({
     this.addId = function(id) {
 
       this.debug.start('addId', id);
-      this.debug.args('addId', id, 'number');
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Source.addId call ';
+        errorMsg += 'was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
+      this.debug.end('addId');
     };
 
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Source.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      this.debug.start('freezeIds');
+
+      freezeObj(ids);
+
+      this.debug.end('freezeIds');
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4849,11 +4941,9 @@ aIV.utils.set({
     this.debug = aIV.debug('Categories');
     thisDebug = this.debug;
 
-    this.debug.group('init', 'coll', 'categories= $$', categories);
-
     this.debug.start('init', categories);
 
-    this.debug.args('init', categories, 'objectMap|stringMap');
+    checkArgs(categories, 'objectMap|stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -4886,7 +4976,7 @@ aIV.utils.set({
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
-     * @type {strings}
+     * @type {!strings}
      */
     this.ids;
 
@@ -4920,8 +5010,6 @@ aIV.utils.set({
       this.ids[ allIndex ] = '_all';
     }
 
-    freezeObj(this.ids);
-
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -4931,7 +5019,7 @@ aIV.utils.set({
      * Protected Property (Categories.data)
      * -----------------------------------------------
      * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
+     * @type {!Object<string, !Category>}
      * @private
      */
     var data;
@@ -4942,36 +5030,43 @@ aIV.utils.set({
 
     /** @type {strings} */
     var subIds;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
     data = {};
 
-    if (this.len) {
+    // Build the data hash map
+    i = this.len;
+    while (i--) {
+      mainId = this.ids[i];
 
-      // Build the data hash map
-      this.ids.forEach(function(/** string */ mainId) {
+      // Save and sort the sub category ids if they exist
+      subIds = ( (hasOwnProp(categories.sub, mainId)) ?
+        Object.keys(categories.sub[ mainId ]) : []
+      );
+      if (subIds.length) {
+        subIds = sortKeys(subIds, categories.sub[ mainId ]);
+      }
 
-        // Save and sort the sub category ids if they exist
-        subIds = null;
-        if ( categories.sub.hasOwnProperty(mainId) ) {
-          subIds = Object.keys(categories.sub[ mainId ]);
-          if (subIds && subIds.length) {
-            subIds = sortKeys(subIds, categories.sub[ mainId ]);
-          }
-        }
+      // Add main category to the hash map
+      data[ mainId ] = new Category(categories.main[ mainId ], subIds);
 
-        // Add main category to the hash map
-        data[ mainId ] = new Category(categories.main[ mainId ], subIds);
-
-        // Add the sub categories to the hash map
-        if (subIds && subIds.length) {
-          subIds.forEach(function(/** string */ subId) {
-            data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-          });
-        } 
-      });
+      // Add the sub categories to the hash map
+      ii = subIds.length;
+      while (ii--) {
+        subId = subIds[ii];
+        data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
+      }
     }
 
-    freezeObj(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -4981,43 +5076,47 @@ aIV.utils.set({
      * ----------------------------------------------- 
      * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Get a catgory's Category object or property.
+     * @desc Get a Catgory's object or protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Category|string|numbers)}
+     * @return {!(Category|string|numbers)}
      */
     this.get = function(id, prop) {
 
       thisDebug.start('get', id, prop);
-      thisDebug.args('get', id, 'string', prop, 'string=');
 
-      /** @type {Category} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Category} */
       var category;
+      /** @type {!(Category|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
+        errorMsg += 'was given an invalid category id to get. catID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      debugCheck = data.hasOwnProperty(id);
-      debugMsg = 'Error: The given category does not exist. catID= $$';
-      thisDebug.fail('get', debugCheck, debugMsg, id);
+      prop = prop || '';
+      category = data[ id ];
+      result = (prop) ? category.get(prop) : category;
 
-      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      thisDebug.end('get', result);
 
-      return (prop) ? category.get(prop) : category;
+      return result;
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    // Deep freeze
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5025,6 +5124,31 @@ aIV.utils.set({
 ////////////////////////////////////////////////////////////////////////////////
 
   Categories.prototype.constructor = Categories;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Categories.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each category.
+   * @type {function}
+   */
+  Categories.prototype.freezeIds = function() {
+
+    this.debug.start('freezeIds');
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+    this.debug.end('freezeIds');
+  };
 
 /* -----------------------------------------------------------------------------
  * The Category Class (classes/category.js)
@@ -5042,11 +5166,14 @@ aIV.utils.set({
    */
   var Category = function(name, subs) {
 
+    var thisDebug;
+
     this.debug = aIV.debug('Category');
+    thisDebug = this.debug;
 
     this.debug.start('init', name, subs);
 
-    this.debug.args('init', name, 'string', subs, 'strings=');
+    checkArgs(name, 'string', subs, 'strings=');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -5067,7 +5194,7 @@ aIV.utils.set({
      * Protected Property (Category.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this category.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -5076,17 +5203,15 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
-    subs = (!!subs) ? freezeObj(subs) : null;
+    subs = (subs) ? freezeObj(subs) : null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -5097,31 +5222,21 @@ aIV.utils.set({
      * Public Method (Category.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the category.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      this.debug.start('get', prop);
-      this.debug.args('get', prop, 'string');
-
-      /** @type {Object<string, (string|numbers|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
+        debug: thisDebug,
         name: name,
         url : url,
         subs: subs,
-        ids : function() {
-          return freezeObj( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      debugCheck = props.hasOwnProperty(prop);
-      debugMsg = 'Error: The given property does not exist. property= $$';
-      this.debug.fail('get', debugCheck, debugMsg, prop);
-
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -5134,23 +5249,44 @@ aIV.utils.set({
     this.addId = function(id) {
 
       this.debug.start('addId', id);
-      this.debug.args('addId', id, 'number');
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Category.addId ';
+        errorMsg += 'call was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
+      this.debug.end('addId');
     };
 
-    // Freeze all of the methods
-    freezeObj(this.get);
-    freezeObj(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Category.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      this.debug.start('freezeIds');
+
+      freezeObj(ids);
+
+      this.debug.end('freezeIds');
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -6140,6 +6276,9 @@ aIV.utils.set({
       this.get(id).addToSearch(config);
     }
 
+    app.sources.freezeIds();
+    app.categories.freezeIds();
+
     this.debug.end('addIdsToSearch');
   };
 
@@ -6567,10 +6706,8 @@ aIV.utils.set({
     var i;
 
     url = '';
-    if ( checkType(question.url, 'string') ) {
-      url = question.url.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s\_]/g, '');
-      url = url.replace(/\s/g, '-');
+    if (question.url && checkType(question.url, 'string')) {
+      url = makeUrl(question.url);
     }
 
     complete = (question.complete === true);
