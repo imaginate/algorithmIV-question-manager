@@ -11,7 +11,10 @@
    */
   var App = function(config, sources, categories, questions) {
 
-    this.debug = aIV.debug('App');
+    this.debug = aIV.debug({
+      classTitle: 'App',
+      openGroups: true
+    });
 
     this.debug.start('init', config, sources, categories, questions);
 
