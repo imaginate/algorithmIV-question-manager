@@ -121,19 +121,18 @@
       mainId = this.ids[i];
 
       // Save and sort the sub category ids if they exist
-      subIds = null;
-      if ( hasOwnProp(categories.sub, mainId) ) {
-        subIds = Object.keys(categories.sub[ mainId ]);
-        if (subIds.length) {
-          subIds = sortKeys(subIds, categories.sub[ mainId ]);
-        }
+      subIds = ( (hasOwnProp(categories.sub, mainId)) ?
+        Object.keys(categories.sub[ mainId ]) : []
+      );
+      if (subIds.length) {
+        subIds = sortKeys(subIds, categories.sub[ mainId ]);
       }
 
       // Add main category to the hash map
       data[ mainId ] = new Category(categories.main[ mainId ], subIds);
 
       // Add the sub categories to the hash map
-      ii = (subIds) ? subIds.length : 0;
+      ii = subIds.length;
       while (ii--) {
         subId = subIds[ii];
         data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
