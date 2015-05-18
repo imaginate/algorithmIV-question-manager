@@ -13,11 +13,9 @@
     this.debug = aIV.debug('Sources');
     thisDebug = this.debug;
 
-    this.debug.group('init', 'coll', 'sources= $$', sources);
-
     this.debug.start('init', sources);
 
-    this.debug.args('init', sources, 'stringMap');
+    checkArgs(sources, 'stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -53,6 +51,9 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {number} */
+    var allIndex;
+
     this.ids = Object.keys(sources);
     this.len = this.ids.length;
 
@@ -61,7 +62,11 @@
       this.ids = sortKeys(this.ids, sources);
     }
 
-    freezeObj(this.ids);
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -81,16 +86,22 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {number} */
+    var i;
+
     data = {};
 
     // Build the data hash map
-    if (this.len) {
-      this.ids.forEach(function(/** string */ sourceId) {
-        data[ sourceId ] = new Source(sources[ sourceId ]);
-      });
+    i = this.len;
+    while (i--) {
+      sourceId = this.ids[i];
+      data[ sourceId ] = new Source(sources[ sourceId ]);
     }
 
-    freezeObj(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -100,43 +111,47 @@
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source's Source object or property.
+     * @desc Get a Source's object or protected property.
      * @param {string} id - The source id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Source|string|numbers)}
+     * @return {!(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
       thisDebug.start('get', id, prop);
-      thisDebug.args('get', id, 'string', prop, 'string=');
 
-      /** @type {Source} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Source} */
       var source;
+      /** @type {!(Source|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Sources.get call ';
+        errorMsg += 'was given an invalid source id to get. sourceID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      debugCheck = data.hasOwnProperty(id);
-      debugMsg = 'Error: The given source does not exist. sourceID= $$';
-      thisDebug.fail('get', debugCheck, debugMsg, id);
+      prop = prop || '';
+      source = data[ id ];
+      result = (prop) ? source.get(prop) : source;
 
-      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      thisDebug.end('get', result);
 
-      return (prop) ? source.get(prop) : source;
+      return result;
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    // Deep freeze
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
