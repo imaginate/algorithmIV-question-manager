@@ -148,7 +148,7 @@
      * ----------------------------------------------- 
      * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Get a catgory's Category object or a protected property.
+     * @desc Get a Catgory's object or protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
      * @return {!(Category|string|numbers)}
@@ -159,14 +159,12 @@
 
       /** @type {string} */
       var errorMsg;
-      /** @type {Category} */
+      /** @type {!Category} */
       var category;
       /** @type {!(Category|string|numbers)} */
       var result;
 
       checkArgs(id, 'string', prop, 'string=');
-
-      prop = prop || '';
 
       if ( !hasOwnProp(data, id) ) {
         errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
@@ -174,8 +172,8 @@
         throw new Error(errorMsg);
       }
 
+      prop = prop || '';
       category = data[ id ];
-
       result = (prop) ? category.get(prop) : category;
 
       thisDebug.end('get', result);
