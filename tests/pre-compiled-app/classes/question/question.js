@@ -165,10 +165,8 @@
     var i;
 
     url = '';
-    if ( checkType(question.url, 'string') ) {
-      url = question.url.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s\_]/g, '');
-      url = url.replace(/\s/g, '-');
+    if (question.url && checkType(question.url, 'string')) {
+      url = makeUrl(question.url);
     }
 
     complete = (question.complete === true);

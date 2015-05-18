@@ -421,11 +421,11 @@
    * @param {string} str - The original string.
    * @return {string} The trimmed string.
    */
-  var trimFunctionWrapper = (function() {
+  var trimFunctionWrapper = (function setup_trimFunctionWrapper() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var funcCheck;
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var endCheck;
 
     funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
@@ -456,9 +456,9 @@
    * @param {string} str - The string to check.
    * @return {boolean} The evaluation result.
    */
-  var isLink = (function() {
+  var isLink = (function setup_isLink() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var http;
 
     http = /^https?\:\/\//;
@@ -477,6 +477,43 @@
       debug.end('isLink', result);
 
       return result;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeUrl)
+   * ---------------------------------------------------
+   * @desc A helper method that converts a name into a valid URL string.
+   * @param {string} name - The name.
+   * @return {string} The url string.
+   */
+  var makeUrl = (function setup_makeUrl() {
+
+    /** @type{!RegExp} */
+    var invalidCharacters;
+    /** @type{!RegExp} */
+    var spaces;
+
+    invalidCharacters = /[^0-9a-z\-\s\_]/g;
+    spaces = /\s/g;
+
+    return function makeUrl(name) {
+
+      debug.start('makeUrl', name);
+
+      /** @type {string} */
+      var url;
+
+      checkArgs(url, 'string');
+
+      url = name.toLowerCase();
+      url = url.replace(invalidCharacters, '');
+      url = url.replace(spaces, '-');
+
+      debug.end('makeUrl', url);
+
+      return url;
     };
   })();
 
