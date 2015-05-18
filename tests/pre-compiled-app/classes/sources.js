@@ -159,3 +159,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 
   Sources.prototype.constructor = Sources;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Sources.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each source.
+   * @type {function}
+   */
+  Sources.prototype.freezeIds = function() {
+
+    this.debug.start('freezeIds');
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+    this.debug.end('freezeIds');
+  };
