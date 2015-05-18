@@ -74,10 +74,10 @@
       /** @type {Object<string, (string|!numbers)>} */
       var props = {
         debug: thisDebug,
-        name : name,
-        url  : url,
-        subs : subs,
-        ids  : ids
+        name: name,
+        url : url,
+        subs: subs,
+        ids : ids
       };
 
       return getter.call(props, propName);
