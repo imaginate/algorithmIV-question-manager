@@ -332,6 +332,9 @@
       this.get(id).addToSearch(config);
     }
 
+    app.sources.freezeIds();
+    app.categories.freezeIds();
+
     this.debug.end('addIdsToSearch');
   };
 
