@@ -106,6 +106,22 @@
       this.debug.end('addId');
     };
 
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Source.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      this.debug.start('freezeIds');
+
+      freezeObj(ids);
+
+      this.debug.end('freezeIds');
+    };
+
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
