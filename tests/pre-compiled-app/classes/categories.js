@@ -13,11 +13,9 @@
     this.debug = aIV.debug('Categories');
     thisDebug = this.debug;
 
-    this.debug.group('init', 'coll', 'categories= $$', categories);
-
     this.debug.start('init', categories);
 
-    this.debug.args('init', categories, 'objectMap|stringMap');
+    checkArgs(categories, 'objectMap|stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -106,36 +104,44 @@
 
     /** @type {strings} */
     var subIds;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
     data = {};
 
-    if (this.len) {
+    // Build the data hash map
+    i = this.len;
+    while (i--) {
+      mainId = this.ids[i];
 
-      // Build the data hash map
-      this.ids.forEach(function(/** string */ mainId) {
-
-        // Save and sort the sub category ids if they exist
-        subIds = null;
-        if ( categories.sub.hasOwnProperty(mainId) ) {
-          subIds = Object.keys(categories.sub[ mainId ]);
-          if (subIds && subIds.length) {
-            subIds = sortKeys(subIds, categories.sub[ mainId ]);
-          }
+      // Save and sort the sub category ids if they exist
+      subIds = null;
+      if ( hasOwnProp(categories.sub, mainId) ) {
+        subIds = Object.keys(categories.sub[ mainId ]);
+        if (subIds.length) {
+          subIds = sortKeys(subIds, categories.sub[ mainId ]);
         }
+      }
 
-        // Add main category to the hash map
-        data[ mainId ] = new Category(categories.main[ mainId ], subIds);
+      // Add main category to the hash map
+      data[ mainId ] = new Category(categories.main[ mainId ], subIds);
 
-        // Add the sub categories to the hash map
-        if (subIds && subIds.length) {
-          subIds.forEach(function(/** string */ subId) {
-            data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-          });
-        } 
-      });
+      // Add the sub categories to the hash map
+      ii = (subIds) ? subIds.length : 0;
+      while (ii--) {
+        subId = subIds[ii];
+        data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
+      }
     }
 
-    freezeObj(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -145,43 +151,49 @@
      * ----------------------------------------------- 
      * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Get a catgory's Category object or property.
+     * @desc Get a catgory's Category object or a protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Category|string|numbers)}
+     * @return {!(Category|string|numbers)}
      */
     this.get = function(id, prop) {
 
       thisDebug.start('get', id, prop);
-      thisDebug.args('get', id, 'string', prop, 'string=');
 
+      /** @type {string} */
+      var errorMsg;
       /** @type {Category} */
       var category;
+      /** @type {!(Category|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      prop = prop || '';
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
+        errorMsg += 'was given an invalid category id to get. catID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      debugCheck = data.hasOwnProperty(id);
-      debugMsg = 'Error: The given category does not exist. catID= $$';
-      thisDebug.fail('get', debugCheck, debugMsg, id);
+      category = data[ id ];
 
-      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      result = (prop) ? category.get(prop) : category;
 
-      return (prop) ? category.get(prop) : category;
+      thisDebug.end('get', result);
+
+      return result;
     };
-
-    // Freeze all of the methods
-    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
+    // Deep freeze
+    freezeObj(this, true);
 
-    // Freeze this class instance
-    freezeObj(this);
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
