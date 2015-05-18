@@ -48,7 +48,7 @@
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
-     * @type {strings}
+     * @type {!strings}
      */
     this.ids;
 
@@ -93,7 +93,7 @@
      * Protected Property (Categories.data)
      * -----------------------------------------------
      * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
+     * @type {!Object<string, !Category>}
      * @private
      */
     var data;
@@ -201,3 +201,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 
   Categories.prototype.constructor = Categories;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Categories.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each category.
+   * @type {function}
+   */
+  Categories.prototype.freezeIds = function() {
+
+    this.debug.start('freezeIds');
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+    this.debug.end('freezeIds');
+  };
