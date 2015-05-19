@@ -1,21 +1,21 @@
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - Tests Module (v1.1.1)
+ * Algorithm IV Question Manager Tests (v1.1.2)
  * -----------------------------------------------------------------------------
- * @file The module for testing the aIV question manager app.
+ * @file The module used to run all tests for aIV's  question manager app.
  * @module aIVAppTests
- * @version 1.1.1
+ * @version 1.1.2
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
- * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
+ * @license The Apache License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  * @desc More details about the module for aIV.tests:
  * <ol>
  *   <li>annotations: 
- *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/js-for-compiler}
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
- *       [See the guideline]{@link https://github.com/imaginate/algorithmIV--javascript-debugger/blob/master/CONTRIBUTING.md}
+ *       [See the guideline]{@link https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md}
  *   </li>
  * </ol>
  */
@@ -31,65 +31,71 @@
  * @typedef {Array<Object>} objects
  */
 
-(function(/** Window */ window, /** function */ tests) {
+////////////////////////////////////////////////////////////////////////////////
+// The Public API
+////////////////////////////////////////////////////////////////////////////////
+
+;(function setupTheTestsPublicAPI(testsModuleAPI, undefined) {
   "use strict";
 
-
 /* -----------------------------------------------------------------------------
- * | The Public API                                                            |
- * v ------------------------------------------------------------------------- v
-                                                              public-api.js */
+ * The Public API (public-api.js)
+ * -------------------------------------------------------------------------- */
+// insert-public-api
 
-})(window, (function() {
+})(
+
+////////////////////////////////////////////////////////////////////////////////
+// The Tests Module
+////////////////////////////////////////////////////////////////////////////////
+
+(function setupTheTestsModule(undefined) {
   "use strict"; 
 
+/* -----------------------------------------------------------------------------
+ * The Tests Module API (module-api.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-api
 
 /* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Public Variables for the Module                                       |
- * v ------------------------------------------------------------------------- v
-                                                             module-vars.js */
-
+ * The Public Module Variables (module-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-vars
 
 /* -----------------------------------------------------------------------------
- * | The Public Methods for the Module                                         |
- * v ------------------------------------------------------------------------- v
-                                                          module-methods.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Tests Class                                                           |
- * v ------------------------------------------------------------------------- v
-                                                           classes/tests.js */
-
+ * The Public Module Methods (module-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-methods
 
 /* -----------------------------------------------------------------------------
- * | The Test Data Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                       classes/test-data.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The App Class                                                             |
- * v ------------------------------------------------------------------------- v
-                                                             classes/app.js */
-
+ * The App Class (classes/app.js)
+ * -------------------------------------------------------------------------- */
+// insert-app
 
 /* -----------------------------------------------------------------------------
- * | The Elems Class                                                           |
- * v ------------------------------------------------------------------------- v
-                                                           classes/elems.js */
-
+ * The MockAjax Class (classes/mock-ajax.js)
+ * -------------------------------------------------------------------------- */
+// insert-mock-ajax
 
 /* -----------------------------------------------------------------------------
- * | End of module                                                             |
- * v ------------------------------------------------------------------------- v
-                                                                            */
-  return _init;
+ * The Elems Class (classes/elems.js)
+ * -------------------------------------------------------------------------- */
+// insert-elems
+
+/* -----------------------------------------------------------------------------
+ * The Tests Class (classes/tests.js)
+ * -------------------------------------------------------------------------- */
+// insert-tests
+
+/* -----------------------------------------------------------------------------
+ * The Test Data Class (classes/test-data.js)
+ * -------------------------------------------------------------------------- */
+// insert-test-data
+
+////////////////////////////////////////////////////////////////////////////////
+// The Tests Module End
+////////////////////////////////////////////////////////////////////////////////
+
+  return testsModuleAPI;
 
 })());
