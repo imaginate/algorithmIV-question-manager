@@ -41,4 +41,4 @@
     };
   })();
 
-  Object.freeze(Tests);
+  freezeObj(Tests);
