@@ -11,48 +11,55 @@
     // Define & Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {!Element} */
+    var root;
+
+    root = getElemById('aIV-tests');
+
+    // Set the following getElemByClass calls to use #aIV-tests as their root
+    aIV.utils.set({ getElemByClassRoot: root });
+
     /**
      * ---------------------------------------------------
      * Private Property (Elems.root)
      * ---------------------------------------------------
      * @desc Element: #aIV-tests
-     * @type {HTMLElement}
+     * @type {!Element}
      */
-    this.root = getID('aIV-tests');
+    this.root = root;
 
     /**
      * ---------------------------------------------------
      * Private Property (Elems.msg)
      * ---------------------------------------------------
      * @desc Element: #aIV-tests .msg
-     * @type {HTMLElement}
+     * @type {!Element}
      */
-    this.msg = getClass('msg')[0];
+    this.msg = getElemByClass('msg');
 
     /**
      * ---------------------------------------------------
      * Private Property (Elems.ui)
      * ---------------------------------------------------
      * @desc Element: #aIV-tests .ui
-     * @type {HTMLElement}
+     * @type {!Element}
      */
-    this.ui = getClass('ui')[0];
+    this.ui = getElemByClass('ui');
 
     /**
      * ---------------------------------------------------
      * Private Property (Elems.start)
      * ---------------------------------------------------
      * @desc Element: #aIV-tests .start
-     * @type {HTMLElement}
+     * @type {!Element}
      */
-    this.start = getClass('start')[0];
+    this.start = getElemByClass('start');
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
