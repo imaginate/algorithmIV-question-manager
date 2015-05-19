@@ -177,7 +177,6 @@
      * Private Method (appendId)
      * ---------------------------------------------
      * @desc Appends the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
      * @private
@@ -227,7 +226,6 @@
      * Private Method (makeIdLink)
      * ---------------------------------------------
      * @desc Creates an anchor element for the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
      * @return {Element} The anchor element.
@@ -248,11 +246,12 @@
       a = makeElem({ tag: 'a', text: id });
       a.href = 'id/' + url;
       a.onclick = (function(id) {
-        return function() {
-          Events.linkId( Number(id) );
+        return function onclick(event) {
+          Events.linkId(id);
+          event && event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id);
+      })( Number(id) );
 
       return a;
     }
@@ -329,8 +328,9 @@
       a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'source/' + url;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkSource(id);
+          event && event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -526,7 +526,6 @@
      * Private Method (makeMainCatLink)
      * ---------------------------------------------
      * @desc Creates a main category link.
-     * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
      * @return {Element} The anchor link.
@@ -547,8 +546,9 @@
       a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + url;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkMainCat(id);
+          event && event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -608,8 +608,9 @@
       a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + parentUrl + '/' + url;
       a.onclick = (function(id, parentId) {
-        return function() {
+        return function onclick(event) {
           Events.linkSubCat(id, parentId);
+          event && event.preventDefault && event.preventDefault();
           return false;
         };
       })(id, parentId);
