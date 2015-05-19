@@ -1,21 +1,21 @@
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - Tests Module (v1.1.1)
+ * Algorithm IV Question Manager Tests (v1.1.2)
  * -----------------------------------------------------------------------------
- * @file The module for testing the aIV question manager app.
+ * @file The module used to run all tests for aIV's  question manager app.
  * @module aIVAppTests
- * @version 1.1.1
+ * @version 1.1.2
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
- * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
+ * @license The Apache License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  * @desc More details about the module for aIV.tests:
  * <ol>
  *   <li>annotations: 
- *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/js-for-compiler}
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
- *       [See the guideline]{@link https://github.com/imaginate/algorithmIV--javascript-debugger/blob/master/CONTRIBUTING.md}
+ *       [See the guideline]{@link https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md}
  *   </li>
  * </ol>
  */
@@ -31,14 +31,17 @@
  * @typedef {Array<Object>} objects
  */
 
-(function(/** Window */ window, /** function */ tests) {
+////////////////////////////////////////////////////////////////////////////////
+// The Public API
+////////////////////////////////////////////////////////////////////////////////
+
+;(function setupTheTestsPublicAPI(testsModuleAPI, undefined) {
   "use strict";
 
-
 /* -----------------------------------------------------------------------------
- * | The Public API                                                            |
- * v ------------------------------------------------------------------------- v
-                                                              public-api.js */
+ * The Public API (public-api.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * ---------------------------------------------------
    * Global Variable (aIV)
@@ -53,46 +56,48 @@
    * ---------------------------------------------------
    * Global Method (aIV.tests)
    * ---------------------------------------------------
-   * @desc Runs tests on aIV.app.
+   * @desc Runs the tests for aIV.app.
    * @type {function}
    * @global
    */
-  aIV.tests = tests;
+  aIV.runTests = testsModuleAPI.startTests;
 
-})(window, (function() {
+})(
+
+////////////////////////////////////////////////////////////////////////////////
+// The Tests Module
+////////////////////////////////////////////////////////////////////////////////
+
+(function setupTheTestsModule(undefined) {
   "use strict"; 
 
-
 /* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
-  /**
-   * -----------------------------------------------------
-   * Private Variable (_initialized)
-   * -----------------------------------------------------
-   * @desc Indicates whether the tests module has been initialized.
-   * @type {boolean}
-   * @private
-   */
-  var _initialized = false;
+ * The Tests Module API (module-api.js)
+ * -------------------------------------------------------------------------- */
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init)
+   * Public Variable (testsModuleAPI)
    * -----------------------------------------------------
-   * @desc Initializes the aIV.debug tests.
+   * @desc The API for the Tests Module.
+   * @type {!Object<string, function>}
+   */
+  var testsModuleAPI = {};
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (testsModuleAPI.startTests)
+   * -----------------------------------------------------
+   * @desc Initializes the aIV.app tests.
    * @type {function}
    */
-  var _init = function() {
+  testsModuleAPI.startTests = function() {
 
-    // Check if tests module has been initialized
-    if (!_initialized) {
+    if (!appHasBeenInitialized) {
 
-      // Save the init to prevent second init
-      _initialized = true;
+      appHasBeenInitialized = true;
 
-      // Setup the tests
+      // Setup the tests app
       app = new App();
 
       // Run the tests
@@ -100,11 +105,21 @@
     }
   };
 
+  aIV.utils.freezeObj(testsModuleAPI, true);
 
 /* -----------------------------------------------------------------------------
- * | The Public Variables for the Module                                       |
- * v ------------------------------------------------------------------------- v
-                                                             module-vars.js */
+ * The Public Module Variables (module-vars.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Variable (appHasBeenInitialized)
+   * -----------------------------------------------------
+   * @desc Indicates whether the Tests app has been initialized.
+   * @type {boolean}
+   */
+  var appHasBeenInitialized = false;
+
   /**
    * ----------------------------------------------- 
    * Public Variable (app)
@@ -114,40 +129,812 @@
    */
   var app;
 
-
 /* -----------------------------------------------------------------------------
- * | The Public Methods for the Module                                         |
- * v ------------------------------------------------------------------------- v
-                                                          module-methods.js */
-  /**
-   * ---------------------------------------------
-   * Public Method (getID)
-   * ---------------------------------------------
-   * @desc A shortcut for getElementById.
-   * @param {string} title - The name of the id of the element to select.
-   * @return {HTMLElement} A reference to element with the given id.
-   */
-  function getID(title) {
-    return document.getElementById(title);
-  }
+ * The Public Module Methods (module-methods.js)
+ * -------------------------------------------------------------------------- */
 
   /**
    * ---------------------------------------------
-   * Public Method (getClass)
+   * Public Method (getElemById)
    * ---------------------------------------------
-   * @desc A shortcut for getElementsByClassName.
-   * @param {string} title - The name of the class to select.
-   * @return {Array<HTMLElement>} The elements with the class name.
+   * @desc A shortcut for the native DOM method - document.getElementById.
+   * @param {string} id - The id of the element to select.
+   * @return {!HTMLElement} The DOM element with the given id.
    */
-  function getClass(title) {
-    return getID('aIV-tests').getElementsByClassName(title);
-  }
+  var getElemById = aIV.utils.getElemById;
 
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName[ [index] ].
+   * @param {string} classname - The class name of the element to select.
+   * @param {number=} index - The index of the array of found elements to
+   *   select. The default is 0.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemByClassRoot: [DOM Node] }).
+   * @return {!HTMLElement} The selected DOM element.
+   */
+  var getElemByClass = aIV.utils.getElemByClass;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemsByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName.
+   * @param {string} classname - The class name of the elements to select.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemsByClassRoot: [DOM Node] }).
+   * @return {!Array<HTMLElement>} The selected DOM elements.
+   */
+  var getElemsByClass = aIV.utils.getElemsByClass;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (freezeObj)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.freeze method with a deep freeze option.
+   * @param {!(Object|function)} obj - The object to freeze.
+   * @param {boolean=} deep - Deep freeze the object. The default is false.
+   * @return {!(Object|function)} The frozen object.
+   */
+  var freezeObj = aIV.utils.freezeObj;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (hasOwnProp)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.prototype.hasOwnProperty method.
+   * @param {!object|function} obj - The object to check.
+   * @param {string} prop - The property to check.
+   * @return {boolean} The result of the check.
+   */
+  var hasOwnProp = aIV.utils.hasOwnProp;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkType)
+   * ---------------------------------------------------
+   * @desc Checks a value's data type against the given optional types.
+   * @param {*} val - The value to be evaluated.
+   * @param {string} type - A string of the data types to evaluate the value
+   *   against. For a complete list of acceptable strings
+   *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/methods/checkType.js}.
+   * @param {boolean=} noTypeValCheck - If true skips the data type string checks.
+   *   The default is false. Use to avoid duplicating checks.
+   * @return {boolean} The evaluation result.
+   */
+  var checkType = aIV.utils.checkType;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (isValidTypeString)
+   * ---------------------------------------------------
+   * @desc Evaluates whether a string is a valid data type string.
+   * @param {string} type - The string to evaluate.
+   * @return {boolean} The evaluation result.
+   */
+  var isValidTypeString = aIV.utils.isValidTypeString;
+
+  /**
+   * ---------------------------------------------
+   * Public Method (copyObj)
+   * ---------------------------------------------
+   * @desc A shortcut that creates a new object with the same properties and
+   *   values as the given object.
+   * @param {!Object} oldObj - The object to copy from.
+   * @return {!Object} The new copied object.
+   */
+  var copyObj = (function setup_copyObj() {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {function} */
+    var throwTypeError;
+
+    errorMsg = 'An aIV.tests copyObj call received an invalid oldObj param.';
+    throwTypeError = function() {
+      throw new TypeError(errorMsg);
+    };
+
+    return function copyObj(oldObj) {
+
+      /** @type {!Object} */
+      var newObj;
+      /** @type {string} */
+      var prop;
+
+      if ( !checkType(oldObj, '!object|function') ) {
+        throwTypeError();
+        oldObj = {};
+      }
+
+      newObj = {};
+
+      for (prop in oldObj) {
+        if ( hasOwnProp(oldObj, prop) ) {
+          newObj[ prop ] = oldObj[ prop ];
+        }
+      }
+
+      return newObj;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------
+   * Public Method (makeObj)
+   * ---------------------------------------------
+   * @desc A shortcut that creates a new object with the given keys and
+   *   values.
+   * @param {(string|!strings)} keys - The new object's keys.
+   * @param {*} val - The value to set the new object's properties to.
+   * @return {!Object} The new object.
+   */
+  var makeObj = (function setup_makeObj() {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {function} */
+    var throwTypeError;
+
+    errorMsg = 'An aIV.tests makeObj call received an invalid keys param.';
+    throwTypeError = function() {
+      throw new TypeError(errorMsg);
+    };
+
+    return function makeObj(keys, val) {
+
+      /** @type {string} */
+      var prop;
+      /** @type {!Object} */
+      var obj;
+      /** @type {number} */
+      var i;
+
+      if ( checkType(keys, 'string') ) {
+        keys = keys.split(' ');
+      }
+
+      obj = {};
+
+      if ( checkType(keys, '!strings') ) {
+        i = keys.length;
+        while (i--) {
+          prop = keys[i];
+          obj[ prop ] = val;
+        }
+      }
+      else {
+        throwTypeError();
+      }
+
+      return obj;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------
+   * Public Method (concatObj)
+   * ---------------------------------------------
+   * @desc A shortcut that copies an object's properties and
+   *   values to an existing object.
+   * @param {!Object} baseObj - The object to copy to.
+   * @param {!Object} addObj - The object to copy from.
+   * @return {!Object} The base object.
+   */
+  var concatObj = (function setup_concatObj() {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {function} */
+    var throwTypeError;
+
+    errorMsg = 'An aIV.tests concatObj call received an invalid param type.';
+    throwTypeError = function() {
+      throw new TypeError(errorMsg);
+    };
+
+    return function concatObj(baseObj, addObj) {
+
+      /** @type {string} */
+      var prop;
+
+      if (!checkType(baseObj, '!object|function') ||
+          !checkType(addObj, '!object|function')) {
+        throwTypeError();
+        baseObj = {};
+        addObj = {};
+      }
+
+      for (prop in addObj) {
+        if (hasOwnProp(addObj, prop) && !hasOwnProp(baseObj, prop)) {
+          baseObj[ prop ] = addObj[ prop ];
+        }
+      }
+
+      return baseObj;
+    };
+  })();
 
 /* -----------------------------------------------------------------------------
- * | The Tests Class                                                           |
- * v ------------------------------------------------------------------------- v
-                                                           classes/tests.js */
+ * The App Class (classes/app.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Class (App)
+   * -----------------------------------------------------
+   * @desc The base class for the app.
+   * @constructor
+   */
+  var App = function() {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ---------------------------------------------------
+     * Public Property (App.elems)
+     * ---------------------------------------------------
+     * @desc The elements for this app.
+     * @type {Object<string, HTMLElement>}
+     */
+    this.elems = new Elems();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    freezeObj(this);
+  };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
+  App.prototype.constructor = App;
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.prototype.runTests)
+   * -----------------------------------------------
+   * @desc Sets up the display for the app.
+   * @type {function}
+   */
+  App.prototype.runTests = function() {
+
+    this.elems.ui.style.opacity = '0';
+
+    setTimeout(function() {
+
+      // Remove the body's current elements
+      while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
+      }
+
+      Tests.runApp();
+    }, 500);
+  };
+
+/* -----------------------------------------------------------------------------
+ * The MockAjax Class (classes/mock-ajax.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Class (MockAjax)
+   * -----------------------------------------------------
+   * @desc Mocks the XMLHttpRequest class for testing.
+   * @param {Array<ajaxResults>=} results - .
+   * @param {ajaxResults=} defaults - .
+   * @constructor
+   */
+  var MockAjax = (function setup_MockAjax(/** function */ orgXMLHttpRequest) {
+
+    /**
+     * -----------------------------------------------------
+     * Mock Results AJAX Object Definition
+     * -----------------------------------------------------
+     * @desc This typedef defines the results object for each new XMLHttpRequest
+     *   call. Note that timeTillDone is the number of milliseconds to wait
+     *   until calling the onreadystatechange function. The remaining properties
+     *   are the read only properties defined by the native XMLHttpRequest
+     *   object. For details on each of XMLHttpRequest's read only properties
+     *   [see MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest}.
+     *   For a list of the valid values for the status property
+     *   [see MSDN]{@link https://msdn.microsoft.com/en-us/library/ms767625%28v=vs.85%29.aspx#sectionToggle2}.
+     * @typedef {{
+     *   timeTillDone: (number|undefined),
+     *   readyState  : (number|undefined),
+     *   response    : ?(ArrayBuffer|Blob|Document|Object|string|undefined),
+     *   responseText: ?(string|undefined),
+     *   responseXML : ?(Document|undefined),
+     *   status      : (number|undefined),
+     *   statusText  : (string|undefined)
+     * }} ajaxResults
+     */
+
+    /**
+     * -----------------------------------------------------
+     * Default Mock Results AJAX Object Definition
+     * -----------------------------------------------------
+     * @desc The same as the defined ajaxResults object except undefined
+     *   values are not allowed.
+     * @typedef {!{
+     *   timeTillDone: number,
+     *   readyState  : number,
+     *   response    : ?(ArrayBuffer|Blob|Document|Object|string),
+     *   responseText: ?string,
+     *   responseXML : ?Document,
+     *   status      : number,
+     *   statusText  : string
+     * }} defaultAjaxResults
+     */
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Private MockAjax Variables
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (DEFAULT_RESULTS)
+     * -----------------------------------------------
+     * @desc The default values for a mock XMLHttpRequest call.
+     * @type {defaultAjaxResults}
+     * @const
+     */
+    var DEFAULT_RESULTS = {
+      timeTillDone: 500,
+      readyState  : 4,
+      response    : null,
+      responseText: null,
+      responseXML : null,
+      status      : 404,
+      statusText  : '404 Not Found'
+    };
+
+    freezeObj(DEFAULT_RESULTS);
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (RESULTS_TYPES)
+     * -----------------------------------------------
+     * @desc The acceptable types for each results object property.
+     * @type {!Object<string, string>}
+     * @const
+     */
+    var RESULTS_TYPES = {
+      timeTillDone: 'number',
+      readyState  : 'number',
+      response    : '?object|string|document',
+      responseText: '?string',
+      responseXML : '?document',
+      status      : 'number',
+      statusText  : 'string'
+    };
+
+    freezeObj(RESULTS_TYPES);
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (RESULTS_VALUES)
+     * -----------------------------------------------
+     * @desc The acceptable values for each results object property.
+     * @type {!Object<string, !Object<string, boolean>>}
+     * @const
+     */
+    var RESULTS_VALUES = {
+      readyState  : makeObj('0 1 2 3 4', true),
+      status      : makeObj('100 101 200 201 202 203 204 205 206 300 ' +
+                    '301 302 303 304 305 307 400 401 402 403 404 405 ' +
+                    '406 407 408 409 410 411 412 413 414 415 416 417 ' +
+                    '500 501 502 503 504 505', true)
+    };
+
+    freezeObj(RESULTS_VALUES, true);
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (defaultResults)
+     * -----------------------------------------------
+     * @desc The default values for a mock XMLHttpRequest call.
+     * @type {defaultAjaxResults}
+     */
+    var defaultResults = copyObj(DEFAULT_RESULTS);
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (counter)
+     * -----------------------------------------------
+     * @desc Maintains a count of the number of times a new MockAjax instance
+     *   is created.
+     * @type {number}
+     */
+    var counter = 0;
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (results)
+     * -----------------------------------------------
+     * @desc An array of the results for each AJAX request made during this mock
+     *   instance's lifetime. If the array is null then all AJAX requests will
+     *   use the default results. Otherwise each property of the array will be
+     *   used for each AJAX call in order. If a property of the array is null
+     *   then the default results will be used.
+     * @type {Array<ajaxResults>}
+     */
+    var results = null;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Private XMLHttpRequest Helpers
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (openMethods)
+     * -----------------------------------------------
+     * @desc The available options for XMLHttpRequest.open's method parameter.
+     * @type {!Object<string, boolean>} */
+    var openMethods = makeObj('GET HEAD POST PUT DELETE TRACE CONNECT', true);
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (throwOpenTypeError)
+     * -----------------------------------------------
+     * @desc A helper that throws a TypeError for invalid XMLHttpRequest.open
+     *   parameters.
+     * @type {function} */
+    var throwOpenTypeError = (function() {
+
+      /** @type {string} */
+      var errorMsg;
+
+      errorMsg = 'An XMLHttpRequest.open call received an invalid param type.';
+
+      return function throwOpenTypeError() {
+        throw new TypeError(errorMsg);
+      };
+    })();
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (throwOpenMethodError)
+     * -----------------------------------------------
+     * @desc A helper that throws an Error for invalid XMLHttpRequest.open
+     *   method parameters.
+     * @type {function} */
+    var throwOpenMethodError = (function() {
+
+      /** @type {string} */
+      var errorMsg;
+
+      errorMsg = 'An XMLHttpRequest.open call received an invalid method ';
+      errorMsg += 'param value.';
+
+      return function throwOpenMethodError() {
+        throw new Error(errorMsg);
+      };
+    })();
+
+    /**
+     * ----------------------------------------------- 
+     * Private Variable (throwOnChangeError)
+     * -----------------------------------------------
+     * @desc A helper that throws an Error for an invalid
+     *   XMLHttpRequest.onreadystatechange property.
+     * @type {function} */
+    var throwOnChangeError = (function() {
+
+      /** @type {string} */
+      var errorMsg;
+
+      errorMsg = 'The XMLHttpRequest.onreadystatechange property was not a ';
+      errorMsg += 'valid function when an XMLHttpRequest.send call was made.';
+
+      return function throwOnChangeError() {
+        throw new Error(errorMsg);
+      };
+    })();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The MockAjax Constructor
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * -----------------------------------------------------
+     * Public Class (MockAjax)
+     * -----------------------------------------------------
+     * @desc Mocks the XMLHttpRequest class for testing.
+     * @param {Array<ajaxResults>=} newResults - An array of the results for
+     *   each AJAX request made during this mock instance's lifetime. If the
+     *   array is null then all AJAX requests will use the default results.
+     *   Otherwise each property of the array will be used for each AJAX call
+     *   in order. If a property of the array is null then the defaults will
+     *   be used.
+     * @param {ajaxResults=} newDefaults - Allows you to modify the default
+     *   results values used.
+     * @constructor
+     */
+    var MockAjax = function(newResults, newDefaults) {
+
+      /** @type {string} */
+      var errorMsg;
+
+      if (this.constructor !== MockAjax) {
+        errorMsg = 'An aIV.tests MockAjax call was made without the new keyword.';
+        throw new Error(errorMsg);
+      }
+
+      if (!checkType(newResults, 'objects=') || !checkType(newDefaults, 'object=')) {
+        errorMsg = 'An aIV.tests MockAjax call received an invalid param type.';
+        throw new TypeError(errorMsg);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Update The Results
+      //////////////////////////////////////////////////////////////////////////
+
+      results = newResults;
+
+      //////////////////////////////////////////////////////////////////////////
+      // Update The Default Values For Mock XMLHttpRequest Results
+      //////////////////////////////////////////////////////////////////////////
+
+      /** @type {string} */
+      var propName;
+      /** @type {*} */
+      var propVal;
+
+      if (newDefaults) {
+        for (propName in newDefaults) {
+          if (hasOwnProp(newDefaults, propName) &&
+              hasOwnProp(defaultResults, propName)) {
+            propVal = newDefaults[ propName ];
+            if ( checkType(propVal, RESULTS_TYPES[ propName ]) ) {
+              if ( hasOwnProp(RESULTS_VALUES, propName) ) {
+                if ( RESULTS_VALUES[ propName ].hasOwnProperty(propVal) ) {
+                  defaultResults[ propName ] = propVal;
+                }
+              }
+              else {
+                defaultResults[ propName ] = propVal;
+              }
+            }
+          }
+        }
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Setup The XMLHttpRequest Constructor
+      //////////////////////////////////////////////////////////////////////////
+
+      /**
+       * -----------------------------------------------
+       * Global Class (XMLHttpRequest)
+       * -----------------------------------------------
+       * @desc Mocks the global XMLHttpRequest class for testing.
+       * @constructor
+       */
+      XMLHttpRequest = function() {
+
+        /** @type {string} */
+        var errorMsg;
+        /** @type {string} */
+        var propName;
+        /** @type {*} */
+        var propVal;
+
+        if (this.constructor !== XMLHttpRequest) {
+          errorMsg = 'An aIV.tests XMLHttpRequest call was made without the ';
+          errorMsg += 'new keyword.';
+          throw new Error(errorMsg);
+        }
+
+        // Add the default properties to this object
+        concatObj(this, defaultResults);
+
+        // Add any specified values for this AJAX call
+        if (checkType(results, '!object') &&
+            checkType(results[ counter ], '!object')) {
+          for (propName in results[ counter ]) {
+            if ( hasOwnProp(defaultResults, propName) ) {
+              propVal = results[ counter ][ propName ];
+              if ( checkType(propVal, RESULTS_TYPES[ propName ]) ) {
+                if ( hasOwnProp(RESULTS_VALUES, propName) ) {
+                  if ( RESULTS_VALUES[ propName ].hasOwnProperty(propVal) ) {
+                    this[ propName ] = propVal;
+                  }
+                }
+                else {
+                  this[ propName ] = propVal;
+                }
+              }
+            }
+          }
+        }
+
+        this.onreadystatechange = function(){};
+
+        ++counter;
+      };
+
+      //////////////////////////////////////////////////////////////////////////
+      // Setup The XMLHttpRequest Prototype
+      //////////////////////////////////////////////////////////////////////////
+
+      XMLHttpRequest.prototype.constructor = XMLHttpRequest;
+
+      /**
+       * ------------------------------------------------------------
+       * Public Method (XMLHttpRequest.prototype.open)
+       * ------------------------------------------------------------
+       * @param {string} method
+       * @param {string} url
+       * @param {boolean=} async
+       * @param {string=} user
+       * @param {string=} password
+       */
+      XMLHttpRequest.prototype.open = function(method, url, async,
+                                               user, password) {
+        if (!checkType(method, 'string') ||
+            !checkType(url, 'string') ||
+            !checkType(async, 'boolean=') ||
+            !checkType(user, 'string=') ||
+            !checkType(password, 'string=')) {
+          throwOpenTypeError();
+        }
+
+        if ( !hasOwnProp(openMethods, method) ) {
+          throwOpenMethodError();
+        }
+      };
+
+      /**
+       * ------------------------------------------------------------
+       * Public Method (XMLHttpRequest.prototype.send)
+       * ------------------------------------------------------------
+       * @type {function}
+       */
+      XMLHttpRequest.prototype.send = function() {
+
+        /** @type {number} */
+        var ms;
+        /** @type {function} */
+        var onreadystatechange;
+
+        ms = this.timeTillDone;
+        onreadystatechange = this.onreadystatechange;
+
+        if ( checkType(onreadystatechange, 'function') ) {
+          setTimeout(function() {
+            onreadystatechange();
+          }, ms);
+        }
+        else {
+          throwOnChangeError();
+        }
+      };
+
+      //////////////////////////////////////////////////////////////////////////
+      // End Of The MockAjax Constructor & XMLHttpRequest Prototype Setup
+      //////////////////////////////////////////////////////////////////////////
+
+      freezeObj(this, true);
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The MockAjax Prototype
+    ////////////////////////////////////////////////////////////////////////////
+
+    MockAjax.prototype.constructor = MockAjax;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (MockAjax.prototype.reset)
+     * -----------------------------------------------
+     * @desc Resets the global XMLHttpRequest constructor to its original
+     *   native constructor and resets the private MockAjax variables.
+     * @type {function}
+     */
+    MockAjax.prototype.reset = function() {
+      XMLHttpRequest = orgXMLHttpRequest;
+      defaultResults = copyObj(DEFAULT_RESULTS);
+      counter = 0;
+      results = null;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The MockAjax Prototype Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    return MockAjax;
+
+  })(XMLHttpRequest);
+
+/* -----------------------------------------------------------------------------
+ * The Elems Class (classes/elems.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Class (Elems)
+   * -----------------------------------------------------
+   * @desc Important app elements.
+   * @constructor
+   */
+  var Elems = function() {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {!Element} */
+    var root;
+
+    root = getElemById('aIV-tests');
+
+    // Set the following getElemByClass calls to use #aIV-tests as their root
+    aIV.utils.set({ getElemByClassRoot: root });
+
+    /**
+     * ---------------------------------------------------
+     * Private Property (Elems.root)
+     * ---------------------------------------------------
+     * @desc Element: #aIV-tests
+     * @type {!Element}
+     */
+    this.root = root;
+
+    /**
+     * ---------------------------------------------------
+     * Private Property (Elems.msg)
+     * ---------------------------------------------------
+     * @desc Element: #aIV-tests .msg
+     * @type {!Element}
+     */
+    this.msg = getElemByClass('msg');
+
+    /**
+     * ---------------------------------------------------
+     * Private Property (Elems.ui)
+     * ---------------------------------------------------
+     * @desc Element: #aIV-tests .ui
+     * @type {!Element}
+     */
+    this.ui = getElemByClass('ui');
+
+    /**
+     * ---------------------------------------------------
+     * Private Property (Elems.start)
+     * ---------------------------------------------------
+     * @desc Element: #aIV-tests .start
+     * @type {!Element}
+     */
+    this.start = getElemByClass('start');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    freezeObj(this);
+  };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
+  Elems.prototype.constructor = Elems;
+
+/* -----------------------------------------------------------------------------
+ * The Tests Class (classes/tests.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Tests)
@@ -191,13 +978,12 @@
     };
   })();
 
-  Object.freeze(Tests);
-
+  freezeObj(Tests);
 
 /* -----------------------------------------------------------------------------
- * | The Test Data Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                       classes/test-data.js */
+ * The Test Data Class (classes/test-data.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------
    * Public Class (TestData)
@@ -3248,142 +4034,10 @@
 
 })();
 
-
-/* -----------------------------------------------------------------------------
- * | The App Class                                                             |
- * v ------------------------------------------------------------------------- v
-                                                             classes/app.js */
-  /**
-   * -----------------------------------------------------
-   * Public Class (App)
-   * -----------------------------------------------------
-   * @desc The base class for the app.
-   * @constructor
-   */
-  var App = function() {
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Define & Setup The Public Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ---------------------------------------------------
-     * Public Property (App.elems)
-     * ---------------------------------------------------
-     * @desc The elements for this app.
-     * @type {Object<string, HTMLElement>}
-     */
-    this.elems = new Elems();
-
-    ////////////////////////////////////////////////////////////////////////////
-    // End Of The Class Setup
-    ////////////////////////////////////////////////////////////////////////////
-
-    // Freeze this class instance
-    Object.freeze(this);
-  };
-
 ////////////////////////////////////////////////////////////////////////////////
-// The Prototype Methods
+// The Tests Module End
 ////////////////////////////////////////////////////////////////////////////////
 
-  App.prototype.constructor = App;
-
-  /**
-   * -----------------------------------------------
-   * Public Method (App.prototype.runTests)
-   * -----------------------------------------------
-   * @desc Sets up the display for the app.
-   * @type {function}
-   */
-  App.prototype.runTests = function() {
-
-    this.elems.ui.style.opacity = '0';
-
-    setTimeout(function() {
-
-      // Remove the body's current elements
-      while (document.body.firstChild) {
-        document.body.removeChild(document.body.firstChild);
-      }
-
-      Tests.runApp();
-    }, 500);
-  };
-
-
-/* -----------------------------------------------------------------------------
- * | The Elems Class                                                           |
- * v ------------------------------------------------------------------------- v
-                                                           classes/elems.js */
-  /**
-   * -----------------------------------------------------
-   * Public Class (Elems)
-   * -----------------------------------------------------
-   * @desc Important app elements.
-   * @constructor
-   */
-  var Elems = function() {
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Define & Setup The Public Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Elems.root)
-     * ---------------------------------------------------
-     * @desc Element: #aIV-tests
-     * @type {HTMLElement}
-     */
-    this.root = getID('aIV-tests');
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Elems.msg)
-     * ---------------------------------------------------
-     * @desc Element: #aIV-tests .msg
-     * @type {HTMLElement}
-     */
-    this.msg = getClass('msg')[0];
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Elems.ui)
-     * ---------------------------------------------------
-     * @desc Element: #aIV-tests .ui
-     * @type {HTMLElement}
-     */
-    this.ui = getClass('ui')[0];
-
-    /**
-     * ---------------------------------------------------
-     * Private Property (Elems.start)
-     * ---------------------------------------------------
-     * @desc Element: #aIV-tests .start
-     * @type {HTMLElement}
-     */
-    this.start = getClass('start')[0];
-
-    ////////////////////////////////////////////////////////////////////////////
-    // End Of The Class Setup
-    ////////////////////////////////////////////////////////////////////////////
-
-    // Freeze this class instance
-    Object.freeze(this);
-  };
-
-////////////////////////////////////////////////////////////////////////////////
-// The Prototype Methods
-////////////////////////////////////////////////////////////////////////////////
-
-  Elems.prototype.constructor = Elems;
-
-
-/* -----------------------------------------------------------------------------
- * | End of module                                                             |
- * v ------------------------------------------------------------------------- v
-                                                                            */
-  return _init;
+  return testsModuleAPI;
 
 })());
