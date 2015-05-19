@@ -32,22 +32,22 @@
      */
     var errorMsg;
     /**
-     * @type {elem}
+     * @type {Element}
      * @private
      */
     var h1;
     /**
-     * @type {elem}
+     * @type {Element}
      * @private
      */
     var errorDiv;
     /**
-     * @type {elem}
+     * @type {Element}
      * @private
      */
     var h2;
     /**
-     * @type {elem}
+     * @type {Element}
      * @private
      */
     var p;
