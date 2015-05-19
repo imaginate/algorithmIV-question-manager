@@ -10099,13 +10099,11 @@ aIV.utils.set({
    * Public Method (Events.popState)
    * -----------------------------------------------
    * @desc The onPopState event handler for the window.
-   * @param {Object} newState - The new state to apply to the app.
+   * @param {!Object} newState - The new state to apply to the app.
    */
   Events.popState = function(newState) {
 
-    this.debug.group('popState', 'coll');
     this.debug.start('popState', newState);
-    this.debug.args('popState', newState, 'object');
 
     /** @type {!numbers} */
     var oldIds;
@@ -10115,6 +10113,8 @@ aIV.utils.set({
     var oldView;
     /** @type {boolean} */
     var flipElems;
+
+    checkArgs(newState, '!object');
 
     oldIds = app.vals.get('ids').slice(0);
     oldIndex = app.vals.get('index');
@@ -10147,7 +10147,7 @@ aIV.utils.set({
 
     app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
-    this.debug.group('popState', 'end');
+    this.debug.end('popState');
   };
 
   /**
@@ -10159,7 +10159,6 @@ aIV.utils.set({
    */
   Events.prev = function() {
 
-    this.debug.group('prev.onclick', 'coll');
     this.debug.start('prev.onclick');
 
     /** @type {number} */
@@ -10171,7 +10170,7 @@ aIV.utils.set({
 
     app.updateDisplay(null, oldIndex);
 
-    this.debug.group('prev.onclick', 'end');
+    this.debug.end('prev.onclick');
   };
 
   /**
@@ -10183,7 +10182,6 @@ aIV.utils.set({
    */
   Events.next = function() {
 
-    this.debug.group('next.onclick', 'coll');
     this.debug.start('next.onclick');
 
     /** @type {number} */
@@ -10195,7 +10193,7 @@ aIV.utils.set({
 
     app.updateDisplay(null, oldIndex);
 
-    this.debug.group('next.onclick', 'end');
+    this.debug.end('next.onclick');
   };
 
 
@@ -10208,9 +10206,6 @@ aIV.utils.set({
    */
   Events.searchView = function(newVal) {
 
-    this.debug.start('searchView.onchange', newVal);
-    this.debug.args('searchView.onchange', newVal, 'string');
-
     /** @type {number} */
     var len;
     /** @type {number} */
@@ -10220,9 +10215,11 @@ aIV.utils.set({
     /** @type {string} */
     var oldView;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.view != newVal) {
 
-      this.debug.group('searchView.onchange', 'coll');
+      this.debug.start('searchView.onchange', newVal);
 
       len = app.vals.get('len');
 
@@ -10235,7 +10232,7 @@ aIV.utils.set({
 
       app.updateDisplay(null, oldIndex, oldView);
 
-      this.debug.group('searchView.onchange', 'end');
+      this.debug.end('searchView.onchange');
     }
   };
 
@@ -10248,17 +10245,16 @@ aIV.utils.set({
    */
   Events.searchOrder = function(newVal) {
 
-    this.debug.start('searchOrder.onchange', newVal);
-    this.debug.args('searchOrder.onchange', newVal, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
     var newIds;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.order != newVal) {
 
-      this.debug.group('searchOrder.onchange', 'coll');
+      this.debug.start('searchOrder.onchange', newVal);
 
       oldIds = app.vals.get('ids');
       newIds = oldIds.slice(0);
@@ -10269,7 +10265,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, null, null, true);
 
-      this.debug.group('searchOrder.onchange', 'end');
+      this.debug.end('searchOrder.onchange');
     }
   };
 
@@ -10282,9 +10278,6 @@ aIV.utils.set({
    */
   Events.searchStage = function(newVal) {
 
-    this.debug.start('searchStage.onchange', newVal);
-    this.debug.args('searchStage.onchange', newVal, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10292,9 +10285,11 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.stage != newVal) {
 
-      this.debug.group('searchStage.onchange', 'coll');
+      this.debug.start('searchStage.onchange', newVal);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10307,7 +10302,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, oldIndex);
 
-      this.debug.group('searchStage.onchange', 'end');
+      this.debug.end('searchStage.onchange');
     }
   };
 
@@ -10320,9 +10315,6 @@ aIV.utils.set({
    */
   Events.searchSource = function(newVal) {
 
-    this.debug.start('searchSource.onchange', newVal);
-    this.debug.args('searchSource.onchange', newVal, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10330,9 +10322,11 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.source != newVal) {
 
-      this.debug.group('searchSource.onchange', 'coll');
+      this.debug.start('searchSource.onchange', newVal);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10345,7 +10339,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, oldIndex);
 
-      this.debug.group('searchSource.onchange', 'end');
+      this.debug.end('searchSource.onchange');
     }
   };
 
@@ -10358,9 +10352,6 @@ aIV.utils.set({
    */
   Events.searchMainCat = function(newVal) {
 
-    this.debug.start('searchMainCat.onchange', newVal);
-    this.debug.args('searchMainCat.onchange', newVal, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10368,9 +10359,11 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.mainCat != newVal) {
 
-      this.debug.group('searchMainCat.onchange', 'coll');
+      this.debug.start('searchMainCat.onchange', newVal);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10384,7 +10377,7 @@ aIV.utils.set({
       app.searchBar.updateSubCatOpts();
       app.updateDisplay(oldIds, oldIndex);
 
-      this.debug.group('searchMainCat.onchange', 'end');
+      this.debug.end('searchMainCat.onchange');
     }
   };
 
@@ -10397,9 +10390,6 @@ aIV.utils.set({
    */
   Events.searchSubCat = function(newVal) {
 
-    this.debug.start('searchSubCat.onchange', newVal);
-    this.debug.args('searchSubCat.onchange', newVal, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10407,9 +10397,11 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.subCat != newVal) {
 
-      this.debug.group('searchSubCat.onchange', 'coll');
+      this.debug.start('searchSubCat.onchange', newVal);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10422,7 +10414,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, oldIndex);
 
-      this.debug.group('searchSubCat.onchange', 'end');
+      this.debug.end('searchSubCat.onchange');
     }
   };
 
@@ -10437,12 +10429,13 @@ aIV.utils.set({
 
     this.debug.group('linkId.onclick', 'coll', 'questionID= $$', id);
     this.debug.start('linkId.onclick', id);
-    this.debug.args('linkId.onclick', id, 'number');
 
     /** @type {number} */
     var oldIndex;
     /** @type {string} */
     var oldView;
+
+    checkArgs(id, 'number');
 
     oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
@@ -10453,6 +10446,7 @@ aIV.utils.set({
 
     app.updateDisplay(null, oldIndex, oldView);
 
+    this.debug.end('linkId.onclick');
     this.debug.group('linkId.onclick', 'end');
   };
 
@@ -10465,9 +10459,6 @@ aIV.utils.set({
    */
   Events.linkSource = function(id) {
 
-    this.debug.start('linkSource.onclick', id);
-    this.debug.args('linkSource.onclick', id, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10475,9 +10466,12 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(id, 'string');
+
     if (app.searchBar.vals.source != id) {
 
       this.debug.group('linkSource.onclick', 'coll', 'sourceID= $$', id);
+      this.debug.start('linkSource.onclick', id);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10493,6 +10487,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, oldIndex);
 
+      this.debug.end('linkSource.onclick');
       this.debug.group('linkSource.onclick', 'end');
     }
   };
@@ -10506,9 +10501,6 @@ aIV.utils.set({
    */
   Events.linkMainCat = function(id) {
 
-    this.debug.start('linkMainCat.onclick', id);
-    this.debug.args('linkMainCat.onclick', id, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10516,9 +10508,12 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(id, 'string');
+
     if (app.searchBar.vals.mainCat != id) {
 
       this.debug.group('linkMainCat.onclick', 'coll', 'mainCatID= $$', id);
+      this.debug.start('linkMainCat.onclick', id);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10535,6 +10530,7 @@ aIV.utils.set({
       app.searchBar.updateSubCatOpts();
       app.updateDisplay(oldIds, oldIndex);
 
+      this.debug.end('linkMainCat.onclick');
       this.debug.group('linkMainCat.onclick', 'end');
     }
   };
@@ -10549,9 +10545,6 @@ aIV.utils.set({
    */
   Events.linkSubCat = function(id, parentId) {
 
-    this.debug.start('linkSubCat.onclick', id, parentId);
-    this.debug.args('linkSubCat.onclick', id, 'string', parentId, 'string');
-
     /** @type {!numbers} */
     var oldIds;
     /** @type {!numbers} */
@@ -10559,9 +10552,12 @@ aIV.utils.set({
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(id, 'string', parentId, 'string');
+
     if (app.searchBar.vals.subCat != id) {
 
       this.debug.group('linkSubCat.onclick', 'coll', 'subCatID= $$', id);
+      this.debug.start('linkSubCat.onclick', id, parentId);
 
       oldIds = app.vals.get('ids');
       oldIndex = app.vals.get('index');
@@ -10588,6 +10584,7 @@ aIV.utils.set({
 
       app.updateDisplay(oldIds, oldIndex);
 
+      this.debug.end('linkSubCat.onclick');
       this.debug.group('linkSubCat.onclick', 'end');
     }
   };
@@ -10602,15 +10599,14 @@ aIV.utils.set({
    */
   Events.extCodeView = function(overflow, elems) {
 
-    debugMsg = 'overflow= $$, elems= $$'
-    this.debug.group('extCodeView.onclick', 'coll', debugMsg, overflow, elems);
     this.debug.start('extCodeView.onclick', overflow, elems);
-    this.debug.args('extCodeView.onclick', overflow, 'number', elems, 'elemMap');
 
     /** @type {number} */
     var newWidth;
     /** @type {number} */
     var newRight;
+
+    checkArgs(overflow, 'number', elems, 'elemMap');
 
     newWidth = elems.code.clientWidth;
 
@@ -10658,10 +10654,10 @@ aIV.utils.set({
       }, 400);
     }
 
-    this.debug.group('extCodeView.onclick', 'end');
+    this.debug.end('extCodeView.onclick');
   };
 
-  freezeObj(Events);
+  freezeObj(Events, true);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The App Module End
