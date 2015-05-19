@@ -129,3 +129,99 @@
       return newObj;
     };
   })();
+
+  /**
+   * ---------------------------------------------
+   * Public Method (makeObj)
+   * ---------------------------------------------
+   * @desc A shortcut that creates a new object with the given keys and
+   *   values.
+   * @param {(string|!strings)} keys - The new object's keys.
+   * @param {*} val - The value to set the new object's properties to.
+   * @return {!Object} The new object.
+   */
+  var makeObj = (function setup_makeObj() {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {function} */
+    var throwTypeError;
+
+    errorMsg = 'An aIV.tests makeObj call received an invalid keys param.';
+    throwTypeError = function() {
+      throw new TypeError(errorMsg);
+    };
+
+    return function makeObj(keys, val) {
+
+      /** @type {string} */
+      var prop;
+      /** @type {!Object} */
+      var obj;
+      /** @type {number} */
+      var i;
+
+      if ( checkType(keys, 'string') ) {
+        keys = keys.split(' ');
+      }
+
+      obj = {};
+
+      if ( checkType(keys, '!strings') ) {
+        i = keys.length;
+        while (i--) {
+          prop = keys[i];
+          obj[ prop ] = val;
+        }
+      }
+      else {
+        throwTypeError();
+      }
+
+      return obj;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------
+   * Public Method (concatObj)
+   * ---------------------------------------------
+   * @desc A shortcut that copies an object's properties and
+   *   values to an existing object.
+   * @param {!Object} baseObj - The object to copy to.
+   * @param {!Object} addObj - The object to copy from.
+   * @return {!Object} The base object.
+   */
+  var concatObj = (function setup_concatObj() {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {function} */
+    var throwTypeError;
+
+    errorMsg = 'An aIV.tests concatObj call received an invalid param type.';
+    throwTypeError = function() {
+      throw new TypeError(errorMsg);
+    };
+
+    return function concatObj(baseObj, addObj) {
+
+      /** @type {string} */
+      var prop;
+
+      if (!checkType(baseObj, '!object|function') ||
+          !checkType(addObj, '!object|function')) {
+        throwTypeError();
+        baseObj = {};
+        addObj = {};
+      }
+
+      for (prop in addObj) {
+        if (hasOwnProp(addObj, prop) && !hasOwnProp(baseObj, prop)) {
+          baseObj[ prop ] = addObj[ prop ];
+        }
+      }
+
+      return baseObj;
+    };
+  })();
