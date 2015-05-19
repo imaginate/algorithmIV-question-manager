@@ -385,7 +385,7 @@ aIV.utils.set({
 
     debug.start('getResource', jsonFile, callback);
 
-    /** @type {XMLHttpRequest} */
+    /** @type {!XMLHttpRequest} */
     var http;
     /** @type {string} */
     var errorMsg;
@@ -879,7 +879,7 @@ aIV.utils.set({
       /** @type {string} */
       var url;
 
-      checkArgs(url, 'string');
+      checkArgs(name, 'string');
 
       url = name.toLowerCase();
       url = url.replace(invalidCharacters, '');

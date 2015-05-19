@@ -505,7 +505,7 @@
       /** @type {string} */
       var url;
 
-      checkArgs(url, 'string');
+      checkArgs(name, 'string');
 
       url = name.toLowerCase();
       url = url.replace(invalidCharacters, '');
