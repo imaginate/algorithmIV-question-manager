@@ -36,9 +36,24 @@
       turnOffMethods: 'all'
     });
 
-    return function() {
-      aIV.app(TestData);
+    // END of immediate calls
+
+    return function runApp() {
+
+      /** @type {!MockAjax} */
+      var mockAjax;
+      /** @type {!ajaxResults} */
+      var ajaxResults;
+
+      ajaxResults = {
+        responseText: TestData.exampleResource,
+        status      : 200,
+        statusText  : '200 OK'
+      };
+      mockAjax = new MockAjax([ ajaxResults ]);
+      aIV.app(TestData.example);
+      mockAjax.reset();
     };
   })();
 
-  freezeObj(Tests);
+  freezeObj(Tests, true);
