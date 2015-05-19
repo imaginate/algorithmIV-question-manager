@@ -12,8 +12,8 @@
    * ---------------------------------------------------
    * Global Method (aIV.tests)
    * ---------------------------------------------------
-   * @desc Runs tests on aIV.app.
+   * @desc Runs the tests for aIV.app.
    * @type {function}
    * @global
    */
-  aIV.tests = tests;
+  aIV.runTests = testsModuleAPI.startTests;
