@@ -438,11 +438,11 @@
      * @param {string} id - The search item's id. If blank then the
      *   option is disabled.
      * @param {string} name - The search item's name.
-     * @return {elem}
+     * @return {Element}
      * @private
      */
     var makeOptElem = function(id, name) {
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       elem = makeElem({
@@ -462,7 +462,7 @@
     this.ids.view.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.view[id];
@@ -475,7 +475,7 @@
     this.ids.order.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.order[id];
@@ -489,7 +489,7 @@
       this.ids.stage.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.stage[id];
@@ -505,7 +505,7 @@
       this.ids.source.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.source[id];
@@ -520,7 +520,7 @@
       this.ids.mainCat.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.mainCat[id];
@@ -537,7 +537,7 @@
         this.ids.subCat[mainId].forEach(function(/** string */ id) {
           /** @type {string} */
           var name;
-          /** @type {elem} */
+          /** @type {Element} */
           var elem;
 
           name = this.names.subCat[id];
@@ -550,7 +550,7 @@
       this.ids.mainCat.forEach(function(/** string */ mainId) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         if (!!this.ids.subCat[mainId]) {
@@ -562,7 +562,7 @@
           this.ids.subCat[mainId].forEach(function(/** string */ id) {
             /** @type {string} */
             var name;
-            /** @type {elem} */
+            /** @type {Element} */
             var elem;
 
             if (id !== 'all') {

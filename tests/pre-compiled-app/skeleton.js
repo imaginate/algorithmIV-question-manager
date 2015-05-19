@@ -29,24 +29,17 @@
  * -----------------------------------------------------------------------------
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
- * @typedef {*} val
- * @typedef {number} num
- * @typedef {Element} elem
- * @typedef {Element} element
  * @typedef {Array<*>} vals
- * @typedef {Array<number>} nums
  * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
- * @typedef {Array<Question>} questions
- * @typedef {Array<Element>} elems
  * @typedef {Array<Element>} elements
+ * @typedef {Array<Question>} questions
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
- * @typedef {Object<string, Element>} elemMap
  * @typedef {Object<string, Element>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */

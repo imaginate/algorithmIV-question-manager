@@ -34,7 +34,7 @@
      * Public Property (Question.elem)
      * -----------------------------------------------
      * @desc The question's DOM container.
-     * @type {element}
+     * @type {!QuestionElem}
      */
     this.elem = new QuestionElem(id);
 

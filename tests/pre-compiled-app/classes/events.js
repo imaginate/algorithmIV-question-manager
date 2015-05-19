@@ -514,7 +514,7 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
-   * @param {elemMap} elems - The code view elements.
+   * @param {elementMap} elems - The code view elements.
    */
   Events.extCodeView = function(overflow, elems) {
 

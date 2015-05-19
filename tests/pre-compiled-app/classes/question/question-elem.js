@@ -23,7 +23,7 @@
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -32,7 +32,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {element}
+     * @type {Element}
      */
     this.info;
 
@@ -41,7 +41,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {element}
+     * @type {Element}
      */
     this.solution;
 
@@ -50,7 +50,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {element}
+     * @type {Element}
      */
     this.pre;
 
@@ -59,7 +59,7 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {element}
+     * @type {Element}
      */
     this.code;
 
@@ -126,9 +126,9 @@
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
-    /** @type {element} */
+    /** @type {Element} */
     var root;
-    /** @type {element} */
+    /** @type {Element} */
     var info;
 
     root = this.root;
@@ -189,13 +189,13 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('id');
@@ -230,7 +230,7 @@
      * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {element} The anchor element.
+     * @return {Element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
@@ -238,7 +238,7 @@
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       if (!url) {
@@ -272,13 +272,13 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('source');
@@ -311,7 +311,7 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {element} The anchor element.
+     * @return {Element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
@@ -321,7 +321,7 @@
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       url = app.sources.get(id, 'url');
@@ -351,11 +351,11 @@
       this.debug.start('appendComplete', complete);
       this.debug.args('appendComplete', complete, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'stage' });
@@ -381,11 +381,11 @@
       this.debug.start('appendCategory', main, sub);
       this.debug.args('appendCategory', main, 'object', sub, 'object');
 
-      /** @type {element} */
+      /** @type {Element} */
       var contain;
-      /** @type {element} */
+      /** @type {Element} */
       var mainDiv;
-      /** @type {element} */
+      /** @type {Element} */
       var subDiv;
 
       contain = makeElem({ className: 'category' });
@@ -413,7 +413,7 @@
      * ---------------------------------------------
      * @desc Appends the question's main categories.
      * @param {Object} main - The question's main categories.
-     * @param {element} div - The DOM container for the main categories.
+     * @param {Element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
@@ -423,9 +423,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
       /** @type {number} */
       var i;
@@ -433,7 +433,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('category');
@@ -470,7 +470,7 @@
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
      * @param {Object} sub - The question's sub categories.
-     * @param {element} div - The DOM container for the sub categories.
+     * @param {Element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
@@ -480,9 +480,9 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
       /** @type {number} */
       var i;
@@ -490,7 +490,7 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('category');
@@ -529,7 +529,7 @@
      * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {element} The anchor link.
+     * @return {Element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
@@ -539,7 +539,7 @@
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       url = app.categories.get(id, 'url');
@@ -568,7 +568,7 @@
      *   indexOf to find the sub category's parent.
      * @param {string} id - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {element} The anchor link.
+     * @return {Element} The anchor link.
      * @private
      */
     function makeSubCatLink(id, name) {
@@ -578,7 +578,7 @@
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
       /** @type {string} */
       var parentId;
@@ -638,11 +638,11 @@
       var content;
       /** @type {string} */
       var title;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       title = (problem) ? 'Problem:' : 'Description:';
@@ -671,17 +671,17 @@
       this.debug.start('appendSolution', solution);
       this.debug.args('appendSolution', solution, 'object');
 
-      /** @type {element} */
+      /** @type {Element} */
       var contain;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var preDiv;
-      /** @type {element} */
+      /** @type {Element} */
       var pre;
-      /** @type {element} */
+      /** @type {Element} */
       var code;
-      /** @type {element} */
+      /** @type {Element} */
       var ol;
       /** @type {number} */
       var height;
@@ -723,11 +723,11 @@
       this.debug.start('appendOutput', output);
       this.debug.args('appendOutput', output, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'output' });
@@ -753,11 +753,11 @@
       this.debug.start('appendLinks', links);
       this.debug.args('appendLinks', links, 'objects');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'links' });
@@ -768,7 +768,7 @@
       div.appendChild(p);
 
       links.forEach(function(/** Object */ linkObj) {
-        /** @type {element} */
+        /** @type {Element} */
         var a;
 
         a = makeElem({ tag: 'a', text: linkObj.name });
@@ -797,21 +797,21 @@
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ext;
-    /** @type {element} */
+    /** @type {Element} */
     var extClose;
-    /** @type {element} */
+    /** @type {Element} */
     var extOpen;
-    /** @type {element} */
+    /** @type {Element} */
     var extBG;
-    /** @type {element} */
+    /** @type {Element} */
     var extHov;
-    /** @type {element} */
+    /** @type {Element} */
     var extHovC;
-    /** @type {element} */
+    /** @type {Element} */
     var extHovO;
 
     code = this.code;

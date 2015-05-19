@@ -29,24 +29,17 @@
  * -----------------------------------------------------------------------------
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
- * @typedef {*} val
- * @typedef {number} num
- * @typedef {Element} elem
- * @typedef {Element} element
  * @typedef {Array<*>} vals
- * @typedef {Array<number>} nums
  * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
- * @typedef {Array<Question>} questions
- * @typedef {Array<Element>} elems
  * @typedef {Array<Element>} elements
+ * @typedef {Array<Question>} questions
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
- * @typedef {Object<string, Element>} elemMap
  * @typedef {Object<string, Element>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
@@ -1412,19 +1405,19 @@ aIV.utils.set({
 
     this.debug.start('findMatches');
 
-    /** @type {nums} */
+    /** @type {numbers} */
     var stage;
-    /** @type {nums} */
+    /** @type {numbers} */
     var source;
-    /** @type {nums} */
+    /** @type {numbers} */
     var mainCat;
-    /** @type {nums} */
+    /** @type {numbers} */
     var subCat;
     /** @type {number} */
     var len;
     /** @type {number} */
     var i;
-    /** @type {nums} */
+    /** @type {numbers} */
     var newIds;
     /** @type {boolean} */
     var pass;
@@ -3140,11 +3133,11 @@ aIV.utils.set({
      * @param {string} id - The search item's id. If blank then the
      *   option is disabled.
      * @param {string} name - The search item's name.
-     * @return {elem}
+     * @return {Element}
      * @private
      */
     var makeOptElem = function(id, name) {
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       elem = makeElem({
@@ -3164,7 +3157,7 @@ aIV.utils.set({
     this.ids.view.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.view[id];
@@ -3177,7 +3170,7 @@ aIV.utils.set({
     this.ids.order.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.order[id];
@@ -3191,7 +3184,7 @@ aIV.utils.set({
       this.ids.stage.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.stage[id];
@@ -3207,7 +3200,7 @@ aIV.utils.set({
       this.ids.source.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.source[id];
@@ -3222,7 +3215,7 @@ aIV.utils.set({
       this.ids.mainCat.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.mainCat[id];
@@ -3239,7 +3232,7 @@ aIV.utils.set({
         this.ids.subCat[mainId].forEach(function(/** string */ id) {
           /** @type {string} */
           var name;
-          /** @type {elem} */
+          /** @type {Element} */
           var elem;
 
           name = this.names.subCat[id];
@@ -3252,7 +3245,7 @@ aIV.utils.set({
       this.ids.mainCat.forEach(function(/** string */ mainId) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         if (!!this.ids.subCat[mainId]) {
@@ -3264,7 +3257,7 @@ aIV.utils.set({
           this.ids.subCat[mainId].forEach(function(/** string */ id) {
             /** @type {string} */
             var name;
-            /** @type {elem} */
+            /** @type {Element} */
             var elem;
 
             if (id !== 'all') {
@@ -5739,11 +5732,11 @@ aIV.utils.set({
      * @param {string} id - The search item's id. If blank then the
      *   option is disabled.
      * @param {string} name - The search item's name.
-     * @return {elem}
+     * @return {Element}
      * @private
      */
     var makeOptElem = function(id, name) {
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       elem = makeElem({
@@ -5763,7 +5756,7 @@ aIV.utils.set({
     this.ids.view.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.view[id];
@@ -5776,7 +5769,7 @@ aIV.utils.set({
     this.ids.order.forEach(function(/** string */ id) {
       /** @type {string} */
       var name;
-      /** @type {elem} */
+      /** @type {Element} */
       var elem;
 
       name = this.names.order[id];
@@ -5790,7 +5783,7 @@ aIV.utils.set({
       this.ids.stage.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.stage[id];
@@ -5806,7 +5799,7 @@ aIV.utils.set({
       this.ids.source.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.source[id];
@@ -5821,7 +5814,7 @@ aIV.utils.set({
       this.ids.mainCat.forEach(function(/** string */ id) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         name = this.names.mainCat[id];
@@ -5838,7 +5831,7 @@ aIV.utils.set({
         this.ids.subCat[mainId].forEach(function(/** string */ id) {
           /** @type {string} */
           var name;
-          /** @type {elem} */
+          /** @type {Element} */
           var elem;
 
           name = this.names.subCat[id];
@@ -5851,7 +5844,7 @@ aIV.utils.set({
       this.ids.mainCat.forEach(function(/** string */ mainId) {
         /** @type {string} */
         var name;
-        /** @type {elem} */
+        /** @type {Element} */
         var elem;
 
         if (!!this.ids.subCat[mainId]) {
@@ -5863,7 +5856,7 @@ aIV.utils.set({
           this.ids.subCat[mainId].forEach(function(/** string */ id) {
             /** @type {string} */
             var name;
-            /** @type {elem} */
+            /** @type {Element} */
             var elem;
 
             if (id !== 'all') {
@@ -6575,7 +6568,7 @@ aIV.utils.set({
      * Public Property (Question.elem)
      * -----------------------------------------------
      * @desc The question's DOM container.
-     * @type {element}
+     * @type {!QuestionElem}
      */
     this.elem = new QuestionElem(id);
 
@@ -7237,7 +7230,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -7246,7 +7239,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {element}
+     * @type {Element}
      */
     this.info;
 
@@ -7255,7 +7248,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {element}
+     * @type {Element}
      */
     this.solution;
 
@@ -7264,7 +7257,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {element}
+     * @type {Element}
      */
     this.pre;
 
@@ -7273,7 +7266,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {element}
+     * @type {Element}
      */
     this.code;
 
@@ -7340,9 +7333,9 @@ aIV.utils.set({
     this.debug.start('addContent', question);
     this.debug.args('addContent', question, 'object');
 
-    /** @type {element} */
+    /** @type {Element} */
     var root;
-    /** @type {element} */
+    /** @type {Element} */
     var info;
 
     root = this.root;
@@ -7403,13 +7396,13 @@ aIV.utils.set({
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('id');
@@ -7444,7 +7437,7 @@ aIV.utils.set({
      * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {element} The anchor element.
+     * @return {Element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
@@ -7452,7 +7445,7 @@ aIV.utils.set({
       this.debug.start('makeIdLink', id, url);
       this.debug.args('makeIdLink', id, 'string', url, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       if (!url) {
@@ -7486,13 +7479,13 @@ aIV.utils.set({
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('source');
@@ -7525,7 +7518,7 @@ aIV.utils.set({
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {element} The anchor element.
+     * @return {Element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
@@ -7535,7 +7528,7 @@ aIV.utils.set({
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       url = app.sources.get(id, 'url');
@@ -7565,11 +7558,11 @@ aIV.utils.set({
       this.debug.start('appendComplete', complete);
       this.debug.args('appendComplete', complete, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'stage' });
@@ -7595,11 +7588,11 @@ aIV.utils.set({
       this.debug.start('appendCategory', main, sub);
       this.debug.args('appendCategory', main, 'object', sub, 'object');
 
-      /** @type {element} */
+      /** @type {Element} */
       var contain;
-      /** @type {element} */
+      /** @type {Element} */
       var mainDiv;
-      /** @type {element} */
+      /** @type {Element} */
       var subDiv;
 
       contain = makeElem({ className: 'category' });
@@ -7627,7 +7620,7 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc Appends the question's main categories.
      * @param {Object} main - The question's main categories.
-     * @param {element} div - The DOM container for the main categories.
+     * @param {Element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
@@ -7637,9 +7630,9 @@ aIV.utils.set({
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
       /** @type {number} */
       var i;
@@ -7647,7 +7640,7 @@ aIV.utils.set({
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('category');
@@ -7684,7 +7677,7 @@ aIV.utils.set({
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
      * @param {Object} sub - The question's sub categories.
-     * @param {element} div - The DOM container for the sub categories.
+     * @param {Element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
@@ -7694,9 +7687,9 @@ aIV.utils.set({
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
       /** @type {number} */
       var i;
@@ -7704,7 +7697,7 @@ aIV.utils.set({
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       config = app.config.links.get('category');
@@ -7743,7 +7736,7 @@ aIV.utils.set({
      * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {element} The anchor link.
+     * @return {Element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
@@ -7753,7 +7746,7 @@ aIV.utils.set({
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
 
       url = app.categories.get(id, 'url');
@@ -7782,7 +7775,7 @@ aIV.utils.set({
      *   indexOf to find the sub category's parent.
      * @param {string} id - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {element} The anchor link.
+     * @return {Element} The anchor link.
      * @private
      */
     function makeSubCatLink(id, name) {
@@ -7792,7 +7785,7 @@ aIV.utils.set({
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {Element} */
       var a;
       /** @type {string} */
       var parentId;
@@ -7852,11 +7845,11 @@ aIV.utils.set({
       var content;
       /** @type {string} */
       var title;
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       title = (problem) ? 'Problem:' : 'Description:';
@@ -7885,17 +7878,17 @@ aIV.utils.set({
       this.debug.start('appendSolution', solution);
       this.debug.args('appendSolution', solution, 'object');
 
-      /** @type {element} */
+      /** @type {Element} */
       var contain;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var preDiv;
-      /** @type {element} */
+      /** @type {Element} */
       var pre;
-      /** @type {element} */
+      /** @type {Element} */
       var code;
-      /** @type {element} */
+      /** @type {Element} */
       var ol;
       /** @type {number} */
       var height;
@@ -7937,11 +7930,11 @@ aIV.utils.set({
       this.debug.start('appendOutput', output);
       this.debug.args('appendOutput', output, 'string');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'output' });
@@ -7967,11 +7960,11 @@ aIV.utils.set({
       this.debug.start('appendLinks', links);
       this.debug.args('appendLinks', links, 'objects');
 
-      /** @type {element} */
+      /** @type {Element} */
       var div;
-      /** @type {element} */
+      /** @type {Element} */
       var h3;
-      /** @type {element} */
+      /** @type {Element} */
       var p;
 
       div = makeElem({ className: 'links' });
@@ -7982,7 +7975,7 @@ aIV.utils.set({
       div.appendChild(p);
 
       links.forEach(function(/** Object */ linkObj) {
-        /** @type {element} */
+        /** @type {Element} */
         var a;
 
         a = makeElem({ tag: 'a', text: linkObj.name });
@@ -8011,21 +8004,21 @@ aIV.utils.set({
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ext;
-    /** @type {element} */
+    /** @type {Element} */
     var extClose;
-    /** @type {element} */
+    /** @type {Element} */
     var extOpen;
-    /** @type {element} */
+    /** @type {Element} */
     var extBG;
-    /** @type {element} */
+    /** @type {Element} */
     var extHov;
-    /** @type {element} */
+    /** @type {Element} */
     var extHovC;
-    /** @type {element} */
+    /** @type {Element} */
     var extHovO;
 
     code = this.code;
@@ -10605,7 +10598,7 @@ aIV.utils.set({
    * -----------------------------------------------
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
-   * @param {elemMap} elems - The code view elements.
+   * @param {elementMap} elems - The code view elements.
    */
   Events.extCodeView = function(overflow, elems) {
 

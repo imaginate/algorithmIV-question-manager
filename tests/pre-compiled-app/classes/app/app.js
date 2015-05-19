@@ -376,19 +376,19 @@
 
     this.debug.start('findMatches');
 
-    /** @type {nums} */
+    /** @type {numbers} */
     var stage;
-    /** @type {nums} */
+    /** @type {numbers} */
     var source;
-    /** @type {nums} */
+    /** @type {numbers} */
     var mainCat;
-    /** @type {nums} */
+    /** @type {numbers} */
     var subCat;
     /** @type {number} */
     var len;
     /** @type {number} */
     var i;
-    /** @type {nums} */
+    /** @type {numbers} */
     var newIds;
     /** @type {boolean} */
     var pass;
