@@ -1,4 +1,13 @@
   /**
+   * -----------------------------------------------------
+   * Public Variable (appHasBeenInitialized)
+   * -----------------------------------------------------
+   * @desc Indicates whether the Tests app has been initialized.
+   * @type {boolean}
+   */
+  var appHasBeenInitialized = false;
+
+  /**
    * ----------------------------------------------- 
    * Public Variable (app)
    * -----------------------------------------------
