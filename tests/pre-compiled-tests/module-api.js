@@ -1,32 +1,31 @@
   /**
    * -----------------------------------------------------
-   * Private Variable (_initialized)
+   * Public Variable (testsModuleAPI)
    * -----------------------------------------------------
-   * @desc Indicates whether the tests module has been initialized.
-   * @type {boolean}
-   * @private
+   * @desc The API for the Tests Module.
+   * @type {!Object<string, function>}
    */
-  var _initialized = false;
+  var testsModuleAPI = {};
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init)
+   * Public Method (testsModuleAPI.startTests)
    * -----------------------------------------------------
-   * @desc Initializes the aIV.debug tests.
+   * @desc Initializes the aIV.app tests.
    * @type {function}
    */
-  var _init = function() {
+  testsModuleAPI.startTests = function() {
 
-    // Check if tests module has been initialized
-    if (!_initialized) {
+    if (!appHasBeenInitialized) {
 
-      // Save the init to prevent second init
-      _initialized = true;
+      appHasBeenInitialized = true;
 
-      // Setup the tests
+      // Setup the tests app
       app = new App();
 
       // Run the tests
       app.runTests();
     }
   };
+
+  aIV.utils.freezeObj(testsModuleAPI, true);
