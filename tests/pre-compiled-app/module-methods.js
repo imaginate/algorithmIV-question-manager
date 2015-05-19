@@ -11,7 +11,7 @@
 
     debug.start('getResource', jsonFile, callback);
 
-    /** @type {XMLHttpRequest} */
+    /** @type {!XMLHttpRequest} */
     var http;
     /** @type {string} */
     var errorMsg;
