@@ -24,22 +24,6 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBar.vals)
-     * -----------------------------------------------
-     * @desc The current selected values.
-     * @type {!{
-     *   view   : string,
-     *   order  : string,
-     *   stage  : string,
-     *   source : string,
-     *   mainCat: string,
-     *   subCat : string
-     * }}
-     */
-    this.vals;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (SearchBar.names)
      * -----------------------------------------------
      * @desc The hash map of the search bar's ids and names.
@@ -83,6 +67,38 @@
 
     /**
      * ----------------------------------------------- 
+     * Public Property (SearchBar.vals)
+     * -----------------------------------------------
+     * @desc The current selected values.
+     * @type {!{
+     *   view   : string,
+     *   order  : string,
+     *   stage  : string,
+     *   source : string,
+     *   mainCat: string,
+     *   subCat : string
+     * }}
+     */
+    this.vals;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBar.elems)
+     * -----------------------------------------------
+     * @desc The select HTMLELements.
+     * @type {!{
+     *   view   : !Element,
+     *   order  : !Element,
+     *   stage  : ?Element,
+     *   source : ?Element,
+     *   mainCat: ?Element,
+     *   subCat : ?Element
+     * }}
+     */
+    this.elems;
+
+    /**
+     * ----------------------------------------------- 
      * Public Property (SearchBar.opts)
      * -----------------------------------------------
      * @desc The option elements for the search bar.
@@ -96,15 +112,6 @@
      * }}
      */
     this.opts;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBar.elems)
-     * -----------------------------------------------
-     * @desc The HTMLSelectElements for searching in the app.
-     * @type {!SearchBarElems}
-     */
-    this.elems;
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup The Public Properties
@@ -126,16 +133,6 @@
     var ii;
     /** @type {number} */
     var i;
-
-    // Setup the current values
-    this.vals = {
-      view   : 'one',
-      order  : 'asc',
-      stage  : 'all',
-      source : 'all',
-      mainCat: 'all',
-      subCat : 'all'
-    };
 
     // Setup the names property
     this.names = {};
@@ -223,22 +220,64 @@
     this.ques.stage.com = [];
     this.ques.stage.inc = [];
 
-    // Check the config values before setting up the search elements
-    config.source   = (config.source   && !!sources.len);
-    config.category = (config.category && !!categories.len);
-    config.subCat   = (config.category && config.subCat);
+    // Setup the current values property
+    this.vals = {
+      view   : 'one',
+      order  : 'asc',
+      stage  : 'all',
+      source : 'all',
+      mainCat: 'all',
+      subCat : 'all'
+    };
 
-    // Ensure at least one sub category exists
-    pass = !config.subCat;
-    i = categories.len;
-    while (i-- && !pass) {
-      mainId = categories.ids[i];
-      pass = !!this.ids.subCat[ mainId ].length;
-    }
-    config.subCat = (config.subCat && pass);
-
-    // Setup the search elements
-    this.elems = new SearchBarElems(config);
+    // Setup the select elements property
+    this.elems = {};
+    this.elems.view = makeElem({
+      tag      : 'select',
+      id       : 'aIV-view',
+      className: 'showView'
+    });
+    this.elems.order = makeElem({
+      tag      : 'select',
+      id       : 'aIV-order',
+      className: 'showOrder'
+    });
+    this.elems.stage = ( (config.stage) ?
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-stage',
+        className: 'showStage'
+      })
+      : null
+    );
+    this.elems.source = ( (config.source && sources.len) ?
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-source',
+        className: 'showSource'
+      })
+      : null
+    );
+    this.elems.mainCat = ( (config.category && categories.len) ?
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-mainCat',
+        className: 'showMainCat'
+      })
+      : null
+    );
+    pass = (this.elems.mainCat && config.subCat);
+    pass = pass && categories.ids.some(function(/** string */ id) {
+      return !!this.ids.subCat[id];
+    }, this);
+    this.elems.subCat = ( (pass) ?
+      makeElem({
+        tag      : 'select',
+        id       : 'aIV-subCat',
+        className: 'showSubCat'
+      })
+      : null
+    );
 
     // Freeze all of the completed properties
     freezeObj(this.names);
@@ -246,6 +285,7 @@
     freezeObj(this.opts);
     freezeObj(this.ques.stage);
     freezeObj(this.ques);
+    freezeObj(this.elems);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
@@ -267,29 +307,112 @@
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {!Object<string, string>} defaults - The default values.
+   * @param {!Object} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
     this.debug.start('setToDefaults', defaults);
 
-    /** @type {!stringMap} */
-    var vals;
+    /** @type {string} */
+    var view;
+    /** @type {string} */
+    var order;
+    /** @type {string} */
+    var stage;
+    /** @type {string} */
+    var source;
+    /** @type {string} */
+    var mainCat;
+    /** @type {string} */
+    var subCat;
 
-    checkArgs(defaults, '!stringMap');
+    checkArgs(defaults, '!object');
 
-    vals = this.vals;
+    view    = defaults.get('view');
+    order   = defaults.get('order');
+    stage   = defaults.get('stage');
+    source  = defaults.get('source');
+    mainCat = defaults.get('mainCat');
+    subCat  = defaults.get('subCat');
 
-    vals.view    = defaults.view;
-    vals.order   = defaults.order;
-    vals.stage   = defaults.stage;
-    vals.source  = defaults.source;
-    vals.mainCat = defaults.mainCat;
-    vals.subCat  = defaults.subCat;
+    this.vals.view    = view;
+    this.vals.order   = order;
+    this.vals.stage   = stage;
+    this.vals.source  = source;
+    this.vals.mainCat = mainCat;
+    this.vals.subCat  = subCat;
 
-    this.elems.setValuesToDefaults(defaults);
+    this.elems.view.value = view;
+    this.elems.order.value = order;
+    if (this.elems.stage) {
+      this.elems.stage.value = stage;
+    }
+    if (this.elems.source) {
+      this.elems.source.value = source;
+    }
+    if (this.elems.mainCat) {
+      this.elems.mainCat.value = mainCat;
+    }
+    if (this.elems.subCat) {
+      this.elems.subCat.value = subCat;
+    }
 
     this.debug.end('setToDefaults');
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (SearchBar.prototype.setMainElems)
+   * -----------------------------------------------------
+   * @desc Creates the search bar's select elements.
+   * @type {function}
+   */
+  SearchBar.prototype.setMainElems = function() {
+
+    this.debug.start('setMainElems');
+
+    /** @type {boolean} */
+    var pass;
+
+    // Set view search element
+    this.elems.view.onchange = function(event) {
+      Events.searchView(event.target.value);
+    };
+
+    // Set order search element
+    this.elems.order.onchange = function(event) {
+      Events.searchOrder(event.target.value);
+    };
+
+    // Set stage search element
+    if (this.elems.stage) {
+      this.elems.stage.onchange = function(event) {
+        Events.searchStage(event.target.value);
+      };
+    }
+
+    // Set source search element
+    if (this.elems.source) {
+      this.elems.source.onchange = function(event) {
+        Events.searchSource(event.target.value);
+      };
+    }
+
+    // Set main category search element
+    if (this.elems.mainCat) {
+      this.elems.mainCat.onchange = function(event) {
+        Events.searchMainCat(event.target.value);
+      };
+    }
+
+    // Set sub category search element
+    if (this.elems.subCat) {
+      this.elems.subCat.onchange = function(event) {
+        Events.searchSubCat(event.target.value);
+      };
+    }
+
+    this.debug.end('setMainElems');
   };
 
   /**
@@ -466,7 +589,12 @@
 
     this.debug.start('appendElems');
 
-    this.elems.appendToMain();
+    app.elems.sel.appendChild(this.elems.view);
+    app.elems.sel.appendChild(this.elems.order);
+    this.elems.stage && app.elems.sel.appendChild(this.elems.stage);
+    this.elems.source && app.elems.sel.appendChild(this.elems.source);
+    this.elems.mainCat && app.elems.sel.appendChild(this.elems.mainCat);
+    this.elems.subCat && app.elems.sel.appendChild(this.elems.subCat);
 
     this.debug.end('appendElems');
   };
