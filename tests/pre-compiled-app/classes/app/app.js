@@ -175,7 +175,15 @@
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
-    this.searchBar.setToDefaults(this.config.searchBar.defaults);
+    defaults = {
+      view   : this.config.searchBar.defaults.get('view'),
+      order  : this.config.searchBar.defaults.get('order'),
+      stage  : this.config.searchBar.defaults.get('stage'),
+      source : this.config.searchBar.defaults.get('source'),
+      mainCat: this.config.searchBar.defaults.get('mainCat'),
+      subCat : this.config.searchBar.defaults.get('subCat')
+    };
+    this.searchBar.setToDefaults(defaults);
 
     // Update the current values to match the given defaults
     newIds = this.findMatches();
@@ -245,7 +253,6 @@
     if ( app.flags.get('initArgs') ) {
 
       app.elems.appendNav();
-      app.searchBar.setMainElems();
       app.searchBar.setOptElems();
       app.searchBar.appendElems();
       app.questions.addIdsToSearch();
