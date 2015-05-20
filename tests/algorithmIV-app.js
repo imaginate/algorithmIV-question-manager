@@ -2700,23 +2700,18 @@ aIV.utils.set({
    * @desc The search bar's values and elements for this app.
    * @todo Break this class down into smaller pieces with appropriate
    *   getters and setters.
-   * @param {booleanMap} config - The app's search bar config settings.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!booleanMap} config - The app's search bar config settings.
+   * @param {!Sources} sources - The app's sources.
+   * @param {!Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(config, sources, categories) {
 
     this.debug = aIV.debug('SearchBar');
 
-    debugMsg = 'config= $$, sources= $$, categories= $$';
-    this.debug.group('init', 'coll', debugMsg, config, sources, categories);
-
     this.debug.start('init', config, sources, categories);
 
-    debugArgs = [ 'init', config, 'booleanMap', sources, 'object' ];
-    debugArgs.push(categories, 'object');
-    this.debug.args(debugArgs);
+    checkArgs(config, '!booleanMap', sources, '!object', categories, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -2727,13 +2722,13 @@ aIV.utils.set({
      * Public Property (SearchBar.names)
      * -----------------------------------------------
      * @desc The hash map of the search bar's ids and names.
-     * @type {{
-     *   view   : stringMap,
-     *   order  : stringMap,
-     *   stage  : stringMap,
-     *   source : stringMap,
-     *   mainCat: stringMap,
-     *   subCat : stringMap
+     * @type {!{
+     *   view   : !stringMap,
+     *   order  : !stringMap,
+     *   stage  : !stringMap,
+     *   source : !stringMap,
+     *   mainCat: !stringMap,
+     *   subCat : !stringMap
      * }}
      */
     this.names;
@@ -2743,13 +2738,13 @@ aIV.utils.set({
      * Public Property (SearchBar.ids)
      * -----------------------------------------------
      * @desc The search bar's ids in order of appearance.
-     * @type {{
-     *   view   : strings,
-     *   order  : strings,
-     *   stage  : strings,
-     *   source : strings,
-     *   mainCat: strings,
-     *   subCat : Object<string, strings>
+     * @type {!{
+     *   view   : !strings,
+     *   order  : !strings,
+     *   stage  : !strings,
+     *   source : !strings,
+     *   mainCat: !strings,
+     *   subCat : !Object<string, !strings>
      * }}
      */
     this.ids;
@@ -2759,8 +2754,8 @@ aIV.utils.set({
      * Public Property (SearchBar.ques)
      * -----------------------------------------------
      * @desc The question ids matching the search property values.
-     * @type {{
-     *   stage: Object<string, nums>
+     * @type {!{
+     *   stage: !Object<string, !numbers>
      * }}
      */
     this.ques;
@@ -2770,7 +2765,7 @@ aIV.utils.set({
      * Public Property (SearchBar.vals)
      * -----------------------------------------------
      * @desc The current selected values.
-     * @type {{
+     * @type {!{
      *   view   : string,
      *   order  : string,
      *   stage  : string,
@@ -2786,13 +2781,13 @@ aIV.utils.set({
      * Public Property (SearchBar.elems)
      * -----------------------------------------------
      * @desc The select HTMLELements.
-     * @type {{
-     *   view   : elem,
-     *   order  : elem,
-     *   stage  : ?elem,
-     *   source : ?elem,
-     *   mainCat: ?elem,
-     *   subCat : ?elem
+     * @type {!{
+     *   view   : !Element,
+     *   order  : !Element,
+     *   stage  : ?Element,
+     *   source : ?Element,
+     *   mainCat: ?Element,
+     *   subCat : ?Element
      * }}
      */
     this.elems;
@@ -2802,13 +2797,13 @@ aIV.utils.set({
      * Public Property (SearchBar.opts)
      * -----------------------------------------------
      * @desc The option elements for the search bar.
-     * @type {{
-     *   view   : elems,
-     *   order  : elems,
-     *   stage  : elems,
-     *   source : elems,
-     *   mainCat: elems,
-     *   subCat : Object<string, elems>
+     * @type {!{
+     *   view   : !elements,
+     *   order  : !elements,
+     *   stage  : !elements,
+     *   source : !elements,
+     *   mainCat: !elements,
+     *   subCat : !Object<string, !elements>
      * }}
      */
     this.opts;
@@ -2817,96 +2812,101 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {!strings} */
+    var mainSubs;
+    /** @type {!Category} */
+    var mainCat;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
     /** @type {boolean} */
     var pass;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
-    // Setup the names, ids, and opts properties
-    this.names = {
-      view: {
-        'one': 'View One',
-        'ten': 'View Ten',
-        'all': 'View All'
-      },
-      order: {
-        'asc' : 'ASC',
-        'desc': 'DESC'
-      },
-      stage: {
-        'all': 'All Stages',
-        'com': 'Completed',
-        'inc': 'Incomplete'
-      },
-      source: {
-        'all': 'All Sources'
-      },
-      mainCat: {
-        'all': 'All Main Categories'
-      },
-      subCat: {
-        'all': 'All Sub Categories'
-      }
+    // Setup the names property
+    this.names = {};
+    this.names.view = {
+      one: 'View One',
+      ten: 'View Ten',
+      all: 'View All'
     };
+    this.names.order = {
+      asc : 'ASC',
+      desc: 'DESC'
+    };
+    this.names.stage = {
+      all: 'All Stages',
+      com: 'Completed',
+      inc: 'Incomplete'
+    };
+    this.names.source = {
+      all: 'All Sources'
+    };
+    this.names.mainCat = {
+      all: 'All Main Categories'
+    };
+    this.names.subCat = {
+      all: 'All Sub Categories'
+    };
+
+    // Add each source to the names property
+    i = sources.len;
+    while (i--) {
+      sourceId = sources.ids[i];
+      this.names.source[ sourceId ] = sources.get(sourceId, 'name');
+    }
+
+    // Setup the ids property
     this.ids = {
       view   : [ 'one','ten','all' ],
       order  : [ 'asc','desc' ],
       stage  : [ 'all','com','inc' ],
-      source : sources.ids.slice(0),
-      mainCat: categories.ids.slice(0),
+      source : [ 'all' ].concat(sources.ids),
+      mainCat: [ 'all' ].concat(categories.ids),
       subCat : {}
     };
-    this.ids.source.unshift('all');
-    this.ids.mainCat.unshift('all');
+
+    // Setup the opts property
     this.opts = {
       view   : [],
       order  : [],
       stage  : [],
       source : [],
       mainCat: [],
-      subCat : {
-        'all': []
-      }
+      subCat : { all: [] }
     };
 
-    this.debug.state('init', 'sources.ids= $$', sources.ids);
-    this.debug.state('init', 'this.ids= $$', this.ids);
-    this.debug.state('init', 'this.ids.source= $$', this.ids.source);
+    debugMsg = 'Sources.ids= $$, SearchBar.ids= $$, SearchBar.ids.source= $$';
+    this.debug.state('init', debugMsg, sources.ids, this.ids, this.ids.source);
 
-    // Add the source names
-    if (sources.len) {
-      sources.ids.forEach(function(/** string */ sourceId) {
-        this.names.source[ sourceId ] = sources.get(sourceId, 'name');
-      }, this);
-    }
+    // Add each category to the names, ids, and opts properties
+    i = categories.len;
+    while (i--) {
+      mainId = categories.ids[i];
+      mainCat = categories.get(mainId);
+      mainSubs = mainCat.get('subs');
 
-    // Add category names and ids
-    if (categories.len) {
+      // Add each main category's name
+      this.names.mainCat[ mainId ] = mainCat.get('name');
 
-      categories.ids.forEach(function(/** string */ mainId) {
-        /** @type {Category} */
-        var mainCat;
-        /** @type {strings} */
-        var subs;
+      // Add each main category to the sub category property in opts
+      this.opts.subCat[ mainId ] = [];
 
-        // Add the main category names
-        mainCat = categories.get(mainId);
-        this.names.mainCat[ mainId ] = mainCat.get('name');
+      // Add each sub category's id for each main category
+      this.ids.subCat[ mainId ] = [ 'all' ].concat(mainSubs);
 
-        // Add the sub category options
-        this.opts.subCat[ mainId ] = [];
-
-        // Add the sub categories names and ids
-        subs = mainCat.get('subs');
-        if (subs && subs.length) {
-          this.ids.subCat[ mainId ] = subs.slice(0);
-          this.ids.subCat[ mainId ].unshift('all');
-          subs.forEach(function(/** string */ subId) {
-            this.names.subCat[ subId ] = categories.get(subId, 'name');
-          }, this);
-        }
-        else {
-          this.ids.subCat[ mainId ] = [ 'all' ];
-        }
-      }, this);
+      // Add each sub category's name
+      ii = mainSubs.length;
+      while (ii--) {
+        subId = mainSubs[ii];
+        this.names.subCat[ subId ] = categories.get(subId, 'name');
+      }
     }
 
     // Setup the question ids property
@@ -2982,15 +2982,13 @@ aIV.utils.set({
     freezeObj(this.ques);
     freezeObj(this.elems);
 
-
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3004,13 +3002,11 @@ aIV.utils.set({
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {Object} defaults - The default values.
+   * @param {!Object} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-    this.debug.group('setToDefaults', 'coll', 'defaults= $$', defaults);
     this.debug.start('setToDefaults', defaults);
-    this.debug.args('setToDefaults', defaults, 'object');
 
     /** @type {string} */
     var view;
@@ -3024,6 +3020,8 @@ aIV.utils.set({
     var mainCat;
     /** @type {string} */
     var subCat;
+
+    checkArgs(defaults, '!object');
 
     view    = defaults.get('view');
     order   = defaults.get('order');
@@ -3054,7 +3052,7 @@ aIV.utils.set({
       this.elems.subCat.value = subCat;
     }
 
-    this.debug.group('setToDefaults', 'end');
+    this.debug.end('setToDefaults');
   };
 
   /**
@@ -3066,7 +3064,6 @@ aIV.utils.set({
    */
   SearchBar.prototype.setMainElems = function() {
 
-    this.debug.group('setMainElems', 'coll');
     this.debug.start('setMainElems');
 
     /** @type {boolean} */
@@ -3110,7 +3107,7 @@ aIV.utils.set({
       };
     }
 
-    this.debug.group('setMainElems', 'end');
+    this.debug.end('setMainElems');
   };
 
   /**
@@ -3122,7 +3119,6 @@ aIV.utils.set({
    */
   SearchBar.prototype.setOptElems = function() {
 
-    this.debug.group('setOptElems', 'coll');
     this.debug.start('setOptElems');
 
     /**
@@ -3274,7 +3270,7 @@ aIV.utils.set({
       }, this);
     }
 
-    this.debug.group('setOptElems', 'end');
+    this.debug.end('setOptElems');
   };
 
   /**
@@ -3294,6 +3290,8 @@ aIV.utils.set({
     this.elems.source && app.elems.sel.appendChild(this.elems.source);
     this.elems.mainCat && app.elems.sel.appendChild(this.elems.mainCat);
     this.elems.subCat && app.elems.sel.appendChild(this.elems.subCat);
+
+    this.debug.end('appendElems');
   };
 
   /**
@@ -3306,12 +3304,13 @@ aIV.utils.set({
   SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
     this.debug.start('updateSubCatOpts', newVal);
-    this.debug.args('updateSubCatOpts', newVal, 'string=');
 
     /** @type {elements} */
     var opts;
 
-    newVal = (typeof newVal === 'string') ? newVal : 'all';
+    checkArgs(newVal, '^string=');
+
+    newVal = newVal || 'all';
 
     this.vals.subCat = newVal;
 
@@ -3330,6 +3329,8 @@ aIV.utils.set({
 
       this.elems.subCat.value = newVal;
     }
+
+    this.debug.end('updateSubCatOpts');
   };
 
 /* -----------------------------------------------------------------------------
@@ -5299,23 +5300,18 @@ aIV.utils.set({
    * @desc The search bar's values and elements for this app.
    * @todo Break this class down into smaller pieces with appropriate
    *   getters and setters.
-   * @param {booleanMap} config - The app's search bar config settings.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!booleanMap} config - The app's search bar config settings.
+   * @param {!Sources} sources - The app's sources.
+   * @param {!Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(config, sources, categories) {
 
     this.debug = aIV.debug('SearchBar');
 
-    debugMsg = 'config= $$, sources= $$, categories= $$';
-    this.debug.group('init', 'coll', debugMsg, config, sources, categories);
-
     this.debug.start('init', config, sources, categories);
 
-    debugArgs = [ 'init', config, 'booleanMap', sources, 'object' ];
-    debugArgs.push(categories, 'object');
-    this.debug.args(debugArgs);
+    checkArgs(config, '!booleanMap', sources, '!object', categories, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -5326,13 +5322,13 @@ aIV.utils.set({
      * Public Property (SearchBar.names)
      * -----------------------------------------------
      * @desc The hash map of the search bar's ids and names.
-     * @type {{
-     *   view   : stringMap,
-     *   order  : stringMap,
-     *   stage  : stringMap,
-     *   source : stringMap,
-     *   mainCat: stringMap,
-     *   subCat : stringMap
+     * @type {!{
+     *   view   : !stringMap,
+     *   order  : !stringMap,
+     *   stage  : !stringMap,
+     *   source : !stringMap,
+     *   mainCat: !stringMap,
+     *   subCat : !stringMap
      * }}
      */
     this.names;
@@ -5342,13 +5338,13 @@ aIV.utils.set({
      * Public Property (SearchBar.ids)
      * -----------------------------------------------
      * @desc The search bar's ids in order of appearance.
-     * @type {{
-     *   view   : strings,
-     *   order  : strings,
-     *   stage  : strings,
-     *   source : strings,
-     *   mainCat: strings,
-     *   subCat : Object<string, strings>
+     * @type {!{
+     *   view   : !strings,
+     *   order  : !strings,
+     *   stage  : !strings,
+     *   source : !strings,
+     *   mainCat: !strings,
+     *   subCat : !Object<string, !strings>
      * }}
      */
     this.ids;
@@ -5358,8 +5354,8 @@ aIV.utils.set({
      * Public Property (SearchBar.ques)
      * -----------------------------------------------
      * @desc The question ids matching the search property values.
-     * @type {{
-     *   stage: Object<string, nums>
+     * @type {!{
+     *   stage: !Object<string, !numbers>
      * }}
      */
     this.ques;
@@ -5369,7 +5365,7 @@ aIV.utils.set({
      * Public Property (SearchBar.vals)
      * -----------------------------------------------
      * @desc The current selected values.
-     * @type {{
+     * @type {!{
      *   view   : string,
      *   order  : string,
      *   stage  : string,
@@ -5385,13 +5381,13 @@ aIV.utils.set({
      * Public Property (SearchBar.elems)
      * -----------------------------------------------
      * @desc The select HTMLELements.
-     * @type {{
-     *   view   : elem,
-     *   order  : elem,
-     *   stage  : ?elem,
-     *   source : ?elem,
-     *   mainCat: ?elem,
-     *   subCat : ?elem
+     * @type {!{
+     *   view   : !Element,
+     *   order  : !Element,
+     *   stage  : ?Element,
+     *   source : ?Element,
+     *   mainCat: ?Element,
+     *   subCat : ?Element
      * }}
      */
     this.elems;
@@ -5401,13 +5397,13 @@ aIV.utils.set({
      * Public Property (SearchBar.opts)
      * -----------------------------------------------
      * @desc The option elements for the search bar.
-     * @type {{
-     *   view   : elems,
-     *   order  : elems,
-     *   stage  : elems,
-     *   source : elems,
-     *   mainCat: elems,
-     *   subCat : Object<string, elems>
+     * @type {!{
+     *   view   : !elements,
+     *   order  : !elements,
+     *   stage  : !elements,
+     *   source : !elements,
+     *   mainCat: !elements,
+     *   subCat : !Object<string, !elements>
      * }}
      */
     this.opts;
@@ -5416,96 +5412,101 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {!strings} */
+    var mainSubs;
+    /** @type {!Category} */
+    var mainCat;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
     /** @type {boolean} */
     var pass;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
-    // Setup the names, ids, and opts properties
-    this.names = {
-      view: {
-        'one': 'View One',
-        'ten': 'View Ten',
-        'all': 'View All'
-      },
-      order: {
-        'asc' : 'ASC',
-        'desc': 'DESC'
-      },
-      stage: {
-        'all': 'All Stages',
-        'com': 'Completed',
-        'inc': 'Incomplete'
-      },
-      source: {
-        'all': 'All Sources'
-      },
-      mainCat: {
-        'all': 'All Main Categories'
-      },
-      subCat: {
-        'all': 'All Sub Categories'
-      }
+    // Setup the names property
+    this.names = {};
+    this.names.view = {
+      one: 'View One',
+      ten: 'View Ten',
+      all: 'View All'
     };
+    this.names.order = {
+      asc : 'ASC',
+      desc: 'DESC'
+    };
+    this.names.stage = {
+      all: 'All Stages',
+      com: 'Completed',
+      inc: 'Incomplete'
+    };
+    this.names.source = {
+      all: 'All Sources'
+    };
+    this.names.mainCat = {
+      all: 'All Main Categories'
+    };
+    this.names.subCat = {
+      all: 'All Sub Categories'
+    };
+
+    // Add each source to the names property
+    i = sources.len;
+    while (i--) {
+      sourceId = sources.ids[i];
+      this.names.source[ sourceId ] = sources.get(sourceId, 'name');
+    }
+
+    // Setup the ids property
     this.ids = {
       view   : [ 'one','ten','all' ],
       order  : [ 'asc','desc' ],
       stage  : [ 'all','com','inc' ],
-      source : sources.ids.slice(0),
-      mainCat: categories.ids.slice(0),
+      source : [ 'all' ].concat(sources.ids),
+      mainCat: [ 'all' ].concat(categories.ids),
       subCat : {}
     };
-    this.ids.source.unshift('all');
-    this.ids.mainCat.unshift('all');
+
+    // Setup the opts property
     this.opts = {
       view   : [],
       order  : [],
       stage  : [],
       source : [],
       mainCat: [],
-      subCat : {
-        'all': []
-      }
+      subCat : { all: [] }
     };
 
-    this.debug.state('init', 'sources.ids= $$', sources.ids);
-    this.debug.state('init', 'this.ids= $$', this.ids);
-    this.debug.state('init', 'this.ids.source= $$', this.ids.source);
+    debugMsg = 'Sources.ids= $$, SearchBar.ids= $$, SearchBar.ids.source= $$';
+    this.debug.state('init', debugMsg, sources.ids, this.ids, this.ids.source);
 
-    // Add the source names
-    if (sources.len) {
-      sources.ids.forEach(function(/** string */ sourceId) {
-        this.names.source[ sourceId ] = sources.get(sourceId, 'name');
-      }, this);
-    }
+    // Add each category to the names, ids, and opts properties
+    i = categories.len;
+    while (i--) {
+      mainId = categories.ids[i];
+      mainCat = categories.get(mainId);
+      mainSubs = mainCat.get('subs');
 
-    // Add category names and ids
-    if (categories.len) {
+      // Add each main category's name
+      this.names.mainCat[ mainId ] = mainCat.get('name');
 
-      categories.ids.forEach(function(/** string */ mainId) {
-        /** @type {Category} */
-        var mainCat;
-        /** @type {strings} */
-        var subs;
+      // Add each main category to the sub category property in opts
+      this.opts.subCat[ mainId ] = [];
 
-        // Add the main category names
-        mainCat = categories.get(mainId);
-        this.names.mainCat[ mainId ] = mainCat.get('name');
+      // Add each sub category's id for each main category
+      this.ids.subCat[ mainId ] = [ 'all' ].concat(mainSubs);
 
-        // Add the sub category options
-        this.opts.subCat[ mainId ] = [];
-
-        // Add the sub categories names and ids
-        subs = mainCat.get('subs');
-        if (subs && subs.length) {
-          this.ids.subCat[ mainId ] = subs.slice(0);
-          this.ids.subCat[ mainId ].unshift('all');
-          subs.forEach(function(/** string */ subId) {
-            this.names.subCat[ subId ] = categories.get(subId, 'name');
-          }, this);
-        }
-        else {
-          this.ids.subCat[ mainId ] = [ 'all' ];
-        }
-      }, this);
+      // Add each sub category's name
+      ii = mainSubs.length;
+      while (ii--) {
+        subId = mainSubs[ii];
+        this.names.subCat[ subId ] = categories.get(subId, 'name');
+      }
     }
 
     // Setup the question ids property
@@ -5581,15 +5582,13 @@ aIV.utils.set({
     freezeObj(this.ques);
     freezeObj(this.elems);
 
-
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    this.debug.group('init', 'end');
-
-    // Freeze this class instance
     freezeObj(this);
+
+    this.debug.end('init');
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5603,13 +5602,11 @@ aIV.utils.set({
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {Object} defaults - The default values.
+   * @param {!Object} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-    this.debug.group('setToDefaults', 'coll', 'defaults= $$', defaults);
     this.debug.start('setToDefaults', defaults);
-    this.debug.args('setToDefaults', defaults, 'object');
 
     /** @type {string} */
     var view;
@@ -5623,6 +5620,8 @@ aIV.utils.set({
     var mainCat;
     /** @type {string} */
     var subCat;
+
+    checkArgs(defaults, '!object');
 
     view    = defaults.get('view');
     order   = defaults.get('order');
@@ -5653,7 +5652,7 @@ aIV.utils.set({
       this.elems.subCat.value = subCat;
     }
 
-    this.debug.group('setToDefaults', 'end');
+    this.debug.end('setToDefaults');
   };
 
   /**
@@ -5665,7 +5664,6 @@ aIV.utils.set({
    */
   SearchBar.prototype.setMainElems = function() {
 
-    this.debug.group('setMainElems', 'coll');
     this.debug.start('setMainElems');
 
     /** @type {boolean} */
@@ -5709,7 +5707,7 @@ aIV.utils.set({
       };
     }
 
-    this.debug.group('setMainElems', 'end');
+    this.debug.end('setMainElems');
   };
 
   /**
@@ -5721,7 +5719,6 @@ aIV.utils.set({
    */
   SearchBar.prototype.setOptElems = function() {
 
-    this.debug.group('setOptElems', 'coll');
     this.debug.start('setOptElems');
 
     /**
@@ -5873,7 +5870,7 @@ aIV.utils.set({
       }, this);
     }
 
-    this.debug.group('setOptElems', 'end');
+    this.debug.end('setOptElems');
   };
 
   /**
@@ -5893,6 +5890,8 @@ aIV.utils.set({
     this.elems.source && app.elems.sel.appendChild(this.elems.source);
     this.elems.mainCat && app.elems.sel.appendChild(this.elems.mainCat);
     this.elems.subCat && app.elems.sel.appendChild(this.elems.subCat);
+
+    this.debug.end('appendElems');
   };
 
   /**
@@ -5905,12 +5904,13 @@ aIV.utils.set({
   SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
     this.debug.start('updateSubCatOpts', newVal);
-    this.debug.args('updateSubCatOpts', newVal, 'string=');
 
     /** @type {elements} */
     var opts;
 
-    newVal = (typeof newVal === 'string') ? newVal : 'all';
+    checkArgs(newVal, '^string=');
+
+    newVal = newVal || 'all';
 
     this.vals.subCat = newVal;
 
@@ -5929,6 +5929,8 @@ aIV.utils.set({
 
       this.elems.subCat.value = newVal;
     }
+
+    this.debug.end('updateSubCatOpts');
   };
 
 /* -----------------------------------------------------------------------------
