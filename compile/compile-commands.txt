@@ -42,7 +42,8 @@ sed \
   -e "/insert-class-source-one/ r classes/source.js" \
   -e "/insert-class-categories/ r classes/categories.js" \
   -e "/insert-class-category/ r classes/category.js" \
-  -e "/insert-class-search-bar/ r classes/search-bar.js" \
+  -e "/insert-class-search-bar-base/ r classes/search-bar/search-bar.js" \
+  -e "/insert-class-search-bar-elems/ r classes/search-bar/search-bar-elems.js" \
   -e "/insert-class-questions/ r classes/questions.js" \
   -e "/insert-class-question-one/ r classes/question/question.js" \
   -e "/insert-class-question-format/ r classes/question/question-format.js" \
@@ -85,7 +86,8 @@ sed ^
   -e "/insert-class-source-one/ r classes/source.js" ^
   -e "/insert-class-categories/ r classes/categories.js" ^
   -e "/insert-class-category/ r classes/category.js" ^
-  -e "/insert-class-search-bar/ r classes/search-bar.js" ^
+  -e "/insert-class-search-bar-base/ r classes/search-bar/search-bar.js" ^
+  -e "/insert-class-search-bar-elems/ r classes/search-bar/search-bar-elems.js" ^
   -e "/insert-class-questions/ r classes/questions.js" ^
   -e "/insert-class-question-one/ r classes/question/question.js" ^
   -e "/insert-class-question-format/ r classes/question/question-format.js" ^
