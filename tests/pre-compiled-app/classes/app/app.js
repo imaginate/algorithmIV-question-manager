@@ -399,8 +399,6 @@
     var newIds;
     /** @type {boolean} */
     var pass;
-    /** @type {function} */
-    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;

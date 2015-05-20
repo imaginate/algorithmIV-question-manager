@@ -193,7 +193,7 @@
     /** @type {number} */
     var i;
 
-    args = [ sel, '!element', ids, '!strings', names, '!stringMap' ];
+    args = [ sel, 'element', ids, '!strings', names, '!stringMap' ];
     args.push(opts, '!elements', noAll, 'boolean=');
     checkArgs.apply(null, args);
 
@@ -634,7 +634,7 @@
       }
     }
 
-    debug.end('findMatches.checkForValue', pass);
+    debug.end('checkForValue', pass);
 
     return pass;
   }
