@@ -168,9 +168,14 @@ aIV.utils.set({
 // insert-class-category
 
 /* -----------------------------------------------------------------------------
- * The SearchBar Class (classes/search-bar.js)
+ * The SearchBar Class (classes/search-bar/search-bar.js)
  * -------------------------------------------------------------------------- */
-// insert-class-search-bar
+// insert-class-search-bar-base
+
+/* -----------------------------------------------------------------------------
+ * The SearchBarElems Class (classes/search-bar/search-bar-elems.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-search-bar-elems
 
 /* -----------------------------------------------------------------------------
  * The Questions Class (classes/questions.js)
