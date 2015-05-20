@@ -497,6 +497,91 @@ aIV.utils.set({
 
   /**
    * ---------------------------------------------------
+   * Public Method (makeOptElem)
+   * ---------------------------------------------------
+   * @desc A helper function that creates option elements.
+   * @param {string} id - The search item's id. If blank then the
+   *   option is disabled.
+   * @param {string} name - The search item's name.
+   * @return {!Element}
+   */
+  var makeOptElem = function(id, name) {
+
+    debug.start('makeOptElem', id, name);
+
+    /** @type {!Element} */
+    var elem;
+
+    checkArgs(id, 'string', name, '^string');
+
+    elem = makeElem({
+      tag : 'option',
+      text: name
+    });
+
+    if (id) {
+      elem.value = id;
+    }
+    else {
+      elem.disabled = true;
+    }
+
+    debug.end('makeOptElem', elem);
+
+    return elem;
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setSearchSection)
+   * ---------------------------------------------------
+   * @desc A helper function that sets option elements for a search section.
+   * @param {?HTMLSelectElement} sel - The search section's select element.
+   * @param {!strings} ids - The search section's ids.
+   * @param {!stringMap} names - The search section's names.
+   * @param {!elements} opts - The search section's option elements.
+   * @param {boolean=} noAll - Indicates that the id of 'all' should be
+   *   skipped.
+   */
+  var setSearchSection = function(sel, ids, names, opts, noAll) {
+
+    debug.start('setSearchSection', sel, ids, names, opts, noAll);
+
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {string} */
+    var name;
+    /** @type {number} */
+    var len;
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    args = [ sel, '!element', ids, '!strings', names, '!stringMap' ];
+    args.push(opts, '!elements', noAll, 'boolean=');
+    checkArgs.apply(null, args);
+
+    len = ids.length;
+    i = -1;
+    while (++i < len) {
+      id = ids[i];
+      if (noAll && id === 'all') {
+        continue;
+      }
+      name = names[ id ];
+      elem = makeOptElem(id, name);
+      opts.push(elem);
+      sel && sel.appendChild(elem);
+    }
+
+    debug.end('setSearchSection');
+  };
+
+  /**
+   * ---------------------------------------------------
    * Public Method (setElemText)
    * ---------------------------------------------------
    * @desc A shortcut that sets the native DOM property - Element.textContent
@@ -4966,153 +5051,76 @@ aIV.utils.set({
 
     this.debug.start('setOptElems');
 
-    /**
-     * ---------------------------------------------------
-     * Private Method (makeOptElem)
-     * ---------------------------------------------------
-     * @desc A helper function that creates option elements.
-     * @param {string} id - The search item's id. If blank then the
-     *   option is disabled.
-     * @param {string} name - The search item's name.
-     * @return {Element}
-     * @private
-     */
-    var makeOptElem = function(id, name) {
-      /** @type {Element} */
-      var elem;
+    /** @type {string} */
+    var mainId;
+    /** @type {!Object<string, !stringMap>} */
+    var names;
+    /** @type {!SearchBarElems} */
+    var elems;
+    /** @type {(!Object<string, !Object>|!elements)} */
+    var opts;
+    /** @type {!HTMLSelectElement} */
+    var sel;
+    /** @type {!Object<string, !Object>} */
+    var ids;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-      elem = makeElem({
-        tag : 'option',
-        text: name
-      });
-      if (id) {
-        elem.value = id;
-      }
-      else {
-        elem.disabled = true;
-      }
-      return elem;
-    };
+    ids = this.ids;
+    opts = this.opts;
+    elems = this.elems;
+    names = this.names;
 
-    // Set view search options
-    this.ids.view.forEach(function(/** string */ id) {
-      /** @type {string} */
-      var name;
-      /** @type {Element} */
-      var elem;
+    setSearchSection(elems.view, ids.view, names.view, opts.view);
 
-      name = this.names.view[id];
-      elem = makeOptElem(id, name);
-      this.opts.view.push(elem);
-      this.elems.view.appendChild(elem);
-    }, this);
+    setSearchSection(elems.order, ids.order, names.order, opts.order);
 
-    // Set order search options
-    this.ids.order.forEach(function(/** string */ id) {
-      /** @type {string} */
-      var name;
-      /** @type {Element} */
-      var elem;
-
-      name = this.names.order[id];
-      elem = makeOptElem(id, name);
-      this.opts.order.push(elem);
-      this.elems.order.appendChild(elem);
-    }, this);
-
-    // Set stage search options
-    if (this.elems.stage) {
-      this.ids.stage.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {Element} */
-        var elem;
-
-        name = this.names.stage[id];
-        elem = makeOptElem(id, name);
-        this.opts.stage.push(elem);
-        this.elems.stage.appendChild(elem);
-      }, this);
+    if (elems.stage) {
+      setSearchSection(elems.stage, ids.stage, names.stage, opts.stage);
     }
 
-    // Set source search options
-    if (this.elems.source) {
-      this.debug.state('setOptElems', 'this.ids.source= $$', this.ids.source);
-      this.ids.source.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {Element} */
-        var elem;
-
-        name = this.names.source[id];
-        elem = makeOptElem(id, name);
-        this.opts.source.push(elem);
-        this.elems.source.appendChild(elem);
-      }, this);
+    if (elems.source) {
+      setSearchSection(elems.source, ids.source, names.source, opts.source);
     }
 
-    // Set main category search options
-    if (this.elems.mainCat) {
-      this.ids.mainCat.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {Element} */
-        var elem;
-
-        name = this.names.mainCat[id];
-        elem = makeOptElem(id, name);
-        this.opts.mainCat.push(elem);
-        this.elems.mainCat.appendChild(elem);
-      }, this);
+    if (elems.mainCat) {
+      setSearchSection(elems.mainCat, ids.mainCat, names.mainCat, opts.mainCat);
     }
 
-    // Set sub category search options
-    if (this.elems.subCat) {
-      // Create the options for each main category with subs
-      Object.keys(this.ids.subCat).forEach(function(/** string */ mainId) {
-        this.ids.subCat[mainId].forEach(function(/** string */ id) {
-          /** @type {string} */
-          var name;
-          /** @type {Element} */
-          var elem;
+    if (elems.subCat) {
 
-          name = this.names.subCat[id];
-          elem = makeOptElem(id, name);
-          this.opts.subCat[mainId].push(elem);
-        }, this);
-      }, this);
-      // Create the options for all
-      this.opts.subCat['all'].push( makeOptElem('all', this.names.subCat['all']) );
-      this.ids.mainCat.forEach(function(/** string */ mainId) {
-        /** @type {string} */
-        var name;
-        /** @type {Element} */
-        var elem;
+      // Set the all option element for all main categories
+      opts.subCat.all.push( makeOptElem('all', names.subCat.all) );
 
-        if (!!this.ids.subCat[mainId]) {
+      len = ids.mainCat.length;
+      i = -1;
+      while (++i < len) {
+        mainId = ids.mainCat[i];
 
-          name = this.names.mainCat[mainId];
-          elem = makeOptElem('', name);
-          this.opts.subCat['all'].push(elem);
+        // Set the sub category option elements for each main category
+        setSearchSection(null, ids.subCat[ mainId ], names.subCat,
+                         opts.subCat[ mainId ]);
 
-          this.ids.subCat[mainId].forEach(function(/** string */ id) {
-            /** @type {string} */
-            var name;
-            /** @type {Element} */
-            var elem;
-
-            if (id !== 'all') {
-              name = this.names.subCat[id];
-              elem = makeOptElem(id, name);
-              this.opts.subCat['all'].push(elem);
-            }
-          }, this);
+        if (mainId === 'all') {
+          continue;
         }
-      }, this);
-      // Append the correct sub categories to the select element
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
-        this.elems.subCat.appendChild(elem);
-      }, this);
+
+        // Set the category option elements for all main categories
+        opts.subCat.all.push( makeOptElem('', names.mainCat[ mainId ]) );
+        setSearchSection(null, ids.subCat[ mainId ], names.subCat,
+                         opts.subCat.all, true);
+      }
+
+      // Append the correct sub categories to its select element
+      opts = opts.subCat[ this.vals.mainCat ];
+      sel = elems.subCat;
+      len = opts.length;
+      i = -1
+      while (++i < len) {
+        sel.appendChild(opts[i]);
+      }
     }
 
     this.debug.end('setOptElems');
@@ -5145,29 +5153,37 @@ aIV.utils.set({
 
     this.debug.start('updateSubCatOpts', newVal);
 
-    /** @type {elements} */
+    /** @type {!elements} */
     var opts;
+    /** @type {!HTMLSelectElement} */
+    var sel;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
     checkArgs(newVal, '^string=');
 
     newVal = newVal || 'all';
-
     this.vals.subCat = newVal;
 
-    if (this.elems.subCat) {
+    sel = this.elems.subCat;
+    if (sel) {
 
-      // Clear subCat's current option elements
-      while (this.elems.subCat.firstChild) {
-        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      // Clear the sub category's current option elements
+      while (sel.firstChild) {
+        sel.removeChild(sel.firstChild);
       }
 
       // Append the new option elements
       opts = this.opts.subCat[ this.vals.mainCat ];
-      opts.forEach(function(/** element */ elem) {
-        this.elems.subCat.appendChild(elem);
-      }, this);
+      len = opts.length;
+      i = -1
+      while (++i < len) {
+        sel.appendChild(opts[i]);
+      }
 
-      this.elems.subCat.value = newVal;
+      sel.value = newVal;
     }
 
     this.debug.end('updateSubCatOpts');
