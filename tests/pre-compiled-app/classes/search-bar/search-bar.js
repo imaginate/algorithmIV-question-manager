@@ -347,17 +347,13 @@
       opts.subCat.all.push( makeOptElem('all', names.subCat.all) );
 
       len = ids.mainCat.length;
-      i = -1;
+      i = 0;
       while (++i < len) {
         mainId = ids.mainCat[i];
 
         // Set the sub category option elements for each main category
         setSearchSection(null, ids.subCat[ mainId ], names.subCat,
                          opts.subCat[ mainId ]);
-
-        if (mainId === 'all') {
-          continue;
-        }
 
         // Set the category option elements for all main categories
         opts.subCat.all.push( makeOptElem('', names.mainCat[ mainId ]) );
