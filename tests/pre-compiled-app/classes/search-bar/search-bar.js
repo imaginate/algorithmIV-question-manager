@@ -405,29 +405,37 @@
 
     this.debug.start('updateSubCatOpts', newVal);
 
-    /** @type {elements} */
+    /** @type {!elements} */
     var opts;
+    /** @type {!HTMLSelectElement} */
+    var sel;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
     checkArgs(newVal, '^string=');
 
     newVal = newVal || 'all';
-
     this.vals.subCat = newVal;
 
-    if (this.elems.subCat) {
+    sel = this.elems.subCat;
+    if (sel) {
 
-      // Clear subCat's current option elements
-      while (this.elems.subCat.firstChild) {
-        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      // Clear the sub category's current option elements
+      while (sel.firstChild) {
+        sel.removeChild(sel.firstChild);
       }
 
       // Append the new option elements
       opts = this.opts.subCat[ this.vals.mainCat ];
-      opts.forEach(function(/** element */ elem) {
-        this.elems.subCat.appendChild(elem);
-      }, this);
+      len = opts.length;
+      i = -1
+      while (++i < len) {
+        sel.appendChild(opts[i]);
+      }
 
-      this.elems.subCat.value = newVal;
+      sel.value = newVal;
     }
 
     this.debug.end('updateSubCatOpts');
