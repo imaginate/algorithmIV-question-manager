@@ -130,6 +130,91 @@
 
   /**
    * ---------------------------------------------------
+   * Public Method (makeOptElem)
+   * ---------------------------------------------------
+   * @desc A helper function that creates option elements.
+   * @param {string} id - The search item's id. If blank then the
+   *   option is disabled.
+   * @param {string} name - The search item's name.
+   * @return {!Element}
+   */
+  var makeOptElem = function(id, name) {
+
+    debug.start('makeOptElem', id, name);
+
+    /** @type {!Element} */
+    var elem;
+
+    checkArgs(id, 'string', name, '^string');
+
+    elem = makeElem({
+      tag : 'option',
+      text: name
+    });
+
+    if (id) {
+      elem.value = id;
+    }
+    else {
+      elem.disabled = true;
+    }
+
+    debug.end('makeOptElem', elem);
+
+    return elem;
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setSearchSection)
+   * ---------------------------------------------------
+   * @desc A helper function that sets option elements for a search section.
+   * @param {?HTMLSelectElement} sel - The search section's select element.
+   * @param {!strings} ids - The search section's ids.
+   * @param {!stringMap} names - The search section's names.
+   * @param {!elements} opts - The search section's option elements.
+   * @param {boolean=} noAll - Indicates that the id of 'all' should be
+   *   skipped.
+   */
+  var setSearchSection = function(sel, ids, names, opts, noAll) {
+
+    debug.start('setSearchSection', sel, ids, names, opts, noAll);
+
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {string} */
+    var name;
+    /** @type {number} */
+    var len;
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    args = [ sel, '!element', ids, '!strings', names, '!stringMap' ];
+    args.push(opts, '!elements', noAll, 'boolean=');
+    checkArgs.apply(null, args);
+
+    len = ids.length;
+    i = -1;
+    while (++i < len) {
+      id = ids[i];
+      if (noAll && id === 'all') {
+        continue;
+      }
+      name = names[ id ];
+      elem = makeOptElem(id, name);
+      opts.push(elem);
+      sel && sel.appendChild(elem);
+    }
+
+    debug.end('setSearchSection');
+  };
+
+  /**
+   * ---------------------------------------------------
    * Public Method (setElemText)
    * ---------------------------------------------------
    * @desc A shortcut that sets the native DOM property - Element.textContent
