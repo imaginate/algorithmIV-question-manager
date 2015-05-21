@@ -18,7 +18,7 @@ sed \
   -e "/insert-highlight-syntax-vars/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" \
   -e "/insert-highlight-syntax-methods/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
 cd ..
-  sed \
+sed \
   -e "/insert-prettify-vars/ r pre-compiled-prettifier/prettify-vars.js" \
   -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" \
   -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
@@ -62,7 +62,7 @@ sed ^
   -e "/insert-highlight-syntax-vars/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" ^
   -e "/insert-highlight-syntax-methods/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
 cd ..
-  sed ^
+sed ^
   -e "/insert-prettify-vars/ r pre-compiled-prettifier/prettify-vars.js" ^
   -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" ^
   -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
@@ -187,6 +187,7 @@ cp -u tests/pre-compiled-app/classes/*.js src/pre-compiled-parts/classes
 cp -u tests/pre-compiled-app/classes/app/*.js src/pre-compiled-parts/classes/app
 cp -u tests/pre-compiled-app/classes/config/*.js src/pre-compiled-parts/classes/config
 cp -u tests/pre-compiled-app/classes/question/*.js src/pre-compiled-parts/classes/question
+cp -u tests/pre-compiled-app/classes/search-bar/*.js src/pre-compiled-parts/classes/search-bar
 cp -u tests/pre-compiled-app/dependencies/*.js src/pre-compiled-parts/dependencies
 cp -u tests/pre-compiled-app/pre-compiled-prettifier/*.js src/pre-compiled-parts/pre-compiled-prettifier
 cp -u tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/*.js src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter
@@ -232,6 +233,12 @@ find . -type f -exec sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" {} \;
 rm -f sed*
 find . -type f -exec sed -i "/^$/N;/^\n$/D" {} \;
 rm -f sed*
+cd ..
+cd search-bar
+find . -type f -exec sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" {} \;
+rm -f sed*
+find . -type f -exec sed -i "/^$/N;/^\n$/D" {} \;
+rm -f sed*
 
 ## MS-DOS Commands
 copy /y tests\pre-compiled-app\*.js src\pre-compiled-parts
@@ -239,6 +246,7 @@ copy /y tests\pre-compiled-app\classes\*.js src\pre-compiled-parts\classes
 copy /y tests\pre-compiled-app\classes\app\*.js src\pre-compiled-parts\classes\app
 copy /y tests\pre-compiled-app\classes\config\*.js src\pre-compiled-parts\classes\config
 copy /y tests\pre-compiled-app\classes\question\*.js src\pre-compiled-parts\classes\question
+copy /y tests\pre-compiled-app\classes\search-bar\*.js src\pre-compiled-parts\classes\search-bar
 copy /y tests\pre-compiled-app\dependencies\*.js src\pre-compiled-parts\dependencies
 copy /y tests\pre-compiled-app\pre-compiled-prettifier\*.js src\pre-compiled-parts\pre-compiled-prettifier
 copy /y tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\*.js src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter
@@ -284,6 +292,12 @@ for /f %f in ('dir /b') do sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" %f
 del /f sed*
 for /f %f in ('dir /b') do sed -i "/^$/N;/^\n$/D" %f
 del /f sed*
+cd ..
+cd search-bar
+for /f %f in ('dir /b') do sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" %f
+del /f sed*
+for /f %f in ('dir /b') do sed -i "/^$/N;/^\n$/D" %f
+del /f sed*
 
 ----------------------------------------------------------------
 COMPILE SRC             |
@@ -295,84 +309,90 @@ src/algorithmIV-app.js  |    |
 ## UNIX Commands
 cd src/pre-compiled-parts/pre-compiled-prettifier
 sed \
-  -e "/highlight-syntax-vars.js/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" \
-  -e "/highlight-syntax-methods.js/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
+  -e "/insert-highlight-syntax-vars/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" \
+  -e "/insert-highlight-syntax-methods/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
 cd ..
-  sed \
-  -e "/prettify-vars.js/ r pre-compiled-prettifier/prettify-vars.js" \
-  -e "/prettify-methods.js/ r pre-compiled-prettifier/prettify-methods.js" \
-  -e "/highlight-syntax.js/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
 sed \
-  -e "/public-api.js/ r public-api.js" \
-  -e "/external-api.js/ r external-api.js" \
-  -e "/module-vars.js/ r module-vars.js" \
-  -e "/module-methods.js/ r module-methods.js" \
-  -e "/app.js/ r classes/app/app.js" \
-  -e "/app-flags.js/ r classes/app/app-flags.js" \
-  -e "/app-elems.js/ r classes/app/app-elems.js" \
-  -e "/app-vals.js/ r classes/app/app-vals.js" \
-  -e "/\/config.js/ r classes/config/config.js" \
-  -e "/\/search-bar-config.js/ r classes/config/search-bar-config.js" \
-  -e "/defaults-search-bar-config.js/ r classes/config/defaults-search-bar-config.js" \
-  -e "/questions-config.js/ r classes/config/questions-config.js" \
-  -e "/pretty-config.js/ r classes/config/pretty-config.js" \
-  -e "/links-config.js/ r classes/config/links-config.js" \
-  -e "/sources.js/ r classes/sources.js" \
-  -e "/source.js/ r classes/source.js" \
-  -e "/categories.js/ r classes/categories.js" \
-  -e "/category.js/ r classes/category.js" \
-  -e "/search-bar.js/ r classes/search-bar.js" \
-  -e "/questions.js/ r classes/questions.js" \
-  -e "/question.js/ r classes/question/question.js" \
-  -e "/question-format.js/ r classes/question/question-format.js" \
-  -e "/question-elem.js/ r classes/question/question-elem.js" \
-  -e "/prettify.js/ r prettify.js" \
-  -e "/events.js/ r classes/events.js" \
-  -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
+  -e "/insert-prettify-vars/ r pre-compiled-prettifier/prettify-vars.js" \
+  -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" \
+  -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
+sed \
+  -e "/insert-aIV-utils/ r dependencies/algorithmIV-utils.min.js" \
+  -e "/insert-public-api/ r public-api.js" \
+  -e "/insert-module-api/ r module-api.js" \
+  -e "/insert-module-vars/ r module-vars.js" \
+  -e "/insert-module-methods/ r module-methods.js" \
+  -e "/insert-class-app-base/ r classes/app/app.js" \
+  -e "/insert-class-app-flags/ r classes/app/app-flags.js" \
+  -e "/insert-class-app-elems/ r classes/app/app-elems.js" \
+  -e "/insert-class-app-vals/ r classes/app/app-vals.js" \
+  -e "/insert-class-config/ r classes/config/config.js" \
+  -e "/insert-class-search-bar-config/ r classes/config/search-bar-config.js" \
+  -e "/insert-class-defaults-search-bar-config/ r classes/config/defaults-search-bar-config.js" \
+  -e "/insert-class-questions-config/ r classes/config/questions-config.js" \
+  -e "/insert-class-pretty-config/ r classes/config/pretty-config.js" \
+  -e "/insert-class-links-config/ r classes/config/links-config.js" \
+  -e "/insert-class-sources/ r classes/sources.js" \
+  -e "/insert-class-source-one/ r classes/source.js" \
+  -e "/insert-class-categories/ r classes/categories.js" \
+  -e "/insert-class-category/ r classes/category.js" \
+  -e "/insert-class-search-bar-base/ r classes/search-bar/search-bar.js" \
+  -e "/insert-class-search-bar-elems/ r classes/search-bar/search-bar-elems.js" \
+  -e "/insert-class-questions/ r classes/questions.js" \
+  -e "/insert-class-question-one/ r classes/question/question.js" \
+  -e "/insert-class-question-format/ r classes/question/question-format.js" \
+  -e "/insert-class-question-elem/ r classes/question/question-elem.js" \
+  -e "/insert-prettifier/ r prettify.js" \
+  -e "/insert-class-events/ r classes/events.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 cp -u pre-compiled-parts/algorithmIV-app-temp.js algorithmIV-app.js
 rm -f pre-compiled-parts/algorithmIV-app-temp.js
+sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+rm -f sed*
 
 ## MS-DOS Commands
 cd src\pre-compiled-parts\pre-compiled-prettifier
 sed ^
-  -e "/highlight-syntax-vars.js/ r pre-compiled-syntax-highlighter\highlight-syntax-vars.js" ^
-  -e "/highlight-syntax-methods.js/ r pre-compiled-syntax-highlighter\highlight-syntax-methods.js" <pre-compiled-syntax-highlighter\highlight-syntax.js>highlight-syntax.js
+  -e "/insert-highlight-syntax-vars/ r pre-compiled-syntax-highlighter/highlight-syntax-vars.js" ^
+  -e "/insert-highlight-syntax-methods/ r pre-compiled-syntax-highlighter/highlight-syntax-methods.js" <pre-compiled-syntax-highlighter/highlight-syntax.js>highlight-syntax.js
 cd ..
 sed ^
-  -e "/prettify-vars.js/ r pre-compiled-prettifier\prettify-vars.js" ^
-  -e "/prettify-methods.js/ r pre-compiled-prettifier\prettify-methods.js" ^
-  -e "/highlight-syntax.js/ r pre-compiled-prettifier\highlight-syntax.js" <pre-compiled-prettifier\prettify.js>prettify.js
+  -e "/insert-prettify-vars/ r pre-compiled-prettifier/prettify-vars.js" ^
+  -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" ^
+  -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
 sed ^
-  -e "/public-api.js/ r public-api.js" ^
-  -e "/external-api.js/ r external-api.js" ^
-  -e "/module-vars.js/ r module-vars.js" ^
-  -e "/module-methods.js/ r module-methods.js" ^
-  -e "/app.js/ r classes\app\app.js" ^
-  -e "/app-flags.js/ r classes\app\app-flags.js" ^
-  -e "/app-elems.js/ r classes\app\app-elems.js" ^
-  -e "/app-vals.js/ r classes\app\app-vals.js" ^
-  -e "/\/config.js/ r classes\config\config.js" ^
-  -e "/\/search-bar-config.js/ r classes\config\search-bar-config.js" ^
-  -e "/defaults-search-bar-config.js/ r classes\config\defaults-search-bar-config.js" ^
-  -e "/questions-config.js/ r classes\config\questions-config.js" ^
-  -e "/pretty-config.js/ r classes\config\pretty-config.js" ^
-  -e "/links-config.js/ r classes\config\links-config.js" ^
-  -e "/sources.js/ r classes\sources.js" ^
-  -e "/source.js/ r classes\source.js" ^
-  -e "/categories.js/ r classes\categories.js" ^
-  -e "/category.js/ r classes\category.js" ^
-  -e "/search-bar.js/ r classes\search-bar.js" ^
-  -e "/questions.js/ r classes\questions.js" ^
-  -e "/question.js/ r classes\question\question.js" ^
-  -e "/question-format.js/ r classes\question\question-format.js" ^
-  -e "/question-elem.js/ r classes\question\question-elem.js" ^
-  -e "/prettify.js/ r prettify.js" ^
-  -e "/events.js/ r classes\events.js" ^
-  -e "/polyfill-methods.js/ r polyfill-methods.js" <skeleton.js>algorithmIV-app-temp.js
+  -e "/insert-aIV-utils/ r dependencies/algorithmIV-utils.min.js" ^
+  -e "/insert-public-api/ r public-api.js" ^
+  -e "/insert-module-api/ r module-api.js" ^
+  -e "/insert-module-vars/ r module-vars.js" ^
+  -e "/insert-module-methods/ r module-methods.js" ^
+  -e "/insert-class-app-base/ r classes/app/app.js" ^
+  -e "/insert-class-app-flags/ r classes/app/app-flags.js" ^
+  -e "/insert-class-app-elems/ r classes/app/app-elems.js" ^
+  -e "/insert-class-app-vals/ r classes/app/app-vals.js" ^
+  -e "/insert-class-config/ r classes/config/config.js" ^
+  -e "/insert-class-search-bar-config/ r classes/config/search-bar-config.js" ^
+  -e "/insert-class-defaults-search-bar-config/ r classes/config/defaults-search-bar-config.js" ^
+  -e "/insert-class-questions-config/ r classes/config/questions-config.js" ^
+  -e "/insert-class-pretty-config/ r classes/config/pretty-config.js" ^
+  -e "/insert-class-links-config/ r classes/config/links-config.js" ^
+  -e "/insert-class-sources/ r classes/sources.js" ^
+  -e "/insert-class-source-one/ r classes/source.js" ^
+  -e "/insert-class-categories/ r classes/categories.js" ^
+  -e "/insert-class-category/ r classes/category.js" ^
+  -e "/insert-class-search-bar-base/ r classes/search-bar/search-bar.js" ^
+  -e "/insert-class-search-bar-elems/ r classes/search-bar/search-bar-elems.js" ^
+  -e "/insert-class-questions/ r classes/questions.js" ^
+  -e "/insert-class-question-one/ r classes/question/question.js" ^
+  -e "/insert-class-question-format/ r classes/question/question-format.js" ^
+  -e "/insert-class-question-elem/ r classes/question/question-elem.js" ^
+  -e "/insert-prettifier/ r prettify.js" ^
+  -e "/insert-class-events/ r classes/events.js" <skeleton.js>algorithmIV-app-temp.js
 cd ..
 copy /y pre-compiled-parts\algorithmIV-app-temp.js algorithmIV-app.js
 del /f pre-compiled-parts\algorithmIV-app-temp.js
+sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+del /f sed*
 
 ----------------------------------------------------------------
 MINIFY SRC              |
@@ -382,7 +402,7 @@ src/algorithmIV-app.js  |    |
 -------------------------    v
 
 ## UNIX Commands
-sed "3,23 d" <src/algorithmIV-app.js>compile/algorithmIV-app.js
+sed "3,26 d;47,88 d" <src/algorithmIV-app.js>compile/algorithmIV-app.js
 cd compile
 java \
   -jar minifier.jar \
@@ -391,12 +411,14 @@ java \
 rm -f algorithmIV-app.js
 cd ..
 sed \
+  -e "1 r src/pre-compiled-parts/dependencies/algorithmIV-utils.min.js" \
+  -e "s/ blank line \*\///" \
   -e "2 r compile/copyright.txt" \
-  -e "1,2 d" <compile/algorithmIV-app.min.js>src/algorithmIV-app.min.js
+  -e "1 d" <compile/algorithmIV-app.min.js>src/algorithmIV-app.min.js
 rm -f compile/algorithmIV-app.min.js
 
 ## MS-DOS Commands
-sed "3,23 d" <src\algorithmIV-app.js>compile\algorithmIV-app.js
+sed "3,26 d;47,88 d" <src\algorithmIV-app.js>compile\algorithmIV-app.js
 cd compile
 java ^
   -jar minifier.jar ^
@@ -405,6 +427,8 @@ java ^
 del /f algorithmIV-app.js
 cd ..
 sed ^
+  -e "1 r src\pre-compiled-parts\dependencies\algorithmIV-utils.min.js" ^
+  -e "s/ blank line \*\///" ^
   -e "2 r compile\copyright.txt" ^
-  -e "1,2 d" <compile\algorithmIV-app.min.js>src\algorithmIV-app.min.js
+  -e "1 d" <compile\algorithmIV-app.min.js>src\algorithmIV-app.min.js
 del /f compile\algorithmIV-app.min.js
