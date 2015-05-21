@@ -21,19 +21,21 @@
 
     aIV.debug.set({
       addBreakpoints: 'args fail',
-      turnOnGroups  : false,
+      turnOnGroups  : true,
       turnOnProfiles: false,
       turnOnTimers  : false
     });
 
     aIV.debug({
       classTitle    : 'prettify',
-      turnOffMethods: 'all'
+      turnOffMethods: 'all',
+      turnOnGroups  : false
     });
 
     aIV.debug({
       classTitle    : 'highlightSyntax',
-      turnOffMethods: 'all'
+      turnOffMethods: 'all',
+      turnOnGroups  : false
     });
 
     // END of immediate calls
