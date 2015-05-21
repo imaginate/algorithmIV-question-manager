@@ -6692,7 +6692,7 @@ aIV.utils.set({
 
     this.debug.start('init', id);
 
-    this.debug.args('init', id, 'number');
+    checkArgs(id, 'number');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -6703,7 +6703,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.root;
 
@@ -6712,7 +6712,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.info;
 
@@ -6721,7 +6721,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.solution;
 
@@ -6730,7 +6730,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.pre;
 
@@ -6739,7 +6739,7 @@ aIV.utils.set({
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.code;
 
@@ -6752,6 +6752,7 @@ aIV.utils.set({
       id       : 'aIV-q' + id,
       className: 'question'
     });
+
     this.info = makeElem({ className: 'info' });
 
     this.root.appendChild(this.info);
@@ -6772,7 +6773,7 @@ aIV.utils.set({
    * Public Method (QuestionElem.prototype.addContent)
    * -----------------------------------------------------
    * @desc Adds the question's contents to its element.
-   * @param {{
+   * @param {!{
    *   id      : string,
    *   url     : string,
    *   complete: string,
@@ -6781,16 +6782,16 @@ aIV.utils.set({
    *     name: string
    *   },
    *   mainCat : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
    *   subCat  : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
-   *   links   : links,
+   *   links   : !links,
    *   problem : string,
    *   descr   : string,
    *   solution: {
@@ -6802,14 +6803,17 @@ aIV.utils.set({
    */
   QuestionElem.prototype.addContent = function(question) {
 
+    var thisDebug = this.debug;
+
     this.debug.group('addContent', 'coll', 'questionID= $$', question.id);
     this.debug.start('addContent', question);
-    this.debug.args('addContent', question, 'object');
 
-    /** @type {Element} */
+    /** @type {!Element} */
     var root;
-    /** @type {Element} */
+    /** @type {!Element} */
     var info;
+
+    checkArgs(question, '!object');
 
     root = this.root;
     info = this.info;
@@ -6818,38 +6822,38 @@ aIV.utils.set({
     // Note: See the below private helper methods for more details
 
     if (question.id) {
-      appendId.call(this, question.id, question.url);
+      appendId(question.id, question.url);
     }
 
     if (question.source.name) {
-      appendSource.call(this, question.source);
+      appendSource(question.source);
     }
 
     if (question.complete) {
-      appendComplete.call(this, question.complete);
+      appendComplete(question.complete);
     }
 
     if (question.mainCat.h3 || question.subCat.h3) {
-      appendCategory.call(this, question.mainCat, question.subCat);
+      appendCategory(question.mainCat, question.subCat);
     }
 
     if (question.problem || question.descr) {
-      appendProblem.call(this, question.problem, question.descr);
+      appendProblem(question.problem, question.descr);
     }
 
-    if ( question.solution.hasOwnProperty('prettyCode') ) {
+    if ( hasOwnProp(question.solution, 'prettyCode') ) {
       appendSolution.call(this, question.solution);
     }
 
     if (question.output) {
-      appendOutput.call(this, question.output);
+      appendOutput(question.output);
     }
 
     if (question.links.length) {
-      appendLinks.call(this, question.links);
+      appendLinks(question.links);
     }
 
-    // Close this debug console group
+    this.debug.end('addContent');
     this.debug.group('addContent', 'end');
 
     /**
@@ -6863,19 +6867,20 @@ aIV.utils.set({
      */
     function appendId(id, url) {
 
-      this.debug.start('appendId', id, url);
-      this.debug.args('appendId', id, 'string', url, 'string');
+      thisDebug.start('appendId', id, url);
 
       /** @type {boolean} */
       var config;
-      /** @type {Element} */
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       config = app.config.links.get('id');
 
@@ -6887,18 +6892,17 @@ aIV.utils.set({
         setElemText(p, id);
       }
 
-
       // Add the anchor link
       if (config) {
-        a = makeIdLink.call(this, id, url);
+        a = makeIdLink(id, url);
         p.appendChild(a);
-        debugMsg = 'p= $$, a= $$, a.onclick= $$';
-        this.debug.state('appendId', debugMsg, p, a, a.onclick);
       }
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
+      thisDebug.end('appendId');
     }
 
     /**
@@ -6908,16 +6912,17 @@ aIV.utils.set({
      * @desc Creates an anchor element for the question id.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {Element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
 
-      this.debug.start('makeIdLink', id, url);
-      this.debug.args('makeIdLink', id, 'string', url, 'string');
+      thisDebug.start('makeIdLink', id, url);
 
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       if (!url) {
         url = Number(id);
@@ -6928,10 +6933,12 @@ aIV.utils.set({
       a.onclick = (function(id) {
         return function onclick(event) {
           Events.linkId(id);
-          event && event.preventDefault && event.preventDefault();
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })( Number(id) );
+
+      thisDebug.end('makeIdLink', a);
 
       return a;
     }
@@ -6941,24 +6948,25 @@ aIV.utils.set({
      * Private Method (appendSource)
      * ---------------------------------------------
      * @desc Appends the question's source.
-     * @param {stringMap} source - The id and name of the source.
+     * @param {!stringMap} source - The id and name of the source.
      * @private
      */
     function appendSource(source) {
 
-      this.debug.start('appendSource', source);
-      this.debug.args('appendSource', source, 'stringMap');
+      thisDebug.start('appendSource', source);
 
       /** @type {boolean} */
       var config;
-      /** @type {Element} */
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(source, '!stringMap');
 
       config = app.config.links.get('source');
 
@@ -6976,11 +6984,11 @@ aIV.utils.set({
 
       // Add the anchor link
       if (config) {
-        a = makeSourceLink.call(this, source.id, source.name);
+        a = makeSourceLink(source.id, source.name);
         p.appendChild(a);
-        debugMsg = 'p= $$, a= $$, a.onclick= $$';
-        this.debug.state('appendSource', debugMsg, p, a, a.onclick);
       }
+
+      thisDebug.end('appendSource');
     }
 
     /**
@@ -6990,18 +6998,19 @@ aIV.utils.set({
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {Element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
 
-      this.debug.start('makeSourceLink', id, name);
-      this.debug.args('makeSourceLink', id, 'string', name, 'string');
+      thisDebug.start('makeSourceLink', id, name);
 
       /** @type {string} */
       var url;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.sources.get(id, 'url');
 
@@ -7010,10 +7019,12 @@ aIV.utils.set({
       a.onclick = (function(id) {
         return function onclick(event) {
           Events.linkSource(id);
-          event && event.preventDefault && event.preventDefault();
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
+
+      thisDebug.end('makeSourceLink', a);
 
       return a;
     }
@@ -7028,15 +7039,16 @@ aIV.utils.set({
      */
     function appendComplete(complete) {
 
-      this.debug.start('appendComplete', complete);
-      this.debug.args('appendComplete', complete, 'string');
+      thisDebug.start('appendComplete', complete);
 
-      /** @type {Element} */
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
+
+      checkArgs(complete, 'string');
 
       div = makeElem({ className: 'stage' });
       h3  = makeElem({ tag: 'h3', text: 'Completed:' });
@@ -7045,6 +7057,8 @@ aIV.utils.set({
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
+      thisDebug.end('appendComplete');
     }
 
     /**
@@ -7052,39 +7066,42 @@ aIV.utils.set({
      * Private Method (appendCategory)
      * ---------------------------------------------
      * @desc Appends the question's categories.
-     * @param {Object} main - The question's main categories.
-     * @param {Object} sub - The question's sub categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Object} sub - The question's sub categories.
      * @private
      */
     function appendCategory(main, sub) {
 
-      this.debug.start('appendCategory', main, sub);
-      this.debug.args('appendCategory', main, 'object', sub, 'object');
+      thisDebug.start('appendCategory', main, sub);
 
-      /** @type {Element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {Element} */
+      /** @type {!Element} */
       var mainDiv;
-      /** @type {Element} */
+      /** @type {!Element} */
       var subDiv;
+
+      checkArgs(main, '!object', sub, '!object');
 
       contain = makeElem({ className: 'category' });
 
       // Add the main categories
       if (main.h3) {
         mainDiv = makeElem({ className: 'mainCategory' });
-        appendMainCategories.call(this, main, mainDiv);
+        appendMainCategories(main, mainDiv);
         contain.appendChild(mainDiv);
       }
 
       // Add the sub categories
       if (sub.h3) {
         subDiv = makeElem({ className: 'subCategory' });
-        appendSubCategories.call(this, sub, subDiv);
+        appendSubCategories(sub, subDiv);
         contain.appendChild(subDiv);
       }
 
       root.appendChild(contain);
+
+      thisDebug.end('appendCategory');
     }
 
     /**
@@ -7092,20 +7109,19 @@ aIV.utils.set({
      * Private Method (appendMainCategories)
      * ---------------------------------------------
      * @desc Appends the question's main categories.
-     * @param {Object} main - The question's main categories.
-     * @param {Element} div - The DOM container for the main categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
 
-      this.debug.start('appendMainCategories', main, div);
-      this.debug.args('appendMainCategories', main, 'object', div, 'elem');
+      thisDebug.start('appendMainCategories', main, div);
 
       /** @type {boolean} */
       var config;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -7113,8 +7129,10 @@ aIV.utils.set({
       var len;
       /** @type {number} */
       var last;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(main, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
@@ -7134,14 +7152,15 @@ aIV.utils.set({
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeMainCatLink.call(this, main.ids[i], main.names[i]);
+          a = makeMainCatLink(main.ids[i], main.names[i]);
           p.appendChild(a);
           if (i !== last) {
             p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
-        this.debug.state('appendMainCategories', 'p= $$', p);
       }
+
+      thisDebug.end('appendMainCategories');
     }
 
     /**
@@ -7149,20 +7168,19 @@ aIV.utils.set({
      * Private Method (appendSubCategories)
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
-     * @param {Object} sub - The question's sub categories.
-     * @param {Element} div - The DOM container for the sub categories.
+     * @param {!Object} sub - The question's sub categories.
+     * @param {!Element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
 
-      this.debug.start('appendSubCategories', sub, div);
-      this.debug.args('appendSubCategories', sub, 'object', div, 'elem');
+      thisDebug.start('appendSubCategories', sub, div);
 
       /** @type {boolean} */
       var config;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -7170,8 +7188,10 @@ aIV.utils.set({
       var len;
       /** @type {number} */
       var last;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(sub, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
@@ -7191,14 +7211,15 @@ aIV.utils.set({
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeSubCatLink.call(this, sub.ids[i], sub.names[i]);
+          a = makeSubCatLink(sub.ids[i], sub.names[i]);
           p.appendChild(a);
           if (i !== last) {
             p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
-        this.debug.state('appendSubCategories', 'p= $$', p);
       }
+
+      thisDebug.end('appendSubCategories');
     }
 
     /**
@@ -7208,18 +7229,19 @@ aIV.utils.set({
      * @desc Creates a main category link.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {Element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
-      this.debug.start('makeMainCatLink', id, name);
-      this.debug.args('makeMainCatLink', id, 'string', name, 'string');
+      thisDebug.start('makeMainCatLink', id, name);
 
       /** @type {string} */
       var url;
-      /** @type {Element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.categories.get(id, 'url');
 
@@ -7228,13 +7250,12 @@ aIV.utils.set({
       a.onclick = (function(id) {
         return function onclick(event) {
           Events.linkMainCat(id);
-          event && event.preventDefault && event.preventDefault();
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
 
-      debugMsg = 'a= $$, a.onclick= $$';
-      this.debug.state('makeMainCatLink', debugMsg, a, a.onclick);
+      thisDebug.end('makeMainCatLink', a);
 
       return a;
     }
@@ -7244,59 +7265,61 @@ aIV.utils.set({
      * Private Method (makeSubCatLink)
      * ---------------------------------------------
      * @desc Creates a sub category link.
-     * @todo Add url parsing logic and remove the use of
-     *   indexOf to find the sub category's parent.
-     * @param {string} id - The sub category's id.
+     * @todo Remove the use of indexOf to find the sub category's parent.
+     * @param {string} subId - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {Element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
-    function makeSubCatLink(id, name) {
+    function makeSubCatLink(subId, name) {
 
-      this.debug.start('makeSubCatLink', id, name);
-      this.debug.args('makeSubCatLink', id, 'string', name, 'string');
+      thisDebug.start('makeSubCatLink', subId, name);
 
-      /** @type {string} */
-      var url;
-      /** @type {Element} */
-      var a;
-      /** @type {string} */
-      var parentId;
       /** @type {string} */
       var parentUrl;
+      /** @type {string} */
+      var parentId;
+      /** @type {!Category} */
+      var category;
+      /** @type {!strings} */
+      var subIds;
+      /** @type {string} */
+      var mainId;
+      /** @type {string} */
+      var url;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
+
+      checkArgs(subId, 'string', name, 'string');
 
       // Set the sub category's parent id and url
-      app.categories.ids.some(function(/** string */ catId) {
-        /** @private */
-        var category;
-        /** @private */
-        var subs;
-
-        category = app.categories.get(catId);
-        subs = category.get('subs');
-        if (subs && subs.indexOf(id) !== -1) {
-          parentId  = catId;
+      i = app.categories.ids.length;
+      while (i--) {
+        mainId = app.categories.ids[i];
+        category = app.categories.get(mainId);
+        subIds = category.get('subs');
+        if (subIds.indexOf(subId) !== -1) {
+          parentId  = mainId;
           parentUrl = category.get('url');
-          return true;
+          break;
         }
+      }
 
-        return false;
-      });
-
-      url = app.categories.get(id, 'url');
+      url = app.categories.get(subId, 'url');
 
       a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + parentUrl + '/' + url;
-      a.onclick = (function(id, parentId) {
+      a.onclick = (function(subId, parentId) {
         return function onclick(event) {
-          Events.linkSubCat(id, parentId);
-          event && event.preventDefault && event.preventDefault();
+          Events.linkSubCat(subId, parentId);
+          event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id, parentId);
+      })(subId, parentId);
 
-      debugMsg = 'a= $$, a.onclick= $$';
-      this.debug.state('makeSubCatLink', debugMsg, a, a.onclick);
+      thisDebug.end('makeSubCatLink', a);
 
       return a;
     }
@@ -7312,22 +7335,23 @@ aIV.utils.set({
      */
     function appendProblem(problem, descr) {
 
-      this.debug.start('appendProblem', problem, descr);
-      this.debug.args('appendProblem', problem, 'string', descr, 'string');
+      thisDebug.start('appendProblem', problem, descr);
 
       /** @type {string} */
       var content;
       /** @type {string} */
       var title;
-      /** @type {Element} */
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
 
+      checkArgs(problem, 'string', descr, 'string');
+
       title = (problem) ? 'Problem:' : 'Description:';
-      content = (problem) ? problem : descr;
+      content = problem || descr;
 
       div = makeElem({ className: 'problem' });
       h3  = makeElem({ tag: 'h3', text: title });
@@ -7337,6 +7361,8 @@ aIV.utils.set({
       div.appendChild(p);
 
       root.appendChild(div);
+
+      thisDebug.end('appendProblem');
     }
 
     /**
@@ -7344,28 +7370,30 @@ aIV.utils.set({
      * Private Method (appendSolution)
      * ---------------------------------------------
      * @desc Appends the question's solution.
-     * @param {Object} solution - The question's solution.
+     * @this {!QuestionElem}
+     * @param {!Object} solution - The question's solution.
      * @private
      */
     function appendSolution(solution) {
 
-      this.debug.start('appendSolution', solution);
-      this.debug.args('appendSolution', solution, 'object');
+      thisDebug.start('appendSolution', solution);
 
-      /** @type {Element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var preDiv;
-      /** @type {Element} */
+      /** @type {!Element} */
       var pre;
-      /** @type {Element} */
+      /** @type {!Element} */
       var code;
-      /** @type {Element} */
+      /** @type {!Element} */
       var ol;
       /** @type {number} */
       var height;
+
+      checkArgs(solution, '!object');
 
       contain  = makeElem({ className: 'solution' });
       h3       = makeElem({ tag: 'h3', text: 'Solution:' });
@@ -7389,6 +7417,8 @@ aIV.utils.set({
       this.solution = contain;
       this.pre = preDiv;
       this.code = code;
+
+      thisDebug.end('appendSolution');
     }
 
     /**
@@ -7401,15 +7431,16 @@ aIV.utils.set({
      */
     function appendOutput(output) {
 
-      this.debug.start('appendOutput', output);
-      this.debug.args('appendOutput', output, 'string');
+      thisDebug.start('appendOutput', output);
 
-      /** @type {Element} */
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
+
+      checkArgs(output, 'string');
 
       div = makeElem({ className: 'output' });
       h3  = makeElem({ tag: 'h3', text: 'Output:' });
@@ -7419,6 +7450,8 @@ aIV.utils.set({
       div.appendChild(p);
 
       root.appendChild(div);
+
+      thisDebug.end('appendOutput');
     }
 
     /**
@@ -7426,20 +7459,29 @@ aIV.utils.set({
      * Private Method (appendLinks)
      * ---------------------------------------------
      * @desc Appends the question's links.
-     * @param {links} links - The question's links.
+     * @param {!links} links - The question's links.
      * @private
      */
     function appendLinks(links) {
 
-      this.debug.start('appendLinks', links);
-      this.debug.args('appendLinks', links, 'objects');
+      thisDebug.start('appendLinks', links);
 
-      /** @type {Element} */
+      /** @type {!Object} */
+      var linkObj;
+      /** @type {number} */
+      var len;
+      /** @type {!Element} */
       var div;
-      /** @type {Element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {Element} */
+      /** @type {!Element} */
       var p;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
+
+      checkArgs(links, '!objects');
 
       div = makeElem({ className: 'links' });
       h3  = makeElem({ tag: 'h3', text: 'Links:' });
@@ -7448,17 +7490,20 @@ aIV.utils.set({
       div.appendChild(h3);
       div.appendChild(p);
 
-      links.forEach(function(/** Object */ linkObj) {
-        /** @type {Element} */
-        var a;
-
+      // Append the links
+      len = links.length;
+      i = -1;
+      while (++i < len) {
+        linkObj = links[i];
         a = makeElem({ tag: 'a', text: linkObj.name });
         a.href = linkObj.href;
         a.target = '_blank';
         p.appendChild(a);
-      });
+      }
 
       root.appendChild(div);
+
+      thisDebug.end('appendLinks');
     }
   };
 
@@ -7478,26 +7523,27 @@ aIV.utils.set({
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {Element} */
+    /** @type {!Element} */
     var code;
-    /** @type {Element} */
+    /** @type {!Element} */
     var ext;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extClose;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extOpen;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extBG;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extHov;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extHovC;
-    /** @type {Element} */
+    /** @type {!Element} */
     var extHovO;
 
     code = this.code;
 
     overflow = code.scrollWidth - code.clientWidth;
+
     debugMsg = 'this.code= $$, scrollWidth= $$, clientWidth= $$, overflow= $$';
     debugArgs = [ 'addCodeExt', debugMsg, code, code.scrollWidth ];
     debugArgs.push(code.clientWidth, overflow);
@@ -7506,6 +7552,7 @@ aIV.utils.set({
     if (overflow < 1) {
       this.root.style.display = 'none';
       this.root.style.opacity = '1';
+      this.debug.end('addCodeExt');
       return;
     }
 
@@ -7541,7 +7588,7 @@ aIV.utils.set({
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elementMap} */
+      /** @type {!elementMap} */
       var elems;
 
       elems = {
@@ -7570,6 +7617,8 @@ aIV.utils.set({
 
     this.root.style.display = 'none';
     this.root.style.opacity = '1';
+
+    this.debug.end('addCodeExt');
   };
 
 /* -----------------------------------------------------------------------------
