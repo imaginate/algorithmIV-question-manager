@@ -960,19 +960,21 @@
       addBreakpoints: 'args fail',
       turnOnGroups  : true,
       turnOnProfiles: false,
-      turnOnTimers  : false
+      turnOnTimers  : true
     });
 
     aIV.debug({
       classTitle    : 'prettify',
       turnOffMethods: 'all',
-      turnOnGroups  : false
+      turnOnGroups  : false,
+      turnOnTimers  : false
     });
 
     aIV.debug({
       classTitle    : 'highlightSyntax',
       turnOffMethods: 'all',
-      turnOnGroups  : false
+      turnOnGroups  : false,
+      turnOnTimers  : false
     });
 
     // END of immediate calls
