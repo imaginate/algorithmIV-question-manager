@@ -1,5 +1,9 @@
 
-  var debug = aIV.debug('appModule');
+  var debug = aIV.debug({
+    classTitle: 'appModule',
+    openGroups: true
+  });
+  var debugHelp = aIV.debug('appHelpers');
   var debugArgs, debugMsg, debugCheck;
 
   /**

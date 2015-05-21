@@ -15,6 +15,7 @@
       classTitle: 'App',
       openGroups: true
     });
+    this.debugHelp = aIV.debug('AppHelpers');
 
     this.debug.start('init', config, sources, categories, questions);
 
@@ -382,7 +383,7 @@
    */
   App.prototype.findMatches = function() {
 
-    this.debug.start('findMatches');
+    this.debugHelp.start('findMatches');
 
     /** @type {numbers} */
     var stage;
@@ -427,7 +428,7 @@
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
       newIds = [];
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -437,7 +438,7 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -476,7 +477,7 @@
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -534,7 +535,7 @@
       newIds.reverse();
     }
 
-    this.debug.end('findMatches', newIds);
+    this.debugHelp.end('findMatches', newIds);
 
     return newIds;
   };
@@ -548,7 +549,7 @@
    */
   App.prototype.getStateObj = function() {
 
-    this.debug.start('getStateObj');
+    this.debugHelp.start('getStateObj');
 
     /** @type {Object<string, (string|number|numbers)>} */
     var vals;
@@ -566,7 +567,7 @@
 
     vals = JSON.stringify(vals);
 
-    this.debug.end('getStateObj', vals);
+    this.debugHelp.end('getStateObj', vals);
 
     return vals;
   };

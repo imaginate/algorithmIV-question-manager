@@ -331,7 +331,11 @@ aIV.utils.set({
  * -------------------------------------------------------------------------- */
 
 
-  var debug = aIV.debug('appModule');
+  var debug = aIV.debug({
+    classTitle: 'appModule',
+    openGroups: true
+  });
+  var debugHelp = aIV.debug('appHelpers');
   var debugArgs, debugMsg, debugCheck;
 
   /**
@@ -376,7 +380,7 @@ aIV.utils.set({
    */
   function getResource(jsonFile, callback) {
 
-    debug.start('getResource', jsonFile, callback);
+    debugHelp.start('getResource', jsonFile, callback);
 
     /** @type {!XMLHttpRequest} */
     var http;
@@ -390,7 +394,7 @@ aIV.utils.set({
       if (http.readyState === 4) {
         if (http.status === 200) {
           resources[ jsonFile ] = JSON.parse(http.responseText);
-          debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
+          debugHelp.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
           errorMsg = 'Your aIV.app resource - resources/' + jsonFile + '.json - ';
@@ -399,7 +403,7 @@ aIV.utils.set({
           errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
           throw new Error(errorMsg);
         }
-        debug.end('getResource');
+        debugHelp.end('getResource');
         callback();
       }
     };
@@ -507,7 +511,7 @@ aIV.utils.set({
    */
   var makeOptElem = function(id, name) {
 
-    debug.start('makeOptElem', id, name);
+    debugHelp.start('makeOptElem', id, name);
 
     /** @type {!Element} */
     var elem;
@@ -526,7 +530,7 @@ aIV.utils.set({
       elem.disabled = true;
     }
 
-    debug.end('makeOptElem', elem);
+    debugHelp.end('makeOptElem', elem);
 
     return elem;
   };
@@ -545,7 +549,7 @@ aIV.utils.set({
    */
   var setSearchSection = function(sel, ids, names, opts, noAll) {
 
-    debug.start('setSearchSection', sel, ids, names, opts, noAll);
+    debugHelp.start('setSearchSection', sel, ids, names, opts, noAll);
 
     /** @type {!Array<*>} */
     var args;
@@ -577,7 +581,7 @@ aIV.utils.set({
       sel && sel.appendChild(elem);
     }
 
-    debug.end('setSearchSection');
+    debugHelp.end('setSearchSection');
   };
 
   /**
@@ -695,7 +699,7 @@ aIV.utils.set({
    */
   function checkTypes(vals, types) {
 
-    debug.start('checkTypes', vals, types);
+    debugHelp.start('checkTypes', vals, types);
 
     /** @type {number} */
     var i;
@@ -732,7 +736,7 @@ aIV.utils.set({
       pass = checkType(vals[i], types[i]);
     }
 
-    debug.end('checkTypes', pass);
+    debugHelp.end('checkTypes', pass);
 
     return pass;
   }
@@ -748,7 +752,7 @@ aIV.utils.set({
    */
   function sortKeys(ids, data) {
 
-    debug.start('sortKeys', ids, data);
+    debugHelp.start('sortKeys', ids, data);
 
     /** @type {!strings} */
     var keys;
@@ -804,7 +808,7 @@ aIV.utils.set({
       }
     }
 
-    debug.end('sortKeys', keys);
+    debugHelp.end('sortKeys', keys);
 
     return keys;
   }
@@ -819,13 +823,13 @@ aIV.utils.set({
    */
   function capFirst(str) {
 
-    debug.start('capFirst', str);
+    debugHelp.start('capFirst', str);
 
     checkArgs(str, 'string');
 
     str = str.charAt(0).toUpperCase() + str.slice(1);
 
-    debug.end('capFirst', str);
+    debugHelp.end('capFirst', str);
 
     return str;
   }
@@ -841,7 +845,7 @@ aIV.utils.set({
    */
   function camelCase(str) {
 
-    debug.start('camelCase', str);
+    debugHelp.start('camelCase', str);
 
     /** @type {!strings} */
     var arr;
@@ -860,7 +864,7 @@ aIV.utils.set({
 
     str = arr.join('');
 
-    debug.end('camelCase', str);
+    debugHelp.end('camelCase', str);
 
     return str;
   }
@@ -885,7 +889,7 @@ aIV.utils.set({
 
     return function trimFunctionWrapper(str) {
 
-      debug.start('trimFunctionWrapper', str);
+      debugHelp.start('trimFunctionWrapper', str);
 
       checkArgs(str, 'string');
 
@@ -894,7 +898,7 @@ aIV.utils.set({
         str = str.replace(endCheck, '');
       }
 
-      debug.end('trimFunctionWrapper', str);
+      debugHelp.end('trimFunctionWrapper', str);
 
       return str;
     };
@@ -917,7 +921,7 @@ aIV.utils.set({
 
     return function isLink(str) {
 
-      debug.start('isLink', str);
+      debugHelp.start('isLink', str);
 
       /** @type {boolean} */
       var result;
@@ -926,7 +930,7 @@ aIV.utils.set({
 
       result = http.test(str);
 
-      debug.end('isLink', result);
+      debugHelp.end('isLink', result);
 
       return result;
     };
@@ -952,7 +956,7 @@ aIV.utils.set({
 
     return function makeUrl(name) {
 
-      debug.start('makeUrl', name);
+      debugHelp.start('makeUrl', name);
 
       /** @type {string} */
       var url;
@@ -963,7 +967,7 @@ aIV.utils.set({
       url = url.replace(invalidCharacters, '');
       url = url.replace(spaces, '-');
 
-      debug.end('makeUrl', url);
+      debugHelp.end('makeUrl', url);
 
       return url;
     };
@@ -981,7 +985,7 @@ aIV.utils.set({
    */
   function checkForValue(checkVal, arr) {
 
-    debug.start('checkForValue', checkVal, arr);
+    debugHelp.start('checkForValue', checkVal, arr);
 
     /** @type {number} */
     var arrVal;
@@ -1001,7 +1005,7 @@ aIV.utils.set({
       }
     }
 
-    debug.end('checkForValue', pass);
+    debugHelp.end('checkForValue', pass);
 
     return pass;
   }
@@ -1092,7 +1096,7 @@ aIV.utils.set({
    */
   function logStartAppTypeError(prop, shouldBeType, wasType) {
 
-    debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
+    debugHelp.start('logStartAppTypeError', prop, shouldBeType, wasType);
 
     /** @type {string} */
     var errorMsg;
@@ -1105,7 +1109,7 @@ aIV.utils.set({
 
     console.error(errorMsg);
 
-    debug.end('logAppInitTypeErrors');
+    debugHelp.end('logAppInitTypeErrors');
   }
 
 /* -----------------------------------------------------------------------------
@@ -1129,6 +1133,7 @@ aIV.utils.set({
       classTitle: 'App',
       openGroups: true
     });
+    this.debugHelp = aIV.debug('AppHelpers');
 
     this.debug.start('init', config, sources, categories, questions);
 
@@ -1496,7 +1501,7 @@ aIV.utils.set({
    */
   App.prototype.findMatches = function() {
 
-    this.debug.start('findMatches');
+    this.debugHelp.start('findMatches');
 
     /** @type {numbers} */
     var stage;
@@ -1541,7 +1546,7 @@ aIV.utils.set({
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
       newIds = [];
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -1551,7 +1556,7 @@ aIV.utils.set({
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -1590,7 +1595,7 @@ aIV.utils.set({
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-      this.debug.end('findMatches', newIds);
+      this.debugHelp.end('findMatches', newIds);
       return newIds;
     }
 
@@ -1648,7 +1653,7 @@ aIV.utils.set({
       newIds.reverse();
     }
 
-    this.debug.end('findMatches', newIds);
+    this.debugHelp.end('findMatches', newIds);
 
     return newIds;
   };
@@ -1662,7 +1667,7 @@ aIV.utils.set({
    */
   App.prototype.getStateObj = function() {
 
-    this.debug.start('getStateObj');
+    this.debugHelp.start('getStateObj');
 
     /** @type {Object<string, (string|number|numbers)>} */
     var vals;
@@ -1680,7 +1685,7 @@ aIV.utils.set({
 
     vals = JSON.stringify(vals);
 
-    this.debug.end('getStateObj', vals);
+    this.debugHelp.end('getStateObj', vals);
 
     return vals;
   };

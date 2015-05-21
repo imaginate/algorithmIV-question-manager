@@ -9,7 +9,7 @@
    */
   function getResource(jsonFile, callback) {
 
-    debug.start('getResource', jsonFile, callback);
+    debugHelp.start('getResource', jsonFile, callback);
 
     /** @type {!XMLHttpRequest} */
     var http;
@@ -23,7 +23,7 @@
       if (http.readyState === 4) {
         if (http.status === 200) {
           resources[ jsonFile ] = JSON.parse(http.responseText);
-          debug.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
+          debugHelp.state('getResource', 'parsed responseText= $$', resources[ jsonFile ]);
         }
         else {
           errorMsg = 'Your aIV.app resource - resources/' + jsonFile + '.json - ';
@@ -32,7 +32,7 @@
           errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
           throw new Error(errorMsg);
         }
-        debug.end('getResource');
+        debugHelp.end('getResource');
         callback();
       }
     };
@@ -140,7 +140,7 @@
    */
   var makeOptElem = function(id, name) {
 
-    debug.start('makeOptElem', id, name);
+    debugHelp.start('makeOptElem', id, name);
 
     /** @type {!Element} */
     var elem;
@@ -159,7 +159,7 @@
       elem.disabled = true;
     }
 
-    debug.end('makeOptElem', elem);
+    debugHelp.end('makeOptElem', elem);
 
     return elem;
   };
@@ -178,7 +178,7 @@
    */
   var setSearchSection = function(sel, ids, names, opts, noAll) {
 
-    debug.start('setSearchSection', sel, ids, names, opts, noAll);
+    debugHelp.start('setSearchSection', sel, ids, names, opts, noAll);
 
     /** @type {!Array<*>} */
     var args;
@@ -210,7 +210,7 @@
       sel && sel.appendChild(elem);
     }
 
-    debug.end('setSearchSection');
+    debugHelp.end('setSearchSection');
   };
 
   /**
@@ -328,7 +328,7 @@
    */
   function checkTypes(vals, types) {
 
-    debug.start('checkTypes', vals, types);
+    debugHelp.start('checkTypes', vals, types);
 
     /** @type {number} */
     var i;
@@ -365,7 +365,7 @@
       pass = checkType(vals[i], types[i]);
     }
 
-    debug.end('checkTypes', pass);
+    debugHelp.end('checkTypes', pass);
 
     return pass;
   }
@@ -381,7 +381,7 @@
    */
   function sortKeys(ids, data) {
 
-    debug.start('sortKeys', ids, data);
+    debugHelp.start('sortKeys', ids, data);
 
     /** @type {!strings} */
     var keys;
@@ -437,7 +437,7 @@
       }
     }
 
-    debug.end('sortKeys', keys);
+    debugHelp.end('sortKeys', keys);
 
     return keys;
   }
@@ -452,13 +452,13 @@
    */
   function capFirst(str) {
 
-    debug.start('capFirst', str);
+    debugHelp.start('capFirst', str);
 
     checkArgs(str, 'string');
 
     str = str.charAt(0).toUpperCase() + str.slice(1);
 
-    debug.end('capFirst', str);
+    debugHelp.end('capFirst', str);
 
     return str;
   }
@@ -474,7 +474,7 @@
    */
   function camelCase(str) {
 
-    debug.start('camelCase', str);
+    debugHelp.start('camelCase', str);
 
     /** @type {!strings} */
     var arr;
@@ -493,7 +493,7 @@
 
     str = arr.join('');
 
-    debug.end('camelCase', str);
+    debugHelp.end('camelCase', str);
 
     return str;
   }
@@ -518,7 +518,7 @@
 
     return function trimFunctionWrapper(str) {
 
-      debug.start('trimFunctionWrapper', str);
+      debugHelp.start('trimFunctionWrapper', str);
 
       checkArgs(str, 'string');
 
@@ -527,7 +527,7 @@
         str = str.replace(endCheck, '');
       }
 
-      debug.end('trimFunctionWrapper', str);
+      debugHelp.end('trimFunctionWrapper', str);
 
       return str;
     };
@@ -550,7 +550,7 @@
 
     return function isLink(str) {
 
-      debug.start('isLink', str);
+      debugHelp.start('isLink', str);
 
       /** @type {boolean} */
       var result;
@@ -559,7 +559,7 @@
 
       result = http.test(str);
 
-      debug.end('isLink', result);
+      debugHelp.end('isLink', result);
 
       return result;
     };
@@ -585,7 +585,7 @@
 
     return function makeUrl(name) {
 
-      debug.start('makeUrl', name);
+      debugHelp.start('makeUrl', name);
 
       /** @type {string} */
       var url;
@@ -596,7 +596,7 @@
       url = url.replace(invalidCharacters, '');
       url = url.replace(spaces, '-');
 
-      debug.end('makeUrl', url);
+      debugHelp.end('makeUrl', url);
 
       return url;
     };
@@ -614,7 +614,7 @@
    */
   function checkForValue(checkVal, arr) {
 
-    debug.start('checkForValue', checkVal, arr);
+    debugHelp.start('checkForValue', checkVal, arr);
 
     /** @type {number} */
     var arrVal;
@@ -634,7 +634,7 @@
       }
     }
 
-    debug.end('checkForValue', pass);
+    debugHelp.end('checkForValue', pass);
 
     return pass;
   }
@@ -725,7 +725,7 @@
    */
   function logStartAppTypeError(prop, shouldBeType, wasType) {
 
-    debug.start('logStartAppTypeError', prop, shouldBeType, wasType);
+    debugHelp.start('logStartAppTypeError', prop, shouldBeType, wasType);
 
     /** @type {string} */
     var errorMsg;
@@ -738,5 +738,5 @@
 
     console.error(errorMsg);
 
-    debug.end('logAppInitTypeErrors');
+    debugHelp.end('logAppInitTypeErrors');
   }
