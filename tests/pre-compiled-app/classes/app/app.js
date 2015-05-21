@@ -206,10 +206,11 @@
     // Setup the value of isHistory
     this.isHistory = true;
     try {
-      window.history.replaceState( this.getStateObj() );
+      window.history.replaceState(this.getStateObj(), '');
     }
     catch (e) {
       this.isHistory = false;
+      this.debug.fail('init', false, e.toString());
     }
 
     this.debug.state('init', 'isHistory= $$', this.isHistory);
@@ -361,7 +362,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        window.history.pushState( app.getStateObj() );
+        window.history.pushState(app.getStateObj(), '');
       }
 
       // Show the question's main element
