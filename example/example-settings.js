@@ -1,8 +1,8 @@
-/* Algorithm IV Question Manager (v1.1.1) (learn@algorithmiv.com)
+/* Algorithm IV Question Manager (v1.1.2) (learn@algorithmiv.com)
  * Section: Example Settings & App Initialization
  * Author: Adam Smith (adamsmith@youlum.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
- * The MIT License (algorithmiv.com/docs/license) */
+ * The Apache License (algorithmiv.com/docs/license) */
 
 (function() {
   "use strict";
@@ -133,7 +133,7 @@
    * }}
    */
   settings.config.prettifyFormat = {
-    trimSpace   : 0,
+    trimSpace   : 4,
     tabLength   : 2,
     commentLinks: true
   };
