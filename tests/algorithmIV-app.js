@@ -331,10 +331,11 @@ aIV.utils.set({
  * -------------------------------------------------------------------------- */
 
 
+  // $s$
   var debug = aIV.debug({
     classTitle: 'appModule',
     openGroups: true
-  });
+  }); // $e$
   var debugHelp = aIV.debug('appHelpers');
   var debugArgs, debugMsg, debugCheck;
 
@@ -1129,10 +1130,11 @@ aIV.utils.set({
    */
   var App = function(config, sources, categories, questions) {
 
+    // $s$
     this.debug = aIV.debug({
       classTitle: 'App',
       openGroups: true
-    });
+    }); // $e$
     this.debugHelp = aIV.debug('AppHelpers');
 
     this.debug.start('init', config, sources, categories, questions);
