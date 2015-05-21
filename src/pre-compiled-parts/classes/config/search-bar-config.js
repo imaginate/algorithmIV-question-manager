@@ -3,10 +3,12 @@
    * Public Class (SearchBarConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the search bar in this app.
-   * @param {Object} config - The user's search bar config settings.
+   * @param {!Object} config - The user's search bar config settings.
    * @constructor
    */
   var SearchBarConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Properties
@@ -69,23 +71,11 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    stage    = true;
-    source   = true;
-    category = true;
-    subCat   = true;
+    stage    = !(config.stage    === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
 
-    if (config.hasOwnProperty('stage') && config.stage === false) {
-      stage = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
     if (!category && subCat) {
       subCat = false;
     }
@@ -100,11 +90,11 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from SearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         stage   : stage,
         source  : source,
@@ -112,18 +102,13 @@
         subCat  : subCat
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

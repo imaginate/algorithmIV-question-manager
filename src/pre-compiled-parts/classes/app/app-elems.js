@@ -16,7 +16,7 @@
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -25,7 +25,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {element}
+     * @type {Element}
      */
     this.sel;
 
@@ -34,7 +34,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {element}
+     * @type {Element}
      */
     this.main;
 
@@ -43,7 +43,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {element}
+     * @type {Element}
      */
     this.nav;
 
@@ -52,7 +52,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {element}
+     * @type {Element}
      */
     this.ques;
 
@@ -61,7 +61,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {element}
+     * @type {Element}
      */
     this.hold;
 
@@ -70,7 +70,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {element}
+     * @type {Element}
      */
     this.none;
 
@@ -101,37 +101,34 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {element} */
+    /** @type {Element} */
     var elem;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
-    /** @type {element} */
+    /** @type {Element} */
     var li;
 
-    this.root = document.createElement('div');
-    this.sel  = document.createElement('nav');
-    this.main = document.createElement('div');
-    this.nav  = document.createElement('nav');
-    this.ques = document.createElement('section');
-    this.hold = document.createElement('img');
-    this.none = document.createElement('section');
-
-    this.root.id = 'aIV';
-    this.sel.id  = 'aIV-selections';
-    this.main.id = 'aIV-main';
-    this.nav.id  = 'aIV-nav';
-    this.ques.id = 'aIV-questions';
-
-    this.sel.className  = 'selections';
-    this.main.className = 'main';
-    this.ques.className = 'questions';
-    this.hold.className = 'loader';
-    this.none.className = 'empty';
-
-    this.root.innerHTML = '<h1>Algorithm IV</h1>';
-    this.none.innerHTML = 'No question(s) found.';
+    this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
+    this.sel  = makeElem({
+      tag      : 'nav',
+      id       : 'aIV-selections',
+      className: 'selections'
+    });
+    this.main = makeElem({ id: 'aIV-main', className: 'main' });
+    this.nav  = makeElem({ tag: 'nav', id: 'aIV-nav' });
+    this.ques = makeElem({
+      tag      : 'section',
+      id       : 'aIV-questions',
+      className: 'questions'
+    });
+    this.hold = makeElem({ tag: 'img', className: 'loader' });
+    this.none = makeElem({
+      tag      : 'section',
+      text     : 'No question(s) found.',
+      className: 'empty'
+    });
 
     this.hold.src = 'images/loading.gif';
 
@@ -146,25 +143,24 @@
     document.body.appendChild(this.root);
 
     // Setup the scrollbar details
-    elem = document.createElement('div');
-    elem.className = 'aIV-scrollbar';
+    elem = makeElem({ className: 'aIV-scrollbar' });
     document.body.appendChild(elem);
 
     this.scrl = {};
     this.scrl.height = elem.offsetWidth - elem.clientWidth;
-    Object.freeze(this.scrl);
+    freezeObj(this.scrl);
 
     document.body.removeChild(elem);
 
     // Setup the code element details
-    elem = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-    li   = document.createElement('li');
+    elem = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem('ol');
+    li   = makeElem('li');
 
     elem.style.opacity = '0';
 
-    li.innerHTML = 'test';
+    setElemText(li, 'test');
 
     elem.appendChild(code);
     code.appendChild(ol);
@@ -180,16 +176,16 @@
 
     this.root.removeChild(elem);
 
-    Object.freeze(this.code);
-    Object.freeze(this.code.ol);
-    Object.freeze(this.code.li);
+    freezeObj(this.code);
+    freezeObj(this.code.ol);
+    freezeObj(this.code.li);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,48 +203,45 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    /** @type {element} */
+    /** @type {Element} */
     var prev;
-    /** @type {element} */
+    /** @type {Element} */
     var pArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var pBG;
-    /** @type {element} */
+    /** @type {Element} */
     var pTitle;
-    /** @type {element} */
+    /** @type {Element} */
     var next;
-    /** @type {element} */
+    /** @type {Element} */
     var nArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var nBG;
-    /** @type {element} */
+    /** @type {Element} */
     var nTitle;
 
-    prev   = document.createElement('div');
-    pArrow = document.createElement('div');
-    pBG    = document.createElement('div');
-    pTitle = document.createElement('div');
-    next   = document.createElement('div');
-    nArrow = document.createElement('div');
-    nBG    = document.createElement('div');
-    nTitle = document.createElement('div');
-
-    pArrow.id = 'aIV-prev';
-    nArrow.id = 'aIV-next';
-
-    prev.className = 'prev';
-    next.className = 'next';
-    pArrow.className = 'arrow';
-    nArrow.className = 'arrow';
-    pBG.className = 'bg';
-    nBG.className = 'bg';
-    pTitle.className = 'title';
-    nTitle.className = 'title';
-
-    pTitle.innerHTML = 'Previous';
-    pArrow.innerHTML = 'Previous';
-    nTitle.innerHTML = 'Next';
-    nArrow.innerHTML = 'Next';
+    prev = makeElem({ className: 'prev' });
+    next = makeElem({ className: 'next' });
+    pBG  = makeElem({ className: 'bg' });
+    nBG  = makeElem({ className: 'bg' });
+    pTitle = makeElem({
+      text     : 'Previous',
+      className: 'title'
+    });
+    nTitle = makeElem({
+      text     : 'Next',
+      className: 'title'
+    });
+    pArrow = makeElem({
+      id       : 'aIV-prev',
+      text     : 'Previous',
+      className: 'arrow'
+    });
+    nArrow = makeElem({
+      id       : 'aIV-next',
+      text     : 'Next',
+      className: 'arrow'
+    });
 
     pArrow.onclick = function() {
       Events.prev();
@@ -266,6 +259,7 @@
 
     this.nav.appendChild(prev);
     this.nav.appendChild(next);
+
   };
 
   /**
@@ -285,23 +279,23 @@
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {element} */
+    /** @type {Element} */
     var errorDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h2;
-    /** @type {element} */
+    /** @type {Element} */
     var p;
-    /** @type {element} */
+    /** @type {Element} */
     var exampleDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h3;
-    /** @type {element} */
+    /** @type {Element} */
     var div;
-    /** @type {element} */
+    /** @type {Element} */
     var pre;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
 
     errorMsg = '' +
@@ -309,13 +303,14 @@
       'initialized without any questions. Please ensure you correctly gave ' +
       'your settings to this app. The app should be initialized with '       +
       'an object that contains properties for all of your settings (see '    +
-      'below). If this error persists please open an issue with '            +
+      'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
-      'class="dark">aIV on GitHub</a> or send an email to <a href="mailto:'  +
-      'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
-      'will solve your problem or answer your question as quickly as we '    +
-      'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
-      'maximize your development skills and projects!<br />'                 +
+      'class="dark">GitHub repository</a> or send an email to '              +
+      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
+      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
+      'libraries are able to help you maximize your development skills and ' +
+      'projects!<br />'                                                      +
       '<span>Best,<br />'                                                    +
       '&ndash; Adam from Algorithm IV</span>';
 
@@ -415,28 +410,17 @@
     divHeight += app.elems.code.ol.height;
 
     // Create the error elements
-    errorDiv = document.createElement('div');
-    h2 = document.createElement('h2');
-    p  = document.createElement('p');
+    errorDiv = makeElem({ className: 'initError' });
+    h2 = makeElem({ tag: 'h2', text: 'Initialization Error' });
+    p  = makeElem({ tag: 'p' , html: errorMsg });
 
     // Create the example elements
-    exampleDiv = document.createElement('div');
-    h3   = document.createElement('h3');
-    div  = document.createElement('div');
-    pre  = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-
-    // Assign the class names
-    errorDiv.className   = 'initError';
-    exampleDiv.className = 'initExample';
-    div.className = 'containExample';
-
-    // Add the content
-    h2.innerHTML = 'Initialization Error';
-    p.innerHTML  = errorMsg;
-    h3.innerHTML = 'Correct Initialization Example';
-    ol.innerHTML = example;
+    exampleDiv = makeElem({ className: 'initExample' });
+    h3   = makeElem({ tag: 'h3', text: 'Correct Initialization Example' });
+    div  = makeElem({ className: 'containExample' });
+    pre  = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem({ tag: 'ol', html: example });
 
     // Complete all dynamic formatting
     div.style.height = divHeight + 'px';
@@ -456,4 +440,5 @@
 
     // Hide the loader
     this.hold.style.display = 'none';
+
   };

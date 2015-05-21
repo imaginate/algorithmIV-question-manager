@@ -4,11 +4,13 @@
    * -----------------------------------------------------
    * @desc The configuration settings for whether to show search links for
    *   portions of each question.
-   * @param {Object} config - The user's config settings for search link
-   *   formatting.
+   * @param {!Object<string, boolean>} config - The user's config settings
+   *   for search link formatting.
    * @constructor
    */
   var LinksConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -48,19 +50,9 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    source   = false;
-    category = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === true) {
-      source = true;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
+    id       = !(config.id       === false);
+    source   =  (config.source   === true );
+    category = !(config.category === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -72,29 +64,24 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from LinksConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         id      : id,
         source  : source,
         category: category
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

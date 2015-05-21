@@ -8,8 +8,10 @@
        */
       function prepareLine(line) {
 
+        checkArgs(line, 'string');
+
         orgLine = line.split('');
-        Object.freeze(orgLine);
+        freezeObj(orgLine);
         newLine = line.split('');
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
@@ -45,6 +47,7 @@
           );
           i = format(i);
         }
+
       }
 
       /**
@@ -58,36 +61,45 @@
        */
       function handleSlash(i) {
 
-        /** @type {val} */
+        /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
+        /** @type {number} */
+        var ii;
+
+        checkArgs(i, 'number');
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
-          return formatLineComment(i);
+          ii = formatLineComment(i);
         }
-
         // Handle comment opening
-        if (orgLine[i + 1] === '*') {
-          return formatCommentOpen(i);
+        else if (orgLine[i + 1] === '*') {
+          ii = formatCommentOpen(i);
         }
+        else {
 
-        // Save preceding character
-        preceding = ( (orgLine[i - 1] === ' ') ?
-          orgLine[i - 2] : orgLine[i - 1]
-        );
+          // Save preceding character
+          preceding = ( (orgLine[i - 1] === ' ') ?
+            orgLine[i - 2] : orgLine[i - 1]
+          );
 
-        // Handle RegExp
-        if (i === 0 || preRegex.test(preceding)) {
-          end = isRegex(i);
-          if (end) {
-            return formatRegex(i, end);
+          // Handle RegExp
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end) {
+              ii = formatRegex(i, end);
+            }
           }
         }
 
         // Handle operator
-        return formatOperator(i);
+        if (!ii) {
+          ii = formatOperator(i);
+        }
+
+        return ii;
       }
 
       /**
@@ -107,31 +119,22 @@
         /** @type {string} */
         var regexBody;
 
-        end = i + 1;
+        checkArgs(i, 'number');
 
-        if (orgLine[end] === '/') {
-          return 0;
-        }
+        end = (orgLine[i + 1] === '/') ? -1 : i;
 
         // Find regex end index
-        while (true) {
-
-          if (end >= lineLen) {
-            return 0;
-          }
+        while (++end && end < lineLen && orgLine[end] !== '/') {
 
           sanitizeCharacter(end);
 
           if (orgLine[end] === '\\') {
             ++end;
-            continue;
           }
+        }
 
-          if (orgLine[end] === '/') {
-            break;
-          }
-
-          ++end;
+        if (end >= lineLen) {
+          end = 0;
         }
 
         regexBody = orgLine.slice(++i, end).join('');
@@ -156,9 +159,12 @@
        */
       function sanitizeCharacter(i) {
 
-        if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
+        checkArgs(i, 'number');
+
+        if ( hasOwnProp(htmlEntity, orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
+
       }
 
       /**
@@ -172,19 +178,19 @@
        */
       function skipComment(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (i >= lineLen) {
-            return i;
-          }
+        while (++i < lineLen) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '*' && i !== lastIndex && orgLine[i + 1] === '/') {
-            return ++i;
+            ++i;
+            break;
           }
         }
+
+        return i;
       }
 
       /**
@@ -199,28 +205,26 @@
       function skipString(i) {
 
         /** @type {string} */
-        var stringType;
+        var strCharacter;
 
-        stringType = orgLine[i];
+        checkArgs(i, 'number');
 
-        while (true) {
-          ++i;
+        strCharacter = orgLine[i];
 
-          if (i >= lineLen) {
-            return lastIndex;
-          }
+        while (++i < lineLen && orgLine[i] !== strCharacter) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '\\') {
             ++i;
-            continue;
-          }
-
-          if (orgLine[i] === stringType) {
-            return i;
           }
         }
+
+        if (i >= lineLen) {
+          i = lastIndex;
+        }
+
+        return i;
       }
 
       /**
@@ -234,13 +238,13 @@
        */
       function skipSpace(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (orgLine[i] !== ' ') {
-            return --i;
-          }
+        while (orgLine[i + 1] === ' ') {
+          ++i;
         }
+
+        return i;
       }
 
       /**
@@ -259,22 +263,17 @@
         /** @type {RegExp} */
         var numberOpts;
 
+        checkArgs(i, 'number');
+
         hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
         numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
           hexNumbers : plainNumbers
         );
 
-        while (true) {
-          ++i;
+        while (++i < lineLen && numberOpts.test(orgLine[i])) {}
+        --i;
 
-          if (i === lineLen) {
-            return lastIndex;
-          }
-
-          if ( !numberOpts.test(orgLine[i]) ) {
-            return --i;
-          }
-        }
+        return i;
       }
 
       /**
@@ -283,41 +282,38 @@
        * ---------------------------------------------
        * @desc Moves the index to the end of the identifier.
        * @param {number} i - The starting line index.
-       * @return {number} The end index.
+       * @return {!{
+       *   endIndex   : number,
+       *   name       : string,
+       *   propFollows: boolean
+       * }}
        * @private
        */
       function skipIdentifier(i) {
 
         /** @type {string} */
         var name;
+        /** @type {!Object} */
+        var result;
         /** @type {boolean} */
         var propFollows;
 
+        checkArgs(i, 'number');
+
         name = '_' + orgLine[i];
 
-        while (true) {
-          ++i;
-
-          if (i === lineLen) {
-            return {
-              endIndex   : --i,
-              name       : name,
-              propFollows: false
-            };
-          }
-
-          if ( identifiers.test(orgLine[i]) ) {
-            name += orgLine[i];
-            continue;
-          }
-
-          propFollows = (orgLine[i] === '.');
-          return {
-            endIndex   : --i,
-            name       : name,
-            propFollows: propFollows
-          };
+        while (++i < lineLen && identifiers.test(orgLine[i])) {
+          name += orgLine[i];
         }
+
+        propFollows = (i !== lineLen && orgLine[i] === '.');
+        result = {
+          endIndex   : --i,
+          name       : name,
+          propFollows: propFollows
+        };
+
+        return result;
       }
 
       /**
@@ -331,30 +327,31 @@
        */
       function formatCommentLinks(start, end) {
 
-        /** @type {string} */
-        var comment;
         /** @type {number} */
         var i;
+        /** @type {boolean} */
+        var pass;
         /** @type {string} */
         var href;
         /** @type {string} */
         var content;
+        /** @type {string} */
+        var comment;
+
+        checkArgs(start, 'number', end, 'number');
 
         if (end === lastIndex) {
           ++end;
         }
 
         comment = orgLine.slice(start, end).join('');
+        pass = commentLinks.test(comment);
 
-        if ( !commentLinks.test(comment) ) {
-          return;
-        }
-
-        while (true) {
+        while (pass) {
           i = comment.search(commentLinks);
 
           if (i === -1) {
-            return;
+            break;
           }
 
           i += start + 1;
@@ -391,6 +388,7 @@
           comment = comment.substr(i);
           start = i;
         }
+
       }
 
       /**
@@ -408,11 +406,11 @@
         /** @type {number} */
         var start;
 
-        start = i;
+        checkArgs(i, 'number');
 
+        start = i;
         newLine[i] = '<span class="cmt">/';
-        ++i;
-        i = (i < lastIndex) ? skipComment(i) : ++i;
+        i = (++i < lastIndex) ? skipComment(i) : ++i;
 
         if (i >= lineLen) {
           commentOpen = true;
@@ -448,20 +446,22 @@
         if (orgLine[0] === '*' && orgLine[1] === '/') {
           commentOpen = false;
           newLine[1] += '</span>';
-          return 3;
+          i = 3;
         }
+        else {
 
-        i = skipComment(0);
-        commentOpen = (i < lineLen) ? false : true;
+          i = skipComment(0);
+          commentOpen = (i > lastIndex);
 
-        if (i > lastIndex) {
-          i = lastIndex;
-        }
+          if (commentOpen) {
+            i = lastIndex;
+          }
 
-        newLine[i] += '</span>';
+          newLine[i] += '</span>';
 
-        if (config.commentLinks) {
-          formatCommentLinks(0, i);
+          if (config.commentLinks) {
+            formatCommentLinks(0, i);
+          }
         }
 
         return i;
@@ -477,6 +477,8 @@
        * @private
        */
       function formatLineComment(i) {
+
+        checkArgs(i, 'number');
 
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
@@ -501,10 +503,10 @@
        */
       function formatString(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="str">' + orgLine[i];
-
         i = skipString(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -528,15 +530,15 @@
         /** @type {string} */
         var character;
 
+        checkArgs(i, 'number', end, 'number');
+
         newLine[i] = '<span class="rgx">/';
 
         i = end;
         usedFlags = '';
 
         // Check for RegExp flags
-        while (true) {
-          ++i;
-
+        while (++i) {
           character = orgLine[i];
 
           if (regexFlags.test(character) &&
@@ -567,10 +569,10 @@
        */
       function formatSpace(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="spc"> ';
-
         i = skipSpace(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -587,6 +589,8 @@
        */
       function formatBracket(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
 
         return i;
@@ -602,6 +606,8 @@
        * @private
        */
       function formatOperator(i) {
+
+        checkArgs(i, 'number');
 
         sanitizeCharacter(i);
 
@@ -621,6 +627,8 @@
        */
       function formatComma(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cmm">,</span>';
 
         return i;
@@ -636,6 +644,8 @@
        * @private
        */
       function formatSemicolon(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="smc">;</span>';
 
@@ -653,6 +663,8 @@
        */
       function formatColon(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cln">:</span>';
 
         return i;
@@ -668,6 +680,8 @@
        * @private
        */
       function formatPeriod(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="per">.</span>';
 
@@ -686,10 +700,10 @@
        */
       function formatNumber(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="num">' + orgLine[i];
-
         i = skipNumber(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -710,34 +724,36 @@
        */
       function formatIdentifier(i, extras) {
 
-        /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
+        /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
         /** @type {string} */
         var keyClassName;
 
+        checkArgs(i, 'number', extras, 'string=');
+
         identifier = skipIdentifier(i);
 
         // Setup the keyword category and class name
-        if ( keywords.hasOwnProperty(identifier.name) ) {
+        if ( hasOwnProp(keywords, identifier.name) ) {
 
-          catID = keywords[identifier.name].cat;
-          keyClassName = keywordCategories[catID];
+          catID = keywords[ identifier.name ].cat;
+          keyClassName = keywordCategories[ catID ];
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
               (orgLine[identifier.endIndex + 1] === '(' ||
                (orgLine[identifier.endIndex + 1] === ' ' &&
                 orgLine[identifier.endIndex + 2] === '('))) {
-            keyClassName = keywordCategories['res'];
+            keyClassName = keywordCategories[ 'res' ];
           }
         }
 
         if (!keyClassName && !!extras) {
-          if ( keywords[extras].props.hasOwnProperty(identifier.name) ) {
-            catID = keywords[extras].cat;
-            keyClassName = keywordCategories[catID];
+          if ( hasOwnProp(keywords[ extras ].props, identifier.name) ) {
+            catID = keywords[ extras ].cat;
+            keyClassName = keywordCategories[ catID ];
           }
         }
 
@@ -754,8 +770,8 @@
         // Format the identifier's property (dot notation only)
         if (identifier.propFollows) {
           formatPeriod(++i);
-          extras = ( ( !keywords.hasOwnProperty(identifier.name) ) ?
-            '' : (!keywords[identifier.name].props) ?
+          extras = ( (!hasOwnProp(keywords, identifier.name)) ?
+            '' : (!keywords[ identifier.name ].props) ?
               '' : identifier.name
           );
           i = formatIdentifier(++i, extras);
@@ -774,6 +790,8 @@
        * @private
        */
       function formatMisc(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
 

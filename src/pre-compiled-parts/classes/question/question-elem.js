@@ -8,6 +8,8 @@
    */
   var QuestionElem = function(id) {
 
+    checkArgs(id, 'number');
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -17,7 +19,7 @@
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {element}
+     * @type {!Element}
      */
     this.root;
 
@@ -26,7 +28,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {element}
+     * @type {!Element}
      */
     this.info;
 
@@ -35,7 +37,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {element}
+     * @type {!Element}
      */
     this.solution;
 
@@ -44,7 +46,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {element}
+     * @type {!Element}
      */
     this.pre;
 
@@ -53,7 +55,7 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {element}
+     * @type {!Element}
      */
     this.code;
 
@@ -61,19 +63,20 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    this.root = document.createElement('section');
-    this.info = document.createElement('div');
+    this.root = makeElem({
+      tag      : 'section',
+      id       : 'aIV-q' + id,
+      className: 'question'
+    });
 
-    this.root.id = 'aIV-q' + id;
-
-    this.root.className = 'question';
-    this.info.className = 'info';
+    this.info = makeElem({ className: 'info' });
 
     this.root.appendChild(this.info);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +90,7 @@
    * Public Method (QuestionElem.prototype.addContent)
    * -----------------------------------------------------
    * @desc Adds the question's contents to its element.
-   * @param {{
+   * @param {!{
    *   id      : string,
    *   url     : string,
    *   complete: string,
@@ -96,16 +99,16 @@
    *     name: string
    *   },
    *   mainCat : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
    *   subCat  : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
-   *   links   : links,
+   *   links   : !links,
    *   problem : string,
    *   descr   : string,
    *   solution: {
@@ -117,50 +120,49 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    /** @type {element} */
+    /** @type {!Element} */
     var root;
-    /** @type {element} */
+    /** @type {!Element} */
     var info;
-    /** @type {boolean} */
-    var testTextContent;
+
+    checkArgs(question, '!object');
 
     root = this.root;
     info = this.info;
-    testTextContent = !!document.body.textContent;
 
     // Append all the sections of the question
     // Note: See the below private helper methods for more details
 
     if (question.id) {
-      appendId.call(this, question.id, question.url);
+      appendId(question.id, question.url);
     }
 
     if (question.source.name) {
-      appendSource.call(this, question.source);
+      appendSource(question.source);
     }
 
     if (question.complete) {
-      appendComplete.call(this, question.complete);
+      appendComplete(question.complete);
     }
 
     if (question.mainCat.h3 || question.subCat.h3) {
-      appendCategory.call(this, question.mainCat, question.subCat);
+      appendCategory(question.mainCat, question.subCat);
     }
 
     if (question.problem || question.descr) {
-      appendProblem.call(this, question.problem, question.descr);
+      appendProblem(question.problem, question.descr);
     }
 
-    if ( question.solution.hasOwnProperty('prettyCode') ) {
+    if ( hasOwnProp(question.solution, 'prettyCode') ) {
       appendSolution.call(this, question.solution);
     }
 
     if (question.output) {
-      appendOutput.call(this, question.output);
+      appendOutput(question.output);
     }
 
     if (question.links.length) {
-      appendLinks.call(this, question.links);
+      appendLinks(question.links);
     }
 
     /**
@@ -168,7 +170,6 @@
      * Private Method (appendId)
      * ---------------------------------------------
      * @desc Appends the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
      * @private
@@ -177,45 +178,37 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       config = app.config.links.get('id');
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      div = makeElem({ className: 'idContain' });
+      h3  = makeElem({ tag: 'h3', text: 'Question:' });
+      p   = makeElem('p');
 
-      div.className = 'idContain';
-
-      if (testTextContent) {
-        h3.textContent = 'Question:';
-        if (!config) {
-          p.textContent = id;
-        }
-      }
-      else {
-        h3.innerHTML = 'Question:';
-        if (!config) {
-          p.innerHTML = id;
-        }
+      if (!config) {
+        setElemText(p, id);
       }
 
       // Add the anchor link
       if (config) {
-        a = makeIdLink.call(this, id, url);
+        a = makeIdLink(id, url);
         p.appendChild(a);
       }
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
     }
 
     /**
@@ -223,30 +216,31 @@
      * Private Method (makeIdLink)
      * ---------------------------------------------
      * @desc Creates an anchor element for the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       if (!url) {
         url = Number(id);
       }
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: id });
       a.href = 'id/' + url;
-      a.innerHTML = id;
       a.onclick = (function(id) {
-        return function() {
-          Events.linkId( Number(id) );
+        return function onclick(event) {
+          Events.linkId(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id);
+      })( Number(id) );
 
       return a;
     }
@@ -256,41 +250,32 @@
      * Private Method (appendSource)
      * ---------------------------------------------
      * @desc Appends the question's source.
-     * @param {stringMap} source - The id and name of the source.
+     * @param {!stringMap} source - The id and name of the source.
      * @private
      */
     function appendSource(source) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(source, '!stringMap');
 
       config = app.config.links.get('source');
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      div = makeElem({ className: 'source' });
+      h3  = makeElem({ tag: 'h3', text: 'Source:' });
+      p   = makeElem('p');
 
-      div.className = 'source';
-
-      if (testTextContent) {
-        h3.textContent = 'Source:';
-        if (!config) {
-          p.textContent = source.name;
-        }
-      }
-      else {
-        h3.innerHTML = 'Source:';
-        if (!config) {
-          p.innerHTML = source.name;
-        }
+      if (!config) {
+        setElemText(p, source.name);
       }
 
       info.appendChild(div);
@@ -299,9 +284,10 @@
 
       // Add the anchor link
       if (config) {
-        a = makeSourceLink.call(this, source.id, source.name);
+        a = makeSourceLink(source.id, source.name);
         p.appendChild(a);
       }
+
     }
 
     /**
@@ -311,25 +297,26 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.sources.get(id, 'url');
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'source/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkSource(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -347,31 +334,23 @@
      */
     function appendComplete(complete) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(complete, 'string');
 
-      div.className = 'stage';
-
-      if (testTextContent) {
-        h3.textContent = 'Completed:';
-        p.textContent  = complete;
-      }
-      else {
-        h3.innerHTML = 'Completed:';
-        p.innerHTML = complete;
-      }
+      div = makeElem({ className: 'stage' });
+      h3  = makeElem({ tag: 'h3', text: 'Completed:' });
+      p   = makeElem({ tag: 'p' , text: complete });
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
     }
 
     /**
@@ -379,45 +358,39 @@
      * Private Method (appendCategory)
      * ---------------------------------------------
      * @desc Appends the question's categories.
-     * @param {Object} main - The question's main categories.
-     * @param {Object} sub - The question's sub categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Object} sub - The question's sub categories.
      * @private
      */
     function appendCategory(main, sub) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {element} */
+      /** @type {!Element} */
       var mainDiv;
-      /** @type {element} */
+      /** @type {!Element} */
       var subDiv;
 
-      contain = document.createElement('div');
-      contain.className = 'category';
+      checkArgs(main, '!object', sub, '!object');
+
+      contain = makeElem({ className: 'category' });
 
       // Add the main categories
       if (main.h3) {
-
-        mainDiv = document.createElement('div');
-        mainDiv.className = 'mainCategory';
-
-        appendMainCategories.call(this, main, mainDiv);
-
+        mainDiv = makeElem({ className: 'mainCategory' });
+        appendMainCategories(main, mainDiv);
         contain.appendChild(mainDiv);
       }
 
       // Add the sub categories
       if (sub.h3) {
-
-        subDiv = document.createElement('div');
-        subDiv.className = 'subCategory';
-
-        appendSubCategories.call(this, sub, subDiv);
-
+        subDiv = makeElem({ className: 'subCategory' });
+        appendSubCategories(sub, subDiv);
         contain.appendChild(subDiv);
       }
 
       root.appendChild(contain);
+
     }
 
     /**
@@ -425,17 +398,17 @@
      * Private Method (appendMainCategories)
      * ---------------------------------------------
      * @desc Appends the question's main categories.
-     * @param {Object} main - The question's main categories.
-     * @param {element} div - The DOM container for the main categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -443,25 +416,18 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(main, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
-      h3 = document.createElement('h3');
-      p  = document.createElement('p');
+      h3  = makeElem({ tag: 'h3', text: main.h3 });
+      p   = makeElem('p');
 
-      if (testTextContent) {
-        h3.textContent = main.h3;
-        if (!config) {
-          p.textContent = main.names.join(', ');
-        }
-      }
-      else {
-        h3.innerHTML = main.h3;
-        if (!config) {
-          p.innerHTML = main.names.join(', ');
-        }
+      if (!config) {
+        setElemText(p, main.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -473,13 +439,14 @@
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeMainCatLink.call(this, main.ids[i], main.names[i]);
+          a = makeMainCatLink(main.ids[i], main.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.appendChild( makeLinkSpan.call(this) );
+            p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
       }
+
     }
 
     /**
@@ -487,17 +454,17 @@
      * Private Method (appendSubCategories)
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
-     * @param {Object} sub - The question's sub categories.
-     * @param {element} div - The DOM container for the sub categories.
+     * @param {!Object} sub - The question's sub categories.
+     * @param {!Element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -505,25 +472,18 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(sub, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
-      h3 = document.createElement('h3');
-      p  = document.createElement('p');
+      h3  = makeElem({ tag: 'h3', text: sub.h3 });
+      p   = makeElem('p');
 
-      if (testTextContent) {
-        h3.textContent = sub.h3;
-        if (!config) {
-          p.textContent = sub.names.join(', ');
-        }
-      }
-      else {
-        h3.innerHTML = sub.h3;
-        if (!config) {
-          p.innerHTML = sub.names.join(', ');
-        }
+      if (!config) {
+        setElemText(p, sub.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -535,13 +495,14 @@
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeSubCatLink.call(this, sub.ids[i], sub.names[i]);
+          a = makeSubCatLink(sub.ids[i], sub.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.appendChild( makeLinkSpan.call(this) );
+            p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
       }
+
     }
 
     /**
@@ -549,28 +510,28 @@
      * Private Method (makeMainCatLink)
      * ---------------------------------------------
      * @desc Creates a main category link.
-     * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.categories.get(id, 'url');
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkMainCat(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -583,75 +544,59 @@
      * Private Method (makeSubCatLink)
      * ---------------------------------------------
      * @desc Creates a sub category link.
-     * @todo Add url parsing logic and remove the use of
-     *   indexOf to find the sub category's parent.
-     * @param {string} id - The sub category's id.
+     * @todo Remove the use of indexOf to find the sub category's parent.
+     * @param {string} subId - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
-    function makeSubCatLink(id, name) {
+    function makeSubCatLink(subId, name) {
 
-      /** @type {string} */
-      var url;
-      /** @type {element} */
-      var a;
-      /** @type {string} */
-      var parentId;
       /** @type {string} */
       var parentUrl;
+      /** @type {string} */
+      var parentId;
+      /** @type {!Category} */
+      var category;
+      /** @type {!strings} */
+      var subIds;
+      /** @type {string} */
+      var mainId;
+      /** @type {string} */
+      var url;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
+
+      checkArgs(subId, 'string', name, 'string');
 
       // Set the sub category's parent id and url
-      app.categories.ids.some(function(/** string */ catId) {
-        /** @private */
-        var category;
-        /** @private */
-        var subs;
-
-        category = app.categories.get(catId);
-        subs = category.get('subs');
-        if (subs && subs.indexOf(id) !== -1) {
-          parentId  = catId;
+      i = app.categories.ids.length;
+      while (i--) {
+        mainId = app.categories.ids[i];
+        category = app.categories.get(mainId);
+        subIds = category.get('subs');
+        if (subIds.indexOf(subId) !== -1) {
+          parentId  = mainId;
           parentUrl = category.get('url');
-          return true;
+          break;
         }
+      }
 
-        return false;
-      });
+      url = app.categories.get(subId, 'url');
 
-      url = app.categories.get(id, 'url');
-
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + parentUrl + '/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
-      a.onclick = (function(id, parentId) {
-        return function() {
-          Events.linkSubCat(id, parentId);
+      a.onclick = (function(subId, parentId) {
+        return function onclick(event) {
+          Events.linkSubCat(subId, parentId);
+          event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id, parentId);
+      })(subId, parentId);
 
       return a;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (makeLinkSpan)
-     * ---------------------------------------------
-     * @desc Creates a span element for spacing between links.
-     * @return {element} The span element.
-     * @private
-     */
-    function makeLinkSpan() {
-
-      /** @type {element} */
-      var span;
-
-      span = document.createElement('span');
-      span.innerHTML = ',&nbsp;&nbsp;';
-
-      return span;
     }
 
     /**
@@ -665,31 +610,31 @@
      */
     function appendProblem(problem, descr) {
 
-      /** @type {element} */
+      /** @type {string} */
+      var content;
+      /** @type {string} */
+      var title;
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(problem, 'string', descr, 'string');
 
-      div.className = 'problem';
+      title = (problem) ? 'Problem:' : 'Description:';
+      content = problem || descr;
 
-      if (testTextContent) {
-        h3.textContent = (problem) ? 'Problem:' : 'Description:';
-      }
-      else {
-        h3.innerHTML = (problem) ? 'Problem:' : 'Description:';
-      }
-      p.innerHTML = (problem) ? problem : descr;
+      div = makeElem({ className: 'problem' });
+      h3  = makeElem({ tag: 'h3', text: title });
+      p   = makeElem({ tag: 'p' , html: content });
 
       div.appendChild(h3);
       div.appendChild(p);
 
       root.appendChild(div);
+
     }
 
     /**
@@ -697,44 +642,35 @@
      * Private Method (appendSolution)
      * ---------------------------------------------
      * @desc Appends the question's solution.
-     * @param {Object} solution - The question's solution.
+     * @this {!QuestionElem}
+     * @param {!Object} solution - The question's solution.
      * @private
      */
     function appendSolution(solution) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var preDiv;
-      /** @type {element} */
+      /** @type {!Element} */
       var pre;
-      /** @type {element} */
+      /** @type {!Element} */
       var code;
-      /** @type {element} */
+      /** @type {!Element} */
       var ol;
       /** @type {number} */
       var height;
 
-      contain  = document.createElement('div');
-      h3       = document.createElement('h3');
-      preDiv   = document.createElement('div');
-      pre      = document.createElement('pre');
-      code     = document.createElement('code');
-      ol       = document.createElement('ol');
+      checkArgs(solution, '!object');
 
-      contain.className = 'solution';
-      preDiv.className     = 'preContain';
-
-      ol.innerHTML = solution.prettyCode;
-
-      if (testTextContent) {
-        h3.textContent = 'Solution:';
-      }
-      else {
-        h3.innerHTML = 'Solution:';
-      }
+      contain  = makeElem({ className: 'solution' });
+      h3       = makeElem({ tag: 'h3', text: 'Solution:' });
+      preDiv   = makeElem({ className: 'preContain' });
+      pre      = makeElem('pre');
+      code     = makeElem('code');
+      ol       = makeElem({ tag: 'ol', html: solution.prettyCode });
 
       height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
@@ -751,6 +687,7 @@
       this.solution = contain;
       this.pre = preDiv;
       this.code = code;
+
     }
 
     /**
@@ -763,32 +700,24 @@
      */
     function appendOutput(output) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(output, 'string');
 
-      div.className = 'output';
-
-      if (testTextContent) {
-        h3.textContent = 'Output:';
-      }
-      else {
-        h3.innerHTML = 'Output:';
-      }
-
-      p.innerHTML    = output;
+      div = makeElem({ className: 'output' });
+      h3  = makeElem({ tag: 'h3', text: 'Output:' });
+      p   = makeElem({ tag: 'p' , html: output });
 
       div.appendChild(h3);
       div.appendChild(p);
 
       root.appendChild(div);
+
     }
 
     /**
@@ -796,51 +725,48 @@
      * Private Method (appendLinks)
      * ---------------------------------------------
      * @desc Appends the question's links.
-     * @param {links} links - The question's links.
+     * @param {!links} links - The question's links.
      * @private
      */
     function appendLinks(links) {
 
-      /** @type {element} */
+      /** @type {!Object} */
+      var linkObj;
+      /** @type {number} */
+      var len;
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(links, '!objects');
 
-      div.className = 'links';
-
-      if (testTextContent) {
-        h3.textContent = 'Links:';
-      }
-      else {
-        h3.innerHTML = 'Links:';
-      }
+      div = makeElem({ className: 'links' });
+      h3  = makeElem({ tag: 'h3', text: 'Links:' });
+      p   = makeElem('p');
 
       div.appendChild(h3);
       div.appendChild(p);
 
-      links.forEach(function(/** Object */ linkObj) {
-        /** @type {element} */
-        var a;
-
-        a = document.createElement('a');
+      // Append the links
+      len = links.length;
+      i = -1;
+      while (++i < len) {
+        linkObj = links[i];
+        a = makeElem({ tag: 'a', text: linkObj.name });
         a.href = linkObj.href;
         a.target = '_blank';
-        if (testTextContent) {
-          a.textContent = linkObj.name;
-        }
-        else {
-          a.innerHTML = linkObj.name;
-        }
         p.appendChild(a);
-      });
+      }
 
       root.appendChild(div);
+
     }
   };
 
@@ -858,24 +784,22 @@
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {element} */
+    /** @type {!Element} */
     var code;
-    /** @type {element} */
+    /** @type {!Element} */
     var ext;
-    /** @type {element} */
+    /** @type {!Element} */
     var extClose;
-    /** @type {element} */
+    /** @type {!Element} */
     var extOpen;
-    /** @type {element} */
+    /** @type {!Element} */
     var extBG;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHov;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHovC;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHovO;
-    /** @type {boolean} */
-    var testTextContent;
 
     code = this.code;
 
@@ -892,34 +816,21 @@
       this.solution.style.paddingBottom = scrollbar + 'px';
     }
 
-    testTextContent = !!document.body.textContent;
-
-    ext      = document.createElement('div');
-    extClose = document.createElement('div');
-    extOpen  = document.createElement('div');
-    extBG    = document.createElement('div');
-    extHov   = document.createElement('div');
-    extHovC  = document.createElement('span');
-    extHovO  = document.createElement('span');
-
-    ext.className      = 'extContain';
-    extClose.className = 'extCloseArrow';
-    extOpen.className  = 'extOpenArrow';
-    extBG.className    = 'extBG';
-    extHov.className   = 'extHover';
-    extHovC.className  = 'closeExt';
-    extHovO.className  = 'openExt';
-
-    if (testTextContent) {
-      extOpen.textContent = 'open';
-      extHovC.textContent = 'Close Extended Code View';
-      extHovO.textContent = 'Extend Code View';
-    }
-    else {
-      extOpen.innerHTML = 'open';
-      extHovC.innerHTML = 'Close Extended Code View';
-      extHovO.innerHTML = 'Extend Code View';
-    }
+    ext      = makeElem({ className: 'extContain' });
+    extClose = makeElem({ className: 'extCloseArrow' });
+    extOpen  = makeElem({ className: 'extOpenArrow', text: 'open' });
+    extBG    = makeElem({ className: 'extBG' });
+    extHov   = makeElem({ className: 'extHover' });
+    extHovC  = makeElem({
+      tag      : 'span',
+      className: 'closeExt',
+      text     : 'Close Extended Code View'
+    });
+    extHovO  = makeElem({
+      tag      : 'span',
+      className: 'openExt',
+      text     : 'Extend Code View'
+    });
 
     extOpen.onmouseover = function() {
       extHov.style.opacity = '1';
@@ -931,7 +842,7 @@
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elementMap} */
+      /** @type {!elementMap} */
       var elems;
 
       elems = {
@@ -942,7 +853,7 @@
         extHovO : extHovO,
         extHovC : extHovC
       };
-      Object.freeze(elems);
+      freezeObj(elems);
 
       return function() {
         Events.extCodeView(overflow, elems);
@@ -960,4 +871,5 @@
 
     this.root.style.display = 'none';
     this.root.style.opacity = '1';
+
   };

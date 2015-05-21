@@ -16,6 +16,8 @@
       /** @type {{ result: string, lineCount: number }} */
       var result;
 
+      checkArgs(solution, 'string');
+
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
 
@@ -23,10 +25,9 @@
     };
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Vars                                                       |
- * v ------------------------------------------------------------------------- v
-                                                           prettify-vars.js */
-    // The prettifier's debugger object
+ * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-vars
 
     /**
      * ---------------------------------------------
@@ -51,7 +52,8 @@
       '<': '&lt;',
       '>': '&gt;'
     };
-    Object.freeze(htmlEntity);
+
+    freezeObj(htmlEntity);
 
     /**
      * ---------------------------------------------
@@ -62,11 +64,12 @@
      *   evaluated for the following possible keywords 'return',
      *   'case', 'typeof', 'instanceof', and 'in'.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
-    Object.freeze(preRegex);
+
+    freezeObj(preRegex);
 
     /**
      * ---------------------------------------------
@@ -74,11 +77,12 @@
      * ---------------------------------------------
      * @desc The flags for js regular expressions.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var regexFlags = /[gimy]/;
-    Object.freeze(regexFlags);
+
+    freezeObj(regexFlags);
 
     /**
      * ---------------------------------------------
@@ -86,11 +90,12 @@
      * ---------------------------------------------
      * @desc List of valid plain number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
-    Object.freeze(plainNumbers);
+
+    freezeObj(plainNumbers);
 
     /**
      * ---------------------------------------------
@@ -98,11 +103,12 @@
      * ---------------------------------------------
      * @desc List of valid hex number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
-    Object.freeze(hexNumbers);
+
+    freezeObj(hexNumbers);
 
     /**
      * ---------------------------------------------
@@ -110,11 +116,12 @@
      * ---------------------------------------------
      * @desc List of valid starting identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
-    Object.freeze(identifierStart);
+
+    freezeObj(identifierStart);
 
     /**
      * ---------------------------------------------
@@ -122,11 +129,12 @@
      * ---------------------------------------------
      * @desc List of valid identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
-    Object.freeze(identifiers);
+
+    freezeObj(identifiers);
 
     /**
      * ---------------------------------------------
@@ -143,11 +151,26 @@
      * Private Variable (commentLinks)
      * ---------------------------------------------
      * @desc Valid link syntax within comments.
-     * @type {RegExp}
+     * @const
+     * @type {!RegExp}
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
-    Object.freeze(commentLinks);
+
+    freezeObj(commentLinks);
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (notSpace)
+     * ---------------------------------------------
+     * @desc A regex that catches anything that is not a space.
+     * @const
+     * @type {!RegExp}
+     * @private
+     */
+    var notSpace = /[^\s]/;
+
+    freezeObj(notSpace);
 
     /**
      * ---------------------------------------------
@@ -166,7 +189,8 @@
       cli: 'cliKey', // Client Objects & Methods
       jqu: 'jquKey'  // jQuery Objects
     };
-    Object.freeze(keywordCategories);
+
+    freezeObj(keywordCategories);
 
     /**
      * ---------------------------------------------
@@ -513,7 +537,7 @@
       _jQuery: makeKeywordObj('jqu', '')
     };
 
-    Object.freeze(keywords);
+    freezeObj(keywords);
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup the keyword properties
@@ -523,23 +547,23 @@
     keywords._Array.props._isArray = makePropObj('');
     keywords._Array.props._observe = makePropObj('');
     keywords._Array.props._of      = makePropObj('');
-    Object.freeze(keywords._Array.props);
+    freezeObj(keywords._Array.props);
 
     // ArrayBuffer
     keywords._ArrayBuffer.props._isView   = makePropObj('');
     keywords._ArrayBuffer.props._transfer = makePropObj('');
-    Object.freeze(keywords._ArrayBuffer.props);
+    freezeObj(keywords._ArrayBuffer.props);
 
     // Date
     keywords._Date.props._UTC   = makePropObj('');
     keywords._Date.props._now   = makePropObj('');
     keywords._Date.props._parse = makePropObj('');
-    Object.freeze(keywords._Date.props);
+    freezeObj(keywords._Date.props);
 
     // JSON
     keywords._JSON.props._parse     = makePropObj('');
     keywords._JSON.props._stringify = makePropObj('');
-    Object.freeze(keywords._JSON.props);
+    freezeObj(keywords._JSON.props);
 
     // Math
     keywords._Math.props._abs    = makePropObj('');
@@ -560,7 +584,7 @@
     keywords._Math.props._sin    = makePropObj('');
     keywords._Math.props._sqrt   = makePropObj('');
     keywords._Math.props._tan    = makePropObj('');
-    Object.freeze(keywords._Math.props);
+    freezeObj(keywords._Math.props);
 
     // Number
     keywords._Number.props._EPSILON           = makePropObj('');
@@ -577,7 +601,7 @@
     keywords._Number.props._parseFloat        = makePropObj('');
     keywords._Number.props._parseInt          = makePropObj('');
     keywords._Number.props._POSITIVE_INFINITY = makePropObj('');
-    Object.freeze(keywords._Number.props);
+    freezeObj(keywords._Number.props);
 
     // Object
     keywords._Object.props._assign                   = makePropObj('');
@@ -598,25 +622,25 @@
     keywords._Object.props._preventExtensions        = makePropObj('');
     keywords._Object.props._seal                     = makePropObj('');
     keywords._Object.props._setPrototypeOf           = makePropObj('');
-    Object.freeze(keywords._Object.props);
+    freezeObj(keywords._Object.props);
 
     // String
     keywords._String.props._fromCharCode  = makePropObj('');
     keywords._String.props._fromCodePoint = makePropObj('');
     keywords._String.props._raw           = makePropObj('');
-    Object.freeze(keywords._String.props);
+    freezeObj(keywords._String.props);
 
     // Symbol
     keywords._Symbol.props._for    = makePropObj('');
     keywords._Symbol.props._keyFor = makePropObj('');
-    Object.freeze(keywords._Symbol.props);
+    freezeObj(keywords._Symbol.props);
 
     // TypedArray
     keywords._TypedArray.props._BYTES_PER_ELEMENT = makePropObj('');
     keywords._TypedArray.props._from              = makePropObj('');
     keywords._TypedArray.props._name              = makePropObj('');
     keywords._TypedArray.props._of                = makePropObj('');
-    Object.freeze(keywords._TypedArray.props);
+    freezeObj(keywords._TypedArray.props);
 
     // console
     keywords._console.props._assert         = makePropObj('');
@@ -625,32 +649,35 @@
     keywords._console.props._groupEnd       = makePropObj('');
     keywords._console.props._log            = makePropObj('');
     keywords._console.props._trace          = makePropObj('');
-    Object.freeze(keywords._console.props);
+    freezeObj(keywords._console.props);
 
     // ImageData
     keywords._ImageData.props._data   = makePropObj('');
     keywords._ImageData.props._height = makePropObj('');
     keywords._ImageData.props._width  = makePropObj('');
-    Object.freeze(keywords._ImageData.props);
+    freezeObj(keywords._ImageData.props);
 
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Methods                                                    |
- * v ------------------------------------------------------------------------- v
-                                                        prettify-methods.js */
+ * The Prettifier Module Methods (pre-compiled-prettifier/prettify-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettify-methods
     /**
      * ---------------------------------------------
      * Public Method (prettify.setConfig)
      * ---------------------------------------------
      * @desc Sets the config settings for the prettifier.
-     * @param {Object<string, (number|boolean)>} newConfig - The config
+     * @param {!Object<string, (number|boolean)>} newConfig - The config
      *   settings for the prettifier.
      * @private
      */
     prettify.setConfig = function(newConfig) {
 
+      checkArgs(newConfig, '!object');
+
       config = newConfig;
-      Object.freeze(config);
+      freezeObj(config);
+
     }
 
     /**
@@ -659,15 +686,19 @@
      * ---------------------------------------------
      * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
-     * @return {strings}
+     * @return {!strings}
      * @private
      */
     function prepareLines(solution) {
 
+      /** @type {!strings} */
+      var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -682,7 +713,9 @@
         solution = solution.replace(/\t/g, '  ');
       }
 
-      return solution.split('\n');
+      lines = solution.split('\n');
+
+      return lines;
     }
 
     /**
@@ -690,8 +723,8 @@
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of code lines.
-     * @return {{
+     * @param {!strings} lines - An array of code lines.
+     * @return {!{
      *   result   : string,
      *   lineCount: number
      * }}
@@ -703,8 +736,12 @@
       var i;
       /** @type {number} */
       var len;
-      /** @type {} */
+      /** @type {string} */
       var line;
+      /** @type {!Object} */
+      var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -722,10 +759,12 @@
 
       }
 
-      return {
+      result = {
         result   : lines.join(''),
         lineCount: len
       };
+
+      return result;
     }
 
     /**
@@ -746,6 +785,8 @@
       /** @type {string} */
       var trimPart;
 
+      checkArgs(line, 'string');
+
       // Trim ending whitespaces
       if (line) {
         i = line.length - 1;
@@ -765,7 +806,7 @@
         trimPart = ( (frontTrimCount < line.length) ?
           line.substr(0, frontTrimCount) : ''
         );
-        if (trimPart && !/[^\s]/.test(trimPart)) {
+        if (trimPart && !notSpace.test(trimPart)) {
           // Trim full count
           line = line.substr(frontTrimCount);
         }
@@ -790,13 +831,15 @@
      * @param {string} cat - The keyword's category.
      * @param {string=} href - The keyword's details link.
      * @param {boolean=} props - Whether the keyword has properties.
-     * @return {Object<string, (string|numberMap)>}
+     * @return {!Object<string, (string|numberMap)>}
      * @private
      */
     function makeKeywordObj(cat, href, props) {
 
-      /** @type {Object<string, (string|numberMap)>} */
+      /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -807,7 +850,9 @@
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }
 
     /**
@@ -816,26 +861,30 @@
      * ---------------------------------------------
      * @desc Creates a keyword property object.
      * @param {string=} href - The keyword's details link.
-     * @return {stringMap}
+     * @return {!stringMap}
      * @private
      */
     function makePropObj(href) {
 
-      /** @type {stringMap} */
+      /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
       obj = {};
       obj.href = href;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }
 
 /* -----------------------------------------------------------------------------
- * | The Highlight Syntax Method                                               |
- * v ------------------------------------------------------------------------- v
-                                                        highlight-syntax.js */
+ * The Highlight Syntax Method (pre-compiled-prettifier/highlight-syntax.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax
     /**
      * ---------------------------------------------
      * Private Method (highlightSyntax)
@@ -850,6 +899,8 @@
 
       var highlightSyntax = function(line) {
 
+        checkArgs(line, 'string');
+
         prepareLine(line);
         formatLine();
 
@@ -857,9 +908,11 @@
       };
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Vars                                               |
- * v ------------------------------------------------------------------------- v
-                                                   highlight-syntax-vars.js */
+ * The Highlight Syntax Variables (pre-compiled-prettifier/
+ *                                 pre-compiled-syntax-highlighter/
+ *                                 highlight-syntax-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-vars
 
       /**
        * ---------------------------------------------
@@ -907,7 +960,7 @@
        * ---------------------------------------------
        * @desc A hash map that stores the matching character
        *  formatting methods.
-       * @type {objectMap}
+       * @type {!objectMap}
        * @private
        */
       var router = {
@@ -949,12 +1002,15 @@
         '9': formatNumber,
         '/': handleSlash
       };
-      Object.freeze(router);
+
+      freezeObj(router);
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Methods                                            |
- * v ------------------------------------------------------------------------- v
-                                                highlight-syntax-methods.js */
+ * The Highlight Syntax Methods (pre-compiled-prettifier/
+ *                               pre-compiled-syntax-highlighter/
+ *                               highlight-syntax-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-highlight-syntax-methods
       /**
        * ---------------------------------------------
        * Private Method (prepareLine)
@@ -965,8 +1021,10 @@
        */
       function prepareLine(line) {
 
+        checkArgs(line, 'string');
+
         orgLine = line.split('');
-        Object.freeze(orgLine);
+        freezeObj(orgLine);
         newLine = line.split('');
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
@@ -1002,6 +1060,7 @@
           );
           i = format(i);
         }
+
       }
 
       /**
@@ -1015,36 +1074,45 @@
        */
       function handleSlash(i) {
 
-        /** @type {val} */
+        /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
+        /** @type {number} */
+        var ii;
+
+        checkArgs(i, 'number');
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
-          return formatLineComment(i);
+          ii = formatLineComment(i);
         }
-
         // Handle comment opening
-        if (orgLine[i + 1] === '*') {
-          return formatCommentOpen(i);
+        else if (orgLine[i + 1] === '*') {
+          ii = formatCommentOpen(i);
         }
+        else {
 
-        // Save preceding character
-        preceding = ( (orgLine[i - 1] === ' ') ?
-          orgLine[i - 2] : orgLine[i - 1]
-        );
+          // Save preceding character
+          preceding = ( (orgLine[i - 1] === ' ') ?
+            orgLine[i - 2] : orgLine[i - 1]
+          );
 
-        // Handle RegExp
-        if (i === 0 || preRegex.test(preceding)) {
-          end = isRegex(i);
-          if (end) {
-            return formatRegex(i, end);
+          // Handle RegExp
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end) {
+              ii = formatRegex(i, end);
+            }
           }
         }
 
         // Handle operator
-        return formatOperator(i);
+        if (!ii) {
+          ii = formatOperator(i);
+        }
+
+        return ii;
       }
 
       /**
@@ -1064,31 +1132,22 @@
         /** @type {string} */
         var regexBody;
 
-        end = i + 1;
+        checkArgs(i, 'number');
 
-        if (orgLine[end] === '/') {
-          return 0;
-        }
+        end = (orgLine[i + 1] === '/') ? -1 : i;
 
         // Find regex end index
-        while (true) {
-
-          if (end >= lineLen) {
-            return 0;
-          }
+        while (++end && end < lineLen && orgLine[end] !== '/') {
 
           sanitizeCharacter(end);
 
           if (orgLine[end] === '\\') {
             ++end;
-            continue;
           }
+        }
 
-          if (orgLine[end] === '/') {
-            break;
-          }
-
-          ++end;
+        if (end >= lineLen) {
+          end = 0;
         }
 
         regexBody = orgLine.slice(++i, end).join('');
@@ -1113,9 +1172,12 @@
        */
       function sanitizeCharacter(i) {
 
-        if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
+        checkArgs(i, 'number');
+
+        if ( hasOwnProp(htmlEntity, orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
+
       }
 
       /**
@@ -1129,19 +1191,19 @@
        */
       function skipComment(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (i >= lineLen) {
-            return i;
-          }
+        while (++i < lineLen) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '*' && i !== lastIndex && orgLine[i + 1] === '/') {
-            return ++i;
+            ++i;
+            break;
           }
         }
+
+        return i;
       }
 
       /**
@@ -1156,28 +1218,26 @@
       function skipString(i) {
 
         /** @type {string} */
-        var stringType;
+        var strCharacter;
 
-        stringType = orgLine[i];
+        checkArgs(i, 'number');
 
-        while (true) {
-          ++i;
+        strCharacter = orgLine[i];
 
-          if (i >= lineLen) {
-            return lastIndex;
-          }
+        while (++i < lineLen && orgLine[i] !== strCharacter) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '\\') {
             ++i;
-            continue;
-          }
-
-          if (orgLine[i] === stringType) {
-            return i;
           }
         }
+
+        if (i >= lineLen) {
+          i = lastIndex;
+        }
+
+        return i;
       }
 
       /**
@@ -1191,13 +1251,13 @@
        */
       function skipSpace(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (orgLine[i] !== ' ') {
-            return --i;
-          }
+        while (orgLine[i + 1] === ' ') {
+          ++i;
         }
+
+        return i;
       }
 
       /**
@@ -1216,22 +1276,17 @@
         /** @type {RegExp} */
         var numberOpts;
 
+        checkArgs(i, 'number');
+
         hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
         numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
           hexNumbers : plainNumbers
         );
 
-        while (true) {
-          ++i;
+        while (++i < lineLen && numberOpts.test(orgLine[i])) {}
+        --i;
 
-          if (i === lineLen) {
-            return lastIndex;
-          }
-
-          if ( !numberOpts.test(orgLine[i]) ) {
-            return --i;
-          }
-        }
+        return i;
       }
 
       /**
@@ -1240,41 +1295,38 @@
        * ---------------------------------------------
        * @desc Moves the index to the end of the identifier.
        * @param {number} i - The starting line index.
-       * @return {number} The end index.
+       * @return {!{
+       *   endIndex   : number,
+       *   name       : string,
+       *   propFollows: boolean
+       * }}
        * @private
        */
       function skipIdentifier(i) {
 
         /** @type {string} */
         var name;
+        /** @type {!Object} */
+        var result;
         /** @type {boolean} */
         var propFollows;
 
+        checkArgs(i, 'number');
+
         name = '_' + orgLine[i];
 
-        while (true) {
-          ++i;
-
-          if (i === lineLen) {
-            return {
-              endIndex   : --i,
-              name       : name,
-              propFollows: false
-            };
-          }
-
-          if ( identifiers.test(orgLine[i]) ) {
-            name += orgLine[i];
-            continue;
-          }
-
-          propFollows = (orgLine[i] === '.');
-          return {
-            endIndex   : --i,
-            name       : name,
-            propFollows: propFollows
-          };
+        while (++i < lineLen && identifiers.test(orgLine[i])) {
+          name += orgLine[i];
         }
+
+        propFollows = (i !== lineLen && orgLine[i] === '.');
+        result = {
+          endIndex   : --i,
+          name       : name,
+          propFollows: propFollows
+        };
+
+        return result;
       }
 
       /**
@@ -1288,30 +1340,31 @@
        */
       function formatCommentLinks(start, end) {
 
-        /** @type {string} */
-        var comment;
         /** @type {number} */
         var i;
+        /** @type {boolean} */
+        var pass;
         /** @type {string} */
         var href;
         /** @type {string} */
         var content;
+        /** @type {string} */
+        var comment;
+
+        checkArgs(start, 'number', end, 'number');
 
         if (end === lastIndex) {
           ++end;
         }
 
         comment = orgLine.slice(start, end).join('');
+        pass = commentLinks.test(comment);
 
-        if ( !commentLinks.test(comment) ) {
-          return;
-        }
-
-        while (true) {
+        while (pass) {
           i = comment.search(commentLinks);
 
           if (i === -1) {
-            return;
+            break;
           }
 
           i += start + 1;
@@ -1348,6 +1401,7 @@
           comment = comment.substr(i);
           start = i;
         }
+
       }
 
       /**
@@ -1365,11 +1419,11 @@
         /** @type {number} */
         var start;
 
-        start = i;
+        checkArgs(i, 'number');
 
+        start = i;
         newLine[i] = '<span class="cmt">/';
-        ++i;
-        i = (i < lastIndex) ? skipComment(i) : ++i;
+        i = (++i < lastIndex) ? skipComment(i) : ++i;
 
         if (i >= lineLen) {
           commentOpen = true;
@@ -1405,20 +1459,22 @@
         if (orgLine[0] === '*' && orgLine[1] === '/') {
           commentOpen = false;
           newLine[1] += '</span>';
-          return 3;
+          i = 3;
         }
+        else {
 
-        i = skipComment(0);
-        commentOpen = (i < lineLen) ? false : true;
+          i = skipComment(0);
+          commentOpen = (i > lastIndex);
 
-        if (i > lastIndex) {
-          i = lastIndex;
-        }
+          if (commentOpen) {
+            i = lastIndex;
+          }
 
-        newLine[i] += '</span>';
+          newLine[i] += '</span>';
 
-        if (config.commentLinks) {
-          formatCommentLinks(0, i);
+          if (config.commentLinks) {
+            formatCommentLinks(0, i);
+          }
         }
 
         return i;
@@ -1434,6 +1490,8 @@
        * @private
        */
       function formatLineComment(i) {
+
+        checkArgs(i, 'number');
 
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
@@ -1458,10 +1516,10 @@
        */
       function formatString(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="str">' + orgLine[i];
-
         i = skipString(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -1485,15 +1543,15 @@
         /** @type {string} */
         var character;
 
+        checkArgs(i, 'number', end, 'number');
+
         newLine[i] = '<span class="rgx">/';
 
         i = end;
         usedFlags = '';
 
         // Check for RegExp flags
-        while (true) {
-          ++i;
-
+        while (++i) {
           character = orgLine[i];
 
           if (regexFlags.test(character) &&
@@ -1524,10 +1582,10 @@
        */
       function formatSpace(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="spc"> ';
-
         i = skipSpace(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -1544,6 +1602,8 @@
        */
       function formatBracket(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
 
         return i;
@@ -1559,6 +1619,8 @@
        * @private
        */
       function formatOperator(i) {
+
+        checkArgs(i, 'number');
 
         sanitizeCharacter(i);
 
@@ -1578,6 +1640,8 @@
        */
       function formatComma(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cmm">,</span>';
 
         return i;
@@ -1593,6 +1657,8 @@
        * @private
        */
       function formatSemicolon(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="smc">;</span>';
 
@@ -1610,6 +1676,8 @@
        */
       function formatColon(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cln">:</span>';
 
         return i;
@@ -1625,6 +1693,8 @@
        * @private
        */
       function formatPeriod(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="per">.</span>';
 
@@ -1643,10 +1713,10 @@
        */
       function formatNumber(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="num">' + orgLine[i];
-
         i = skipNumber(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -1667,34 +1737,36 @@
        */
       function formatIdentifier(i, extras) {
 
-        /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
+        /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
         /** @type {string} */
         var keyClassName;
 
+        checkArgs(i, 'number', extras, 'string=');
+
         identifier = skipIdentifier(i);
 
         // Setup the keyword category and class name
-        if ( keywords.hasOwnProperty(identifier.name) ) {
+        if ( hasOwnProp(keywords, identifier.name) ) {
 
-          catID = keywords[identifier.name].cat;
-          keyClassName = keywordCategories[catID];
+          catID = keywords[ identifier.name ].cat;
+          keyClassName = keywordCategories[ catID ];
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
               (orgLine[identifier.endIndex + 1] === '(' ||
                (orgLine[identifier.endIndex + 1] === ' ' &&
                 orgLine[identifier.endIndex + 2] === '('))) {
-            keyClassName = keywordCategories['res'];
+            keyClassName = keywordCategories[ 'res' ];
           }
         }
 
         if (!keyClassName && !!extras) {
-          if ( keywords[extras].props.hasOwnProperty(identifier.name) ) {
-            catID = keywords[extras].cat;
-            keyClassName = keywordCategories[catID];
+          if ( hasOwnProp(keywords[ extras ].props, identifier.name) ) {
+            catID = keywords[ extras ].cat;
+            keyClassName = keywordCategories[ catID ];
           }
         }
 
@@ -1711,8 +1783,8 @@
         // Format the identifier's property (dot notation only)
         if (identifier.propFollows) {
           formatPeriod(++i);
-          extras = ( ( !keywords.hasOwnProperty(identifier.name) ) ?
-            '' : (!keywords[identifier.name].props) ?
+          extras = ( (!hasOwnProp(keywords, identifier.name)) ?
+            '' : (!keywords[ identifier.name ].props) ?
               '' : identifier.name
           );
           i = formatIdentifier(++i, extras);
@@ -1732,13 +1804,17 @@
        */
       function formatMisc(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
 
         return i;
       }
 
       return highlightSyntax;
+
     })();
 
     return prettify;
+
   })();

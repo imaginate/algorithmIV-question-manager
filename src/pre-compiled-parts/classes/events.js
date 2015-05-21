@@ -13,7 +13,7 @@
    * Public Method (Events.popState)
    * -----------------------------------------------
    * @desc The onPopState event handler for the window.
-   * @param {Object} newState - The new state to apply to the app.
+   * @param {!Object} newState - The new state to apply to the app.
    */
   Events.popState = function(newState) {
 
@@ -25,6 +25,8 @@
     var oldView;
     /** @type {boolean} */
     var flipElems;
+
+    checkArgs(newState, '!object');
 
     oldIds = app.vals.get('ids').slice(0);
     oldIndex = app.vals.get('index');
@@ -117,6 +119,8 @@
     /** @type {string} */
     var oldView;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.view != newVal) {
 
       len = app.vals.get('len');
@@ -147,6 +151,8 @@
     /** @type {!numbers} */
     var newIds;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.order != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -176,6 +182,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(newVal, 'string');
 
     if (app.searchBar.vals.stage != newVal) {
 
@@ -209,6 +217,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.source != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -240,6 +250,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(newVal, 'string');
 
     if (app.searchBar.vals.mainCat != newVal) {
 
@@ -274,6 +286,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.subCat != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -304,6 +318,8 @@
     /** @type {string} */
     var oldView;
 
+    checkArgs(id, 'number');
+
     oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
 
@@ -330,6 +346,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(id, 'string');
 
     if (app.searchBar.vals.source != id) {
 
@@ -365,6 +383,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(id, 'string');
 
     if (app.searchBar.vals.mainCat != id) {
 
@@ -403,6 +423,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(id, 'string', parentId, 'string');
+
     if (app.searchBar.vals.subCat != id) {
 
       oldIds = app.vals.get('ids');
@@ -439,7 +461,7 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
-   * @param {elemMap} elems - The code view elements.
+   * @param {elementMap} elems - The code view elements.
    */
   Events.extCodeView = function(overflow, elems) {
 
@@ -447,6 +469,8 @@
     var newWidth;
     /** @type {number} */
     var newRight;
+
+    checkArgs(overflow, 'number', elems, 'elemMap');
 
     newWidth = elems.code.clientWidth;
 
@@ -462,7 +486,7 @@
       setTimeout(function() {
         elems.extOpen.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'open';
+          setElemText(elems.extOpen, 'open');
           elems.extHovC.style.display = 'none';
           elems.extHovO.style.display = 'block';
         }, 600);
@@ -481,7 +505,7 @@
       setTimeout(function() {
         elems.extClose.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'close';
+          setElemText(elems.extOpen, 'close');
           elems.extHovO.style.display = 'none';
           elems.extHovC.style.display = 'block';
         }, 600);
@@ -490,4 +514,4 @@
 
   };
 
-  Object.freeze(Events);
+  freezeObj(Events, true);

@@ -8,6 +8,8 @@
    */
   var Sources = function(sources) {
 
+    checkArgs(sources, 'stringMap');
+
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
     ////////////////////////////////////////////////////////////////////////////
@@ -42,6 +44,9 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {number} */
+    var allIndex;
+
     this.ids = Object.keys(sources);
     this.len = this.ids.length;
 
@@ -50,7 +55,11 @@
       this.ids = sortKeys(this.ids, sources);
     }
 
-    Object.freeze(this.ids);
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -70,16 +79,22 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {number} */
+    var i;
+
     data = {};
 
     // Build the data hash map
-    if (this.len) {
-      this.ids.forEach(function(/** string */ sourceId) {
-        data[ sourceId ] = new Source(sources[ sourceId ]);
-      });
+    i = this.len;
+    while (i--) {
+      sourceId = this.ids[i];
+      data[ sourceId ] = new Source(sources[ sourceId ]);
     }
 
-    Object.freeze(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -89,34 +104,42 @@
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source's Source object or property.
+     * @desc Get a Source's object or protected property.
      * @param {string} id - The source id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Source|string|numbers)}
+     * @return {!(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      /** @type {Source} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Source} */
       var source;
+      /** @type {!(Source|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Sources.get call ';
+        errorMsg += 'was given an invalid source id to get. sourceID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      prop = prop || '';
+      source = data[ id ];
+      result = (prop) ? source.get(prop) : source;
 
-      return (prop) ? source.get(prop) : source;
+      return result;
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    // Deep freeze
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,3 +147,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
   Sources.prototype.constructor = Sources;
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Sources.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each source.
+   * @type {function}
+   */
+  Sources.prototype.freezeIds = function() {
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+  };

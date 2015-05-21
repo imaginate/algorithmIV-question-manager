@@ -11,6 +11,13 @@
    */
   var App = function(config, sources, categories, questions) {
 
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ config, 'objectMap', sources, 'stringMap' ];
+    args.push(categories, 'objectMap|stringMap', questions, '!objects');
+    checkArgs.apply(null, args);
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -98,7 +105,7 @@
 
     /** @type {booleanMap} */
     var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
+    /** @type {?Object<string, (string|number)>} */
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
@@ -149,11 +156,11 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources,
-                                   this.categories);
+    this.questions = new Questions(questions, tmpConfig, this.sources.get,
+                                   this.categories.get);
 
     // Set the search defaults
-    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
+    defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -161,7 +168,15 @@
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
-    this.searchBar.setToDefaults(this.config.searchBar.defaults);
+    defaults = {
+      view   : this.config.searchBar.defaults.get('view'),
+      order  : this.config.searchBar.defaults.get('order'),
+      stage  : this.config.searchBar.defaults.get('stage'),
+      source : this.config.searchBar.defaults.get('source'),
+      mainCat: this.config.searchBar.defaults.get('mainCat'),
+      subCat : this.config.searchBar.defaults.get('subCat')
+    };
+    this.searchBar.setToDefaults(defaults);
 
     // Update the current values to match the given defaults
     newIds = this.findMatches();
@@ -182,7 +197,7 @@
     // Setup the value of isHistory
     this.isHistory = true;
     try {
-      window.history.replaceState( this.getStateObj() );
+      window.history.replaceState(this.getStateObj(), '');
     }
     catch (e) {
       this.isHistory = false;
@@ -199,8 +214,8 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,16 +236,15 @@
     /** @type {number} */
     var renderTime;
 
-    if ( this.flags.get('initArgs') ) {
+    if ( app.flags.get('initArgs') ) {
 
-      this.elems.appendNav();
-      this.searchBar.setMainElems();
-      this.searchBar.setOptElems();
-      this.searchBar.appendElems();
-      this.questions.addIdsToSearch();
-      this.questions.appendElems();
+      app.elems.appendNav();
+      app.searchBar.setOptElems();
+      app.searchBar.appendElems();
+      app.questions.addIdsToSearch();
+      app.questions.appendElems();
 
-      renderTime = this.questions.len * 32;
+      renderTime = app.questions.len * 50;
       setTimeout(function() {
 
         /** @type {boolean} */
@@ -244,7 +258,7 @@
       }, renderTime);
     }
     else {
-      this.elems.appendError();
+      app.elems.appendError();
     }
   };
 
@@ -265,6 +279,8 @@
   App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
                                          flipElems, noPushState) {
 
+    /** @type {!Array<*>} */
+    var args;
     /** @type {!numbers} */
     var newIds;
     /** @type {number} */
@@ -272,9 +288,13 @@
     /** @type {string} */
     var newView;
 
-    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    args = [ oldIds, 'numbers=', oldIndex, '?number=', oldView, '?string=' ];
+    args.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    checkArgs.apply(null, args);
+
+    oldIds = (!!oldIds) ? oldIds : app.vals.get('ids').slice(0);
     oldIndex = ( ( checkType(oldIndex, '!number') ) ?
-      oldIndex : this.vals.get('index')
+      oldIndex : app.vals.get('index')
     );
 
     newView = app.searchBar.vals.view;
@@ -284,11 +304,11 @@
     noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('ids').slice(0);
-    newIndex = this.vals.get('index');
+    newIds = app.vals.get('ids').slice(0);
+    newIndex = app.vals.get('index');
 
     // Hide the question's main element
-    this.elems.main.style.opacity = '0';
+    app.elems.main.style.opacity = '0';
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
@@ -313,7 +333,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        window.history.pushState( app.getStateObj() );
+        window.history.pushState(app.getStateObj(), '');
       }
 
       // Show the question's main element
@@ -326,30 +346,28 @@
    * -----------------------------------------------
    * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Finds the matching question ids for the current
-   *   selected search values.
+   * @desc Finds the matching question ids for the current selected search
+   *   values.
    * @return {numbers} An array of the matching ids.
    */
   App.prototype.findMatches = function() {
 
-    /** @type {nums} */
+    /** @type {numbers} */
     var stage;
-    /** @type {nums} */
+    /** @type {numbers} */
     var source;
-    /** @type {nums} */
+    /** @type {numbers} */
     var mainCat;
-    /** @type {nums} */
+    /** @type {numbers} */
     var subCat;
     /** @type {number} */
     var len;
     /** @type {number} */
     var i;
-    /** @type {nums} */
+    /** @type {numbers} */
     var newIds;
     /** @type {boolean} */
     var pass;
-    /** @type {function} */
-    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;
@@ -376,18 +394,16 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      return [];
+      newIds = [];
+      return newIds;
     }
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-
       newIds = this.vals.get('allIds').slice(0);
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
       return newIds;
     }
 
@@ -423,47 +439,11 @@
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
       return newIds;
     }
-
-    // The helper function that checks each array for the
-    // current value being checked & removes the checked
-    // values from the array
-    checkForValue = function(/** number */ val, /** numbers */ arr) {
-
-      /** @type {boolean} */
-      var pass;
-      /** @type {number} */
-      var i;
-      /** @type {number} */
-      var compareVal;
-
-      pass = false;
-
-      i = arr.length;
-      while (i--) {
-
-        compareVal = arr[i];
-
-        if (compareVal >= val) {
-          arr.pop();
-          if (compareVal === val) {
-            pass = true;
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-
-      return pass;
-    };
 
     // Remove the question ids that do not exist in all other arrays
     i = newIds.length;
@@ -545,5 +525,7 @@
       subCat : this.searchBar.vals.subCat
     };
 
-    return JSON.stringify(vals);
+    vals = JSON.stringify(vals);
+
+    return vals;
   };

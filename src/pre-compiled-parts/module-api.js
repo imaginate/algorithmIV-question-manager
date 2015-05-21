@@ -1,21 +1,21 @@
   /**
    * -----------------------------------------------------
-   * Private Variable (_initialized)
+   * Public Variable (appModuleAPI)
    * -----------------------------------------------------
-   * @desc Indicates whether the app has been initialized.
-   * @type {boolean}
-   * @private
+   * @desc Holds the app module's public properties and methods.
+   * @type {!Object<string, function>}
+   * @struct
    */
-  var _initialized = false;
+  var appModuleAPI = {};
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init)
+   * Public Method (appModuleAPI.startApp)
    * -----------------------------------------------------
    * @desc Initializes the app.
    * @param {Object} settings - The app's settings.
    */
-  var _init = function(settings) {
+  appModuleAPI.startApp = function(settings) {
 
     /** @type {?(string|strings)} */
     var resourceList;
@@ -31,63 +31,74 @@
     var setup;
     /** @type {function} */
     var callback;
+    /** @type {string} */
+    var types;
     /** @type {number} */
     var i;
 
-    // Check if app has been initialized
-    if (_initialized) {
-      return;
+    if (appHasBeenInitialized) {
+      throw new Error('The aIV.app init call was made a second time.');
     }
 
     // Save the init of this app to prevent second init
-    _initialized = true;
+    appHasBeenInitialized = true;
 
-    // Check the settings arg
-    if (!settings || !checkType(settings, 'object')) {
+    if ( !checkType(settings, '!object') ) {
       settings = {};
     }
 
     // Setup the app arguments
-    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
+    resourceList = ( ( hasOwnProp(settings, 'resources') ) ?
       settings.resources : null
     );
-    config = ( ( settings.hasOwnProperty('config') ) ?
-      settings.config : ( settings.hasOwnProperty('configuration') ) ?
+    config = ( ( hasOwnProp(settings, 'config') ) ?
+      settings.config : ( hasOwnProp(settings, 'configuration') ) ?
         settings.configuration : null
     );
-    sources = ( ( settings.hasOwnProperty('sources') ) ?
-      settings.sources : ( settings.hasOwnProperty('source') ) ?
+    sources = ( ( hasOwnProp(settings, 'sources') ) ?
+      settings.sources : ( hasOwnProp(settings, 'source') ) ?
         settings.source : null
     );
-    categories = ( ( settings.hasOwnProperty('categories') ) ?
-      settings.categories : ( settings.hasOwnProperty('category') ) ?
+    categories = ( ( hasOwnProp(settings, 'categories') ) ?
+      settings.categories : ( hasOwnProp(settings, 'category') ) ?
         settings.category : null
     );
-    questions = ( ( settings.hasOwnProperty('questions') ) ?
-      settings.questions : ( settings.hasOwnProperty('question') ) ?
+    questions = ( ( hasOwnProp(settings, 'questions') ) ?
+      settings.questions : ( hasOwnProp(settings, 'question') ) ?
         settings.question : []
     );
 
     // Check the types of the arguments
     if ( !checkType(resourceList, 'string|strings') ) {
+      types = 'null, a string, or an array of strings';
+      logStartAppTypeError('resources', types, getTypeOf(resourceList));
       resourceList = null;
     }
     if ( !checkType(config, 'objectMap') ) {
+      types = 'null or an object with string => object pairs';
+      logStartAppTypeError('config', types, getTypeOf(config));
       config = null;
     }
     if ( !checkType(sources, 'stringMap') ) {
+      types = 'null or an object with string => string pairs';
+      logStartAppTypeError('sources', types, getTypeOf(sources));
       sources = null;
     }
     if ( !checkType(categories, 'stringMap|objectMap') ) {
+      types = 'null or an object with string => object or ';
+      types += 'string => string pairs';
+      logStartAppTypeError('categories', types, getTypeOf(categories));
       categories = null;
     }
     if ( !checkType(questions, '!objects') ) {
+      types = 'an array of question objects';
+      logStartAppTypeError('questions', types, getTypeOf(questions));
       questions = [];
     }
 
     // Setup and start the app
     setup = function() {
-      Object.freeze(resources);
+      freezeObj(resources);
       app = new App(config, sources, categories, questions);
       app.setupDisplay();
     };
@@ -95,7 +106,7 @@
     // Save the resources
     if (resourceList) {
 
-      if (typeof resourceList === 'string') {
+      if ( checkType(resourceList, 'string') ) {
         getResource(resourceList, setup);
         return;
       }
@@ -110,38 +121,41 @@
         })(resourceList[i], callback);
       }
       getResource(resourceList[0], callback);
-      return;
     }
-
-    setup();
+    else {
+      setup();
+    }
   };
 
   /**
    * -----------------------------------------------------
-   * Public Method (_init.getResource)
+   * Public Method (appModuleAPI.getResource)
    * -----------------------------------------------------
    * @desc Makes the app's resources publically available.
    * @param {string=} prop - The specific resource to retrieve.
-   * @return {val} Either the entire resources object or one of its properties.
+   * @return {*} Either the entire resources object or one of its properties.
    */
-  _init.getResource = function(prop) {
+  appModuleAPI.getResource = function(prop) {
 
     /** @type {string} */
     var errorMsg;
+    /** @type {*} */
+    var result;
 
     prop = prop || '';
 
-    if (prop && !resources.hasOwnProperty(prop)) {
+    if (prop && !hasOwnProp(resources, prop)) {
       errorMsg = 'The resource you requested does not exist. Please verify that \'';
       errorMsg += prop + '\' is a correct json file name in the resources folder ';
       errorMsg += 'and that the file name was included in the setup of the app ';
       errorMsg += '(see algorithmiv.com/docs/resources).';
       console.error(errorMsg);
-      return;
+    }
+    else {
+      result = (!!prop) ? resources[ prop ] : resources;
     }
 
-    return (!!prop) ? resources[ prop ] : resources;
+    return result;
   }
 
-  Object.freeze(_init);
-  Object.freeze(_init.getResource);
+  aIV.utils.freezeObj(appModuleAPI);

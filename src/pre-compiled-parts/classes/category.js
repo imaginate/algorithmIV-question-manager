@@ -10,6 +10,8 @@
    */
   var Category = function(name, subs) {
 
+    checkArgs(name, 'string', subs, 'strings=');
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -29,7 +31,7 @@
      * Protected Property (Category.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this category.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -38,17 +40,15 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    subs = (subs) ? freezeObj(subs) : null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -59,24 +59,20 @@
      * Public Method (Category.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the category.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      /** @type {Object<string, (string|numbers|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
         name: name,
         url : url,
         subs: subs,
-        ids : function() {
-          return Object.freeze( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -88,21 +84,38 @@
      */
     this.addId = function(id) {
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Category.addId ';
+        errorMsg += 'call was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
     };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Category.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      freezeObj(ids);
+
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -3,14 +3,17 @@
      * Public Method (prettify.setConfig)
      * ---------------------------------------------
      * @desc Sets the config settings for the prettifier.
-     * @param {Object<string, (number|boolean)>} newConfig - The config
+     * @param {!Object<string, (number|boolean)>} newConfig - The config
      *   settings for the prettifier.
      * @private
      */
     prettify.setConfig = function(newConfig) {
 
+      checkArgs(newConfig, '!object');
+
       config = newConfig;
-      Object.freeze(config);
+      freezeObj(config);
+
     }
 
     /**
@@ -19,15 +22,19 @@
      * ---------------------------------------------
      * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
-     * @return {strings}
+     * @return {!strings}
      * @private
      */
     function prepareLines(solution) {
 
+      /** @type {!strings} */
+      var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -42,7 +49,9 @@
         solution = solution.replace(/\t/g, '  ');
       }
 
-      return solution.split('\n');
+      lines = solution.split('\n');
+
+      return lines;
     }
 
     /**
@@ -50,8 +59,8 @@
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of code lines.
-     * @return {{
+     * @param {!strings} lines - An array of code lines.
+     * @return {!{
      *   result   : string,
      *   lineCount: number
      * }}
@@ -63,8 +72,12 @@
       var i;
       /** @type {number} */
       var len;
-      /** @type {} */
+      /** @type {string} */
       var line;
+      /** @type {!Object} */
+      var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -82,10 +95,12 @@
 
       }
 
-      return {
+      result = {
         result   : lines.join(''),
         lineCount: len
       };
+
+      return result;
     }
 
     /**
@@ -106,6 +121,8 @@
       /** @type {string} */
       var trimPart;
 
+      checkArgs(line, 'string');
+
       // Trim ending whitespaces
       if (line) {
         i = line.length - 1;
@@ -125,7 +142,7 @@
         trimPart = ( (frontTrimCount < line.length) ?
           line.substr(0, frontTrimCount) : ''
         );
-        if (trimPart && !/[^\s]/.test(trimPart)) {
+        if (trimPart && !notSpace.test(trimPart)) {
           // Trim full count
           line = line.substr(frontTrimCount);
         }
@@ -150,13 +167,15 @@
      * @param {string} cat - The keyword's category.
      * @param {string=} href - The keyword's details link.
      * @param {boolean=} props - Whether the keyword has properties.
-     * @return {Object<string, (string|numberMap)>}
+     * @return {!Object<string, (string|numberMap)>}
      * @private
      */
     function makeKeywordObj(cat, href, props) {
 
-      /** @type {Object<string, (string|numberMap)>} */
+      /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -167,7 +186,9 @@
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }
 
     /**
@@ -176,18 +197,22 @@
      * ---------------------------------------------
      * @desc Creates a keyword property object.
      * @param {string=} href - The keyword's details link.
-     * @return {stringMap}
+     * @return {!stringMap}
      * @private
      */
     function makePropObj(href) {
 
-      /** @type {stringMap} */
+      /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
       obj = {};
       obj.href = href;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }

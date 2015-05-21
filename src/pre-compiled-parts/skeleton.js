@@ -1,19 +1,22 @@
-/** @preserve blank line for custom compile (sed scripting) */
+/** @preserve blank line */
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - App Module (v1.1.1)
+ * Algorithm IV Question Manager App (v1.1.2)
  * -----------------------------------------------------------------------------
- * @file The module for implementing the aIV question management app.
+ * @file Algorithm IV's question manager is a JavaScript app designed to manage
+ *   practice questions and JavaScript coded solutions for learning computer
+ *   science focused algorithms and data structures, improving programming
+ *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
- * @version 1.1.1
+ * @version 1.1.2
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
- * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
+ * @license The Apache License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  * @desc More details about aIV's question manager:
  * <ol>
  *   <li>annotations: 
- *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/docs/js-for-compiler}
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
@@ -26,195 +29,188 @@
  * -----------------------------------------------------------------------------
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
- * @typedef {*} val
- * @typedef {number} num
- * @typedef {HTMLElement} elem
- * @typedef {HTMLElement} element
  * @typedef {Array<*>} vals
- * @typedef {Array<number>} nums
  * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
+ * @typedef {Array<Element>} elements
  * @typedef {Array<Question>} questions
- * @typedef {Array<HTMLElement>} elems
- * @typedef {Array<HTMLElement>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
- * @typedef {Object<string, HTMLElement>} elemMap
- * @typedef {Object<string, HTMLElement>} elementMap
+ * @typedef {Object<string, Element>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
-(function(/** Window */ window, /** function(Object) */ core) {
+////////////////////////////////////////////////////////////////////////////////
+// The Dependencies
+////////////////////////////////////////////////////////////////////////////////
+
+/* -----------------------------------------------------------------------------
+ * Algorithm IV JavaScript Shortcuts (dependencies/algorithmIV-utils.min.js)
+ * -------------------------------------------------------------------------- */
+// insert-aIV-utils
+
+////////////////////////////////////////////////////////////////////////////////
+// The Public API
+////////////////////////////////////////////////////////////////////////////////
+
+(function(window, appModuleAPI) {
   "use strict";
 
-
 /* -----------------------------------------------------------------------------
- * | The Public API                                                            |
- * v ------------------------------------------------------------------------- v
-                                                              public-api.js */
+ * The Public API (public-api.js)
+ * -------------------------------------------------------------------------- */
+// insert-public-api
 
-})(window, (function(/** Window */ window, /** Document */ document) {
+})(window,
+
+////////////////////////////////////////////////////////////////////////////////
+// The App Module
+////////////////////////////////////////////////////////////////////////////////
+
+(function(window, document, undefined) {
   "use strict"; 
 
+/* -----------------------------------------------------------------------------
+ * Set The TypeError Message For Invalid Arguments
+ * -------------------------------------------------------------------------- */
+
+aIV.utils.set({
+  checkArgsErrorMsg: 'An aIV.app internal call received an invalid parameter.'
+});
 
 /* -----------------------------------------------------------------------------
- * | The Public Variables for the Module                                       |
- * v ------------------------------------------------------------------------- v
-                                                             module-vars.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Public Methods for the Module                                         |
- * v ------------------------------------------------------------------------- v
-                                                          module-methods.js */
-
+ * The App Module API (module-api.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-api
 
 /* -----------------------------------------------------------------------------
- * | The App Class                                                             |
- * v ------------------------------------------------------------------------- v
-                                                         classes/app/app.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The App Flags Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                   classes/app/app-flags.js */
-
+ * The Public Module Variables (module-vars.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-vars
 
 /* -----------------------------------------------------------------------------
- * | The App Elems Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                   classes/app/app-elems.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The App Vals Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                                    classes/app/app-vals.js */
-
+ * The Public Module Methods (module-methods.js)
+ * -------------------------------------------------------------------------- */
+// insert-module-methods
 
 /* -----------------------------------------------------------------------------
- * | The Config Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                   classes/config/config.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Search Bar Config Class                                               |
- * v ------------------------------------------------------------------------- v
-                                        classes/config/search-bar-config.js */
-
+ * The App Class (classes/app/app.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-app-base
 
 /* -----------------------------------------------------------------------------
- * | The Defaults Search Bar Config Class                                      |
- * v ------------------------------------------------------------------------- v
-                               classes/config/defaults-search-bar-config.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Questions Config Class                                                |
- * v ------------------------------------------------------------------------- v
-                                         classes/config/questions-config.js */
-
+ * The AppFlags Class (classes/app/app-flags.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-app-flags
 
 /* -----------------------------------------------------------------------------
- * | The Pretty Config Class                                                   |
- * v ------------------------------------------------------------------------- v
-                                            classes/config/pretty-config.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Links Config Class                                                    |
- * v ------------------------------------------------------------------------- v
-                                             classes/config/links-config.js */
-
+ * The AppElems Class (classes/app/app-elems.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-app-elems
 
 /* -----------------------------------------------------------------------------
- * | The Sources Class                                                         |
- * v ------------------------------------------------------------------------- v
-                                                         classes/sources.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Source Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                          classes/source.js */
-
+ * The AppVals Class (classes/app/app-vals.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-app-vals
 
 /* -----------------------------------------------------------------------------
- * | The Categories Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                                      classes/categories.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Category Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                                        classes/category.js */
-
+ * The Config Class (classes/config/config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-config
 
 /* -----------------------------------------------------------------------------
- * | The Search Bar Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                                      classes/search-bar.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Questions Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                       classes/questions.js */
-
+ * The SearchBarConfig Class (classes/config/search-bar-config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-search-bar-config
 
 /* -----------------------------------------------------------------------------
- * | The Question Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                               classes/question/question.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Question Format Class                                                 |
- * v ------------------------------------------------------------------------- v
-                                        classes/question/question-format.js */
-
+ * The DefaultsSearchBarConfig (classes/config/defaults-search-bar-config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-defaults-search-bar-config
 
 /* -----------------------------------------------------------------------------
- * | The Question Elem Class                                                   |
- * v ------------------------------------------------------------------------- v
-                                          classes/question/question-elem.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Prettifier Module                                                     |
- * v ------------------------------------------------------------------------- v
-                                                                prettify.js */
-
+ * The QuestionsConfig Class (classes/config/questions-config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-questions-config
 
 /* -----------------------------------------------------------------------------
- * | The Events Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                          classes/events.js */
-
-
-/* -----------------------------------------------------------------------------
- * | The Polyfill Methods                                                      |
- * v ------------------------------------------------------------------------- v
-                                                        polyfill-methods.js */
-
+ * The PrettyConfig Class (classes/config/pretty-config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-pretty-config
 
 /* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
-
+ * The LinksConfig Class (classes/config/links-config.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-links-config
 
 /* -----------------------------------------------------------------------------
- * | End of module                                                             |
- * v ------------------------------------------------------------------------- v
-                                                                            */
-  return _init;
+ * The Sources Class (classes/sources.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-sources
+
+/* -----------------------------------------------------------------------------
+ * The Source Class (classes/source.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-source-one
+
+/* -----------------------------------------------------------------------------
+ * The Categories Class (classes/categories.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-categories
+
+/* -----------------------------------------------------------------------------
+ * The Category Class (classes/category.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-category
+
+/* -----------------------------------------------------------------------------
+ * The SearchBar Class (classes/search-bar/search-bar.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-search-bar-base
+
+/* -----------------------------------------------------------------------------
+ * The SearchBarElems Class (classes/search-bar/search-bar-elems.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-search-bar-elems
+
+/* -----------------------------------------------------------------------------
+ * The Questions Class (classes/questions.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-questions
+
+/* -----------------------------------------------------------------------------
+ * The Question Class (classes/question/question.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-question-one
+
+/* -----------------------------------------------------------------------------
+ * The QuestionFormat Class (classes/question/question-format.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-question-format
+
+/* -----------------------------------------------------------------------------
+ * The QuestionElem Class (classes/question/question-elem.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-question-elem
+
+/* -----------------------------------------------------------------------------
+ * The Prettifier Module  (prettify.js)
+ * -------------------------------------------------------------------------- */
+// insert-prettifier
+
+/* -----------------------------------------------------------------------------
+ * The Events Class (classes/events.js)
+ * -------------------------------------------------------------------------- */
+// insert-class-events
+
+////////////////////////////////////////////////////////////////////////////////
+// The App Module End
+////////////////////////////////////////////////////////////////////////////////
+
+  return appModuleAPI;
 
 })(window, document));

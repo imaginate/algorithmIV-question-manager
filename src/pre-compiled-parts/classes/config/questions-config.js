@@ -3,10 +3,12 @@
    * Public Class (QuestionsConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for formatting questions in this app.
-   * @param {Object} config - The user's question format config settings.
+   * @param {!Object} config - The user's question format config settings.
    * @constructor
    */
   var QuestionsConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -106,43 +108,15 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    complete = true;
-    source   = true;
-    category = true;
-    subCat   = true;
-    links    = true;
-    problem  = true;
-    descr    = false;
-    output   = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('complete') && config.complete === false) {
-      complete = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
-    if (config.hasOwnProperty('links') && config.links === false) {
-      links = false;
-    }
-    if (config.hasOwnProperty('problem') && config.problem === false) {
-      problem = false;
-    }
-    if (config.hasOwnProperty('descr') && config.descr === true) {
-      descr = true;
-    }
-    if (config.hasOwnProperty('output') && config.output === false) {
-      output = false;
-    }
+    id       = !(config.id       === false);
+    complete = !(config.complete === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
+    links    = !(config.links    === false);
+    problem  = !(config.problem  === false);
+    descr    =  (config.descr    === true );
+    output   = !(config.output   === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -154,11 +128,11 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from QuestionsConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         id      : id,
         complete: complete,
@@ -171,18 +145,13 @@
         output  : output
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////

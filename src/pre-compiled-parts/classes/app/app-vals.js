@@ -8,6 +8,8 @@
    */
   var AppVals = function(questionsLen) {
 
+    checkArgs(questionsLen, 'number');
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -71,7 +73,7 @@
     index = -1;
 
     // Freeze the needed protected properties
-    Object.freeze(allIds);
+    freezeObj(allIds);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -81,8 +83,8 @@
      * ----------------------------------------------- 
      * Public Method (AppVals.get)
      * -----------------------------------------------
-     * @desc Gets an app value.
-     * @param {string} prop - The name of the value to get.
+     * @desc Gets an AppVals protected property.
+     * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
      */
     this.get = function(prop) {
@@ -95,7 +97,7 @@
         index : index
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -108,26 +110,25 @@
      */
     this.set = function(newIds, newIndex) {
 
+      checkArgs(newIds, 'numbers', newIndex, 'number=');
+
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (typeof newIndex === 'number') {
+      if ( checkType(newIndex, 'number') ) {
         index = newIndex;
       }
-    };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,11 +150,11 @@
     /** @type {number} */
     var len;
 
+    checkArgs(ids, 'numbers', index, 'number=');
+
     index = index || 0;
 
-    if (!ids) {
-      ids = this.get('allIds');
-    }
+    ids = ids || this.get('allIds');
     len = ids.length;
 
     // Check the new index value
@@ -166,6 +167,7 @@
 
     // Reset the values
     this.set(ids, index);
+
   };
 
   /**
@@ -177,80 +179,92 @@
    *   The options are 'prev', 'next', or a question id.
    * @return {number} The new index.
    */
-  AppVals.prototype.move = function(way) {
+  AppVals.prototype.move = (function setupAppVals_move() {
 
-    /** @type {number} */
-    var id;
-    /** @type {string} */
-    var view;
-    /** @type {number} */
-    var index;
-    /** @type {number} */
-    var last;
+    /** function(string) */
+    var throwParamError = function(way) {
 
-    id = (typeof way === 'number') ? way : 0;
-    index = this.get('index');
+      /** @type {string} */
+      var errorMsg;
 
-    // Check the value for way
-    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
-      try {
-        id = Number( way.replace(/[^0-9]/g, '') );
+      errorMsg = 'An aIV.app internal error occurred. An AppVals.move call ';
+      errorMsg += 'received an invalid way parameter. way= ' + way;
+      throw new Error(errorMsg);
+    };
+
+    return function move(way) {
+
+      /** @type {number} */
+      var id;
+      /** @type {string} */
+      var view;
+      /** @type {number} */
+      var index;
+      /** @type {number} */
+      var last;
+
+      checkArgs(way, 'string|number');
+
+      if ( checkType(way, 'number') ) {
+        id  = way;
+        way = null;
       }
-      catch (e) {
-        return;
-      }
-    }
-
-    view = app.searchBar.vals.view;
-
-    // Handle moving to a specific question id
-    if (id) {
-
-      if (view !== 'one') {
-        app.searchBar.vals.view = 'one';
+      else {
+        id = 0;
       }
 
-      index = this.get('ids').indexOf(way);
+      index = this.get('index');
+
+      // Check the value for way & convert number strings to a number
+      if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+        id = way.replace(/[^0-9]/g, '');
+        id = id && Number(id);
+        id || throwParamError(way);
+        way = null;
+      }
+
+      view = app.searchBar.vals.view;
+
+      if (way) {
+
+        // Save the last index
+        last = this.get('len') - 1;
+
+        if (view === 'one') {
+
+          // Handle moving the index one spot
+          if (way === 'prev') {
+            index = (index === 0) ? last : --index;
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : ++index;
+          }
+        }
+        else if (view === 'ten') {
+
+          // Handle moving the index ten spots
+          last = last - (last % 10);
+          if (way === 'prev') {
+            index = (index === 0) ? last : (index - 10);
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : (index + 10);
+          }
+        }
+      }
+      else {
+
+        // Handle moving to a specific question id
+        (id) || (id <= app.questions.len) || throwParamError(id);
+        if (view !== 'one') {
+          app.searchBar.vals.view = 'one';
+        }
+        index = this.get('ids').indexOf(id);
+        (index !== -1) || throwParamError(id);
+      }
 
       this.set(null, index);
 
       return index;
-    }
-
-    // Save the last index
-    last = this.get('len') - 1;
-
-    // Handle moving the index one spot
-    if (view === 'one') {
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : --index;
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : ++index;
-      }
-
-      this.set(null, index);
-
-      return index;
-    }
-
-    // Handle moving the index ten spots
-    if (view === 'ten') {
-
-      // Update the last index
-      last = last - (last % 10);
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : (index - 10);
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : (index + 10);
-      }
-
-      this.set(null, index);
-
-      return index;
-    }
-
-  };
+    };
+  })();

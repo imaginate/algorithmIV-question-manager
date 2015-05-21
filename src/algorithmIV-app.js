@@ -1,19 +1,22 @@
-/** @preserve blank line for custom compile (sed scripting) */
+/** @preserve blank line */
 
 /**
  * -----------------------------------------------------------------------------
- * Algorithm IV Question Manager - App Module (v1.1.1)
+ * Algorithm IV Question Manager App (v1.1.2)
  * -----------------------------------------------------------------------------
- * @file The module for implementing the aIV question management app.
+ * @file Algorithm IV's question manager is a JavaScript app designed to manage
+ *   practice questions and JavaScript coded solutions for learning computer
+ *   science focused algorithms and data structures, improving programming
+ *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
- * @version 1.1.1
+ * @version 1.1.2
  * @author Adam Smith ({@link adamsmith@youlum.com})
  * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
- * @license The MIT License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
+ * @license The Apache License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
  * @desc More details about aIV's question manager:
  * <ol>
  *   <li>annotations: 
- *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/}
+ *       [See Closure Compiler specific JSDoc]{@link https://developers.google.com/closure/compiler/docs/js-for-compiler}
  *       and [See JSDoc3]{@link http://usejsdoc.org/}
  *   </li>
  *   <li>contributing: 
@@ -26,36 +29,74 @@
  * -----------------------------------------------------------------------------
  * Pre-Defined JSDoc Types
  * -----------------------------------------------------------------------------
- * @typedef {*} val
- * @typedef {number} num
- * @typedef {HTMLElement} elem
- * @typedef {HTMLElement} element
  * @typedef {Array<*>} vals
- * @typedef {Array<number>} nums
  * @typedef {Array<number>} numbers
  * @typedef {Array<string>} strings
  * @typedef {Array<Object>} objects
+ * @typedef {Array<Element>} elements
  * @typedef {Array<Question>} questions
- * @typedef {Array<HTMLElement>} elems
- * @typedef {Array<HTMLElement>} elements
  * @typedef {Array<{name: string, href: string}>} links
  * @typedef {Object<string, string>} stringMap
  * @typedef {Object<string, number>} numberMap
  * @typedef {Object<string, object>} objectMap
  * @typedef {Object<string, boolean>} booleanMap
- * @typedef {Object<string, HTMLElement>} elemMap
- * @typedef {Object<string, HTMLElement>} elementMap
+ * @typedef {Object<string, Element>} elementMap
  * @typedef {Object<string, strings>} stringsMap
  */
 
-(function(/** Window */ window, /** function(Object) */ core) {
-  "use strict";
-
+////////////////////////////////////////////////////////////////////////////////
+// The Dependencies
+////////////////////////////////////////////////////////////////////////////////
 
 /* -----------------------------------------------------------------------------
- * | The Public API                                                            |
- * v ------------------------------------------------------------------------- v
-                                                              public-api.js */
+ * Algorithm IV JavaScript Shortcuts (dependencies/algorithmIV-utils.min.js)
+ * -------------------------------------------------------------------------- */
+
+/* Algorithm IV JavaScript Polyfills (v0.0.1) (learn@algorithmiv.com)
+ * Author: Adam Smith (adamsmith@youlum.com)
+ * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * The Apache License (algorithmiv.com/docs/license) */
+(function(h,m,n){h.console=h.console||{};(function(a,b){a.log||(a.log=b);a.error||(a.error=a.log);a.assert||(a.assert=function(b){var c;if(!b)return c=1<arguments.length?Array.prototype.slice.call(arguments,1):["A console.assert call failed."],a.error.apply(this,c)});a.clear||(a.clear=b);a.count||(a.count=b);a.debug||(a.debug=a.log);a.dir||(a.dir=a.log);a.dirxml||(a.dirxml=a.log);a.exception||(a.exception=a.error);a.group||(a.group=b);a.groupCollapsed||(a.groupCollapsed=a.group);a.groupEnd||(a.groupEnd=
+b);a.info||(a.info=a.log);a.markTimeline||(a.markTimeline=a.timeStamp?a.timeStamp:b);a.profile||(a.profile=b);a.profileEnd||(a.profileEnd=b);a.table||(a.table=b);a.time||(a.time=b);a.timeEnd||(a.timeEnd=b);a.timeline||(a.timeline=b);a.timelineEnd||(a.timelineEnd=b);a.timeStamp||(a.timeStamp=a.markTimeline);a.trace||(a.trace=a.log);a.warn||(a.warn=a.error);(function(b,c,f,h){var d,k,l,g;if(b)if(l=["assert","error","info","log","warn"],g=["clear","dir","profile","profileEnd"],g=l.concat(g),c)for(d=
+g.length;d--;)k=a[g[d]],a[g[d]]=c.call(k,a);else for(d=l.length;d--;)k=a[l[d]],f.call(k,a,h.call(arguments))})("object"===typeof a.log,Function.prototype.bind,Function.prototype.call,Array.prototype.slice)})(h.console,function(){});Object.keys||(Object.keys=function(){var a,b;a=!{toString:null}.propertyIsEnumerable("toString");b="toString toLocaleString valueOf hasOwnProperty isPrototypeOf propertyIsEnumerable constructor".split(" ");return function(e){var c,f;if(!e||"object"!==typeof e&&"function"!==
+typeof e)throw new TypeError("An Object.keys call received an invalid object parameter. Note: It only accepts non-null objects and functions.");f=[];for(c in e)e.hasOwnProperty(c)&&f.push(c);if(a)for(c=b.length;c--;)e.hasOwnProperty(b[c])&&f.push(b[c]);return f}}());Object.freeze||(Object.freeze=function(a){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An Object.freeze call received an invalid object parameter. Note: It only accepts non-null objects and functions.");return a});
+try{Object.freeze(function(){})}catch(p){Object.freeze=function(a){return function(b){return"function"===typeof b?b:a(b)}}(Object.freeze)}Object.isFrozen||(Object.isFrozen=function(a){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An Object.isFrozen call received an invalid object parameter. Note: It only accepts non-null objects and functions.");return!0});Array.isArray||(Array.isArray=function(a){return"[object Array]"===Object.prototype.toString.call(a)})})(window,document);
+
+/* Algorithm IV JavaScript Shortcuts (v1.0.4) (learn@algorithmiv.com)
+ * Author: Adam Smith (adamsmith@youlum.com)
+ * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * The Apache License (algorithmiv.com/docs/license) */
+(function(u,n){u.aIV=u.aIV||{};aIV.utils=aIV.utils||n})(window,function(u,n,y){var e={},f={checkArgsErrorMsg:"A function call had an invalid parameter data type.",getElemByClassRoot:n,getElemsByClassRoot:n,getElemByTagRoot:n,getElemsByTagRoot:n,types:{checkArgsErrorMsg:"string|function",getElemByClassRoot:"!(Document|Element)",getElemsByClassRoot:"!(Document|Element)",getElemByTagRoot:"!(Document|Element)",getElemsByTagRoot:"!(Document|Element)"}};Object.freeze(f);Object.freeze(f.types);var m={checkArgsErrorMsg:f.checkArgsErrorMsg,
+getElemByClassRoot:f.getElemByClassRoot,getElemsByClassRoot:f.getElemsByClassRoot,getElemByTagRoot:f.getElemByTagRoot,getElemsByTagRoot:f.getElemsByTagRoot};e.checkType=function(){var b=/^string$|^number$|^boolean$|^function$|^undefined$/,a=/^string$|^number$|^boolean$|^object$|^function$|^undefined$/,c=/^elem$|^element$|^document$/,e=/^array$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$/,z=/^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,
+k=/\!/,m=/\?/,l=/\=/,n=/\*/,f=function(a,b){return null===a?!1:typeof a===b},u=function(a,b){return a&&f(a,"object")&&a.nodeType?a.nodeType==={elem:1,element:1,document:9}[b]:!1};return function(h,d,r){var p,v,q,g;if(!f(d,"string"))throw new TypeError("An aIV.utils.checkType call received an invalid (a non-string) type parameter.");if(p=n.test(d)){if(1<d.length)throw h="An aIV.utils.checkType call received an invalid type string. When using an asterisk, '*', no other values should be given as the asterisk guarantees the check will ",
+h+="pass.",Error(h);return!0}if(p=h===y&&l.test(d))g=!0;else{g=d;var t;t=(q=null===h)?k.test(g):!0;q&&m.test(g)&&(t=!t);g=t}q=p||!g||k.test(d)?!1:m.test(d);p=p||q&&g;if(!r||!p)if(d=d.toLowerCase(),d=d.replace(w.exceptLowerAlphaAndPipe,""),v=d.split("|"),!r)for(d=v,t=!0,r=d.length;t&&r--;)if(t=w.allDataTypes.test(d[r]),!t)throw h=void 0,h="An aIV.utils.checkType call received an invalid type ",h+="string. The value '"+d[r]+"' was incorrect. ",h+="Check aIV.utils.checkType's documentation for a ",h+=
+"list of acceptable type strings.",Error(h);if(!p){if(null===h){h=v;p=q;d=!1;for(v=h.length;!d&&v--;)g||(p=!b.test(h[v])),d=p;h=d}else{p=v;g=!1;for(v=p.length;!g&&v--;){d=p[v];if("any"===d){g=!0;break}if(a.test(d))g=f(h,d);else if(c.test(d))g=u(h,d);else if(e.test(d))if(g=h,t=q=r=void 0,Array.isArray(g))if("array"===d)g=!0;else{d=d.slice(0,-1);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r=g.length;q&&r--;)q=t(g[r],d);g=q}else g=!1;else if(z.test(d))if(g=h,t=q=r=void 0,f(g,"object")){d=d.slice(0,
+-3);t="array"===d?Array.isArray:c.test(d)?u:f;q=!0;for(r in g)if(g.hasOwnProperty(r)&&(q=t(g[r],d),!q))break;g=q}else g=!1}h=g}p=h}return p}}();e.isValidTypeString=function(b){var a,c;if("string"!==typeof b)throw new TypeError("An aIV.utils.isValidTypeString call received an invalid (a non-string) typeString parameter.");b=b.toLowerCase();b=b.replace(w.exceptLowerAlphaAndPipe,"");c=b.split("|");a=!0;for(b=c.length;a&&b--;)a=w.allDataTypes.test(c[b]);return a};e.checkArgs=function(){var b=e.checkType,
+a=e.isValidTypeString;return function(){var c,e,f,k,n,l,u;e=arguments.length;if(2>e||e%2)throw Error("An aIV.utils.checkArgs call was missing parameters.");n=Array.prototype.slice.call(arguments,0);l=!0;for(c=-1;++c<e;)if(c%2){k=n[c];u=(u=b(k,"string",!0))&&a(k);if(!u)throw l=void 0,l="An aIV.utils.checkArgs call received an invalid type ",l+="string. The value '"+k+"' was incorrect. ",l+="Check aIV.utils.checkType's documentation for a ",l+="list of acceptable type strings.",Error(l);l=l&&b(f,k,
+!0)}else f=n[c];if(!l&&(k=m.checkArgsErrorMsg,(k=b(k,"string")?k:k())&&b(k,"string")))throw new TypeError(k);return l}}();e.getTypeOf=function(){var b=e.checkType;return function(a){var c;c=typeof a;"object"===c&&b(a,"document|element|array")&&(c=null===a?"null":Array.isArray(a)?"array":1===a.nodeType?"element":"document");return c}}();e.freezeObj=function(){var b=function(a){var c;Object.freeze(a);for(c in a)a.hasOwnProperty(c)&&a[c]&&("object"===typeof a[c]||"function"===typeof a[c])&&b(a[c])};
+return function(a,c){if(!a||"object"!==typeof a&&"function"!==typeof a)throw new TypeError("An aIV.utils.freezeObj call received an invalid obj parameter.");"boolean"!==typeof c&&(c=!1);c?b(a):Object.freeze(a);return a}}();e.hasOwnProp=function(b,a){var c;if(!b||"object"!==typeof b&&"function"!==typeof b)throw new TypeError("An aIV.utils.hasOwnProp call received an invalid obj parameter.");if(!a||"string"!==typeof a)throw c="An aIV.utils.hasOwnProp call received an invalid prop parameter.",new TypeError(c);
+return b.hasOwnProperty(a)};var w={allDataTypes:/^any$|^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|^element$|^undefined$|^null$|^document$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,exceptLowerAlphaAndPipe:/[^a-z\|]/g};e.freezeObj(w,!0);e.getElemById=function(b){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemById call received an invalid id parameter (should be a string).");
+b=n.getElementById(b);if(!b)throw b="An aIV.utils.getElemById call received an invalid id parameter (i.e. no element with the id was found).",new RangeError(b);return b};e.getElemByClass=function(b,a,c){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemByClass call received an invalid class name parameter.");a="number"!==typeof a||-1>a?0:Math.floor(a);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByClassRoot);b=c.getElementsByClassName?c.getElementsByClassName(b):
+x.getElementsByClassNameAlt(b,c);if(0>a||a>=b.length)a=b.length-1;a=b[a];if(!a)throw a="An aIV.utils.getElemByClass call received an invalid class name parameter ",a+="(i.e. no element with the class name was found).",new RangeError(a);return a};e.getElemsByClass=function(b,a){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemsByClass call received an invalid class name parameter.");a&&"object"===typeof a&&(a instanceof Element||a instanceof Document)||(a=m.getElemsByClassRoot);
+return a.getElementsByClassName?a.getElementsByClassName(b):x.getElementsByClassNameAlt(b,a)};e.getElemByTag=function(b,a,c){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemByTag call received an invalid tag name parameter.");a="number"!==typeof a||-1>a?0:Math.floor(a);c&&"object"===typeof c&&(c instanceof Element||c instanceof Document)||(c=m.getElemByTagRoot);b=c.getElementsByTagName(b);if(0>a||a>=b.length)a=b.length-1;a=b[a];if(!a)throw a="An aIV.utils.getElemByTag call received an invalid tag name parameter ",
+a+="(i.e. no element with the tag name was found).",new RangeError(a);return a};e.getElemsByTag=function(b,a){if(!b||"string"!==typeof b)throw new TypeError("An aIV.utils.getElemsByTag call received an invalid tag name parameter.");a&&"object"===typeof a&&(a instanceof Element||a instanceof Document)||(a=m.getElemsByTagRoot);return a.getElementsByTagName(b)};e.makeElem=function(b){var a;b&&"string"===typeof b?(a=b,b=null):b&&"object"===typeof b?b.hasOwnProperty("tag")&&b.tag&&"string"===typeof b.tag?
+a=b.tag:b.hasOwnProperty("tagName")&&b.tagName&&"string"===typeof b.tagName&&(a=b.tagName):b=null;a||(a="div");a=n.createElement(a);b&&(b.hasOwnProperty("text")&&b.text&&"string"===typeof b.text&&(a.textContent?a.textContent=b.text:a.innerText=b.text),b.hasOwnProperty("html")&&b.html&&"string"===typeof b.html&&(a.innerHTML=b.html),b.hasOwnProperty("id")&&b.id&&"string"===typeof b.id&&(a.id=b.id),b.hasOwnProperty("className")&&b.className&&"string"===typeof b.className&&(a.className=b.className));
+return a};e.setElemText=function(b,a){var c;if(!(b&&"object"===typeof b&&b instanceof Element))throw new TypeError("An aIV.utils.setElemText call received an invalid elem parameter (should be a DOM Element).");if(!a||"string"!==typeof a)throw c="An aIV.utils.setElemText call received an invalid text parameter (should be a string).",new TypeError(c);b.textContent?b.textContent=a:b.innerText=a;return b};e.addElemText=function(b,a){var c;if(!(b&&"object"===typeof b&&b instanceof Element))throw new TypeError("An aIV.utils.addElemText call received an invalid elem parameter (should be a DOM Element).");
+if(!a||"string"!==typeof a)throw c="An aIV.utils.addElemText call received an invalid text parameter (should be a string).",new TypeError(c);b.textContent?b.textContent+=a:b.innerText+=a;return b};var x={getElementsByClassNameAlt:function(b,a){var c,e,f,k,m,l;if(a.querySelectorAll)k=a.querySelectorAll("."+b);else if(n.evaluate)for(k=[],f='"'+(" "+b+" ")+'")]',c=n.evaluate(f,a,null,0,null),f=c.iterateNext();f;)k.push(f),f=c.iterateNext();else for(l=new RegExp("(^|s)"+b+"(s|$)"),m=a.getElementsByTagName("*"),
+k=[],e=m.length,c=-1;++c<e;)f=m[c],l.test(f.className)&&k.push(f);return k}};e.freezeObj(x,!0);e.set=function(){var b=e.checkType;return function(a){var c;if(!a||"object"!==typeof a)throw new TypeError("An aIV.utils.set call received an invalid settings parameter (should be an object).");for(c in m)if(m.hasOwnProperty(c)&&a.hasOwnProperty(c))if(b(a[c],f.types[c]))m[c]=a[c];else throw a=void 0,a="An aIV.utils.set call received an invalid "+c,a+=" settings parameter (should be a "+f.types[c],a+=").",
+new TypeError(a);return!0}}();e.reset=function(){var b,a,c;b=(b=arguments.length)?1<b?Array.prototype.slice.call(arguments,0):Array.isArray(arguments[0])?arguments[0]:[arguments[0]]:Object.keys(m);if(!e.checkType(b,"!strings"))throw new TypeError("An aIV.utils.reset call received an invalid setting parameter (should be a string or an array of strings).");for(c=b.length;c--;)a=b[c],m.hasOwnProperty(a)&&(m[a]=f[a]);return!0};e.freezeObj(e,!0);return e}(window,document));
+
+////////////////////////////////////////////////////////////////////////////////
+// The Public API
+////////////////////////////////////////////////////////////////////////////////
+
+(function(window, appModuleAPI) {
+  "use strict";
+
+/* -----------------------------------------------------------------------------
+ * The Public API (public-api.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * ---------------------------------------------------
    * Global Variable (aIV)
@@ -71,31 +112,230 @@
    * Global Method (aIV.app)
    * ---------------------------------------------------
    * @desc Initializes the aIV question management app.
-   * @param {Object} settings - The app's settings.
+   * @param {!Object} settings - The app's settings.
    * @param {objectMap=} settings.config - The app's configuration.
    * @param {stringMap=} settings.sources - The app's sources.
    * @param {(objectMap|stringMap)=} settings.categories - The app's categories.
-   * @param {objects} settings.questions - The app's questions.
+   * @param {!objects} settings.questions - The app's questions.
    * @param {(string|strings)=} settings.resources - The app's resources.
    * @global
    */
-  aIV.app = core;
+  aIV.app = appModuleAPI.startApp;
 
-})(window, (function(/** Window */ window, /** Document */ document) {
+  /**
+   * ---------------------------------------------------
+   * Global Method (aIV.app.getResource)
+   * ---------------------------------------------------
+   * @desc Makes the app's resources publically available.
+   * @param {string=} prop - The specific resource to retrieve.
+   * @return {*} Either the entire resources object or one of its properties.
+   * @global
+   */
+  aIV.app.getResource = appModuleAPI.getResource;
+
+})(window,
+
+////////////////////////////////////////////////////////////////////////////////
+// The App Module
+////////////////////////////////////////////////////////////////////////////////
+
+(function(window, document, undefined) {
   "use strict"; 
 
+/* -----------------------------------------------------------------------------
+ * Set The TypeError Message For Invalid Arguments
+ * -------------------------------------------------------------------------- */
+
+aIV.utils.set({
+  checkArgsErrorMsg: 'An aIV.app internal call received an invalid parameter.'
+});
 
 /* -----------------------------------------------------------------------------
- * | The Public Variables for the Module                                       |
- * v ------------------------------------------------------------------------- v
-                                                             module-vars.js */
+ * The App Module API (module-api.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Variable (appModuleAPI)
+   * -----------------------------------------------------
+   * @desc Holds the app module's public properties and methods.
+   * @type {!Object<string, function>}
+   * @struct
+   */
+  var appModuleAPI = {};
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (appModuleAPI.startApp)
+   * -----------------------------------------------------
+   * @desc Initializes the app.
+   * @param {Object} settings - The app's settings.
+   */
+  appModuleAPI.startApp = function(settings) {
+
+    /** @type {?(string|strings)} */
+    var resourceList;
+    /** @type {objectMap} */
+    var config;
+    /** @type {stringMap} */
+    var sources;
+    /** @type {(objectMap|stringMap)} */
+    var categories;
+    /** @type {!objects} */
+    var questions;
+    /** @type {function} */
+    var setup;
+    /** @type {function} */
+    var callback;
+    /** @type {string} */
+    var types;
+    /** @type {number} */
+    var i;
+
+    if (appHasBeenInitialized) {
+      throw new Error('The aIV.app init call was made a second time.');
+    }
+
+    // Save the init of this app to prevent second init
+    appHasBeenInitialized = true;
+
+    if ( !checkType(settings, '!object') ) {
+      settings = {};
+    }
+
+    // Setup the app arguments
+    resourceList = ( ( hasOwnProp(settings, 'resources') ) ?
+      settings.resources : null
+    );
+    config = ( ( hasOwnProp(settings, 'config') ) ?
+      settings.config : ( hasOwnProp(settings, 'configuration') ) ?
+        settings.configuration : null
+    );
+    sources = ( ( hasOwnProp(settings, 'sources') ) ?
+      settings.sources : ( hasOwnProp(settings, 'source') ) ?
+        settings.source : null
+    );
+    categories = ( ( hasOwnProp(settings, 'categories') ) ?
+      settings.categories : ( hasOwnProp(settings, 'category') ) ?
+        settings.category : null
+    );
+    questions = ( ( hasOwnProp(settings, 'questions') ) ?
+      settings.questions : ( hasOwnProp(settings, 'question') ) ?
+        settings.question : []
+    );
+
+    // Check the types of the arguments
+    if ( !checkType(resourceList, 'string|strings') ) {
+      types = 'null, a string, or an array of strings';
+      logStartAppTypeError('resources', types, getTypeOf(resourceList));
+      resourceList = null;
+    }
+    if ( !checkType(config, 'objectMap') ) {
+      types = 'null or an object with string => object pairs';
+      logStartAppTypeError('config', types, getTypeOf(config));
+      config = null;
+    }
+    if ( !checkType(sources, 'stringMap') ) {
+      types = 'null or an object with string => string pairs';
+      logStartAppTypeError('sources', types, getTypeOf(sources));
+      sources = null;
+    }
+    if ( !checkType(categories, 'stringMap|objectMap') ) {
+      types = 'null or an object with string => object or ';
+      types += 'string => string pairs';
+      logStartAppTypeError('categories', types, getTypeOf(categories));
+      categories = null;
+    }
+    if ( !checkType(questions, '!objects') ) {
+      types = 'an array of question objects';
+      logStartAppTypeError('questions', types, getTypeOf(questions));
+      questions = [];
+    }
+
+    // Setup and start the app
+    setup = function() {
+      freezeObj(resources);
+      app = new App(config, sources, categories, questions);
+      app.setupDisplay();
+    };
+
+    // Save the resources
+    if (resourceList) {
+
+      if ( checkType(resourceList, 'string') ) {
+        getResource(resourceList, setup);
+        return;
+      }
+
+      callback = setup;
+      i = resourceList.length;
+      while (--i) {
+        callback = (function(jsonFile, callback) {         
+          return function() {
+            getResource(jsonFile, callback);
+          };
+        })(resourceList[i], callback);
+      }
+      getResource(resourceList[0], callback);
+    }
+    else {
+      setup();
+    }
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (appModuleAPI.getResource)
+   * -----------------------------------------------------
+   * @desc Makes the app's resources publically available.
+   * @param {string=} prop - The specific resource to retrieve.
+   * @return {*} Either the entire resources object or one of its properties.
+   */
+  appModuleAPI.getResource = function(prop) {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {*} */
+    var result;
+
+    prop = prop || '';
+
+    if (prop && !hasOwnProp(resources, prop)) {
+      errorMsg = 'The resource you requested does not exist. Please verify that \'';
+      errorMsg += prop + '\' is a correct json file name in the resources folder ';
+      errorMsg += 'and that the file name was included in the setup of the app ';
+      errorMsg += '(see algorithmiv.com/docs/resources).';
+      console.error(errorMsg);
+    }
+    else {
+      result = (!!prop) ? resources[ prop ] : resources;
+    }
+
+    return result;
+  }
+
+  aIV.utils.freezeObj(appModuleAPI);
+
+/* -----------------------------------------------------------------------------
+ * The Public Module Variables (module-vars.js)
+ * -------------------------------------------------------------------------- */
+
+
+  /**
+   * -----------------------------------------------------
+   * Public Variable (appHasBeenInitialized)
+   * -----------------------------------------------------
+   * @desc Indicates whether the app has been initialized.
+   * @type {boolean}
+   */
+  var appHasBeenInitialized = false;
 
   /**
    * ----------------------------------------------- 
    * Public Variable (resources)
    * -----------------------------------------------
    * @desc The resources for the app.
-   * @type {Object}
+   * @type {!Object}
    */
   var resources = {};
 
@@ -104,105 +344,14 @@
    * Public Variable (app)
    * -----------------------------------------------
    * @desc The app instance.
-   * @type {App}
+   * @type {!App}
    */
   var app;
 
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps)
-   * -----------------------------------------------
-   * @desc Regular expressions that are used multiple times
-   *   throughout the app.
-   * @type {Object<string, Object>}
-   */
-  var regexps = {};
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps.types)
-   * -----------------------------------------------
-   * @desc Regular expressions that contain types.
-   * @type {Object<string, RegExp>}
-   */
-  regexps.types = {};
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps.types.all)
-   * -----------------------------------------------
-   * @desc All the types available.
-   * @type {RegExp}
-   */
-  regexps.types.all = (function() {
-    /** @type {string} */
-    var types;
-
-    types = '' +
-    '^string$|^number$|^boolean$|^object$|^array$|^function$|^elem$|'          +
-    '^undefined$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|'   +
-    '^functions$|^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|' +
-    '^functionmap$|^elemmap$';
-
-    return new RegExp(types);
-  })();
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps.types.basic)
-   * -----------------------------------------------
-   * @desc The basic types available.
-   * @type {RegExp}
-   */
-  regexps.types.basic = (function() {
-    /** @type {string} */
-    var types;
-
-    types = '^string$|^number$|^boolean$|^object$|' +
-            '^function$|^elem$|^undefined$';
-
-    return new RegExp(types);
-  })();
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps.types.arrays)
-   * -----------------------------------------------
-   * @desc The array types available.
-   * @type {RegExp}
-   */
-  regexps.types.arrays = (function() {
-    /** @type {string} */
-    var types;
-
-    types = '^array$|^strings$|^numbers$|^booleans$|' +
-            '^objects$|^arrays$|^elems$|^functions$';
-
-    return new RegExp(types);
-  })();
-
-  /**
-   * ----------------------------------------------- 
-   * Public Variable (regexps.types.maps)
-   * -----------------------------------------------
-   * @desc The hash map types available.
-   * @type {RegExp}
-   */
-  regexps.types.maps = (function() {
-    /** @type {string} */
-    var types;
-
-    types = '^stringmap$|^numbermap$|^booleanmap$|^objectmap$|' +
-            '^arraymap$|^functionmap$|^elemmap$';
-
-    return new RegExp(types);
-  })();
-
-
 /* -----------------------------------------------------------------------------
- * | The Public Methods for the Module                                         |
- * v ------------------------------------------------------------------------- v
-                                                          module-methods.js */
+ * The Public Module Methods (module-methods.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * ---------------------------------------------
    * Public Method (getResource)
@@ -214,10 +363,12 @@
    */
   function getResource(jsonFile, callback) {
 
-    /** @type {XMLHttpRequest} */
+    /** @type {!XMLHttpRequest} */
     var http;
     /** @type {string} */
-    var msg;
+    var errorMsg;
+
+    checkArgs(jsonFile, 'string', callback, 'function');
 
     http = new XMLHttpRequest();
     http.onreadystatechange = function() {
@@ -226,11 +377,11 @@
           resources[ jsonFile ] = JSON.parse(http.responseText);
         }
         else {
-          msg = 'Your resource - resources/' + jsonFile + '.json - ';
-          msg += 'failed to load. Please ensure your resources folder ';
-          msg += 'is in the same directory as algorithmIV-app.js. ';
-          msg += 'XMLHttpRequest.statusText= ' + http.statusText;
-          console.error(msg);
+          errorMsg = 'Your aIV.app resource - resources/' + jsonFile + '.json - ';
+          errorMsg += 'failed to load. Please ensure your resources folder ';
+          errorMsg += 'is in the same directory as algorithmIV-app.js. ';
+          errorMsg += 'XMLHttpRequest.statusText= ' + http.statusText;
+          throw new Error(errorMsg);
         }
         callback();
       }
@@ -241,320 +392,321 @@
 
   /**
    * ---------------------------------------------
-   * Public Method (getID)
+   * Public Method (getElemById)
    * ---------------------------------------------
-   * @desc A shortcut for getElementById.
-   * @param {string} title - The name of the id of the element to select.
-   * @return {elem} A reference to element with the given id.
+   * @desc A shortcut for the native DOM method - document.getElementById.
+   * @param {string} id - The id of the element to select.
+   * @return {!HTMLElement} The DOM element with the given id.
    */
-  function getID(title) {
+  var getElemById = aIV.utils.getElemById;
 
-    return document.getElementById(title);
-  }
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName[ [index] ].
+   * @param {string} classname - The class name of the element to select.
+   * @param {number=} index - The index of the array of found elements to
+   *   select. The default is 0.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemByClassRoot: [DOM Node] }).
+   * @return {!HTMLElement} The selected DOM element.
+   */
+  var getElemByClass = aIV.utils.getElemByClass;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemsByClass)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByClassName.
+   * @param {string} classname - The class name of the elements to select.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemsByClassRoot: [DOM Node] }).
+   * @return {!Array<HTMLElement>} The selected DOM elements.
+   */
+  var getElemsByClass = aIV.utils.getElemsByClass;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemByTag)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByTagName[ [index] ].
+   * @param {string} tag - The tag name of the element to select.
+   * @param {number=} index - The index of the array of found elements to
+   *   select. The default is 0.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemByTagRoot: [DOM Node] }).
+   * @return {!HTMLElement} The selected DOM element.
+   */
+  var getElemByTag = aIV.utils.getElemByTag;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getElemsByTag)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method -
+   *   [DOM Node].getElementsByTagName.
+   * @param {string} tag - The tag name of the elements to select.
+   * @param {!(Document|Element)=} root - Limit the selections to this element's
+   *   children. The default is document or the element set with
+   *   aIV.utils.set({ getElemsByTagRoot: [DOM Node] }).
+   * @return {!Array<HTMLElement>} The selected DOM elements.
+   */
+  var getElemsByTag = aIV.utils.getElemsByTag;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeElem)
+   * ---------------------------------------------------
+   * @desc A shortcut for the native DOM method - document.createElement.
+   * @param {(string|!Object<string, string>)=} settings - A string of the
+   *   element's tag name or an object hash map of the element's details.
+   *   The default tag name is 'div'.
+   * @param {string=} settings.tag - The element's tag name.
+   * @param {string=} settings.tagName - The element's tag name.
+   * @param {string=} settings.text - The element's textContent or innerText.
+   * @param {string=} settings.html - The element's innerHTML.
+   * @param {string=} settings.id - The element's id.
+   * @param {string=} settings.className - The element's class name.
+   * @return {!HTMLElement} The DOM element with the given id.
+   */
+  var makeElem = aIV.utils.makeElem;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeOptElem)
+   * ---------------------------------------------------
+   * @desc A helper function that creates option elements.
+   * @param {string} id - The search item's id. If blank then the
+   *   option is disabled.
+   * @param {string} name - The search item's name.
+   * @return {!Element}
+   */
+  var makeOptElem = function(id, name) {
+
+    /** @type {!Element} */
+    var elem;
+
+    checkArgs(id, 'string', name, '^string');
+
+    elem = makeElem({
+      tag : 'option',
+      text: name
+    });
+
+    if (id) {
+      elem.value = id;
+    }
+    else {
+      elem.disabled = true;
+    }
+
+    return elem;
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setSearchSection)
+   * ---------------------------------------------------
+   * @desc A helper function that sets option elements for a search section.
+   * @param {?HTMLSelectElement} sel - The search section's select element.
+   * @param {!strings} ids - The search section's ids.
+   * @param {!stringMap} names - The search section's names.
+   * @param {!elements} opts - The search section's option elements.
+   * @param {boolean=} noAll - Indicates that the id of 'all' should be
+   *   skipped.
+   */
+  var setSearchSection = function(sel, ids, names, opts, noAll) {
+
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {string} */
+    var name;
+    /** @type {number} */
+    var len;
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    args = [ sel, 'element', ids, '!strings', names, '!stringMap' ];
+    args.push(opts, '!elements', noAll, 'boolean=');
+    checkArgs.apply(null, args);
+
+    len = ids.length;
+    i = -1;
+    while (++i < len) {
+      id = ids[i];
+      if (noAll && id === 'all') {
+        continue;
+      }
+      name = names[ id ];
+      elem = makeOptElem(id, name);
+      opts.push(elem);
+      sel && sel.appendChild(elem);
+    }
+
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setElemText)
+   * ---------------------------------------------------
+   * @desc A shortcut that sets the native DOM property - Element.textContent
+   *   or Element.innerText.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to set the DOM element's textContent or
+   *   innerText to.
+   * @return {!Element} The updated DOM element.
+   */
+  var setElemText = aIV.utils.setElemText;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (addElemText)
+   * ---------------------------------------------------
+   * @desc A shortcut that adds to the native DOM property - Element.textContent
+   *   or Element.innerText.
+   * @param {!Element} elem - The DOM element.
+   * @param {string} text - The text to add to the DOM element's textContent or
+   *   innerText.
+   * @return {!Element} The updated DOM element.
+   */
+  var addElemText = aIV.utils.addElemText;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (freezeObj)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.freeze method with a deep freeze option.
+   * @param {!(Object|function)} obj - The object to freeze.
+   * @param {boolean=} deep - Deep freeze the object. The default is false.
+   * @return {!(Object|function)} The frozen object.
+   */
+  var freezeObj = aIV.utils.freezeObj;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (hasOwnProp)
+   * ---------------------------------------------------
+   * @desc A shortcut for the Object.prototype.hasOwnProperty method.
+   * @param {!(Object|function)} obj - The object to check.
+   * @param {string} prop - The property to check.
+   * @return {boolean} The result of the check.
+   */
+  var hasOwnProp = aIV.utils.hasOwnProp;
 
   /**
    * ---------------------------------------------
-   * Public Method (getTag)
+   * Public Method (getTypeOf)
    * ---------------------------------------------
-   * @desc A shortcut for getElementsByTagName.
-   * @param {string} title - The name of the tags to select.
-   * @param {elem=} root - The root element to use.
-   * @return {elems} References to the elements with the tag.
+   * @desc A shortcut for the native typeof operator that additionally
+   *   distinguishes null, array, document, and element types from an
+   *   object type.
+   * @param {*} val - The value to get the typeof.
+   * @return {string} The value's type.
    */
-  function getTag(title, root) {
-
-    root = root || app.elems.root;
-
-    return root.getElementsByTagName(title);
-  }
-
-  /**
-   * ---------------------------------------------
-   * Public Method (getClass)
-   * ---------------------------------------------
-   * @desc A shortcut for getElementsByClassName.
-   * @param {string} title - The name of the class to select.
-   * @param {elem=} root - The root element to use.
-   * @return {elems} References to the elements with the class.
-   */
-  function getClass(title, root) {
-
-    root = root || app.elems.root;
-
-    return root.getElementsByClassName(title);
-  }
+  var getTypeOf = aIV.utils.getTypeOf;
 
   /**
    * ---------------------------------------------------
    * Public Method (checkType)
    * ---------------------------------------------------
-   * @param {val} val - The value to be evaluated.
-   * @param {string} type - The type to evaluate the value against. The
-   *   optional types are 'string', 'number', 'boolean', 'object',
-   *   'function', 'elem', 'undefined', 'array', 'strings', 'numbers',
-   *   'booleans', 'objects', 'functions', 'arrays', 'elems', 'stringMap',
-   *   'numberMap', 'booleanMap', 'objectMap', 'functionMap', 'arrayMap', and
-   *   'elemMap'. Use '|' as the separator for multiple types (e.g.
-   *   'strings|numbers'). Use '=' to indicate the value is optional (e.g.
-   *   'array=' or 'string|number='). Use '!' to indicate that null is not a
-   *   possibility (e.g. '!string').
+   * @desc Checks a value's data type against the given optional types.
+   * @param {*} val - The value to be evaluated.
+   * @param {string} type - A string of the data types to evaluate the value
+   *   against. For a complete list of acceptable strings
+   *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
+   * @param {boolean=} noTypeValCheck - If true skips the data type string checks.
+   *   The default is false. Use to avoid duplicating checks.
    * @return {boolean} The evaluation result.
    */
-  function checkType(val, type) {
+  var checkType = aIV.utils.checkType;
 
-    /**
-     * @type {strings}
-     * @private
-     */
-    var types;
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkArgs)
+   * ---------------------------------------------------
+   * @desc Catches invalid argument data types and throws an error.
+   * @param {...*} val - Each argument passed to the method.
+   * @param {...string} type -  Each argument's optional data types.
+   *   [See aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}
+   *   for the available data type strings.
+   * @return {boolean} The evaluation result.
+   * @example
+   *   exampleMethod = function(arg1, arg2) {
+   *     checkArgs(arg1, '!object', arg2, 'number=');
+   *   };
+   */
+  var checkArgs = aIV.utils.checkArgs;
 
-    type = type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
-
-    types = ( /\|/.test(type) ) ? type.split('|') : [ type ];
-
-    return types.some(function(/** string */ type) {
-      /**
-       * @type {string}
-       * @private
-       */
-      var cleanType;
-
-      cleanType = type.replace(/\!|\=/g, '');
-
-      // Handle undefined val
-      if (val === undefined) {
-        type = type.replace(/\!/g, '');
-        return /\=|^undefined$/.test(type);
-      }
-      else {
-
-        // Evaluate null
-        if (val === null) {
-          return !(/\!/.test(type));
-        }
-
-        if (cleanType === 'undefined') {
-          return false;
-        }
-
-        // Evaluate array types
-        if ( regexps.types.arrays.test(cleanType) ) {
-
-          if ( !Array.isArray(val) ) {
-            return false;
-          }
-
-          // Evaluate a basic array
-          if (cleanType === 'array') {
-            return true;
-          }
-
-          // Evaluate an array of arrays
-          if (cleanType === 'arrays') {
-            return val.every(function(subVal) {
-              return ( Array.isArray(subVal) );
-            });
-          }
-
-          // Evaluate an array of elements
-          if (cleanType === 'elems') {
-            return val.every(function(subVal) {
-              return (subVal instanceof HTMLElement);
-            });
-          }
-
-          // Evaluate each value of the array
-          cleanType = cleanType.replace(/s$/, '');
-          return val.every(function(subVal) {
-            return (typeof subVal === cleanType);
-          });
-        }
-
-        // Evaluate element
-        if (cleanType === 'elem') {
-          return (val instanceof HTMLElement);
-        }
-
-        // Evaluate string, number, boolean, object, and function types
-        if ( regexps.types.basic.test(cleanType) ) {
-          return (typeof val === cleanType);
-        }
-
-        // Evaluate hash map types
-        if ( regexps.types.maps.test(cleanType) ) {
-
-          if (typeof val !== 'object') {
-            return false;
-          }
-
-          // Evaluate a hash map of arrays
-          if (cleanType === 'arraymap') {
-            return Object.keys(val).every(function(subVal) {
-              return ( Array.isArray(val[ subVal ]) );
-            });
-          }
-
-          // Evaluate a hash map of elements
-          if (cleanType === 'elemmap') {
-            return Object.keys(val).every(function(subVal) {
-              return (val[ subVal ] instanceof HTMLElement);
-            });
-          }
-
-          // Evaluate each value of the hash map
-          cleanType = cleanType.replace(/map$/, '');
-          return Object.keys(val).every(function(subVal) {
-            return (typeof val[ subVal ] === cleanType);
-          });
-        }
-      }
-
-      return false;
-    });
-  }
+  /**
+   * ---------------------------------------------------
+   * Public Method (isValidTypeString)
+   * ---------------------------------------------------
+   * @desc Evaluates whether a string is a valid data type string.
+   * @param {string} type - The string to evaluate.
+   * @return {boolean} The evaluation result.
+   */
+  var isValidTypeString = aIV.utils.isValidTypeString;
 
   /**
    * ---------------------------------------------------
    * Public Method (checkTypes)
    * ---------------------------------------------------
-   * @param {vals} vals - An array of the value(s) to be evaluated.
+   * @param {!Array<*>} vals - An array of the value(s) to be evaluated.
    *   Note that the values must be provided in an array.
-   * @param {(string|strings)} types - The type(s) to evaluate the value(s)
-   *   against. The optional types are 'string', 'number', 'boolean', 'object',
-   *   'function', 'elem', 'undefined', 'array', 'strings', 'numbers',
-   *   'booleans', 'objects', 'functions', 'arrays', 'elems', 'stringMap',
-   *   'numberMap', 'booleanMap', 'objectMap', 'functionMap', 'arrayMap', and
-   *   'elemMap'. Use '|' as the separator for multiple types (e.g.
-   *   'strings|numbers'). Use '=' to indicate the value is optional (e.g.
-   *   'array=' or 'string|number='). Use '!' to indicate that null is not a
-   *   possibility (e.g. '!string').
+   * @param {!(string|strings)} types - The type(s) to evaluate the value(s)
+   *   against. For a complete list of acceptable strings
+   *   [see aIV.utils.checkType]{@link https://github.com/imaginate/algorithmIV-javascript-shortcuts/blob/master/src/pre-compiled-parts/js-methods/checkType.js}.
    * @return {boolean} The evaluation result.
    */
   function checkTypes(vals, types) {
 
-    /**
-     * @type {val}
-     * @private
-     */
+    /** @type {number} */
+    var i;
+    /** @type {*} */
     var val;
+    /** @type {string} */
+    var type;
+    /** @type {boolean} */
+    var pass;
+    /** @type {string} */
+    var errorMsg;
 
-    if (typeof types === 'string') {
-      types = vals.map(function() {
-        return types;
-      });
+    checkArgs(vals, '!array', types, '!string|strings');
+
+    if ( checkType(types, 'string') ) {
+      type = types;
+      types = new Array(vals.length);
+      i = types.length;
+      while (i--) {
+        types[i] = type;
+      }
     }
 
-    return types.every(function(/** string */ _type, /** number */ i) {
-      /**
-       * @type {strings}
-       * @private
-       */
-      var _types;
+    if (vals.length !== types.length) {
+      errorMsg = 'An aIV.app internal error occurred. A checkTypes call ';
+      errorMsg += 'received an invalid parameter. The length of the vals ';
+      errorMsg += 'and types arrays did not match.';
+      throw new Error(errorMsg);
+    }
 
-      val = vals[i];
-      _type = _type.toLowerCase().replace(/[^a-z\|\=\!]/g, '');
-      _types = ( /\|/.test(_type) ) ? _type.split('|') : [ _type ];
+    pass = true;
+    i = vals.length;
+    while (pass && i--) {
+      pass = checkType(vals[i], types[i]);
+    }
 
-      return _types.some(function(/** string */ type) {
-        /**
-         * @type {string}
-         * @private
-         */
-        var cleanType;
-
-        cleanType = type.replace(/\!|\=/g, '');
-
-        // Handle undefined val
-        if (val === undefined) {
-          type = type.replace(/\!/g, '');
-          return /\=|^undefined$/.test(type);
-        }
-        else {
-
-          // Evaluate null
-          if (val === null) {
-            return !(/\!/.test(type));
-          }
-
-          if (cleanType === 'undefined') {
-            return false;
-          }
-
-          // Evaluate array types
-          if ( regexps.types.arrays.test(cleanType) ) {
-
-            if ( !Array.isArray(val) ) {
-              return false;
-            }
-
-            // Evaluate a basic array
-            if (cleanType === 'array') {
-              return true;
-            }
-
-            // Evaluate an array of arrays
-            if (cleanType === 'arrays') {
-              return val.every(function(subVal) {
-                return ( Array.isArray(subVal) );
-              });
-            }
-
-            // Evaluate an array of elements
-            if (cleanType === 'elems') {
-              return val.every(function(subVal) {
-                return (subVal instanceof HTMLElement);
-              });
-            }
-
-            // Evaluate each value of the array
-            cleanType = cleanType.replace(/s$/, '');
-            return val.every(function(subVal) {
-              return (typeof subVal === cleanType);
-            });
-          }
-
-          // Evaluate element
-          if (cleanType === 'elem') {
-            return (val instanceof HTMLElement);
-          }
-
-          // Evaluate string, number, boolean, object, and function types
-          if ( regexps.types.basic.test(cleanType) ) {
-            return (typeof val === cleanType);
-          }
-
-          // Evaluate hash map types
-          if ( regexps.types.maps.test(cleanType) ) {
-
-            if (typeof val !== 'object') {
-              return false;
-            }
-
-            // Evaluate a hash map of arrays
-            if (cleanType === 'arraymap') {
-              return Object.keys(val).every(function(subVal) {
-                return ( Array.isArray(val[ subVal ]) );
-              });
-            }
-
-            // Evaluate a hash map of elements
-            if (cleanType === 'elemmap') {
-              return Object.keys(val).every(function(subVal) {
-                return (val[ subVal ] instanceof HTMLElement);
-              });
-            }
-
-            // Evaluate each value of the hash map
-            cleanType = cleanType.replace(/map$/, '');
-            return Object.keys(val).every(function(subVal) {
-              return (typeof val[ subVal ] === cleanType);
-            });
-          }
-        }
-
-        return false;
-      });
-    });
+    return pass;
   }
 
   /**
@@ -562,47 +714,28 @@
    * Public Method (sortKeys)
    * ---------------------------------------------------
    * @desc A helper method that sorts the keys of an object.
-   * @param {strings} ids - The unsorted keys.
-   * @param {stringMap} data - A hash map of ids and names.
-   * @return {strings} The sorted keys.
+   * @param {!strings} ids - The unsorted keys.
+   * @param {!stringMap} data - A hash map of ids and names.
+   * @return {!strings} The sorted keys.
    */
   function sortKeys(ids, data) {
 
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {!strings} */
     var keys;
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {!strings} */
     var names;
-    /**
-     * @type {string}
-     * @private
-     */
+    /** @type {string} */
     var name;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var id;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var len;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var ii;
+
+    checkArgs(ids, '!strings', data, '!stringMap');
 
     keys  = [];
     names = [];
@@ -654,7 +787,11 @@
    */
   function capFirst(str) {
 
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    checkArgs(str, 'string');
+
+    str = str.charAt(0).toUpperCase() + str.slice(1);
+
+    return str;
   }
 
   /**
@@ -668,16 +805,12 @@
    */
   function camelCase(str) {
 
-    /**
-     * @type {strings}
-     * @private
-     */
+    /** @type {!strings} */
     var arr;
-    /**
-     * @type {num}
-     * @private
-     */
+    /** @type {number} */
     var i;
+
+    checkArgs(str, 'string');
 
     arr = str.split('-');
 
@@ -687,7 +820,9 @@
       arr[i] = capFirst(arr[i]);
     }
 
-    return arr.join('');
+    str = arr.join('');
+
+    return str;
   }
 
   /**
@@ -698,17 +833,19 @@
    * @param {string} str - The original string.
    * @return {string} The trimmed string.
    */
-  var trimFunctionWrapper = (function() {
+  var trimFunctionWrapper = (function setup_trimFunctionWrapper() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var funcCheck;
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var endCheck;
 
     funcCheck = /^function[\s\w]*\(\)\s*\{\s*[\r\n]{1,2}/;
     endCheck = /[\r\n]{1,2}\s*\}\;?$/;
 
-    return function(str) {
+    return function trimFunctionWrapper(str) {
+
+      checkArgs(str, 'string');
 
       if (funcCheck.test(str) && endCheck.test(str)) {
         str = str.replace(funcCheck, '');
@@ -727,24 +864,187 @@
    * @param {string} str - The string to check.
    * @return {boolean} The evaluation result.
    */
-  var isLink = (function() {
+  var isLink = (function setup_isLink() {
 
-    /** @type{RegExp} */
+    /** @type{!RegExp} */
     var http;
 
     http = /^https?\:\/\//;
 
-    return function(str) {
+    return function isLink(str) {
 
-      return http.test(str);
+      /** @type {boolean} */
+      var result;
+
+      checkArgs(str, 'string');
+
+      result = http.test(str);
+
+      return result;
     };
   })();
 
+  /**
+   * ---------------------------------------------------
+   * Public Method (makeUrl)
+   * ---------------------------------------------------
+   * @desc A helper method that converts a name into a valid URL string.
+   * @param {string} name - The name.
+   * @return {string} The url string.
+   */
+  var makeUrl = (function setup_makeUrl() {
+
+    /** @type{!RegExp} */
+    var invalidCharacters;
+    /** @type{!RegExp} */
+    var spaces;
+
+    invalidCharacters = /[^0-9a-z\-\s\_]/g;
+    spaces = /\s/g;
+
+    return function makeUrl(name) {
+
+      /** @type {string} */
+      var url;
+
+      checkArgs(name, 'string');
+
+      url = name.toLowerCase();
+      url = url.replace(invalidCharacters, '');
+      url = url.replace(spaces, '-');
+
+      return url;
+    };
+  })();
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (checkForValue)
+   * ---------------------------------------------------
+   * @desc A helper function that checks an array for a value & removes each
+   *   value that is greater than or equal to given value from the array.
+   * @param {number} checkVal - The value to check for.
+   * @param {numbers} arr - The array to check & update.
+   * @return {boolean} The result of the check.
+   */
+  function checkForValue(checkVal, arr) {
+
+    /** @type {number} */
+    var arrVal;
+    /** @type {boolean} */
+    var pass;
+    /** @type {number} */
+    var i;
+
+    pass = false;
+
+    i = arr.length;
+    while (i-- && arr[i] >= checkVal) {
+      arrVal = arr.pop();
+      if (arrVal === checkVal) {
+        pass = true;
+        break;
+      }
+    }
+
+    return pass;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (getter)
+   * ---------------------------------------------------
+   * @desc The basic getter function for all the classes.
+   * @this {!Object<string, *>} A hash map of the protected property names
+   *   and current values for the class calling the getter.
+   * @param {string} propName - The name of the protected property to get.
+   * @return {*}
+   */
+  function getter(propName) {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {*} */
+    var propVal;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A getter was given an ';
+      errorMsg += 'invalid property name to get. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    propVal = this[ propName ];
+
+    return propVal;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (setter)
+   * ---------------------------------------------------
+   * @desc The basic setter function for all the classes.
+   * @this {!Object<string, function(*)>} A hash map of the protected property
+   *   names and setting functions for the class calling the setter.
+   * @param {string} propName - The name of the protected property to set.
+   * @param {*} propVal - The value to set the property to.
+   * @return {boolean} The success of the setter.
+   */
+  function setter(propName, propVal) {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {boolean} */
+    var pass;
+
+    checkArgs(propName, 'string');
+
+    if ( !hasOwnProp(this, propName) ) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid property name. property= ' + propName;
+      throw new Error(errorMsg);
+    }
+
+    pass = this[ propName ](propVal);
+
+    if (!pass) {
+      errorMsg = 'An aIV.app internal error occurred. A setter was given an ';
+      errorMsg += 'invalid new property value. value= ' + propVal;
+      throw new Error(errorMsg);
+    }
+
+    return pass;
+  }
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (logStartAppTypeError)
+   * ---------------------------------------------------
+   * @desc Logs appModuleAPI.startApp type errors for settings properties.
+   * @param {string} prop - The failed settings property's name.
+   * @param {string} shouldBeType - The property's acceptable data types.
+   * @param {string} wasType - The property's actual data type.
+   */
+  function logStartAppTypeError(prop, shouldBeType, wasType) {
+
+    /** @type {string} */
+    var errorMsg;
+
+    checkArgs(prop, 'string', shouldBeType, 'string', wasType, 'string');
+
+    errorMsg = 'Your aIV.app settings property, ' + prop + ', was an ';
+    errorMsg += 'incorrect data type. It should be ' + shouldBeType + '. ';
+    errorMsg += 'The given typeof ' + prop + ' was \'' + wasType + '\'.';
+
+    console.error(errorMsg);
+
+  }
 
 /* -----------------------------------------------------------------------------
- * | The App Class                                                             |
- * v ------------------------------------------------------------------------- v
-                                                         classes/app/app.js */
+ * The App Class (classes/app/app.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (App)
@@ -757,6 +1057,13 @@
    * @constructor
    */
   var App = function(config, sources, categories, questions) {
+
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ config, 'objectMap', sources, 'stringMap' ];
+    args.push(categories, 'objectMap|stringMap', questions, '!objects');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -845,7 +1152,7 @@
 
     /** @type {booleanMap} */
     var tmpConfig;
-    /** @type {?Object<string, (string|num)>} */
+    /** @type {?Object<string, (string|number)>} */
     var defaults;
     /** @type {Object<string, stringMap>} */
     var names;
@@ -896,11 +1203,11 @@
       links   : this.config.questions.get('links'),
       output  : this.config.questions.get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources,
-                                   this.categories);
+    this.questions = new Questions(questions, tmpConfig, this.sources.get,
+                                   this.categories.get);
 
     // Set the search defaults
-    defaults = ( (!!config && config.hasOwnProperty('searchDefaults')) ?
+    defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
       config.searchDefaults : null
     );
     names = this.searchBar.names;
@@ -908,7 +1215,15 @@
     this.config.searchBar.defaults.update(defaults, names, ids, len);
 
     // Set the search bar to the defaults
-    this.searchBar.setToDefaults(this.config.searchBar.defaults);
+    defaults = {
+      view   : this.config.searchBar.defaults.get('view'),
+      order  : this.config.searchBar.defaults.get('order'),
+      stage  : this.config.searchBar.defaults.get('stage'),
+      source : this.config.searchBar.defaults.get('source'),
+      mainCat: this.config.searchBar.defaults.get('mainCat'),
+      subCat : this.config.searchBar.defaults.get('subCat')
+    };
+    this.searchBar.setToDefaults(defaults);
 
     // Update the current values to match the given defaults
     newIds = this.findMatches();
@@ -929,7 +1244,7 @@
     // Setup the value of isHistory
     this.isHistory = true;
     try {
-      window.history.replaceState( this.getStateObj() );
+      window.history.replaceState(this.getStateObj(), '');
     }
     catch (e) {
       this.isHistory = false;
@@ -946,8 +1261,8 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -968,16 +1283,15 @@
     /** @type {number} */
     var renderTime;
 
-    if ( this.flags.get('initArgs') ) {
+    if ( app.flags.get('initArgs') ) {
 
-      this.elems.appendNav();
-      this.searchBar.setMainElems();
-      this.searchBar.setOptElems();
-      this.searchBar.appendElems();
-      this.questions.addIdsToSearch();
-      this.questions.appendElems();
+      app.elems.appendNav();
+      app.searchBar.setOptElems();
+      app.searchBar.appendElems();
+      app.questions.addIdsToSearch();
+      app.questions.appendElems();
 
-      renderTime = this.questions.len * 32;
+      renderTime = app.questions.len * 50;
       setTimeout(function() {
 
         /** @type {boolean} */
@@ -991,7 +1305,7 @@
       }, renderTime);
     }
     else {
-      this.elems.appendError();
+      app.elems.appendError();
     }
   };
 
@@ -1012,6 +1326,8 @@
   App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
                                          flipElems, noPushState) {
 
+    /** @type {!Array<*>} */
+    var args;
     /** @type {!numbers} */
     var newIds;
     /** @type {number} */
@@ -1019,9 +1335,13 @@
     /** @type {string} */
     var newView;
 
-    oldIds = (!!oldIds) ? oldIds : this.vals.get('ids').slice(0);
+    args = [ oldIds, 'numbers=', oldIndex, '?number=', oldView, '?string=' ];
+    args.push(flipElems, 'boolean=', noPushState, 'boolean=');
+    checkArgs.apply(null, args);
+
+    oldIds = (!!oldIds) ? oldIds : app.vals.get('ids').slice(0);
     oldIndex = ( ( checkType(oldIndex, '!number') ) ?
-      oldIndex : this.vals.get('index')
+      oldIndex : app.vals.get('index')
     );
 
     newView = app.searchBar.vals.view;
@@ -1031,11 +1351,11 @@
     noPushState = noPushState || false;
 
     // Save the new matching question ids and index
-    newIds = this.vals.get('ids').slice(0);
-    newIndex = this.vals.get('index');
+    newIds = app.vals.get('ids').slice(0);
+    newIndex = app.vals.get('index');
 
     // Hide the question's main element
-    this.elems.main.style.opacity = '0';
+    app.elems.main.style.opacity = '0';
 
     // Wrap logic in timeout to allow css transitions to complete
     setTimeout(function() {
@@ -1060,7 +1380,7 @@
 
       // Update the state
       if (app.isHistory && !noPushState) {
-        window.history.pushState( app.getStateObj() );
+        window.history.pushState(app.getStateObj(), '');
       }
 
       // Show the question's main element
@@ -1073,30 +1393,28 @@
    * -----------------------------------------------
    * Public Method (App.prototype.findMatches)
    * -----------------------------------------------
-   * @desc Finds the matching question ids for the current
-   *   selected search values.
+   * @desc Finds the matching question ids for the current selected search
+   *   values.
    * @return {numbers} An array of the matching ids.
    */
   App.prototype.findMatches = function() {
 
-    /** @type {nums} */
+    /** @type {numbers} */
     var stage;
-    /** @type {nums} */
+    /** @type {numbers} */
     var source;
-    /** @type {nums} */
+    /** @type {numbers} */
     var mainCat;
-    /** @type {nums} */
+    /** @type {numbers} */
     var subCat;
     /** @type {number} */
     var len;
     /** @type {number} */
     var i;
-    /** @type {nums} */
+    /** @type {numbers} */
     var newIds;
     /** @type {boolean} */
     var pass;
-    /** @type {function} */
-    var checkForValue;
 
     // Save the current values
     stage   = this.searchBar.vals.stage;
@@ -1123,18 +1441,16 @@
         (source  && !source.length)  ||
         (mainCat && !mainCat.length) ||
         (subCat  && !subCat.length)) {
-      return [];
+      newIds = [];
+      return newIds;
     }
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-
       newIds = this.vals.get('allIds').slice(0);
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
       return newIds;
     }
 
@@ -1170,47 +1486,11 @@
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-
       if (this.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
-
       return newIds;
     }
-
-    // The helper function that checks each array for the
-    // current value being checked & removes the checked
-    // values from the array
-    checkForValue = function(/** number */ val, /** numbers */ arr) {
-
-      /** @type {boolean} */
-      var pass;
-      /** @type {number} */
-      var i;
-      /** @type {number} */
-      var compareVal;
-
-      pass = false;
-
-      i = arr.length;
-      while (i--) {
-
-        compareVal = arr[i];
-
-        if (compareVal >= val) {
-          arr.pop();
-          if (compareVal === val) {
-            pass = true;
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-
-      return pass;
-    };
 
     // Remove the question ids that do not exist in all other arrays
     i = newIds.length;
@@ -1292,14 +1572,15 @@
       subCat : this.searchBar.vals.subCat
     };
 
-    return JSON.stringify(vals);
+    vals = JSON.stringify(vals);
+
+    return vals;
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The App Flags Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                   classes/app/app-flags.js */
+ * The AppFlags Class (classes/app/app-flags.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (AppFlags)
@@ -1311,8 +1592,10 @@
    */
   var AppFlags = function(pass) {
 
+    checkArgs(pass, 'boolean');
+
     ////////////////////////////////////////////////////////////////////////////
-    // Define The Protected Properties
+    // Define & Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1323,13 +1606,7 @@
      * @type {boolean}
      * @private
      */
-    var initArgs;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Setup The Protected Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    initArgs = pass;
+    var initArgs = pass;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -1339,48 +1616,48 @@
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
      * -----------------------------------------------
-     * @desc Gets a flag.
+     * @desc Gets an AppFlags protected property.
      * @param {string} prop - The name of the flag to get.
-     * @return {boolean}
+     * @return {boolean} The flag's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
-      var flags = {
+      /** @type {!Object<string, boolean>} */
+      var props = {
         initArgs: initArgs
       };
 
-      return flags[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.set)
      * -----------------------------------------------
-     * @desc Sets a flag.
+     * @desc Sets an AppFlags protected property.
      * @param {string} prop - The name of the flag to set.
      * @param {boolean} val - The value to set the flag to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      /** @type {Object<string, function>} */
-      var flags = {
-        initArgs: function () { initArgs = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        initArgs: function(val) {
+          initArgs = val;
+          return checkType(val, 'boolean');
+        }
       };
 
-      flags[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1389,11 +1666,10 @@
 
   AppFlags.prototype.constructor = AppFlags;
 
-
 /* -----------------------------------------------------------------------------
- * | The App Elems Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                   classes/app/app-elems.js */
+ * The AppElems Class (classes/app/app-elems.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (AppElems)
@@ -1412,7 +1688,7 @@
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {element}
+     * @type {Element}
      */
     this.root;
 
@@ -1421,7 +1697,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {element}
+     * @type {Element}
      */
     this.sel;
 
@@ -1430,7 +1706,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {element}
+     * @type {Element}
      */
     this.main;
 
@@ -1439,7 +1715,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {element}
+     * @type {Element}
      */
     this.nav;
 
@@ -1448,7 +1724,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {element}
+     * @type {Element}
      */
     this.ques;
 
@@ -1457,7 +1733,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {element}
+     * @type {Element}
      */
     this.hold;
 
@@ -1466,7 +1742,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {element}
+     * @type {Element}
      */
     this.none;
 
@@ -1497,37 +1773,34 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {element} */
+    /** @type {Element} */
     var elem;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
-    /** @type {element} */
+    /** @type {Element} */
     var li;
 
-    this.root = document.createElement('div');
-    this.sel  = document.createElement('nav');
-    this.main = document.createElement('div');
-    this.nav  = document.createElement('nav');
-    this.ques = document.createElement('section');
-    this.hold = document.createElement('img');
-    this.none = document.createElement('section');
-
-    this.root.id = 'aIV';
-    this.sel.id  = 'aIV-selections';
-    this.main.id = 'aIV-main';
-    this.nav.id  = 'aIV-nav';
-    this.ques.id = 'aIV-questions';
-
-    this.sel.className  = 'selections';
-    this.main.className = 'main';
-    this.ques.className = 'questions';
-    this.hold.className = 'loader';
-    this.none.className = 'empty';
-
-    this.root.innerHTML = '<h1>Algorithm IV</h1>';
-    this.none.innerHTML = 'No question(s) found.';
+    this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
+    this.sel  = makeElem({
+      tag      : 'nav',
+      id       : 'aIV-selections',
+      className: 'selections'
+    });
+    this.main = makeElem({ id: 'aIV-main', className: 'main' });
+    this.nav  = makeElem({ tag: 'nav', id: 'aIV-nav' });
+    this.ques = makeElem({
+      tag      : 'section',
+      id       : 'aIV-questions',
+      className: 'questions'
+    });
+    this.hold = makeElem({ tag: 'img', className: 'loader' });
+    this.none = makeElem({
+      tag      : 'section',
+      text     : 'No question(s) found.',
+      className: 'empty'
+    });
 
     this.hold.src = 'images/loading.gif';
 
@@ -1542,25 +1815,24 @@
     document.body.appendChild(this.root);
 
     // Setup the scrollbar details
-    elem = document.createElement('div');
-    elem.className = 'aIV-scrollbar';
+    elem = makeElem({ className: 'aIV-scrollbar' });
     document.body.appendChild(elem);
 
     this.scrl = {};
     this.scrl.height = elem.offsetWidth - elem.clientWidth;
-    Object.freeze(this.scrl);
+    freezeObj(this.scrl);
 
     document.body.removeChild(elem);
 
     // Setup the code element details
-    elem = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-    li   = document.createElement('li');
+    elem = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem('ol');
+    li   = makeElem('li');
 
     elem.style.opacity = '0';
 
-    li.innerHTML = 'test';
+    setElemText(li, 'test');
 
     elem.appendChild(code);
     code.appendChild(ol);
@@ -1576,16 +1848,16 @@
 
     this.root.removeChild(elem);
 
-    Object.freeze(this.code);
-    Object.freeze(this.code.ol);
-    Object.freeze(this.code.li);
+    freezeObj(this.code);
+    freezeObj(this.code.ol);
+    freezeObj(this.code.li);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1603,48 +1875,45 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    /** @type {element} */
+    /** @type {Element} */
     var prev;
-    /** @type {element} */
+    /** @type {Element} */
     var pArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var pBG;
-    /** @type {element} */
+    /** @type {Element} */
     var pTitle;
-    /** @type {element} */
+    /** @type {Element} */
     var next;
-    /** @type {element} */
+    /** @type {Element} */
     var nArrow;
-    /** @type {element} */
+    /** @type {Element} */
     var nBG;
-    /** @type {element} */
+    /** @type {Element} */
     var nTitle;
 
-    prev   = document.createElement('div');
-    pArrow = document.createElement('div');
-    pBG    = document.createElement('div');
-    pTitle = document.createElement('div');
-    next   = document.createElement('div');
-    nArrow = document.createElement('div');
-    nBG    = document.createElement('div');
-    nTitle = document.createElement('div');
-
-    pArrow.id = 'aIV-prev';
-    nArrow.id = 'aIV-next';
-
-    prev.className = 'prev';
-    next.className = 'next';
-    pArrow.className = 'arrow';
-    nArrow.className = 'arrow';
-    pBG.className = 'bg';
-    nBG.className = 'bg';
-    pTitle.className = 'title';
-    nTitle.className = 'title';
-
-    pTitle.innerHTML = 'Previous';
-    pArrow.innerHTML = 'Previous';
-    nTitle.innerHTML = 'Next';
-    nArrow.innerHTML = 'Next';
+    prev = makeElem({ className: 'prev' });
+    next = makeElem({ className: 'next' });
+    pBG  = makeElem({ className: 'bg' });
+    nBG  = makeElem({ className: 'bg' });
+    pTitle = makeElem({
+      text     : 'Previous',
+      className: 'title'
+    });
+    nTitle = makeElem({
+      text     : 'Next',
+      className: 'title'
+    });
+    pArrow = makeElem({
+      id       : 'aIV-prev',
+      text     : 'Previous',
+      className: 'arrow'
+    });
+    nArrow = makeElem({
+      id       : 'aIV-next',
+      text     : 'Next',
+      className: 'arrow'
+    });
 
     pArrow.onclick = function() {
       Events.prev();
@@ -1662,6 +1931,7 @@
 
     this.nav.appendChild(prev);
     this.nav.appendChild(next);
+
   };
 
   /**
@@ -1681,23 +1951,23 @@
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {element} */
+    /** @type {Element} */
     var errorDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h2;
-    /** @type {element} */
+    /** @type {Element} */
     var p;
-    /** @type {element} */
+    /** @type {Element} */
     var exampleDiv;
-    /** @type {element} */
+    /** @type {Element} */
     var h3;
-    /** @type {element} */
+    /** @type {Element} */
     var div;
-    /** @type {element} */
+    /** @type {Element} */
     var pre;
-    /** @type {element} */
+    /** @type {Element} */
     var code;
-    /** @type {element} */
+    /** @type {Element} */
     var ol;
 
     errorMsg = '' +
@@ -1705,13 +1975,14 @@
       'initialized without any questions. Please ensure you correctly gave ' +
       'your settings to this app. The app should be initialized with '       +
       'an object that contains properties for all of your settings (see '    +
-      'below). If this error persists please open an issue with '            +
+      'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
-      'class="dark">aIV on GitHub</a> or send an email to <a href="mailto:'  +
-      'learn@algorithmiv.com" class="dark">learn@algorithmiv.com</a>. We '   +
-      'will solve your problem or answer your question as quickly as we '    +
-      'can. We hope aIV\'s apps, tools, and libraries are able to help you ' +
-      'maximize your development skills and projects!<br />'                 +
+      'class="dark">GitHub repository</a> or send an email to '              +
+      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
+      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
+      'libraries are able to help you maximize your development skills and ' +
+      'projects!<br />'                                                      +
       '<span>Best,<br />'                                                    +
       '&ndash; Adam from Algorithm IV</span>';
 
@@ -1811,28 +2082,17 @@
     divHeight += app.elems.code.ol.height;
 
     // Create the error elements
-    errorDiv = document.createElement('div');
-    h2 = document.createElement('h2');
-    p  = document.createElement('p');
+    errorDiv = makeElem({ className: 'initError' });
+    h2 = makeElem({ tag: 'h2', text: 'Initialization Error' });
+    p  = makeElem({ tag: 'p' , html: errorMsg });
 
     // Create the example elements
-    exampleDiv = document.createElement('div');
-    h3   = document.createElement('h3');
-    div  = document.createElement('div');
-    pre  = document.createElement('pre');
-    code = document.createElement('code');
-    ol   = document.createElement('ol');
-
-    // Assign the class names
-    errorDiv.className   = 'initError';
-    exampleDiv.className = 'initExample';
-    div.className = 'containExample';
-
-    // Add the content
-    h2.innerHTML = 'Initialization Error';
-    p.innerHTML  = errorMsg;
-    h3.innerHTML = 'Correct Initialization Example';
-    ol.innerHTML = example;
+    exampleDiv = makeElem({ className: 'initExample' });
+    h3   = makeElem({ tag: 'h3', text: 'Correct Initialization Example' });
+    div  = makeElem({ className: 'containExample' });
+    pre  = makeElem('pre');
+    code = makeElem('code');
+    ol   = makeElem({ tag: 'ol', html: example });
 
     // Complete all dynamic formatting
     div.style.height = divHeight + 'px';
@@ -1852,13 +2112,13 @@
 
     // Hide the loader
     this.hold.style.display = 'none';
+
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The App Vals Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                                    classes/app/app-vals.js */
+ * The AppVals Class (classes/app/app-vals.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (AppVals)
@@ -1868,6 +2128,8 @@
    * @constructor
    */
   var AppVals = function(questionsLen) {
+
+    checkArgs(questionsLen, 'number');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -1932,7 +2194,7 @@
     index = -1;
 
     // Freeze the needed protected properties
-    Object.freeze(allIds);
+    freezeObj(allIds);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -1942,8 +2204,8 @@
      * ----------------------------------------------- 
      * Public Method (AppVals.get)
      * -----------------------------------------------
-     * @desc Gets an app value.
-     * @param {string} prop - The name of the value to get.
+     * @desc Gets an AppVals protected property.
+     * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
      */
     this.get = function(prop) {
@@ -1956,7 +2218,7 @@
         index : index
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -1969,26 +2231,25 @@
      */
     this.set = function(newIds, newIndex) {
 
+      checkArgs(newIds, 'numbers', newIndex, 'number=');
+
       if (newIds) {
         ids = newIds.slice(0);
         len = ids.length;
       }
 
-      if (typeof newIndex === 'number') {
+      if ( checkType(newIndex, 'number') ) {
         index = newIndex;
       }
-    };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2010,11 +2271,11 @@
     /** @type {number} */
     var len;
 
+    checkArgs(ids, 'numbers', index, 'number=');
+
     index = index || 0;
 
-    if (!ids) {
-      ids = this.get('allIds');
-    }
+    ids = ids || this.get('allIds');
     len = ids.length;
 
     // Check the new index value
@@ -2027,6 +2288,7 @@
 
     // Reset the values
     this.set(ids, index);
+
   };
 
   /**
@@ -2038,98 +2300,111 @@
    *   The options are 'prev', 'next', or a question id.
    * @return {number} The new index.
    */
-  AppVals.prototype.move = function(way) {
+  AppVals.prototype.move = (function setupAppVals_move() {
 
-    /** @type {number} */
-    var id;
-    /** @type {string} */
-    var view;
-    /** @type {number} */
-    var index;
-    /** @type {number} */
-    var last;
+    /** function(string) */
+    var throwParamError = function(way) {
 
-    id = (typeof way === 'number') ? way : 0;
-    index = this.get('index');
+      /** @type {string} */
+      var errorMsg;
 
-    // Check the value for way
-    if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
-      try {
-        id = Number( way.replace(/[^0-9]/g, '') );
+      errorMsg = 'An aIV.app internal error occurred. An AppVals.move call ';
+      errorMsg += 'received an invalid way parameter. way= ' + way;
+      throw new Error(errorMsg);
+    };
+
+    return function move(way) {
+
+      /** @type {number} */
+      var id;
+      /** @type {string} */
+      var view;
+      /** @type {number} */
+      var index;
+      /** @type {number} */
+      var last;
+
+      checkArgs(way, 'string|number');
+
+      if ( checkType(way, 'number') ) {
+        id  = way;
+        way = null;
       }
-      catch (e) {
-        return;
-      }
-    }
-
-    view = app.searchBar.vals.view;
-
-    // Handle moving to a specific question id
-    if (id) {
-
-      if (view !== 'one') {
-        app.searchBar.vals.view = 'one';
+      else {
+        id = 0;
       }
 
-      index = this.get('ids').indexOf(way);
+      index = this.get('index');
+
+      // Check the value for way & convert number strings to a number
+      if (typeof way === 'string' && way !== 'prev' && way !== 'next') {
+        id = way.replace(/[^0-9]/g, '');
+        id = id && Number(id);
+        id || throwParamError(way);
+        way = null;
+      }
+
+      view = app.searchBar.vals.view;
+
+      if (way) {
+
+        // Save the last index
+        last = this.get('len') - 1;
+
+        if (view === 'one') {
+
+          // Handle moving the index one spot
+          if (way === 'prev') {
+            index = (index === 0) ? last : --index;
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : ++index;
+          }
+        }
+        else if (view === 'ten') {
+
+          // Handle moving the index ten spots
+          last = last - (last % 10);
+          if (way === 'prev') {
+            index = (index === 0) ? last : (index - 10);
+          }
+          else if (way === 'next') {
+            index = (index === last) ? 0 : (index + 10);
+          }
+        }
+      }
+      else {
+
+        // Handle moving to a specific question id
+        (id) || (id <= app.questions.len) || throwParamError(id);
+        if (view !== 'one') {
+          app.searchBar.vals.view = 'one';
+        }
+        index = this.get('ids').indexOf(id);
+        (index !== -1) || throwParamError(id);
+      }
 
       this.set(null, index);
 
       return index;
-    }
-
-    // Save the last index
-    last = this.get('len') - 1;
-
-    // Handle moving the index one spot
-    if (view === 'one') {
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : --index;
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : ++index;
-      }
-
-      this.set(null, index);
-
-      return index;
-    }
-
-    // Handle moving the index ten spots
-    if (view === 'ten') {
-
-      // Update the last index
-      last = last - (last % 10);
-
-      if (way === 'prev') {
-        index = (index === 0) ? last : (index - 10);
-      }
-      else if (way === 'next') {
-        index = (index === last) ? 0 : (index + 10);
-      }
-
-      this.set(null, index);
-
-      return index;
-    }
-
-  };
-
+    };
+  })();
 
 /* -----------------------------------------------------------------------------
- * | The Config Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                   classes/config/config.js */
+ * The Config Class (classes/config/config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Config)
    * -----------------------------------------------------
    * @desc The configuration settings for this app.
-   * @param {?Object} config - The user's config settings.
+   * @param {Object<string, Object>} config - The user's config settings.
    * @constructor
    */
   var Config = function(config) {
+
+    checkArgs(config, 'objectMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -2179,20 +2454,20 @@
     ////////////////////////////////////////////////////////////////////////////
 
     // Check the given user's config object
-    if (!config || typeof config !== 'object') {
+    if ( !checkType(config, '!object') ) {
       config = {};
     }
 
-    if (!config.searchSettings || typeof config.searchSettings !== 'object') {
+    if ( !checkType(config.searchSettings, '!object') ) {
       config.searchSettings = {};
     }
-    if (!config.questionFormat || typeof config.questionFormat !== 'object') {
+    if ( !checkType(config.questionFormat, '!object') ) {
       config.questionFormat = {};
     }
-    if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
+    if ( !checkType(config.prettifyFormat, '!object') ) {
       config.prettifyFormat = {};
     }
-    if (!config.showLinks || typeof config.showLinks !== 'object') {
+    if ( !checkType(config.showLinks, '!object') ) {
       config.showLinks = {};
     }
 
@@ -2206,8 +2481,8 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2216,20 +2491,21 @@
 
   Config.prototype.constructor = Config;
 
-
 /* -----------------------------------------------------------------------------
- * | The Search Bar Config Class                                               |
- * v ------------------------------------------------------------------------- v
-                                        classes/config/search-bar-config.js */
+ * The SearchBarConfig Class (classes/config/search-bar-config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (SearchBarConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the search bar in this app.
-   * @param {Object} config - The user's search bar config settings.
+   * @param {!Object} config - The user's search bar config settings.
    * @constructor
    */
   var SearchBarConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Properties
@@ -2292,23 +2568,11 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    stage    = true;
-    source   = true;
-    category = true;
-    subCat   = true;
+    stage    = !(config.stage    === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
 
-    if (config.hasOwnProperty('stage') && config.stage === false) {
-      stage = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
     if (!category && subCat) {
       subCat = false;
     }
@@ -2323,11 +2587,11 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from SearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         stage   : stage,
         source  : source,
@@ -2335,18 +2599,13 @@
         subCat  : subCat
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2355,11 +2614,10 @@
 
   SearchBarConfig.prototype.constructor = SearchBarConfig;
 
-
 /* -----------------------------------------------------------------------------
- * | The Defaults Search Bar Config Class                                      |
- * v ------------------------------------------------------------------------- v
-                               classes/config/defaults-search-bar-config.js */
+ * The DefaultsSearchBarConfig (classes/config/defaults-search-bar-config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (DefaultsSearchBarConfig)
@@ -2465,7 +2723,7 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(string|number)}
+     * @return {(string|number)} The property's value.
      */
     this.get = function(prop) {
 
@@ -2480,7 +2738,7 @@
         subCat : subCat
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
@@ -2490,33 +2748,28 @@
      * @desc Sets a protected property's value for DefaultsSearchBarConfig.
      * @param {string} prop - The name of the property to set.
      * @param {(string|number)} val - The value to set the property to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      /** @type {Object<string, function>} */
-      var props = {
-        startID: function() { startID = val; },
-        view   : function() { view    = val; },
-        order  : function() { order   = val; },
-        stage  : function() { stage   = val; },
-        source : function() { source  = val; },
-        mainCat: function() { mainCat = val; },
-        subCat : function() { subCat  = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        startID: function(val) { startID = val; return true; },
+        view   : function(val) { view    = val; return true; },
+        order  : function(val) { order   = val; return true; },
+        stage  : function(val) { stage   = val; return true; },
+        source : function(val) { source  = val; return true; },
+        mainCat: function(val) { mainCat = val; return true; },
+        subCat : function(val) { subCat  = val; return true; }
       };
 
-      props[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2531,62 +2784,67 @@
    * ---------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
-   * @param {Object} names - The available search ids and names.
-   * @param {Object} ids - The available sub category ids.
+   * @param {!Object<string, stringMap>} names - The available search ids and names.
+   * @param {!Object} ids - The available sub category ids.
    * @param {number} quesLen - The number of user's questions.
    */
   DefaultsSearchBarConfig.prototype.update = function(defaults, names,
                                                       ids, quesLen) {
 
+    /** @type {number} */
+    var i;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {string} */
+    var prop;
+    /** @type {!Array<string>} */
+    var props;
+    /** @type {(number|string)} */
+    var startID;
+    /** @type {string} */
+    var mainCat;
+
+    args = [ defaults, 'object', names, 'object', ids, 'object' ];
+    args.push(quesLen, 'number');
+    checkArgs.apply(null, args);
+
     // Check the user supplied defaults
-    if (!defaults || typeof defaults !== 'object') {
+    if ( !checkType(defaults, '!object') ) {
       defaults = {};
     }
 
+    // Set the view, order, stage, source, & main category
+    props = 'view order stage source mainCat'.split(' ');
+    i = props.length;
+    while (i--) {
+      prop = props[i];
+      if (checkType(defaults[ prop ], 'string') &&
+          hasOwnProp(names[ prop ], defaults[ prop ])) {
+        this.set(prop, defaults[ prop ]);
+      }
+    }
+
     // Set the startID
-    if (!!defaults.startID && typeof defaults.startID === 'number' &&
-        defaults.startID <= quesLen) {
-      this.set('startID', defaults.startID);
-    }
-
-    // Set the view
-    if (!!defaults.view && typeof defaults.view === 'string' &&
-        !!names.view[defaults.view]) {
-      this.set('view', defaults.view);
-    }
-
-    // Set the order
-    if (!!defaults.order && typeof defaults.order === 'string' &&
-        !!names.order[defaults.order]) {
-      this.set('order', defaults.order);
-    }
-
-    // Set the stage
-    if (!!defaults.stage && typeof defaults.stage === 'string' &&
-        !!names.stage[defaults.stage]) {
-      this.set('stage', defaults.stage);
-    }
-
-    // Set the source
-    if (!!defaults.source && typeof defaults.source === 'string' &&
-        !!names.source[defaults.source]) {
-      this.set('source', defaults.source);
-    }
-
-    // Set the main category
-    if (!!defaults.mainCat && typeof defaults.mainCat === 'string' &&
-        !!names.mainCat[defaults.mainCat]) {
-      this.set('mainCat', defaults.mainCat);
+    if ( checkType(defaults.startID, 'number|string') ) {
+      startID = defaults.startID;
+      if ( checkType(startID, 'string') ) {
+        startID = startID.replace(/[^0-9]/g, '');
+        startID = startID && Number(startID);
+      }
+      if (startID && startID <= quesLen) {
+        this.set('startID', startID);
+      }
     }
 
     // Set the sub category
-    if (!!defaults.subCat && typeof defaults.subCat === 'string' &&
-        defaults.subCat !== 'all' && !!names.subCat[defaults.subCat]) {
-      if (this.get('mainCat') === 'all') {
+    if (checkType(defaults.subCat, 'string') && defaults.subCat !== 'all' &&
+        hasOwnProp(names.subCat, defaults.subCat)) {
+      mainCat = this.get('mainCat');
+      if (mainCat === 'all') {
         this.set('subCat', defaults.subCat);
       }
       else {
-        if (ids.subCat[this.get('mainCat')].indexOf(defaults.subCat) !== -1) {
+        if (ids.subCat[ mainCat ].indexOf(defaults.subCat) !== -1) {
           this.set('subCat', defaults.subCat);
         }
       }
@@ -2594,20 +2852,21 @@
 
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The Questions Config Class                                                |
- * v ------------------------------------------------------------------------- v
-                                         classes/config/questions-config.js */
+ * The QuestionsConfig Class (classes/config/questions-config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (QuestionsConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for formatting questions in this app.
-   * @param {Object} config - The user's question format config settings.
+   * @param {!Object} config - The user's question format config settings.
    * @constructor
    */
   var QuestionsConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -2707,43 +2966,15 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    complete = true;
-    source   = true;
-    category = true;
-    subCat   = true;
-    links    = true;
-    problem  = true;
-    descr    = false;
-    output   = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('complete') && config.complete === false) {
-      complete = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === false) {
-      source = false;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
-    if (config.hasOwnProperty('subCat') && config.subCat === false) {
-      subCat = false;
-    }
-    if (config.hasOwnProperty('links') && config.links === false) {
-      links = false;
-    }
-    if (config.hasOwnProperty('problem') && config.problem === false) {
-      problem = false;
-    }
-    if (config.hasOwnProperty('descr') && config.descr === true) {
-      descr = true;
-    }
-    if (config.hasOwnProperty('output') && config.output === false) {
-      output = false;
-    }
+    id       = !(config.id       === false);
+    complete = !(config.complete === false);
+    source   = !(config.source   === false);
+    category = !(config.category === false);
+    subCat   = !(config.subCat   === false);
+    links    = !(config.links    === false);
+    problem  = !(config.problem  === false);
+    descr    =  (config.descr    === true );
+    output   = !(config.output   === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -2755,11 +2986,11 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from QuestionsConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         id      : id,
         complete: complete,
@@ -2772,18 +3003,13 @@
         output  : output
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2791,22 +3017,582 @@
 ////////////////////////////////////////////////////////////////////////////////
 
   QuestionsConfig.prototype.constructor = QuestionsConfig;
+  /**
+   * -----------------------------------------------------
+   * Public Class (Questions)
+   * -----------------------------------------------------
+   * @desc The questions for this app.
+   * @param {!objects} questions - The user's questions.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
+   * @constructor
+   */
+  var Questions = function(questions, config, getSource, getCategory) {
 
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ questions, '!objects', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.len)
+     * -----------------------------------------------
+     * @desc The total number of questions.
+     * @type {number}
+     */
+    this.len;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (Questions.list)
+     * -----------------------------------------------
+     * @desc An array of all the question objects.
+     * @return {questions}
+     */
+    this.list;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {number} */
+    var i;
+    /** @type {number} */
+    var id;
+    /** @type {number} */
+    var len;
+
+    this.len = questions.length;
+
+    i = this.len + 1;
+    this.list = (this.len) ? new Array(i) : [];
+
+    // Add blank to beginning of list so ids and indexes match
+    if (this.len) {
+      this.list[0] = null;
+    }
+
+    // Add the Question object references to the list
+    len = this.len;
+    i = -1;
+    while (++i < len) {
+      id = i + 1;
+      this.list[ id ] = new Question(questions[i], id, config,
+                                     getSource, getCategory);
+    }
+
+    // Freeze the public properties that are objects
+    freezeObj(this.list);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Protected Property (Questions.data)
+     * -----------------------------------------------
+     * @desc The hash map of question objects (key= url).
+     * @type {Object<string, Question>}
+     */
+    var data;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Protected Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /** @type {string} */
+    var url;
+
+    data = {};
+
+    // Build the data hash map
+    i = this.len + 1;
+    while (--i) {
+      url = this.list[i].get('url');
+      if (url) {
+        data[ url ] = this.list[i];
+      }
+    }
+
+    // Freeze the protected properties
+    freezeObj(data);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define & Setup The Public Methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Questions.get)
+     * -----------------------------------------------
+     * @desc Gets a question's object or property value.
+     * @param {(number|string)} id - The question id to get.
+     * @param {string=} prop - The name of the property to get.
+     * @param {boolean=} formatted - If true then gets the
+     *   formatted property.
+     * @return {*} The Question or property value.
+     */
+    this.get = function(id, prop, formatted) {
+
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Question} */
+      var question;
+      /** @type {*} */
+      var result;
+
+      checkArgs(id, 'number|string', prop, 'string=', formatted, 'boolean=');
+
+      if (!hasOwnProp(this.list, String(id)) && !hasOwnProp(data, String(id))) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.get call was ';
+        errorMsg += 'given an invalid question id to get. id= ' + id;
+        throw new Error(errorMsg);
+      }
+
+      prop = prop || '';
+      formatted = formatted || false;
+
+      question = ( checkType(id, 'number') ) ? this.list[ id ] : data[ id ];
+      result = ( (!prop) ?
+        question : (prop === 'elem') ?
+          question.elem : (prop === 'rootElem') ?
+            question.elem.root : question.get(prop, formatted)
+      );
+
+      return result;
+    };
+
+    freezeObj(this.get);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    freezeObj(this);
+
+  };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
+  Questions.prototype.constructor = Questions;
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemStyle)
+   * ---------------------------------------------------
+   * @desc Sets the style for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {(string|!Object)} type - The style setting to set.
+   *   If a string is given then another param with the value is
+   *   required. If an object is provided then use key => value
+   *   pairs like styleType => newValue (see below example).
+   * @param {(string|number)=} val - If the type param is a string then
+   *   this is the new value for the it.
+   * @example
+   *   app.questions.setElemStyle(5, { display: 'none' });
+   *   // OR
+   *   app.questions.setElemStyle(5, 'display', 'none');
+   */
+  Questions.prototype.setElemStyle = function(id, type, val) {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {!RegExp} */
+    var dash;
+    /** @type {string} */
+    var prop;
+    /** @type {number} */
+    var i;
+
+    args = [ id, 'number|string', type, '!string|object' ];
+    args.push(val, 'string|number=');
+    checkArgs.apply(null, args);
+
+    dash = /\-/;
+
+    // Handle one update
+    if ( checkType(type, 'string') ) {
+
+      if ( !checkType(val, 'string|number') ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'value to set the style to. val= ' + val;
+        throw new TypeError(errorMsg);
+      }
+
+      // Replace dashes with camel case
+      if ( dash.test(type) ) {
+        type = camelCase(type);
+      }
+
+      elem = this.get(id, 'rootElem');
+
+      if ( !(type in elem.style) ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'style property to set. prop= ' + type;
+        throw new Error(errorMsg);
+      }
+
+      elem.style[ type ] = val;
+    }
+    // Handle multiple updates
+    else {
+
+      elem = this.get(id, 'rootElem');
+
+      for (prop in type) {
+        if ( hasOwnProp(type, prop) ) {
+
+          // Replace dashes with camel case
+          if ( dash.test(prop) ) {
+            prop = camelCase(prop);
+          }
+
+          if ( !(prop in elem.style) ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'style property to set. prop= ' + prop;
+            throw new Error(errorMsg);
+          }
+
+          val = type[ prop ];
+
+          if ( !checkType(val, 'string|number') ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'value to set a style to. prop= ' + prop + ', ';
+            errorMsg += 'val= ' + val;
+            throw new TypeError(errorMsg);
+          }
+
+          elem.style[ prop ] = val;
+        }
+      }
+    }
+
+  };
+
+  /**
+   * ---------------------------------------------------
+   * Public Method (Questions.prototype.setElemClass)
+   * ---------------------------------------------------
+   * @desc Sets the class name for a question's container element.
+   * @param {(number|string)} id - The question id to set.
+   * @param {string} newClassName - The new class name.
+   */
+  Questions.prototype.setElemClass = function(id, newClassName) {
+
+    checkArgs(id, 'number|string', newClassName, 'string');
+
+    this.get(id, 'rootElem').className = newClassName;
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.addIdsToSearch)
+   * -----------------------------------------------------
+   * @desc Sets the format for all of the questions.
+   * @type {function}
+   */
+  Questions.prototype.addIdsToSearch = function() {
+
+    /** @type {!booleanMap} */
+    var config;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var id;
+
+    config = {
+      stage   : app.config.searchBar.get('stage'),
+      source  : app.config.searchBar.get('source'),
+      category: app.config.searchBar.get('category'),
+      subCat  : app.config.searchBar.get('subCat')
+    };
+    config.source = config.source || app.config.links.get('source');
+    config.category = config.category || app.config.links.get('category');
+    config.subCat = config.subCat || app.config.links.get('category');
+
+    len = this.len + 1;
+    id = 0;
+    while (++id < len) {
+      this.get(id).addToSearch(config);
+    }
+
+    app.sources.freezeIds();
+    app.categories.freezeIds();
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.appendElems)
+   * -----------------------------------------------------
+   * @desc Sets and appends the elements for all of the questions.
+   * @type {function}
+   */
+  Questions.prototype.appendElems = function() {
+
+    /** @type {!Question} */
+    var question;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var id;
+
+    len = this.len + 1;
+    id = 0;
+    while (++id < len) {
+      question = this.get(id);
+      app.elems.ques.appendChild(question.elem.root);
+      question.addElemContent();
+    }
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.addCodeExts)
+   * -----------------------------------------------------
+   * @desc If overflow occurs in a question's code element it enables
+   *   the auto extend button for the question.
+   * @type {function}
+   */
+  Questions.prototype.addCodeExts = function() {
+
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var id;
+
+    len = this.len + 1;
+    id = 0;
+    while (++id < len) {
+      this.get(id, 'elem').addCodeExt();
+    }
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.reverseElems)
+   * -----------------------------------------------------
+   * @desc Appends each question's element to #aIV-questions in the direction
+   *   of the current search order.
+   * @type {function}
+   */
+  Questions.prototype.reverseElems = function() {
+
+    /** @type {string} */
+    var direction;
+    /** @type {!Element} */
+    var elem;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var id;
+
+    direction = app.searchBar.vals.order;
+    len = this.len + 1;
+
+    // Appends in asc order
+    if (direction === 'asc') {
+      id = 0;
+      while (++id < len) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
+      }
+    }
+    // Appends in desc order
+    else {
+      id = len;
+      while (--id) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
+      }
+    }
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.hideElems)
+   * -----------------------------------------------------
+   * @desc Updates the display to 'none' for the provided questions.
+   * @param {!numbers} ids - The previous active question ids.
+   * @param {number} index - The index of the ids to hide from view.
+   * @param {string} view - The old value of app.searchBar.vals.view.
+   */
+  Questions.prototype.hideElems = function(ids, index, view) {
+
+    /** @type {string} */
+    var errorMsg;
+    /** @type {number} */
+    var i;
+
+    checkArgs(ids, '!numbers', index, 'number', view, 'string');
+
+    if (index === -1) {
+
+      // Hide the empty message
+      if (!ids.length) {
+        app.elems.none.style.display = 'none';
+      }
+      // Hide all of the provided ids
+      else {
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
+      }
+
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
+      }
+
+      // Hide only the index of the provided ids
+      if (view === 'one') {
+        this.setElemStyle(ids[ index ], 'display', 'none');
+      }
+      // Hide the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be hidden
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
+    }
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (Questions.prototype.showElems)
+   * -----------------------------------------------------
+   * @desc Updates the display to 'block' for the provided questions.
+   * @param {!numbers} ids - The new active question ids.
+   * @param {number} index - The index of the ids to show.
+   */
+  Questions.prototype.showElems = function(ids, index) {
+
+    /** @type {number} */
+    var i;
+    /** @type {string} */
+    var view;
+    /** @type {string} */
+    var errorMsg;
+    /** @type {string} */
+    var newClassName;
+
+    checkArgs(ids, '!numbers', index, 'number');
+
+    if (index === -1) {
+
+      // Show the empty message
+      if (!ids.length) {
+        app.elems.none.style.display = 'block';
+      }
+      // Show all of the provided ids
+      else {
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
+      }
+
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
+      }
+
+      view = app.searchBar.vals.view;
+
+      // Show only the index of the provided ids
+      if (view === 'one') {
+        this.setElemClass(ids[ index ], 'question shade1 hideLink');
+        this.setElemStyle(ids[ index ], 'display', 'block');
+      }
+      // Show the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be shown
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
+    }
+
+  };
 
 /* -----------------------------------------------------------------------------
- * | The Pretty Config Class                                                   |
- * v ------------------------------------------------------------------------- v
-                                            classes/config/pretty-config.js */
+ * The PrettyConfig Class (classes/config/pretty-config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (PrettyConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for the prettifier.
-   * @param {Object<string, (string|number|boolean)>} config - The user's
+   * @param {!Object<string, (string|number|boolean)>} config - The user's
    *   prettifier configuration settings.
    * @constructor
    */
   var PrettyConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -2848,26 +3634,30 @@
 
     trimSpace = 0;
     tabLength = 2;
-    commentLinks = false;
+    commentLinks = (config.commentLinks === true);
 
-    if ( config.hasOwnProperty('trimSpace') ) {
-      if (typeof config.trimSpace === 'number' && config.trimSpace >= 0) {
+    if ( hasOwnProp(config, 'trimSpace') ) {
+      if (checkType(config.trimSpace, 'number') && config.trimSpace >= 0) {
         trimSpace = Math.floor(config.trimSpace);
       }
-      else if (typeof config.trimSpace === 'string') {
-        trimSpace = Number( config.trimSpace.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.trimSpace, 'string') ) {
+        config.trimSpace = config.trimSpace.replace(/[^0-9]/g, '');
+        if (config.trimSpace) {
+          trimSpace = Number(config.trimSpace);
+        }
       }
     }
-    if ( config.hasOwnProperty('tabLength') ) {
-      if (typeof config.tabLength === 'number') {
-        tabLength = config.tabLength;
+
+    if ( hasOwnProp(config, 'tabLength') ) {
+      if (checkType(config.tabLength, 'number') && config.tabLength >= 0) {
+        tabLength = Math.floor(config.tabLength);
       }
-      else if (typeof config.tabLength === 'string') {
-        tabLength = Number( config.tabLength.replace(/[^0-9]/g, '') );
+      else if ( checkType(config.tabLength, 'string') ) {
+        config.tabLength = config.tabLength.replace(/[^0-9]/g, '');
+        if (config.tabLength) {
+          tabLength = Number(config.tabLength);
+        }
       }
-    }
-    if (config.hasOwnProperty('commentLinks') && config.commentLinks === true) {
-      commentLinks = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -2880,7 +3670,7 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from PrettyConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {(number|boolean)}
+     * @return {(number|boolean)} The property's value.
      */
     this.get = function(prop) {
 
@@ -2891,18 +3681,13 @@
         commentLinks: commentLinks
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2911,22 +3696,23 @@
 
   PrettyConfig.prototype.constructor = PrettyConfig;
 
-
 /* -----------------------------------------------------------------------------
- * | The Links Config Class                                                    |
- * v ------------------------------------------------------------------------- v
-                                             classes/config/links-config.js */
+ * The LinksConfig Class (classes/config/links-config.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (LinksConfig)
    * -----------------------------------------------------
    * @desc The configuration settings for whether to show search links for
    *   portions of each question.
-   * @param {Object} config - The user's config settings for search link
-   *   formatting.
+   * @param {!Object<string, boolean>} config - The user's config settings
+   *   for search link formatting.
    * @constructor
    */
   var LinksConfig = function(config) {
+
+    checkArgs(config, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -2966,19 +3752,9 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    id       = true;
-    source   = false;
-    category = true;
-
-    if (config.hasOwnProperty('id') && config.id === false) {
-      id = false;
-    }
-    if (config.hasOwnProperty('source') && config.source === true) {
-      source = true;
-    }
-    if (config.hasOwnProperty('category') && config.category === false) {
-      category = false;
-    }
+    id       = !(config.id       === false);
+    source   =  (config.source   === true );
+    category = !(config.category === false);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -2990,29 +3766,24 @@
      * -----------------------------------------------
      * @desc Gets a protected property's value from LinksConfig.
      * @param {string} prop - The name of the property to get.
-     * @return {boolean}
+     * @return {boolean} The property's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
+      /** @type {!Object<string, boolean>} */
       var props = {
         id      : id,
         source  : source,
         category: category
       };
 
-      return props[ prop ];
+      return getter.call(props, prop);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3021,11 +3792,10 @@
 
   LinksConfig.prototype.constructor = LinksConfig;
 
-
 /* -----------------------------------------------------------------------------
- * | The Sources Class                                                         |
- * v ------------------------------------------------------------------------- v
-                                                         classes/sources.js */
+ * The Sources Class (classes/sources.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Sources)
@@ -3035,6 +3805,8 @@
    * @constructor
    */
   var Sources = function(sources) {
+
+    checkArgs(sources, 'stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -3070,6 +3842,9 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {number} */
+    var allIndex;
+
     this.ids = Object.keys(sources);
     this.len = this.ids.length;
 
@@ -3078,7 +3853,11 @@
       this.ids = sortKeys(this.ids, sources);
     }
 
-    Object.freeze(this.ids);
+    // Fix a category with the id of all
+    allIndex = this.ids.indexOf('all');
+    if (allIndex !== -1) {
+      this.ids[ allIndex ] = '_all';
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -3098,16 +3877,22 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {number} */
+    var i;
+
     data = {};
 
     // Build the data hash map
-    if (this.len) {
-      this.ids.forEach(function(/** string */ sourceId) {
-        data[ sourceId ] = new Source(sources[ sourceId ]);
-      });
+    i = this.len;
+    while (i--) {
+      sourceId = this.ids[i];
+      data[ sourceId ] = new Source(sources[ sourceId ]);
     }
 
-    Object.freeze(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -3117,34 +3902,42 @@
      * ----------------------------------------------- 
      * Public Method (Sources.get)
      * -----------------------------------------------
-     * @desc Get a source's Source object or property.
+     * @desc Get a Source's object or protected property.
      * @param {string} id - The source id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Source|string|numbers)}
+     * @return {!(Source|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      /** @type {Source} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Source} */
       var source;
+      /** @type {!(Source|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Sources.get call ';
+        errorMsg += 'was given an invalid source id to get. sourceID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      source = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      prop = prop || '';
+      source = data[ id ];
+      result = (prop) ? source.get(prop) : source;
 
-      return (prop) ? source.get(prop) : source;
+      return result;
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    // Deep freeze
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3153,11 +3946,32 @@
 
   Sources.prototype.constructor = Sources;
 
+  /**
+   * -----------------------------------------------------
+   * Public Method (Sources.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each source.
+   * @type {function}
+   */
+  Sources.prototype.freezeIds = function() {
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+  };
 
 /* -----------------------------------------------------------------------------
- * | The Source Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                          classes/source.js */
+ * The Source Class (classes/source.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Source)
@@ -3167,6 +3981,8 @@
    * @constructor
    */
   var Source = function(name) {
+
+    checkArgs(name, 'string');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -3187,7 +4003,7 @@
      * Protected Property (Source.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this source.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -3196,14 +4012,12 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
 
@@ -3216,23 +4030,19 @@
      * Public Method (Source.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the source.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      /** @type {Object<string, (string|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
         name: name,
         url : url,
-        ids : function() {
-          return Object.freeze( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -3244,21 +4054,38 @@
      */
     this.addId = function(id) {
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Source.addId call ';
+        errorMsg += 'was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
     };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Source.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      freezeObj(ids);
+
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3267,11 +4094,10 @@
 
   Source.prototype.constructor = Source;
 
-
 /* -----------------------------------------------------------------------------
- * | The Categories Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                                      classes/categories.js */
+ * The Categories Class (classes/categories.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Categories)
@@ -3281,6 +4107,8 @@
    * @constructor
    */
   var Categories = function(categories) {
+
+    checkArgs(categories, 'objectMap|stringMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Prepare The User Supplied Params
@@ -3313,7 +4141,7 @@
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
-     * @type {strings}
+     * @type {!strings}
      */
     this.ids;
 
@@ -3347,8 +4175,6 @@
       this.ids[ allIndex ] = '_all';
     }
 
-    Object.freeze(this.ids);
-
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -3358,7 +4184,7 @@
      * Protected Property (Categories.data)
      * -----------------------------------------------
      * @desc Saves a hash map of the category objects using the ids as keys.
-     * @type {Object<string, Category>}
+     * @type {!Object<string, !Category>}
      * @private
      */
     var data;
@@ -3369,36 +4195,43 @@
 
     /** @type {strings} */
     var subIds;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
     data = {};
 
-    if (this.len) {
+    // Build the data hash map
+    i = this.len;
+    while (i--) {
+      mainId = this.ids[i];
 
-      // Build the data hash map
-      this.ids.forEach(function(/** string */ mainId) {
+      // Save and sort the sub category ids if they exist
+      subIds = ( (hasOwnProp(categories.sub, mainId)) ?
+        Object.keys(categories.sub[ mainId ]) : []
+      );
+      if (subIds.length) {
+        subIds = sortKeys(subIds, categories.sub[ mainId ]);
+      }
 
-        // Save and sort the sub category ids if they exist
-        subIds = null;
-        if ( categories.sub.hasOwnProperty(mainId) ) {
-          subIds = Object.keys(categories.sub[ mainId ]);
-          if (subIds && subIds.length) {
-            subIds = sortKeys(subIds, categories.sub[ mainId ]);
-          }
-        }
+      // Add main category to the hash map
+      data[ mainId ] = new Category(categories.main[ mainId ], subIds);
 
-        // Add main category to the hash map
-        data[ mainId ] = new Category(categories.main[ mainId ], subIds);
-
-        // Add the sub categories to the hash map
-        if (subIds && subIds.length) {
-          subIds.forEach(function(/** string */ subId) {
-            data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
-          });
-        } 
-      });
+      // Add the sub categories to the hash map
+      ii = subIds.length;
+      while (ii--) {
+        subId = subIds[ii];
+        data[ subId ] = new Category(categories.sub[ mainId ][ subId ]);
+      }
     }
 
-    Object.freeze(data);
+    // Deep freeze
+    freezeObj(data, true);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -3408,34 +4241,42 @@
      * ----------------------------------------------- 
      * Public Property (Categories.get)
      * -----------------------------------------------
-     * @desc Get a catgory's Category object or property.
+     * @desc Get a Catgory's object or protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
-     * @return {(Category|string|numbers)}
+     * @return {!(Category|string|numbers)}
      */
     this.get = function(id, prop) {
 
-      /** @type {Category} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Category} */
       var category;
+      /** @type {!(Category|string|numbers)} */
+      var result;
 
-      if (typeof prop !== 'string') {
-        prop = '';
+      checkArgs(id, 'string', prop, 'string=');
+
+      if ( !hasOwnProp(data, id) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
+        errorMsg += 'was given an invalid category id to get. catID= ' + id;
+        throw new Error(errorMsg);
       }
 
-      category = ( data.hasOwnProperty(id) ) ? data[ id ] : false;
+      prop = prop || '';
+      category = data[ id ];
+      result = (prop) ? category.get(prop) : category;
 
-      return (prop) ? category.get(prop) : category;
+      return result;
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    // Deep freeze
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3444,11 +4285,32 @@
 
   Categories.prototype.constructor = Categories;
 
+  /**
+   * -----------------------------------------------------
+   * Public Method (Categories.prototype.freezeIds)
+   * -----------------------------------------------------
+   * @desc Freezes the ids array for each category.
+   * @type {function}
+   */
+  Categories.prototype.freezeIds = function() {
+
+    /** @type {string} */
+    var id;
+    /** @type {number} */
+    var i;
+
+    i = this.len;
+    while (i--) {
+      id = this.ids[i];
+      this.get(id).freezeIds();
+    }
+
+  };
 
 /* -----------------------------------------------------------------------------
- * | The Category Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                                        classes/category.js */
+ * The Category Class (classes/category.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Category)
@@ -3460,6 +4322,8 @@
    * @constructor
    */
   var Category = function(name, subs) {
+
+    checkArgs(name, 'string', subs, 'strings=');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -3480,7 +4344,7 @@
      * Protected Property (Category.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this category.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -3489,17 +4353,15 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
-    subs = (!!subs) ? Object.freeze(subs) : null;
+    subs = (subs) ? freezeObj(subs) : null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -3510,24 +4372,20 @@
      * Public Method (Category.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the category.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      /** @type {Object<string, (string|numbers|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
         name: name,
         url : url,
         subs: subs,
-        ids : function() {
-          return Object.freeze( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -3539,21 +4397,38 @@
      */
     this.addId = function(id) {
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Category.addId ';
+        errorMsg += 'call was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
     };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Category.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      freezeObj(ids);
+
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3562,11 +4437,10 @@
 
   Category.prototype.constructor = Category;
 
-
 /* -----------------------------------------------------------------------------
- * | The Search Bar Class                                                      |
- * v ------------------------------------------------------------------------- v
-                                                      classes/search-bar.js */
+ * The SearchBar Class (classes/search-bar/search-bar.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (SearchBar)
@@ -3574,12 +4448,14 @@
    * @desc The search bar's values and elements for this app.
    * @todo Break this class down into smaller pieces with appropriate
    *   getters and setters.
-   * @param {booleanMap} config - The app's search bar config settings.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!booleanMap} config - The app's search bar config settings.
+   * @param {!Sources} sources - The app's sources.
+   * @param {!Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(config, sources, categories) {
+
+    checkArgs(config, '!booleanMap', sources, '!object', categories, '!object');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -3587,53 +4463,10 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBar.names)
-     * -----------------------------------------------
-     * @desc The hash map of the search bar's ids and names.
-     * @type {{
-     *   view   : stringMap,
-     *   order  : stringMap,
-     *   stage  : stringMap,
-     *   source : stringMap,
-     *   mainCat: stringMap,
-     *   subCat : stringMap
-     * }}
-     */
-    this.names;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBar.ids)
-     * -----------------------------------------------
-     * @desc The search bar's ids in order of appearance.
-     * @type {{
-     *   view   : strings,
-     *   order  : strings,
-     *   stage  : strings,
-     *   source : strings,
-     *   mainCat: strings,
-     *   subCat : Object<string, strings>
-     * }}
-     */
-    this.ids;
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (SearchBar.ques)
-     * -----------------------------------------------
-     * @desc The question ids matching the search property values.
-     * @type {{
-     *   stage: Object<string, nums>
-     * }}
-     */
-    this.ques;
-
-    /**
-     * ----------------------------------------------- 
      * Public Property (SearchBar.vals)
      * -----------------------------------------------
      * @desc The current selected values.
-     * @type {{
+     * @type {!{
      *   view   : string,
      *   order  : string,
      *   stage  : string,
@@ -3646,135 +4479,94 @@
 
     /**
      * ----------------------------------------------- 
-     * Public Property (SearchBar.elems)
+     * Public Property (SearchBar.names)
      * -----------------------------------------------
-     * @desc The select HTMLELements.
-     * @type {{
-     *   view   : elem,
-     *   order  : elem,
-     *   stage  : ?elem,
-     *   source : ?elem,
-     *   mainCat: ?elem,
-     *   subCat : ?elem
+     * @desc The hash map of the search bar's ids and names.
+     * @type {!{
+     *   view   : !stringMap,
+     *   order  : !stringMap,
+     *   stage  : !stringMap,
+     *   source : !stringMap,
+     *   mainCat: !stringMap,
+     *   subCat : !stringMap
      * }}
      */
-    this.elems;
+    this.names;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBar.ids)
+     * -----------------------------------------------
+     * @desc The search bar's ids in order of appearance.
+     * @type {!{
+     *   view   : !strings,
+     *   order  : !strings,
+     *   stage  : !strings,
+     *   source : !strings,
+     *   mainCat: !strings,
+     *   subCat : !Object<string, !strings>
+     * }}
+     */
+    this.ids;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBar.ques)
+     * -----------------------------------------------
+     * @desc The question ids matching the search property values.
+     * @type {!{
+     *   stage: !Object<string, !numbers>
+     * }}
+     */
+    this.ques;
 
     /**
      * ----------------------------------------------- 
      * Public Property (SearchBar.opts)
      * -----------------------------------------------
      * @desc The option elements for the search bar.
-     * @type {{
-     *   view   : elems,
-     *   order  : elems,
-     *   stage  : elems,
-     *   source : elems,
-     *   mainCat: elems,
-     *   subCat : Object<string, elems>
+     * @type {!{
+     *   view   : !elements,
+     *   order  : !elements,
+     *   stage  : !elements,
+     *   source : !elements,
+     *   mainCat: !elements,
+     *   subCat : !Object<string, !elements>
      * }}
      */
     this.opts;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBar.elems)
+     * -----------------------------------------------
+     * @desc The HTMLSelectElements for searching in the app.
+     * @type {!SearchBarElems}
+     */
+    this.elems;
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {string} */
+    var sourceId;
+    /** @type {!strings} */
+    var mainSubs;
+    /** @type {!Category} */
+    var mainCat;
+    /** @type {string} */
+    var mainId;
+    /** @type {string} */
+    var subId;
     /** @type {boolean} */
     var pass;
+    /** @type {number} */
+    var ii;
+    /** @type {number} */
+    var i;
 
-    // Setup the names, ids, and opts properties
-    this.names = {
-      view: {
-        'one': 'View One',
-        'ten': 'View Ten',
-        'all': 'View All'
-      },
-      order: {
-        'asc' : 'ASC',
-        'desc': 'DESC'
-      },
-      stage: {
-        'all': 'All Stages',
-        'com': 'Completed',
-        'inc': 'Incomplete'
-      },
-      source: {
-        'all': 'All Sources'
-      },
-      mainCat: {
-        'all': 'All Main Categories'
-      },
-      subCat: {
-        'all': 'All Sub Categories'
-      }
-    };
-    this.ids = {
-      view   : [ 'one','ten','all' ],
-      order  : [ 'asc','desc' ],
-      stage  : [ 'all','com','inc' ],
-      source : sources.ids.slice(0),
-      mainCat: categories.ids.slice(0),
-      subCat : {}
-    };
-    this.ids.source.unshift('all');
-    this.ids.mainCat.unshift('all');
-    this.opts = {
-      view   : [],
-      order  : [],
-      stage  : [],
-      source : [],
-      mainCat: [],
-      subCat : {
-        'all': []
-      }
-    };
-
-    // Add the source names
-    if (sources.len) {
-      sources.ids.forEach(function(/** string */ sourceId) {
-        this.names.source[ sourceId ] = sources.get(sourceId, 'name');
-      }, this);
-    }
-
-    // Add category names and ids
-    if (categories.len) {
-
-      categories.ids.forEach(function(/** string */ mainId) {
-        /** @type {Category} */
-        var mainCat;
-        /** @type {strings} */
-        var subs;
-
-        // Add the main category names
-        mainCat = categories.get(mainId);
-        this.names.mainCat[ mainId ] = mainCat.get('name');
-
-        // Add the sub category options
-        this.opts.subCat[ mainId ] = [];
-
-        // Add the sub categories names and ids
-        subs = mainCat.get('subs');
-        if (subs && subs.length) {
-          this.ids.subCat[ mainId ] = subs.slice(0);
-          this.ids.subCat[ mainId ].unshift('all');
-          subs.forEach(function(/** string */ subId) {
-            this.names.subCat[ subId ] = categories.get(subId, 'name');
-          }, this);
-        }
-        else {
-          this.ids.subCat[ mainId ] = [ 'all' ];
-        }
-      }, this);
-    }
-
-    // Setup the question ids property
-    this.ques = {};
-    this.ques.stage = {};
-    this.ques.stage.com = [];
-    this.ques.stage.inc = [];
-
-    // Setup the current values property
+    // Setup the current values
     this.vals = {
       view   : 'one',
       order  : 'asc',
@@ -3784,41 +4576,119 @@
       subCat : 'all'
     };
 
-    // Setup the select elements property
-    this.elems = {};
-    this.elems.view = document.createElement('select');
-    this.elems.order = document.createElement('select');
-    this.elems.stage = ( (config.stage) ?
-      document.createElement('select') : null
-    );
-    this.elems.source = ( (config.source && sources.len) ?
-      document.createElement('select') : null
-    );
-    this.elems.mainCat = ( (config.category && categories.len) ?
-      document.createElement('select') : null
-    );
-    pass = (this.elems.mainCat && config.subCat);
-    pass = pass && categories.ids.some(function(/** string */ id) {
-      return !!this.ids.subCat[id];
-    }, this);
-    this.elems.subCat = ( (pass) ?
-      document.createElement('select') : null
-    );
+    // Setup the names property
+    this.names = {};
+    this.names.view = {
+      one: 'View One',
+      ten: 'View Ten',
+      all: 'View All'
+    };
+    this.names.order = {
+      asc : 'ASC',
+      desc: 'DESC'
+    };
+    this.names.stage = {
+      all: 'All Stages',
+      com: 'Completed',
+      inc: 'Incomplete'
+    };
+    this.names.source = {
+      all: 'All Sources'
+    };
+    this.names.mainCat = {
+      all: 'All Main Categories'
+    };
+    this.names.subCat = {
+      all: 'All Sub Categories'
+    };
+
+    // Add each source to the names property
+    i = sources.len;
+    while (i--) {
+      sourceId = sources.ids[i];
+      this.names.source[ sourceId ] = sources.get(sourceId, 'name');
+    }
+
+    // Setup the ids property
+    this.ids = {
+      view   : [ 'one','ten','all' ],
+      order  : [ 'asc','desc' ],
+      stage  : [ 'all','com','inc' ],
+      source : [ 'all' ].concat(sources.ids),
+      mainCat: [ 'all' ].concat(categories.ids),
+      subCat : {}
+    };
+
+    // Setup the opts property
+    this.opts = {
+      view   : [],
+      order  : [],
+      stage  : [],
+      source : [],
+      mainCat: [],
+      subCat : { all: [] }
+    };
+
+    // Add each category to the names, ids, and opts properties
+    i = categories.len;
+    while (i--) {
+      mainId = categories.ids[i];
+      mainCat = categories.get(mainId);
+      mainSubs = mainCat.get('subs');
+
+      // Add each main category's name
+      this.names.mainCat[ mainId ] = mainCat.get('name');
+
+      // Add each main category to the sub category property in opts
+      this.opts.subCat[ mainId ] = [];
+
+      // Add each sub category's id for each main category
+      this.ids.subCat[ mainId ] = [ 'all' ].concat(mainSubs);
+
+      // Add each sub category's name
+      ii = mainSubs.length;
+      while (ii--) {
+        subId = mainSubs[ii];
+        this.names.subCat[ subId ] = categories.get(subId, 'name');
+      }
+    }
+
+    // Setup the question ids property
+    this.ques = {};
+    this.ques.stage = {};
+    this.ques.stage.com = [];
+    this.ques.stage.inc = [];
+
+    // Check the config values before setting up the search elements
+    config.source   = (config.source   && !!sources.len);
+    config.category = (config.category && !!categories.len);
+    config.subCat   = (config.category && config.subCat);
+
+    // Ensure at least one sub category exists
+    pass = !config.subCat;
+    i = categories.len;
+    while (i-- && !pass) {
+      mainId = categories.ids[i];
+      pass = !!this.ids.subCat[ mainId ].length;
+    }
+    config.subCat = (config.subCat && pass);
+
+    // Setup the search elements
+    this.elems = new SearchBarElems(config);
 
     // Freeze all of the completed properties
-    Object.freeze(this.names);
-    Object.freeze(this.ids);
-    Object.freeze(this.opts);
-    Object.freeze(this.ques.stage);
-    Object.freeze(this.ques);
-    Object.freeze(this.elems);
+    freezeObj(this.names);
+    freezeObj(this.ids);
+    freezeObj(this.opts);
+    freezeObj(this.ques.stage);
+    freezeObj(this.ques);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3832,115 +4702,25 @@
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {Object} defaults - The default values.
+   * @param {!Object<string, string>} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
-    /** @type {string} */
-    var view;
-    /** @type {string} */
-    var order;
-    /** @type {string} */
-    var stage;
-    /** @type {string} */
-    var source;
-    /** @type {string} */
-    var mainCat;
-    /** @type {string} */
-    var subCat;
+    /** @type {!stringMap} */
+    var vals;
 
-    view    = defaults.get('view');
-    order   = defaults.get('order');
-    stage   = defaults.get('stage');
-    source  = defaults.get('source');
-    mainCat = defaults.get('mainCat');
-    subCat  = defaults.get('subCat');
+    checkArgs(defaults, '!stringMap');
 
-    this.vals.view    = view;
-    this.vals.order   = order;
-    this.vals.stage   = stage;
-    this.vals.source  = source;
-    this.vals.mainCat = mainCat;
-    this.vals.subCat  = subCat;
+    vals = this.vals;
 
-    this.elems.view.value = view;
-    this.elems.order.value = order;
-    if (this.elems.stage) {
-      this.elems.stage.value = stage;
-    }
-    if (this.elems.source) {
-      this.elems.source.value = source;
-    }
-    if (this.elems.mainCat) {
-      this.elems.mainCat.value = mainCat;
-    }
-    if (this.elems.subCat) {
-      this.elems.subCat.value = subCat;
-    }
+    vals.view    = defaults.view;
+    vals.order   = defaults.order;
+    vals.stage   = defaults.stage;
+    vals.source  = defaults.source;
+    vals.mainCat = defaults.mainCat;
+    vals.subCat  = defaults.subCat;
 
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (SearchBar.prototype.setMainElems)
-   * -----------------------------------------------------
-   * @desc Creates the search bar's select elements.
-   * @type {function}
-   */
-  SearchBar.prototype.setMainElems = function() {
-
-    /** @type {boolean} */
-    var pass;
-
-    // Set view search element
-    this.elems.view.id = 'aIV-view';
-    this.elems.view.className = 'showView';
-    this.elems.view.onchange = function(event) {
-      Events.searchView(event.target.value);
-    };
-
-    // Set order search element
-    this.elems.order.id = 'aIV-order';
-    this.elems.order.className = 'showOrder';
-    this.elems.order.onchange = function(event) {
-      Events.searchOrder(event.target.value);
-    };
-
-    // Set stage search element
-    if (this.elems.stage) {
-      this.elems.stage.id = 'aIV-stage';
-      this.elems.stage.className = 'showStage';
-      this.elems.stage.onchange = function(event) {
-        Events.searchStage(event.target.value);
-      };
-    }
-
-    // Set source search element
-    if (this.elems.source) {
-      this.elems.source.id = 'aIV-source';
-      this.elems.source.className = 'showSource';
-      this.elems.source.onchange = function(event) {
-        Events.searchSource(event.target.value);
-      };
-    }
-
-    // Set main category search element
-    if (this.elems.mainCat) {
-      this.elems.mainCat.id = 'aIV-mainCat';
-      this.elems.mainCat.className = 'showMainCat';
-      this.elems.mainCat.onchange = function(event) {
-        Events.searchMainCat(event.target.value);
-      };
-    }
-
-    // Set sub category search element
-    if (this.elems.subCat) {
-      this.elems.subCat.id = 'aIV-subCat';
-      this.elems.subCat.className = 'showSubCat';
-      this.elems.subCat.onchange = function(event) {
-        Events.searchSubCat(event.target.value);
-      };
-    }
+    this.elems.setValuesToDefaults(defaults);
 
   };
 
@@ -3953,150 +4733,72 @@
    */
   SearchBar.prototype.setOptElems = function() {
 
-    /**
-     * ---------------------------------------------------
-     * Private Method (makeOptElem)
-     * ---------------------------------------------------
-     * @desc A helper function that creates option elements.
-     * @param {string} id - The search item's id. If blank then the
-     *   option is disabled.
-     * @param {string} name - The search item's name.
-     * @return {elem}
-     * @private
-     */
-    var makeOptElem = function(id, name) {
-      /** @type {elem} */
-      var elem;
+    /** @type {string} */
+    var mainId;
+    /** @type {!Object<string, !stringMap>} */
+    var names;
+    /** @type {!SearchBarElems} */
+    var elems;
+    /** @type {(!Object<string, !Object>|!elements)} */
+    var opts;
+    /** @type {!HTMLSelectElement} */
+    var sel;
+    /** @type {!Object<string, !Object>} */
+    var ids;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-      elem = document.createElement('option');
-      elem.textContent = name;
-      if (id) {
-        elem.value = id;
+    ids = this.ids;
+    opts = this.opts;
+    elems = this.elems;
+    names = this.names;
+
+    setSearchSection(elems.view, ids.view, names.view, opts.view);
+
+    setSearchSection(elems.order, ids.order, names.order, opts.order);
+
+    if (elems.stage) {
+      setSearchSection(elems.stage, ids.stage, names.stage, opts.stage);
+    }
+
+    if (elems.source) {
+      setSearchSection(elems.source, ids.source, names.source, opts.source);
+    }
+
+    if (elems.mainCat) {
+      setSearchSection(elems.mainCat, ids.mainCat, names.mainCat, opts.mainCat);
+    }
+
+    if (elems.subCat) {
+
+      // Set the all option element for all main categories
+      opts.subCat.all.push( makeOptElem('all', names.subCat.all) );
+
+      len = ids.mainCat.length;
+      i = 0;
+      while (++i < len) {
+        mainId = ids.mainCat[i];
+
+        // Set the sub category option elements for each main category
+        setSearchSection(null, ids.subCat[ mainId ], names.subCat,
+                         opts.subCat[ mainId ]);
+
+        // Set the category option elements for all main categories
+        opts.subCat.all.push( makeOptElem('', names.mainCat[ mainId ]) );
+        setSearchSection(null, ids.subCat[ mainId ], names.subCat,
+                         opts.subCat.all, true);
       }
-      else {
-        elem.disabled = true;
+
+      // Append the correct sub categories to its select element
+      opts = opts.subCat[ this.vals.mainCat ];
+      sel = elems.subCat;
+      len = opts.length;
+      i = -1
+      while (++i < len) {
+        sel.appendChild(opts[i]);
       }
-      return elem;
-    };
-
-    // Set view search options
-    this.ids.view.forEach(function(/** string */ id) {
-      /** @type {string} */
-      var name;
-      /** @type {elem} */
-      var elem;
-
-      name = this.names.view[id];
-      elem = makeOptElem(id, name);
-      this.opts.view.push(elem);
-      this.elems.view.appendChild(elem);
-    }, this);
-
-    // Set order search options
-    this.ids.order.forEach(function(/** string */ id) {
-      /** @type {string} */
-      var name;
-      /** @type {elem} */
-      var elem;
-
-      name = this.names.order[id];
-      elem = makeOptElem(id, name);
-      this.opts.order.push(elem);
-      this.elems.order.appendChild(elem);
-    }, this);
-
-    // Set stage search options
-    if (this.elems.stage) {
-      this.ids.stage.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {elem} */
-        var elem;
-
-        name = this.names.stage[id];
-        elem = makeOptElem(id, name);
-        this.opts.stage.push(elem);
-        this.elems.stage.appendChild(elem);
-      }, this);
-    }
-
-    // Set source search options
-    if (this.elems.source) {
-      this.ids.source.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {elem} */
-        var elem;
-
-        name = this.names.source[id];
-        elem = makeOptElem(id, name);
-        this.opts.source.push(elem);
-        this.elems.source.appendChild(elem);
-      }, this);
-    }
-
-    // Set main category search options
-    if (this.elems.mainCat) {
-      this.ids.mainCat.forEach(function(/** string */ id) {
-        /** @type {string} */
-        var name;
-        /** @type {elem} */
-        var elem;
-
-        name = this.names.mainCat[id];
-        elem = makeOptElem(id, name);
-        this.opts.mainCat.push(elem);
-        this.elems.mainCat.appendChild(elem);
-      }, this);
-    }
-
-    // Set sub category search options
-    if (this.elems.subCat) {
-      // Create the options for each main category with subs
-      Object.keys(this.ids.subCat).forEach(function(/** string */ mainId) {
-        this.ids.subCat[mainId].forEach(function(/** string */ id) {
-          /** @type {string} */
-          var name;
-          /** @type {elem} */
-          var elem;
-
-          name = this.names.subCat[id];
-          elem = makeOptElem(id, name);
-          this.opts.subCat[mainId].push(elem);
-        }, this);
-      }, this);
-      // Create the options for all
-      this.opts.subCat['all'].push( makeOptElem('all', this.names.subCat['all']) );
-      this.ids.mainCat.forEach(function(/** string */ mainId) {
-        /** @type {string} */
-        var name;
-        /** @type {elem} */
-        var elem;
-
-        if (!!this.ids.subCat[mainId]) {
-
-          name = this.names.mainCat[mainId];
-          elem = makeOptElem('', name);
-          this.opts.subCat['all'].push(elem);
-
-          this.ids.subCat[mainId].forEach(function(/** string */ id) {
-            /** @type {string} */
-            var name;
-            /** @type {elem} */
-            var elem;
-
-            if (id !== 'all') {
-              name = this.names.subCat[id];
-              elem = makeOptElem(id, name);
-              this.opts.subCat['all'].push(elem);
-            }
-          }, this);
-        }
-      }, this);
-      // Append the correct sub categories to the select element
-      this.opts.subCat[this.vals.mainCat].forEach(function(/** elem */ elem) {
-        this.elems.subCat.appendChild(elem);
-      }, this);
     }
 
   };
@@ -4110,12 +4812,8 @@
    */
   SearchBar.prototype.appendElems = function() {
 
-    app.elems.sel.appendChild(this.elems.view);
-    app.elems.sel.appendChild(this.elems.order);
-    this.elems.stage && app.elems.sel.appendChild(this.elems.stage);
-    this.elems.source && app.elems.sel.appendChild(this.elems.source);
-    this.elems.mainCat && app.elems.sel.appendChild(this.elems.mainCat);
-    this.elems.subCat && app.elems.sel.appendChild(this.elems.subCat);
+    this.elems.appendToMain();
+
   };
 
   /**
@@ -4127,47 +4825,273 @@
    */
   SearchBar.prototype.updateSubCatOpts = function(newVal) {
 
-    /** @type {elements} */
+    /** @type {!elements} */
     var opts;
+    /** @type {!HTMLSelectElement} */
+    var sel;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-    newVal = (typeof newVal === 'string') ? newVal : 'all';
+    checkArgs(newVal, '^string=');
 
+    newVal = newVal || 'all';
     this.vals.subCat = newVal;
 
-    if (this.elems.subCat) {
+    sel = this.elems.subCat;
+    if (sel) {
 
-      // Clear subCat's current option elements
-      while (this.elems.subCat.firstChild) {
-        this.elems.subCat.removeChild(this.elems.subCat.firstChild);
+      // Clear the sub category's current option elements
+      while (sel.firstChild) {
+        sel.removeChild(sel.firstChild);
       }
 
       // Append the new option elements
       opts = this.opts.subCat[ this.vals.mainCat ];
-      opts.forEach(function(/** element */ elem) {
-        this.elems.subCat.appendChild(elem);
-      }, this);
+      len = opts.length;
+      i = -1
+      while (++i < len) {
+        sel.appendChild(opts[i]);
+      }
 
-      this.elems.subCat.value = newVal;
+      sel.value = newVal;
     }
+
   };
 
+/* -----------------------------------------------------------------------------
+ * The SearchBarElems Class (classes/search-bar/search-bar-elems.js)
+ * -------------------------------------------------------------------------- */
+
+  /**
+   * -----------------------------------------------------
+   * Public Class (SearchBarElems)
+   * -----------------------------------------------------
+   * @desc The search bar's values and elements for this app.
+   * @param {!booleanMap} config - The app's search bar config settings.
+   * @constructor
+   */
+  var SearchBarElems = function(config) {
+
+    checkArgs(config, '!booleanMap');
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Define The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.view)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-view.
+     * @type {!HTMLSelectElement}
+     */
+    this.view;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.order)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-order.
+     * @type {!HTMLSelectElement}
+     */
+    this.order;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.stage)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-stage.
+     * @type {?HTMLSelectElement}
+     */
+    this.stage;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.source)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-source.
+     * @type {?HTMLSelectElement}
+     */
+    this.source;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.mainCat)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-mainCat.
+     * @type {?HTMLSelectElement}
+     */
+    this.mainCat;
+
+    /**
+     * ----------------------------------------------- 
+     * Public Property (SearchBarElems.subCat)
+     * -----------------------------------------------
+     * @desc The DOM HTMLSelectElement #aIV-subCat.
+     * @type {?HTMLSelectElement}
+     */
+    this.subCat;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup The Public Properties
+    ////////////////////////////////////////////////////////////////////////////
+
+    this.view = makeElem({
+      tag      : 'select',
+      id       : 'aIV-view',
+      className: 'showView'
+    });
+    this.view.onchange = function(event) {
+      Events.searchView(event.target.value);
+    };
+
+    this.order = makeElem({
+      tag      : 'select',
+      id       : 'aIV-order',
+      className: 'showOrder'
+    });
+    this.order.onchange = function(event) {
+      Events.searchOrder(event.target.value);
+    };
+
+    this.stage = null;
+    if (config.stage) {
+      this.stage = makeElem({
+        tag      : 'select',
+        id       : 'aIV-stage',
+        className: 'showStage'
+      });
+      this.stage.onchange = function(event) {
+        Events.searchStage(event.target.value);
+      };
+    }
+
+    this.source = null;
+    if (config.source) {
+      this.source = makeElem({
+        tag      : 'select',
+        id       : 'aIV-source',
+        className: 'showSource'
+      });
+      this.source.onchange = function(event) {
+        Events.searchSource(event.target.value);
+      };
+    }
+
+    this.mainCat = null;
+    if (config.category) {
+      this.mainCat = makeElem({
+        tag      : 'select',
+        id       : 'aIV-mainCat',
+        className: 'showMainCat'
+      });
+      this.mainCat.onchange = function(event) {
+        Events.searchMainCat(event.target.value);
+      };
+    }
+
+    this.subCat = null;
+    if (config.subCat) {
+      this.subCat = makeElem({
+        tag      : 'select',
+        id       : 'aIV-subCat',
+        className: 'showSubCat'
+      });
+      this.subCat.onchange = function(event) {
+        Events.searchSubCat(event.target.value);
+      };
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End Of The Class Setup
+    ////////////////////////////////////////////////////////////////////////////
+
+    freezeObj(this);
+
+  };
+
+////////////////////////////////////////////////////////////////////////////////
+// The Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
+  SearchBarElems.prototype.constructor = SearchBarElems;
+
+  /**
+   * --------------------------------------------------------------
+   * Public Method (SearchBarElems.prototype.setValuesToDefaults)
+   * --------------------------------------------------------------
+   * @desc Updates the search bar's values to the defaults.
+   * @param {!Object<string, string>} defaults - The default values.
+   */
+  SearchBarElems.prototype.setValuesToDefaults = function(defaults) {
+
+    checkArgs(defaults, '!stringMap');
+
+    this.view.value  = defaults.view;
+    this.order.value = defaults.order;
+    if (this.stage) {
+      this.stage.value = defaults.stage;
+    }
+    if (this.source) {
+      this.source.value = defaults.source;
+    }
+    if (this.mainCat) {
+      this.mainCat.value = defaults.mainCat;
+    }
+    if (this.subCat) {
+      this.subCat.value = defaults.subCat;
+    }
+
+  };
+
+  /**
+   * -------------------------------------------------------
+   * Public Method (SearchBarElems.prototype.appendToMain)
+   * -------------------------------------------------------
+   * @desc Appends the search bar's elements to the selections root.
+   * @type {function}
+   */
+  SearchBarElems.prototype.appendToMain = function() {
+
+    /** @type {!Element} */
+    var sel;
+
+    sel = app.elems.sel;
+
+    sel.appendChild(this.view);
+    sel.appendChild(this.order);
+    this.stage   && sel.appendChild(this.stage);
+    this.source  && sel.appendChild(this.source);
+    this.mainCat && sel.appendChild(this.mainCat);
+    this.subCat  && sel.appendChild(this.subCat);
+
+  };
 
 /* -----------------------------------------------------------------------------
- * | The Questions Class                                                       |
- * v ------------------------------------------------------------------------- v
-                                                       classes/questions.js */
+ * The Questions Class (classes/questions.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Questions)
    * -----------------------------------------------------
    * @desc The questions for this app.
-   * @param {objects} questions - The user's questions.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!objects} questions - The user's questions.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, sources, categories) {
+  var Questions = function(questions, config, getSource, getCategory) {
+
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ questions, '!objects', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -4204,8 +5128,8 @@
 
     this.len = questions.length;
 
-    len = this.len + 1;
-    this.list = (this.len) ? new Array(len) : [];
+    i = this.len + 1;
+    this.list = (this.len) ? new Array(i) : [];
 
     // Add blank to beginning of list so ids and indexes match
     if (this.len) {
@@ -4213,15 +5137,16 @@
     }
 
     // Add the Question object references to the list
-    --len;
+    len = this.len;
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config, sources, categories);
+      this.list[ id ] = new Question(questions[i], id, config,
+                                     getSource, getCategory);
     }
 
     // Freeze the public properties that are objects
-    Object.freeze(this.list);
+    freezeObj(this.list);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -4246,7 +5171,7 @@
     data = {};
 
     // Build the data hash map
-    ++i;
+    i = this.len + 1;
     while (--i) {
       url = this.list[i].get('url');
       if (url) {
@@ -4255,7 +5180,7 @@
     }
 
     // Freeze the protected properties
-    Object.freeze(data);
+    freezeObj(data);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -4265,38 +5190,51 @@
      * ----------------------------------------------- 
      * Public Method (Questions.get)
      * -----------------------------------------------
-     * @desc Gets a question's object or property.
+     * @desc Gets a question's object or property value.
      * @param {(number|string)} id - The question id to get.
      * @param {string=} prop - The name of the property to get.
      * @param {boolean=} formatted - If true then gets the
      *   formatted property.
-     * @return {val}
+     * @return {*} The Question or property value.
      */
     this.get = function(id, prop, formatted) {
 
-      /** @type {Question} */
+      /** @type {string} */
+      var errorMsg;
+      /** @type {!Question} */
       var question;
+      /** @type {*} */
+      var result;
+
+      checkArgs(id, 'number|string', prop, 'string=', formatted, 'boolean=');
+
+      if (!hasOwnProp(this.list, String(id)) && !hasOwnProp(data, String(id))) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.get call was ';
+        errorMsg += 'given an invalid question id to get. id= ' + id;
+        throw new Error(errorMsg);
+      }
 
       prop = prop || '';
       formatted = formatted || false;
 
-      question = (typeof id === 'number') ? this.list[ id ] : data[ id ];
-
-      return ( (!prop) ?
+      question = ( checkType(id, 'number') ) ? this.list[ id ] : data[ id ];
+      result = ( (!prop) ?
         question : (prop === 'elem') ?
-          question.elem : question.get(prop, formatted)
+          question.elem : (prop === 'rootElem') ?
+            question.elem.root : question.get(prop, formatted)
       );
+
+      return result;
     };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
+    freezeObj(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4311,7 +5249,7 @@
    * ---------------------------------------------------
    * @desc Sets the style for a question's container element.
    * @param {(number|string)} id - The question id to set.
-   * @param {!(string|stringMap)} type - The style setting to set.
+   * @param {(string|!Object)} type - The style setting to set.
    *   If a string is given then another param with the value is
    *   required. If an object is provided then use key => value
    *   pairs like styleType => newValue (see below example).
@@ -4324,28 +5262,86 @@
    */
   Questions.prototype.setElemStyle = function(id, type, val) {
 
+    /** @type {string} */
+    var errorMsg;
+    /** @type {!Array<*>} */
+    var args;
+    /** @type {!Element} */
+    var elem;
+    /** @type {!RegExp} */
+    var dash;
+    /** @type {string} */
+    var prop;
+    /** @type {number} */
+    var i;
+
+    args = [ id, 'number|string', type, '!string|object' ];
+    args.push(val, 'string|number=');
+    checkArgs.apply(null, args);
+
+    dash = /\-/;
+
     // Handle one update
-    if (typeof type === 'string') {
+    if ( checkType(type, 'string') ) {
+
+      if ( !checkType(val, 'string|number') ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'value to set the style to. val= ' + val;
+        throw new TypeError(errorMsg);
+      }
 
       // Replace dashes with camel case
-      if ( /\-/.test(type) ) {
+      if ( dash.test(type) ) {
         type = camelCase(type);
       }
 
-      this.get(id).elem.root.style[ type ] = val;
-      return;
-    }
+      elem = this.get(id, 'rootElem');
 
-    // Handle multiple updates
-    Object.keys(type).forEach(function(/** string */ key) {
-
-      // Replace dashes with camel case
-      if ( /\-/.test(key) ) {
-        key = camelCase(key);
+      if ( !(type in elem.style) ) {
+        errorMsg = 'An aIV.app internal error occurred. A ';
+        errorMsg += 'Questions.setElemStyle call was given an invalid ';
+        errorMsg += 'style property to set. prop= ' + type;
+        throw new Error(errorMsg);
       }
 
-      this.get(id).elem.root.style[ key ] = type[ key ];
-    }, this);
+      elem.style[ type ] = val;
+    }
+    // Handle multiple updates
+    else {
+
+      elem = this.get(id, 'rootElem');
+
+      for (prop in type) {
+        if ( hasOwnProp(type, prop) ) {
+
+          // Replace dashes with camel case
+          if ( dash.test(prop) ) {
+            prop = camelCase(prop);
+          }
+
+          if ( !(prop in elem.style) ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'style property to set. prop= ' + prop;
+            throw new Error(errorMsg);
+          }
+
+          val = type[ prop ];
+
+          if ( !checkType(val, 'string|number') ) {
+            errorMsg = 'An aIV.app internal error occurred. A Questions.';
+            errorMsg += 'setElemStyle call was given an invalid ';
+            errorMsg += 'value to set a style to. prop= ' + prop + ', ';
+            errorMsg += 'val= ' + val;
+            throw new TypeError(errorMsg);
+          }
+
+          elem.style[ prop ] = val;
+        }
+      }
+    }
+
   };
 
   /**
@@ -4358,7 +5354,10 @@
    */
   Questions.prototype.setElemClass = function(id, newClassName) {
 
-    this.get(id).elem.root.className = newClassName;
+    checkArgs(id, 'number|string', newClassName, 'string');
+
+    this.get(id, 'rootElem').className = newClassName;
+
   };
 
   /**
@@ -4370,12 +5369,12 @@
    */
   Questions.prototype.addIdsToSearch = function() {
 
-    /** @type {booleanMap} */
+    /** @type {!booleanMap} */
     var config;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     config = {
       stage   : app.config.searchBar.get('stage'),
@@ -4388,10 +5387,13 @@
     config.subCat = config.subCat || app.config.links.get('category');
 
     len = this.len + 1;
-    i = 0;
-    while (++i < len) {
-      this.get(i).addToSearch(config);
+    id = 0;
+    while (++id < len) {
+      this.get(id).addToSearch(config);
     }
+
+    app.sources.freezeIds();
+    app.categories.freezeIds();
 
   };
 
@@ -4400,22 +5402,21 @@
    * Public Method (Questions.prototype.appendElems)
    * -----------------------------------------------------
    * @desc Sets and appends the elements for all of the questions.
-   * @type {function()}
+   * @type {function}
    */
   Questions.prototype.appendElems = function() {
 
+    /** @type {!Question} */
+    var question;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
-    /** @type {Question} */
-    var question;
+    var id;
 
     len = this.len + 1;
-
-    i = 0;
-    while (++i < len) {
-      question = this.get(i);
+    id = 0;
+    while (++id < len) {
+      question = this.get(id);
       app.elems.ques.appendChild(question.elem.root);
       question.addElemContent();
     }
@@ -4435,13 +5436,12 @@
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     len = this.len + 1;
-
-    i = 0;
-    while (++i < len) {
-      this.get(i).elem.addCodeExt();
+    id = 0;
+    while (++id < len) {
+      this.get(id, 'elem').addCodeExt();
     }
 
   };
@@ -4452,38 +5452,39 @@
    * -----------------------------------------------------
    * @desc Appends each question's element to #aIV-questions in the direction
    *   of the current search order.
-   * @type {function()}
+   * @type {function}
    */
   Questions.prototype.reverseElems = function() {
 
     /** @type {string} */
     var direction;
-    /** @type {Question} */
-    var question;
+    /** @type {!Element} */
+    var elem;
     /** @type {number} */
     var len;
     /** @type {number} */
-    var i;
+    var id;
 
     direction = app.searchBar.vals.order;
     len = this.len + 1;
 
     // Appends in asc order
     if (direction === 'asc') {
-      i = 0;
-      while (++i < len) {
-        question = this.get(i);
-        app.elems.ques.appendChild(question.elem.root);
+      id = 0;
+      while (++id < len) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
       }
     }
     // Appends in desc order
     else {
-      i = len;
-      while (--i) {
-        question = this.get(i);
-        app.elems.ques.appendChild(question.elem.root);
+      id = len;
+      while (--id) {
+        elem = this.get(id, 'rootElem');
+        app.elems.ques.appendChild(elem);
       }
     }
+
   };
 
   /**
@@ -4497,46 +5498,61 @@
    */
   Questions.prototype.hideElems = function(ids, index, view) {
 
+    /** @type {string} */
+    var errorMsg;
     /** @type {number} */
     var i;
+
+    checkArgs(ids, '!numbers', index, 'number', view, 'string');
 
     if (index === -1) {
 
       // Hide the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'none';
-        return;
       }
-
       // Hide all of the provided ids
-      i = ids.length;
-      while (i--) {
-        this.setElemStyle(ids[i], 'display', 'none');
+      else {
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
       }
 
-      return;
-    }
-
-    // Hide only the index of the provided ids
-    if (view === 'one') {
-      this.setElemStyle(ids[ index ], 'display', 'none');
-      return;
-    }
-
-    // Hide the index plus ten (or to the array end)
-    if (view === 'ten') {
-
-      // Remove all ids from the array that should NOT be hidden
-      i = index + 11;
-      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
-
-      i = ids.length;
-      while (i--) {
-        this.setElemStyle(ids[i], 'display', 'none');
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'hideElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
       }
 
-      return;
+      // Hide only the index of the provided ids
+      if (view === 'one') {
+        this.setElemStyle(ids[ index ], 'display', 'none');
+      }
+      // Hide the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be hidden
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          this.setElemStyle(ids[i], 'display', 'none');
+        }
+      }
     }
+
   };
 
   /**
@@ -4549,77 +5565,98 @@
    */
   Questions.prototype.showElems = function(ids, index) {
 
-    /** @type {string} */
-    var view;
     /** @type {number} */
     var i;
     /** @type {string} */
+    var view;
+    /** @type {string} */
+    var errorMsg;
+    /** @type {string} */
     var newClassName;
+
+    checkArgs(ids, '!numbers', index, 'number');
 
     if (index === -1) {
 
       // Show the empty message
       if (!ids.length) {
         app.elems.none.style.display = 'block';
-        return;
       }
-
       // Show all of the provided ids
-      i = ids.length;
-      while (i--) {
-        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
-        this.setElemClass(ids[i], newClassName);
-        this.setElemStyle(ids[i], 'display', 'block');
+      else {
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
+    }
+    else {
+
+      if (!ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was not given any ids when a ';
+        errorMsg += 'non-negative index was present.';
+        throw new Error(errorMsg);
       }
 
-      return;
-    }
-
-    view = app.searchBar.vals.view;
-
-    // Show only the index of the provided ids
-    if (view === 'one') {
-      this.setElemClass(ids[ index ], 'question shade1 hideLink');
-      this.setElemStyle(ids[ index ], 'display', 'block');
-      return;
-    }
-
-    // Show the index plus ten (or to the array end)
-    if (view === 'ten') {
-
-      // Remove all ids from the array that should NOT be shown
-      i = index + 11;
-      ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
-
-      i = ids.length;
-      while (i--) {
-        newClassName = (i % 2) ? 'question shade2' : 'question shade1';
-        this.setElemClass(ids[i], newClassName);
-        this.setElemStyle(ids[i], 'display', 'block');
+      if (index < 0 || index >= ids.length) {
+        errorMsg = 'An aIV.app internal error occurred. A Questions.';
+        errorMsg += 'showElems call was given an invalid index. ';
+        errorMsg += 'index= ' + index;
+        throw new Error(errorMsg);
       }
 
-      return;
+      view = app.searchBar.vals.view;
+
+      // Show only the index of the provided ids
+      if (view === 'one') {
+        this.setElemClass(ids[ index ], 'question shade1 hideLink');
+        this.setElemStyle(ids[ index ], 'display', 'block');
+      }
+      // Show the index plus ten (or to the array end)
+      else if (view === 'ten') {
+
+        // Remove all ids from the array that should NOT be shown
+        i = index + 11;
+        ids = (ids.length < i) ? ids.slice(index) : ids.slice(index, i);
+
+        i = ids.length;
+        while (i--) {
+          newClassName = (i % 2) ? 'question shade2' : 'question shade1';
+          this.setElemClass(ids[i], newClassName);
+          this.setElemStyle(ids[i], 'display', 'block');
+        }
+      }
     }
+
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The Question Class                                                        |
- * v ------------------------------------------------------------------------- v
-                                               classes/question/question.js */
+ * The Question Class (classes/question/question.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (Question)
    * -----------------------------------------------------
    * @desc An object containing the details of a question.
-   * @param {Object} question - The details of a new question.
+   * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, sources, categories) {
+  var Question = function(question, id, config, getSource, getCategory) {
+
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties
@@ -4630,7 +5667,7 @@
      * Public Property (Question.elem)
      * -----------------------------------------------
      * @desc The question's DOM container.
-     * @type {element}
+     * @type {!QuestionElem}
      */
     this.elem = new QuestionElem(id);
 
@@ -4751,103 +5788,93 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {!stringMap} */
+    var linkObj;
+    /** @type {string} */
+    var catId;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
+
     url = '';
-    if (!!question.url && typeof question.url === 'string') {
-      url = question.url.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+    if (question.url && checkType(question.url, 'string')) {
+      url = makeUrl(question.url);
     }
 
-    complete = (!!question.complete && question.complete === true);
+    complete = (question.complete === true);
 
-    source = ( (!!question.source && typeof question.source === 'string') ?
-      question.source : ''
+    source = ( (!checkType(question.source, 'string')) ?
+      '' : (question.source === 'all') ?
+        '_all' : question.source
     );
-    if ( !sources.get(source, 'name') ) {
+    if ( !getSource(source, 'name') ) {
       source = '';
     }
 
-    // Setup main categories
-    mainCat = ( (!question.mainCat || !checkType(question.mainCat, 'strings')) ?
-      [] : (question.mainCat.length) ?
-        question.mainCat.slice(0) : []
-    );
-
-    // Check the main category ids accuracy
-    mainCat.forEach(function(/** string */ catID, /** number */ i) {
-
-      if (catID === 'all') {
-        mainCat[i] = '_all';
-        catID = '_all';
-      }
-
-      if ( !categories.get(catID, 'name') ) {
-        mainCat.splice(i, 1);
-      }
-    });
-
-    // Setup sub categories
-    subCat = ( (!question.subCat || !checkType(question.subCat, 'strings')) ?
-      [] : (question.subCat.length) ?
-        question.subCat.slice(0) : []
-    );
-
-    // Check the sub category ids accuracy
-    subCat.forEach(function(/** string */ catID, /** number */ i) {
-
-      if (catID === 'all') {
-        subCat[i] = '_all';
-        catID = '_all';
-      }
-
-      if ( !categories.get(catID, 'name') ) {
-        subCat.splice(i, 1);
-      }
-    });
-
-    // Setup links
-    links = ( (!config.links || !question.links ||
-               !checkType(question.links, 'objects') ||
-               !question.links.length) ?
-      [] : question.links.slice(0)
-    );
-
-    // Check the link objects accuracy
-    if (links.length) {
-      links.forEach(function(/** stringMap */ linkObj, /** number */ i) {
-        if (!linkObj.name || !linkObj.href ||
-            !checkTypes([ linkObj.name, linkObj.href ], 'string') ||
-            !isLink(linkObj.href)) {
-          links.splice(i, 1);
+    mainCat = [];
+    if ( checkType(question.mainCat, '!strings') ) {
+      len = question.mainCat.length;
+      i = -1;
+      while (++i < len) {
+        catId = question.mainCat[i];
+        if (catId === 'all') {
+          catId = '_all';
         }
-      });
+        if ( getCategory(catId, 'name') ) {
+          mainCat.push(catId);
+        }
+      }
     }
 
-    problem = ( (!!question.problem && typeof question.problem === 'string') ?
-      question.problem : ''
-    );
+    subCat = [];
+    if ( checkType(question.subCat, '!strings') ) {
+      len = question.subCat.length;
+      i = -1;
+      while (++i < len) {
+        catId = question.subCat[i];
+        if (catId === 'all') {
+          catId = '_all';
+        }
+        if ( getCategory(catId, 'name') ) {
+          subCat.push(catId);
+        }
+      }
+    }
 
-    descr = ( (!!question.descr && typeof question.descr === 'string') ?
-      question.descr : ''
-    );
+    links = [];
+    if (config.links && checkType(question.links, '!objects')) {
+      len = question.links.length;
+      i = -1;
+      while (++i < len) {
+        linkObj = question.links[i];
+        if (checkType(linkObj, '!object') &&
+            checkType(linkObj.name, 'string') &&
+            checkType(linkObj.href, 'string') &&
+            isLink(linkObj.href)) {
+          links.push(linkObj);
+        }
+      }
+    }
+
+    problem = ( checkType(question.problem, 'string') ) ? question.problem : '';
+
+    descr = ( checkType(question.descr, 'string') ) ? question.descr : '';
 
     solution = '';
     output = '';
-    if (!!question.solution && typeof question.solution === 'function') {
+    if ( checkType(question.solution, 'function') ) {
 
       solution = String(question.solution);
-
-      if (solution) {
-        solution = trimFunctionWrapper(solution);
-      }
+      solution = solution && trimFunctionWrapper(solution);
 
       if (solution && config.output) {
         try {
           output = String( question.solution() );
         }
-        catch (errorMsg) {
-
-          output = 'The solution returned an error.';
+        catch (error) {
+          output = 'The solution returned the following error - ';
+          output += error.toString();
         }
       }
     }
@@ -4859,12 +5886,12 @@
       mainCat : mainCat,
       subCat  : subCat,
       solution: solution
-    }, config, sources, categories);
+    }, config, getSource, getCategory);
 
-    // Freeze the needed protected properties
-    Object.freeze(mainCat);
-    Object.freeze(subCat);
-    Object.freeze(links);
+    // Freeze some of the protected properties
+    freezeObj(mainCat);
+    freezeObj(subCat);
+    freezeObj(links);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -4874,16 +5901,24 @@
      * ----------------------------------------------- 
      * Public Method (Question.get)
      * -----------------------------------------------
-     * @desc Gets a protected property for the question.
-     * @param {string} prop - The name of the property to get.
+     * @desc Gets a protected property's value from a Question.
+     * @param {string} propName - The name of the property to get.
      * @param {boolean=} formatted - If true then gets the
      *   formatted property.
-     * @return {val} The property's value.
+     * @return {*} The property's value.
      */
-    this.get = function(prop, formatted) {
+    this.get = function(propName, formatted) {
 
-      /** @type {Object<string, val>} */
-      var props = {
+      /** @type {string} */
+      var errorMsg;
+      /** @type {*} */
+      var propVal;
+      /** @type {!Object<string, *>} */
+      var props;
+
+      checkArgs(propName, 'string', formatted, 'boolean=');
+
+      props = {
         id      : id,
         url     : url,
         complete: complete,
@@ -4897,20 +5932,24 @@
         output  : output
       };
 
-      formatted = formatted || false;
+      if ( !hasOwnProp(props, propName) ) {
+        errorMsg = 'An aIV.app internal error occurred. A Question.get call was ';
+        errorMsg += 'given an invalid property name to get. property= ' + propName;
+        throw new Error(errorMsg);
+      }
 
-      return (formatted) ? format.get(prop) : props[ prop ];
+      propVal = (formatted) ? format.get(propName) : props[ propName ];
+
+      return propVal;
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this.get);
+    freezeObj(this);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4924,10 +5963,12 @@
    * Public Method (Question.prototype.addToSearch)
    * -----------------------------------------------------
    * @desc Adds the question id to its matching search properties.
-   * @param {booleanMap} config - The needed format config.
+   * @param {!booleanMap} config - The needed format config.
    */
   Question.prototype.addToSearch = function(config) {
 
+    /** @type {number} */
+    var i;
     /** @type {number} */
     var id;
     /** @type {boolean} */
@@ -4939,14 +5980,16 @@
     /** @type {strings} */
     var subCat;
 
+    checkArgs(config, '!booleanMap');
+
     id       = this.get('id');
     complete = this.get('complete');
     source   = this.get('source');
     mainCat  = this.get('mainCat');
     subCat   = this.get('subCat');
 
+    // Add the Question's id to the stage ids
     if (config.stage) {
-
       if (complete) {
         app.searchBar.ques.stage['com'].push(id);
       }
@@ -4955,21 +5998,27 @@
       }
     }
 
+    // Add the Question's id to the source ids
     if (config.source && source) {
       app.sources.get(source).addId(id);
     }
 
-    if (config.category && mainCat.length) {
-      mainCat.forEach(function(/** string */ catId) {
-        app.categories.get(catId).addId(id);
-      });
+    // Add the Question's id to the main category ids
+    if (config.category) {
+      i = mainCat.length;
+      while (i--) {
+        app.categories.get(mainCat[i]).addId(id);
+      }
     }
 
-    if (config.category && config.subCat && subCat.length) {
-      subCat.forEach(function(/** string */ catId) {
-        app.categories.get(catId).addId(id);
-      });
+    // Add the Question's id to the sub category ids
+    if (config.category && config.subCat) {
+      i = subCat.length;
+      while (i--) {
+        app.categories.get(subCat[i]).addId(id);
+      }
     }
+
   };
 
   /**
@@ -5008,23 +6057,29 @@
 
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The Question Format Class                                                 |
- * v ------------------------------------------------------------------------- v
-                                        classes/question/question-format.js */
+ * The QuestionFormat Class (classes/question/question-format.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (QuestionFormat)
    * -----------------------------------------------------
    * @desc An object containing the formatted details of a question.
-   * @param {Object} question - The pre-formatted details of the question.
-   * @param {booleanMap} config - The settings for question formatting.
-   * @param {Sources} sources - The app's sources.
-   * @param {Categories} categories - The app's categories.
+   * @param {!Object} question - The pre-formatted details of the question.
+   * @param {!booleanMap} config - The settings for question formatting.
+   * @param {function} getSource - The getter for the app's sources.
+   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config, sources, categories) {
+  var QuestionFormat = function(question, config, getSource, getCategory) {
+
+    /** @type {!Array<*>} */
+    var args;
+
+    args = [ question, '!object', config, '!booleanMap' ];
+    args.push(getSource, 'function', getCategory, 'function');
+    checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -5103,10 +6158,13 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {{ result: string, lineCount: number }} */
+    /** @type {!{ result: string, lineCount: number }} */
     var code;
+    /** @type {number} */
+    var len;
+    /** @type {number} */
+    var i;
 
-    // Format the id
     id = (config.id && question.id) ? question.id : '';
     if (id) {
       id = ( (id < 10) ?
@@ -5115,12 +6173,10 @@
       );
     }
 
-    // Format the source
-    source = ( (sources.len && config.source && question.source) ?
-      sources.get(question.source, 'name') : ''
+    source = ( (config.source && question.source) ?
+      getSource(question.source, 'name') : ''
     );
 
-    // Format the completion status
     complete = ( (!config.complete) ?
       '' : (question.complete) ?
         'Yes' : 'No'
@@ -5135,16 +6191,19 @@
       h3   : null,
       names: null
     };
-    if (categories.len && config.category) {
+    if (config.category) {
 
       // Format the main category
       if (question.mainCat.length) {
         mainCat.h3 = ( (question.mainCat.length > 1) ?
           'Main Categories:' : 'Main Category:'
         );
-        mainCat.names = question.mainCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.mainCat.length;
+        mainCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          mainCat.names[i] = getCategory(question.mainCat[i], 'name');
+        }
       }
 
       // Format the sub category
@@ -5152,9 +6211,12 @@
         subCat.h3 = ( (question.subCat.length > 1) ?
           'Sub Categories:' : 'Sub Category:'
         );
-        subCat.names = question.subCat.map(function(/** string */ catID) {
-          return categories.get(catID, 'name');
-        });
+        len = question.subCat.length;
+        subCat.names = new Array(len);
+        i = -1;
+        while (++i < len) {
+          subCat.names[i] = getCategory(question.subCat[i], 'name');
+        }
       }
     }
 
@@ -5166,10 +6228,10 @@
       solution.lineCount = code.lineCount;
     }
 
-    // Freeze all of the properties that are objects
-    Object.freeze(mainCat);
-    Object.freeze(subCat);
-    Object.freeze(solution);
+    // Freeze all of the protected properties that are objects
+    freezeObj(mainCat);
+    freezeObj(subCat);
+    freezeObj(solution);
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -5179,13 +6241,13 @@
      * ----------------------------------------------- 
      * Public Method (QuestionFormat.get)
      * -----------------------------------------------
-     * @desc Gets a protected property for the question.
-     * @param {string} prop - The name of the property to get.
-     * @return {val} The property's value.
+     * @desc Gets a protected property's value from the QuestionFormat.
+     * @param {string} propName - The name of the property to get.
+     * @return {*} The property's value.
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      /** @type {Object<string, val>} */
+      /** @type {Object<string, *>} */
       var props = {
         id      : id,
         source  : source,
@@ -5195,18 +6257,15 @@
         solution: solution
       };
 
-      return props[ prop ];
+      return getter.call(props, propName);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5215,11 +6274,10 @@
 
   QuestionFormat.prototype.constructor = QuestionFormat;
 
-
 /* -----------------------------------------------------------------------------
- * | The Question Elem Class                                                   |
- * v ------------------------------------------------------------------------- v
-                                          classes/question/question-elem.js */
+ * The QuestionElem Class (classes/question/question-elem.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Class (QuestionElem)
@@ -5230,6 +6288,8 @@
    */
   var QuestionElem = function(id) {
 
+    checkArgs(id, 'number');
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -5239,7 +6299,7 @@
      * Public Property (QuestionElem.root)
      * -----------------------------------------------
      * @desc The question's root element.
-     * @type {element}
+     * @type {!Element}
      */
     this.root;
 
@@ -5248,7 +6308,7 @@
      * Public Property (QuestionElem.info)
      * -----------------------------------------------
      * @desc The question's div.info element.
-     * @type {element}
+     * @type {!Element}
      */
     this.info;
 
@@ -5257,7 +6317,7 @@
      * Public Property (QuestionElem.solution)
      * -----------------------------------------------
      * @desc The question's div.solution element.
-     * @type {element}
+     * @type {!Element}
      */
     this.solution;
 
@@ -5266,7 +6326,7 @@
      * Public Property (QuestionElem.pre)
      * -----------------------------------------------
      * @desc The question's div.preContain element.
-     * @type {element}
+     * @type {!Element}
      */
     this.pre;
 
@@ -5275,7 +6335,7 @@
      * Public Property (QuestionElem.code)
      * -----------------------------------------------
      * @desc The question's code element.
-     * @type {element}
+     * @type {!Element}
      */
     this.code;
 
@@ -5283,19 +6343,20 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    this.root = document.createElement('section');
-    this.info = document.createElement('div');
+    this.root = makeElem({
+      tag      : 'section',
+      id       : 'aIV-q' + id,
+      className: 'question'
+    });
 
-    this.root.id = 'aIV-q' + id;
-
-    this.root.className = 'question';
-    this.info.className = 'info';
+    this.info = makeElem({ className: 'info' });
 
     this.root.appendChild(this.info);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5309,7 +6370,7 @@
    * Public Method (QuestionElem.prototype.addContent)
    * -----------------------------------------------------
    * @desc Adds the question's contents to its element.
-   * @param {{
+   * @param {!{
    *   id      : string,
    *   url     : string,
    *   complete: string,
@@ -5318,16 +6379,16 @@
    *     name: string
    *   },
    *   mainCat : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
    *   subCat  : {
-   *     ids  : strings,
+   *     ids  : !strings,
    *     h3   : ?string,
-   *     names: ?strings
+   *     names: strings
    *   },
-   *   links   : links,
+   *   links   : !links,
    *   problem : string,
    *   descr   : string,
    *   solution: {
@@ -5339,50 +6400,49 @@
    */
   QuestionElem.prototype.addContent = function(question) {
 
-    /** @type {element} */
+    /** @type {!Element} */
     var root;
-    /** @type {element} */
+    /** @type {!Element} */
     var info;
-    /** @type {boolean} */
-    var testTextContent;
+
+    checkArgs(question, '!object');
 
     root = this.root;
     info = this.info;
-    testTextContent = !!document.body.textContent;
 
     // Append all the sections of the question
     // Note: See the below private helper methods for more details
 
     if (question.id) {
-      appendId.call(this, question.id, question.url);
+      appendId(question.id, question.url);
     }
 
     if (question.source.name) {
-      appendSource.call(this, question.source);
+      appendSource(question.source);
     }
 
     if (question.complete) {
-      appendComplete.call(this, question.complete);
+      appendComplete(question.complete);
     }
 
     if (question.mainCat.h3 || question.subCat.h3) {
-      appendCategory.call(this, question.mainCat, question.subCat);
+      appendCategory(question.mainCat, question.subCat);
     }
 
     if (question.problem || question.descr) {
-      appendProblem.call(this, question.problem, question.descr);
+      appendProblem(question.problem, question.descr);
     }
 
-    if ( question.solution.hasOwnProperty('prettyCode') ) {
+    if ( hasOwnProp(question.solution, 'prettyCode') ) {
       appendSolution.call(this, question.solution);
     }
 
     if (question.output) {
-      appendOutput.call(this, question.output);
+      appendOutput(question.output);
     }
 
     if (question.links.length) {
-      appendLinks.call(this, question.links);
+      appendLinks(question.links);
     }
 
     /**
@@ -5390,7 +6450,6 @@
      * Private Method (appendId)
      * ---------------------------------------------
      * @desc Appends the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
      * @private
@@ -5399,45 +6458,37 @@
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       config = app.config.links.get('id');
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      div = makeElem({ className: 'idContain' });
+      h3  = makeElem({ tag: 'h3', text: 'Question:' });
+      p   = makeElem('p');
 
-      div.className = 'idContain';
-
-      if (testTextContent) {
-        h3.textContent = 'Question:';
-        if (!config) {
-          p.textContent = id;
-        }
-      }
-      else {
-        h3.innerHTML = 'Question:';
-        if (!config) {
-          p.innerHTML = id;
-        }
+      if (!config) {
+        setElemText(p, id);
       }
 
       // Add the anchor link
       if (config) {
-        a = makeIdLink.call(this, id, url);
+        a = makeIdLink(id, url);
         p.appendChild(a);
       }
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
     }
 
     /**
@@ -5445,30 +6496,31 @@
      * Private Method (makeIdLink)
      * ---------------------------------------------
      * @desc Creates an anchor element for the question id.
-     * @todo Add url parsing logic.
      * @param {string} id - The question id.
      * @param {string} url - The question id url.
-     * @return {element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeIdLink(id, url) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', url, 'string');
 
       if (!url) {
         url = Number(id);
       }
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: id });
       a.href = 'id/' + url;
-      a.innerHTML = id;
       a.onclick = (function(id) {
-        return function() {
-          Events.linkId( Number(id) );
+        return function onclick(event) {
+          Events.linkId(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id);
+      })( Number(id) );
 
       return a;
     }
@@ -5478,41 +6530,32 @@
      * Private Method (appendSource)
      * ---------------------------------------------
      * @desc Appends the question's source.
-     * @param {stringMap} source - The id and name of the source.
+     * @param {!stringMap} source - The id and name of the source.
      * @private
      */
     function appendSource(source) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(source, '!stringMap');
 
       config = app.config.links.get('source');
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      div = makeElem({ className: 'source' });
+      h3  = makeElem({ tag: 'h3', text: 'Source:' });
+      p   = makeElem('p');
 
-      div.className = 'source';
-
-      if (testTextContent) {
-        h3.textContent = 'Source:';
-        if (!config) {
-          p.textContent = source.name;
-        }
-      }
-      else {
-        h3.innerHTML = 'Source:';
-        if (!config) {
-          p.innerHTML = source.name;
-        }
+      if (!config) {
+        setElemText(p, source.name);
       }
 
       info.appendChild(div);
@@ -5521,9 +6564,10 @@
 
       // Add the anchor link
       if (config) {
-        a = makeSourceLink.call(this, source.id, source.name);
+        a = makeSourceLink(source.id, source.name);
         p.appendChild(a);
       }
+
     }
 
     /**
@@ -5533,25 +6577,26 @@
      * @desc Creates an anchor element for the question's source.
      * @param {string} id - The source's id.
      * @param {string} name - The source's name.
-     * @return {element} The anchor element.
+     * @return {!Element} The anchor element.
      * @private
      */
     function makeSourceLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.sources.get(id, 'url');
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'source/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkSource(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -5569,31 +6614,23 @@
      */
     function appendComplete(complete) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(complete, 'string');
 
-      div.className = 'stage';
-
-      if (testTextContent) {
-        h3.textContent = 'Completed:';
-        p.textContent  = complete;
-      }
-      else {
-        h3.innerHTML = 'Completed:';
-        p.innerHTML = complete;
-      }
+      div = makeElem({ className: 'stage' });
+      h3  = makeElem({ tag: 'h3', text: 'Completed:' });
+      p   = makeElem({ tag: 'p' , text: complete });
 
       info.appendChild(div);
       div.appendChild(h3);
       div.appendChild(p);
+
     }
 
     /**
@@ -5601,45 +6638,39 @@
      * Private Method (appendCategory)
      * ---------------------------------------------
      * @desc Appends the question's categories.
-     * @param {Object} main - The question's main categories.
-     * @param {Object} sub - The question's sub categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Object} sub - The question's sub categories.
      * @private
      */
     function appendCategory(main, sub) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {element} */
+      /** @type {!Element} */
       var mainDiv;
-      /** @type {element} */
+      /** @type {!Element} */
       var subDiv;
 
-      contain = document.createElement('div');
-      contain.className = 'category';
+      checkArgs(main, '!object', sub, '!object');
+
+      contain = makeElem({ className: 'category' });
 
       // Add the main categories
       if (main.h3) {
-
-        mainDiv = document.createElement('div');
-        mainDiv.className = 'mainCategory';
-
-        appendMainCategories.call(this, main, mainDiv);
-
+        mainDiv = makeElem({ className: 'mainCategory' });
+        appendMainCategories(main, mainDiv);
         contain.appendChild(mainDiv);
       }
 
       // Add the sub categories
       if (sub.h3) {
-
-        subDiv = document.createElement('div');
-        subDiv.className = 'subCategory';
-
-        appendSubCategories.call(this, sub, subDiv);
-
+        subDiv = makeElem({ className: 'subCategory' });
+        appendSubCategories(sub, subDiv);
         contain.appendChild(subDiv);
       }
 
       root.appendChild(contain);
+
     }
 
     /**
@@ -5647,17 +6678,17 @@
      * Private Method (appendMainCategories)
      * ---------------------------------------------
      * @desc Appends the question's main categories.
-     * @param {Object} main - The question's main categories.
-     * @param {element} div - The DOM container for the main categories.
+     * @param {!Object} main - The question's main categories.
+     * @param {!Element} div - The DOM container for the main categories.
      * @private
      */
     function appendMainCategories(main, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -5665,25 +6696,18 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(main, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
-      h3 = document.createElement('h3');
-      p  = document.createElement('p');
+      h3  = makeElem({ tag: 'h3', text: main.h3 });
+      p   = makeElem('p');
 
-      if (testTextContent) {
-        h3.textContent = main.h3;
-        if (!config) {
-          p.textContent = main.names.join(', ');
-        }
-      }
-      else {
-        h3.innerHTML = main.h3;
-        if (!config) {
-          p.innerHTML = main.names.join(', ');
-        }
+      if (!config) {
+        setElemText(p, main.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -5695,13 +6719,14 @@
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeMainCatLink.call(this, main.ids[i], main.names[i]);
+          a = makeMainCatLink(main.ids[i], main.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.appendChild( makeLinkSpan.call(this) );
+            p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
       }
+
     }
 
     /**
@@ -5709,17 +6734,17 @@
      * Private Method (appendSubCategories)
      * ---------------------------------------------
      * @desc Appends the question's sub categories.
-     * @param {Object} sub - The question's sub categories.
-     * @param {element} div - The DOM container for the sub categories.
+     * @param {!Object} sub - The question's sub categories.
+     * @param {!Element} div - The DOM container for the sub categories.
      * @private
      */
     function appendSubCategories(sub, div) {
 
       /** @type {boolean} */
       var config;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
       /** @type {number} */
       var i;
@@ -5727,25 +6752,18 @@
       var len;
       /** @type {number} */
       var last;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(sub, '!object', div, '!element');
 
       config = app.config.links.get('category');
 
-      h3 = document.createElement('h3');
-      p  = document.createElement('p');
+      h3  = makeElem({ tag: 'h3', text: sub.h3 });
+      p   = makeElem('p');
 
-      if (testTextContent) {
-        h3.textContent = sub.h3;
-        if (!config) {
-          p.textContent = sub.names.join(', ');
-        }
-      }
-      else {
-        h3.innerHTML = sub.h3;
-        if (!config) {
-          p.innerHTML = sub.names.join(', ');
-        }
+      if (!config) {
+        setElemText(p, sub.names.join(', '));
       }
 
       div.appendChild(h3);
@@ -5757,13 +6775,14 @@
         last = len - 1;
         i = -1;
         while (++i < len) {
-          a = makeSubCatLink.call(this, sub.ids[i], sub.names[i]);
+          a = makeSubCatLink(sub.ids[i], sub.names[i]);
           p.appendChild(a);
           if (i !== last) {
-            p.appendChild( makeLinkSpan.call(this) );
+            p.appendChild( makeElem({ tag: 'span', html: ',&nbsp;&nbsp;' }) );
           }
         }
       }
+
     }
 
     /**
@@ -5771,28 +6790,28 @@
      * Private Method (makeMainCatLink)
      * ---------------------------------------------
      * @desc Creates a main category link.
-     * @todo Add url parsing logic to event.
      * @param {string} id - The main category's id.
      * @param {string} name - The main category's name.
-     * @return {element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
     function makeMainCatLink(id, name) {
 
       /** @type {string} */
       var url;
-      /** @type {element} */
+      /** @type {!Element} */
       var a;
+
+      checkArgs(id, 'string', name, 'string');
 
       url = app.categories.get(id, 'url');
 
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
       a.onclick = (function(id) {
-        return function() {
+        return function onclick(event) {
           Events.linkMainCat(id);
+          event.preventDefault && event.preventDefault();
           return false;
         };
       })(id);
@@ -5805,75 +6824,59 @@
      * Private Method (makeSubCatLink)
      * ---------------------------------------------
      * @desc Creates a sub category link.
-     * @todo Add url parsing logic and remove the use of
-     *   indexOf to find the sub category's parent.
-     * @param {string} id - The sub category's id.
+     * @todo Remove the use of indexOf to find the sub category's parent.
+     * @param {string} subId - The sub category's id.
      * @param {string} name - The sub category's name.
-     * @return {element} The anchor link.
+     * @return {!Element} The anchor link.
      * @private
      */
-    function makeSubCatLink(id, name) {
+    function makeSubCatLink(subId, name) {
 
-      /** @type {string} */
-      var url;
-      /** @type {element} */
-      var a;
-      /** @type {string} */
-      var parentId;
       /** @type {string} */
       var parentUrl;
+      /** @type {string} */
+      var parentId;
+      /** @type {!Category} */
+      var category;
+      /** @type {!strings} */
+      var subIds;
+      /** @type {string} */
+      var mainId;
+      /** @type {string} */
+      var url;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
+
+      checkArgs(subId, 'string', name, 'string');
 
       // Set the sub category's parent id and url
-      app.categories.ids.some(function(/** string */ catId) {
-        /** @private */
-        var category;
-        /** @private */
-        var subs;
-
-        category = app.categories.get(catId);
-        subs = category.get('subs');
-        if (subs && subs.indexOf(id) !== -1) {
-          parentId  = catId;
+      i = app.categories.ids.length;
+      while (i--) {
+        mainId = app.categories.ids[i];
+        category = app.categories.get(mainId);
+        subIds = category.get('subs');
+        if (subIds.indexOf(subId) !== -1) {
+          parentId  = mainId;
           parentUrl = category.get('url');
-          return true;
+          break;
         }
+      }
 
-        return false;
-      });
+      url = app.categories.get(subId, 'url');
 
-      url = app.categories.get(id, 'url');
-
-      a = document.createElement('a');
+      a = makeElem({ tag: 'a', text: name, className: 'dark' });
       a.href = 'category/' + parentUrl + '/' + url;
-      a.className = 'dark';
-      a.innerHTML = name;
-      a.onclick = (function(id, parentId) {
-        return function() {
-          Events.linkSubCat(id, parentId);
+      a.onclick = (function(subId, parentId) {
+        return function onclick(event) {
+          Events.linkSubCat(subId, parentId);
+          event.preventDefault && event.preventDefault();
           return false;
         };
-      })(id, parentId);
+      })(subId, parentId);
 
       return a;
-    }
-
-    /**
-     * ---------------------------------------------
-     * Private Method (makeLinkSpan)
-     * ---------------------------------------------
-     * @desc Creates a span element for spacing between links.
-     * @return {element} The span element.
-     * @private
-     */
-    function makeLinkSpan() {
-
-      /** @type {element} */
-      var span;
-
-      span = document.createElement('span');
-      span.innerHTML = ',&nbsp;&nbsp;';
-
-      return span;
     }
 
     /**
@@ -5887,31 +6890,31 @@
      */
     function appendProblem(problem, descr) {
 
-      /** @type {element} */
+      /** @type {string} */
+      var content;
+      /** @type {string} */
+      var title;
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(problem, 'string', descr, 'string');
 
-      div.className = 'problem';
+      title = (problem) ? 'Problem:' : 'Description:';
+      content = problem || descr;
 
-      if (testTextContent) {
-        h3.textContent = (problem) ? 'Problem:' : 'Description:';
-      }
-      else {
-        h3.innerHTML = (problem) ? 'Problem:' : 'Description:';
-      }
-      p.innerHTML = (problem) ? problem : descr;
+      div = makeElem({ className: 'problem' });
+      h3  = makeElem({ tag: 'h3', text: title });
+      p   = makeElem({ tag: 'p' , html: content });
 
       div.appendChild(h3);
       div.appendChild(p);
 
       root.appendChild(div);
+
     }
 
     /**
@@ -5919,44 +6922,35 @@
      * Private Method (appendSolution)
      * ---------------------------------------------
      * @desc Appends the question's solution.
-     * @param {Object} solution - The question's solution.
+     * @this {!QuestionElem}
+     * @param {!Object} solution - The question's solution.
      * @private
      */
     function appendSolution(solution) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var contain;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var preDiv;
-      /** @type {element} */
+      /** @type {!Element} */
       var pre;
-      /** @type {element} */
+      /** @type {!Element} */
       var code;
-      /** @type {element} */
+      /** @type {!Element} */
       var ol;
       /** @type {number} */
       var height;
 
-      contain  = document.createElement('div');
-      h3       = document.createElement('h3');
-      preDiv   = document.createElement('div');
-      pre      = document.createElement('pre');
-      code     = document.createElement('code');
-      ol       = document.createElement('ol');
+      checkArgs(solution, '!object');
 
-      contain.className = 'solution';
-      preDiv.className     = 'preContain';
-
-      ol.innerHTML = solution.prettyCode;
-
-      if (testTextContent) {
-        h3.textContent = 'Solution:';
-      }
-      else {
-        h3.innerHTML = 'Solution:';
-      }
+      contain  = makeElem({ className: 'solution' });
+      h3       = makeElem({ tag: 'h3', text: 'Solution:' });
+      preDiv   = makeElem({ className: 'preContain' });
+      pre      = makeElem('pre');
+      code     = makeElem('code');
+      ol       = makeElem({ tag: 'ol', html: solution.prettyCode });
 
       height = solution.lineCount * app.elems.code.li.height;
       height += app.elems.code.ol.height;
@@ -5973,6 +6967,7 @@
       this.solution = contain;
       this.pre = preDiv;
       this.code = code;
+
     }
 
     /**
@@ -5985,32 +6980,24 @@
      */
     function appendOutput(output) {
 
-      /** @type {element} */
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(output, 'string');
 
-      div.className = 'output';
-
-      if (testTextContent) {
-        h3.textContent = 'Output:';
-      }
-      else {
-        h3.innerHTML = 'Output:';
-      }
-
-      p.innerHTML    = output;
+      div = makeElem({ className: 'output' });
+      h3  = makeElem({ tag: 'h3', text: 'Output:' });
+      p   = makeElem({ tag: 'p' , html: output });
 
       div.appendChild(h3);
       div.appendChild(p);
 
       root.appendChild(div);
+
     }
 
     /**
@@ -6018,51 +7005,48 @@
      * Private Method (appendLinks)
      * ---------------------------------------------
      * @desc Appends the question's links.
-     * @param {links} links - The question's links.
+     * @param {!links} links - The question's links.
      * @private
      */
     function appendLinks(links) {
 
-      /** @type {element} */
+      /** @type {!Object} */
+      var linkObj;
+      /** @type {number} */
+      var len;
+      /** @type {!Element} */
       var div;
-      /** @type {element} */
+      /** @type {!Element} */
       var h3;
-      /** @type {element} */
+      /** @type {!Element} */
       var p;
+      /** @type {!Element} */
+      var a;
+      /** @type {number} */
+      var i;
 
-      div = document.createElement('div');
-      h3  = document.createElement('h3');
-      p   = document.createElement('p');
+      checkArgs(links, '!objects');
 
-      div.className = 'links';
-
-      if (testTextContent) {
-        h3.textContent = 'Links:';
-      }
-      else {
-        h3.innerHTML = 'Links:';
-      }
+      div = makeElem({ className: 'links' });
+      h3  = makeElem({ tag: 'h3', text: 'Links:' });
+      p   = makeElem('p');
 
       div.appendChild(h3);
       div.appendChild(p);
 
-      links.forEach(function(/** Object */ linkObj) {
-        /** @type {element} */
-        var a;
-
-        a = document.createElement('a');
+      // Append the links
+      len = links.length;
+      i = -1;
+      while (++i < len) {
+        linkObj = links[i];
+        a = makeElem({ tag: 'a', text: linkObj.name });
         a.href = linkObj.href;
         a.target = '_blank';
-        if (testTextContent) {
-          a.textContent = linkObj.name;
-        }
-        else {
-          a.innerHTML = linkObj.name;
-        }
         p.appendChild(a);
-      });
+      }
 
       root.appendChild(div);
+
     }
   };
 
@@ -6080,24 +7064,22 @@
     var overflow;
     /** @type {number} */
     var scrollbar;
-    /** @type {element} */
+    /** @type {!Element} */
     var code;
-    /** @type {element} */
+    /** @type {!Element} */
     var ext;
-    /** @type {element} */
+    /** @type {!Element} */
     var extClose;
-    /** @type {element} */
+    /** @type {!Element} */
     var extOpen;
-    /** @type {element} */
+    /** @type {!Element} */
     var extBG;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHov;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHovC;
-    /** @type {element} */
+    /** @type {!Element} */
     var extHovO;
-    /** @type {boolean} */
-    var testTextContent;
 
     code = this.code;
 
@@ -6114,34 +7096,21 @@
       this.solution.style.paddingBottom = scrollbar + 'px';
     }
 
-    testTextContent = !!document.body.textContent;
-
-    ext      = document.createElement('div');
-    extClose = document.createElement('div');
-    extOpen  = document.createElement('div');
-    extBG    = document.createElement('div');
-    extHov   = document.createElement('div');
-    extHovC  = document.createElement('span');
-    extHovO  = document.createElement('span');
-
-    ext.className      = 'extContain';
-    extClose.className = 'extCloseArrow';
-    extOpen.className  = 'extOpenArrow';
-    extBG.className    = 'extBG';
-    extHov.className   = 'extHover';
-    extHovC.className  = 'closeExt';
-    extHovO.className  = 'openExt';
-
-    if (testTextContent) {
-      extOpen.textContent = 'open';
-      extHovC.textContent = 'Close Extended Code View';
-      extHovO.textContent = 'Extend Code View';
-    }
-    else {
-      extOpen.innerHTML = 'open';
-      extHovC.innerHTML = 'Close Extended Code View';
-      extHovO.innerHTML = 'Extend Code View';
-    }
+    ext      = makeElem({ className: 'extContain' });
+    extClose = makeElem({ className: 'extCloseArrow' });
+    extOpen  = makeElem({ className: 'extOpenArrow', text: 'open' });
+    extBG    = makeElem({ className: 'extBG' });
+    extHov   = makeElem({ className: 'extHover' });
+    extHovC  = makeElem({
+      tag      : 'span',
+      className: 'closeExt',
+      text     : 'Close Extended Code View'
+    });
+    extHovO  = makeElem({
+      tag      : 'span',
+      className: 'openExt',
+      text     : 'Extend Code View'
+    });
 
     extOpen.onmouseover = function() {
       extHov.style.opacity = '1';
@@ -6153,7 +7122,7 @@
 
     extOpen.onclick = (function(overflow, code, ext, extOpen,
                                 extClose, extHovO, extHovC) {
-      /** @type {elementMap} */
+      /** @type {!elementMap} */
       var elems;
 
       elems = {
@@ -6164,7 +7133,7 @@
         extHovO : extHovO,
         extHovC : extHovC
       };
-      Object.freeze(elems);
+      freezeObj(elems);
 
       return function() {
         Events.extCodeView(overflow, elems);
@@ -6182,13 +7151,13 @@
 
     this.root.style.display = 'none';
     this.root.style.opacity = '1';
+
   };
 
-
 /* -----------------------------------------------------------------------------
- * | The Prettifier Module                                                     |
- * v ------------------------------------------------------------------------- v
-                                                                prettify.js */
+ * The Prettifier Module  (prettify.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * -----------------------------------------------------
    * Public Method (prettify)
@@ -6207,6 +7176,8 @@
       /** @type {{ result: string, lineCount: number }} */
       var result;
 
+      checkArgs(solution, 'string');
+
       // Format the solution
       result = applyFormatting( prepareLines(solution) );
 
@@ -6214,10 +7185,9 @@
     };
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Vars                                                       |
- * v ------------------------------------------------------------------------- v
-                                                           prettify-vars.js */
-    // The prettifier's debugger object
+ * The Prettifier Module Variables (pre-compiled-prettifier/prettify-vars.js)
+ * -------------------------------------------------------------------------- */
+
 
     /**
      * ---------------------------------------------
@@ -6242,7 +7212,8 @@
       '<': '&lt;',
       '>': '&gt;'
     };
-    Object.freeze(htmlEntity);
+
+    freezeObj(htmlEntity);
 
     /**
      * ---------------------------------------------
@@ -6253,11 +7224,12 @@
      *   evaluated for the following possible keywords 'return',
      *   'case', 'typeof', 'instanceof', and 'in'.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var preRegex = /[\(\)\[\{\};\*\/%\+\-<>&\^\|=!:\?nef]/;
-    Object.freeze(preRegex);
+
+    freezeObj(preRegex);
 
     /**
      * ---------------------------------------------
@@ -6265,11 +7237,12 @@
      * ---------------------------------------------
      * @desc The flags for js regular expressions.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var regexFlags = /[gimy]/;
-    Object.freeze(regexFlags);
+
+    freezeObj(regexFlags);
 
     /**
      * ---------------------------------------------
@@ -6277,11 +7250,12 @@
      * ---------------------------------------------
      * @desc List of valid plain number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var plainNumbers = /[0-9\.]/;
-    Object.freeze(plainNumbers);
+
+    freezeObj(plainNumbers);
 
     /**
      * ---------------------------------------------
@@ -6289,11 +7263,12 @@
      * ---------------------------------------------
      * @desc List of valid hex number characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var hexNumbers = /[a-f0-9x\.]/i;
-    Object.freeze(hexNumbers);
+
+    freezeObj(hexNumbers);
 
     /**
      * ---------------------------------------------
@@ -6301,11 +7276,12 @@
      * ---------------------------------------------
      * @desc List of valid starting identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifierStart = /[a-z_\$]/i;
-    Object.freeze(identifierStart);
+
+    freezeObj(identifierStart);
 
     /**
      * ---------------------------------------------
@@ -6313,11 +7289,12 @@
      * ---------------------------------------------
      * @desc List of valid identifier characters.
      * @const
-     * @type {RegExp}
+     * @type {!RegExp}
      * @private
      */
     var identifiers = /[a-z0-9_\$]/i;
-    Object.freeze(identifiers);
+
+    freezeObj(identifiers);
 
     /**
      * ---------------------------------------------
@@ -6334,11 +7311,26 @@
      * Private Variable (commentLinks)
      * ---------------------------------------------
      * @desc Valid link syntax within comments.
-     * @type {RegExp}
+     * @const
+     * @type {!RegExp}
      * @private
      */
     var commentLinks = /\s\[([^\[\]]+)\]\(([^\s\(\)]+)\)/;
-    Object.freeze(commentLinks);
+
+    freezeObj(commentLinks);
+
+    /**
+     * ---------------------------------------------
+     * Private Variable (notSpace)
+     * ---------------------------------------------
+     * @desc A regex that catches anything that is not a space.
+     * @const
+     * @type {!RegExp}
+     * @private
+     */
+    var notSpace = /[^\s]/;
+
+    freezeObj(notSpace);
 
     /**
      * ---------------------------------------------
@@ -6357,7 +7349,8 @@
       cli: 'cliKey', // Client Objects & Methods
       jqu: 'jquKey'  // jQuery Objects
     };
-    Object.freeze(keywordCategories);
+
+    freezeObj(keywordCategories);
 
     /**
      * ---------------------------------------------
@@ -6704,7 +7697,7 @@
       _jQuery: makeKeywordObj('jqu', '')
     };
 
-    Object.freeze(keywords);
+    freezeObj(keywords);
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup the keyword properties
@@ -6714,23 +7707,23 @@
     keywords._Array.props._isArray = makePropObj('');
     keywords._Array.props._observe = makePropObj('');
     keywords._Array.props._of      = makePropObj('');
-    Object.freeze(keywords._Array.props);
+    freezeObj(keywords._Array.props);
 
     // ArrayBuffer
     keywords._ArrayBuffer.props._isView   = makePropObj('');
     keywords._ArrayBuffer.props._transfer = makePropObj('');
-    Object.freeze(keywords._ArrayBuffer.props);
+    freezeObj(keywords._ArrayBuffer.props);
 
     // Date
     keywords._Date.props._UTC   = makePropObj('');
     keywords._Date.props._now   = makePropObj('');
     keywords._Date.props._parse = makePropObj('');
-    Object.freeze(keywords._Date.props);
+    freezeObj(keywords._Date.props);
 
     // JSON
     keywords._JSON.props._parse     = makePropObj('');
     keywords._JSON.props._stringify = makePropObj('');
-    Object.freeze(keywords._JSON.props);
+    freezeObj(keywords._JSON.props);
 
     // Math
     keywords._Math.props._abs    = makePropObj('');
@@ -6751,7 +7744,7 @@
     keywords._Math.props._sin    = makePropObj('');
     keywords._Math.props._sqrt   = makePropObj('');
     keywords._Math.props._tan    = makePropObj('');
-    Object.freeze(keywords._Math.props);
+    freezeObj(keywords._Math.props);
 
     // Number
     keywords._Number.props._EPSILON           = makePropObj('');
@@ -6768,7 +7761,7 @@
     keywords._Number.props._parseFloat        = makePropObj('');
     keywords._Number.props._parseInt          = makePropObj('');
     keywords._Number.props._POSITIVE_INFINITY = makePropObj('');
-    Object.freeze(keywords._Number.props);
+    freezeObj(keywords._Number.props);
 
     // Object
     keywords._Object.props._assign                   = makePropObj('');
@@ -6789,25 +7782,25 @@
     keywords._Object.props._preventExtensions        = makePropObj('');
     keywords._Object.props._seal                     = makePropObj('');
     keywords._Object.props._setPrototypeOf           = makePropObj('');
-    Object.freeze(keywords._Object.props);
+    freezeObj(keywords._Object.props);
 
     // String
     keywords._String.props._fromCharCode  = makePropObj('');
     keywords._String.props._fromCodePoint = makePropObj('');
     keywords._String.props._raw           = makePropObj('');
-    Object.freeze(keywords._String.props);
+    freezeObj(keywords._String.props);
 
     // Symbol
     keywords._Symbol.props._for    = makePropObj('');
     keywords._Symbol.props._keyFor = makePropObj('');
-    Object.freeze(keywords._Symbol.props);
+    freezeObj(keywords._Symbol.props);
 
     // TypedArray
     keywords._TypedArray.props._BYTES_PER_ELEMENT = makePropObj('');
     keywords._TypedArray.props._from              = makePropObj('');
     keywords._TypedArray.props._name              = makePropObj('');
     keywords._TypedArray.props._of                = makePropObj('');
-    Object.freeze(keywords._TypedArray.props);
+    freezeObj(keywords._TypedArray.props);
 
     // console
     keywords._console.props._assert         = makePropObj('');
@@ -6816,32 +7809,35 @@
     keywords._console.props._groupEnd       = makePropObj('');
     keywords._console.props._log            = makePropObj('');
     keywords._console.props._trace          = makePropObj('');
-    Object.freeze(keywords._console.props);
+    freezeObj(keywords._console.props);
 
     // ImageData
     keywords._ImageData.props._data   = makePropObj('');
     keywords._ImageData.props._height = makePropObj('');
     keywords._ImageData.props._width  = makePropObj('');
-    Object.freeze(keywords._ImageData.props);
+    freezeObj(keywords._ImageData.props);
 
 
 /* -----------------------------------------------------------------------------
- * | The Prettifier Methods                                                    |
- * v ------------------------------------------------------------------------- v
-                                                        prettify-methods.js */
+ * The Prettifier Module Methods (pre-compiled-prettifier/prettify-methods.js)
+ * -------------------------------------------------------------------------- */
+
     /**
      * ---------------------------------------------
      * Public Method (prettify.setConfig)
      * ---------------------------------------------
      * @desc Sets the config settings for the prettifier.
-     * @param {Object<string, (number|boolean)>} newConfig - The config
+     * @param {!Object<string, (number|boolean)>} newConfig - The config
      *   settings for the prettifier.
      * @private
      */
     prettify.setConfig = function(newConfig) {
 
+      checkArgs(newConfig, '!object');
+
       config = newConfig;
-      Object.freeze(config);
+      freezeObj(config);
+
     }
 
     /**
@@ -6850,15 +7846,19 @@
      * ---------------------------------------------
      * @desc Standardizes all line breaks and replaces tabs with spaces.
      * @param {string} solution - The problem's solution to be formatted.
-     * @return {strings}
+     * @return {!strings}
      * @private
      */
     function prepareLines(solution) {
 
+      /** @type {!strings} */
+      var lines;
       /** @type {string} */
       var spaces;
       /** @type {number} */
       var spaceCount;
+
+      checkArgs(solution, 'string');
 
       // Standardize all line breaks
       solution = solution.replace(/\r\n?/g, '\n');
@@ -6873,7 +7873,9 @@
         solution = solution.replace(/\t/g, '  ');
       }
 
-      return solution.split('\n');
+      lines = solution.split('\n');
+
+      return lines;
     }
 
     /**
@@ -6881,8 +7883,8 @@
      * Private Method (applyFormatting)
      * ---------------------------------------------
      * @desc Applies the prettifier formats.
-     * @param {strings} lines - An array of code lines.
-     * @return {{
+     * @param {!strings} lines - An array of code lines.
+     * @return {!{
      *   result   : string,
      *   lineCount: number
      * }}
@@ -6894,8 +7896,12 @@
       var i;
       /** @type {number} */
       var len;
-      /** @type {} */
+      /** @type {string} */
       var line;
+      /** @type {!Object} */
+      var result;
+
+      checkArgs(lines, '!strings');
 
       commentOpen = false;
       len = lines.length;
@@ -6913,10 +7919,12 @@
 
       }
 
-      return {
+      result = {
         result   : lines.join(''),
         lineCount: len
       };
+
+      return result;
     }
 
     /**
@@ -6937,6 +7945,8 @@
       /** @type {string} */
       var trimPart;
 
+      checkArgs(line, 'string');
+
       // Trim ending whitespaces
       if (line) {
         i = line.length - 1;
@@ -6956,7 +7966,7 @@
         trimPart = ( (frontTrimCount < line.length) ?
           line.substr(0, frontTrimCount) : ''
         );
-        if (trimPart && !/[^\s]/.test(trimPart)) {
+        if (trimPart && !notSpace.test(trimPart)) {
           // Trim full count
           line = line.substr(frontTrimCount);
         }
@@ -6981,13 +7991,15 @@
      * @param {string} cat - The keyword's category.
      * @param {string=} href - The keyword's details link.
      * @param {boolean=} props - Whether the keyword has properties.
-     * @return {Object<string, (string|numberMap)>}
+     * @return {!Object<string, (string|numberMap)>}
      * @private
      */
     function makeKeywordObj(cat, href, props) {
 
-      /** @type {Object<string, (string|numberMap)>} */
+      /** @type {!Object<string, (string|numberMap)>} */
       var obj;
+
+      checkArgs(cat, 'string', href, 'string=', props, 'boolean=');
 
       href = href || '';
       props = props || false;
@@ -6998,7 +8010,9 @@
       obj.href = href;
       obj.props = (props) ? {} : false;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }
 
     /**
@@ -7007,26 +8021,30 @@
      * ---------------------------------------------
      * @desc Creates a keyword property object.
      * @param {string=} href - The keyword's details link.
-     * @return {stringMap}
+     * @return {!stringMap}
      * @private
      */
     function makePropObj(href) {
 
-      /** @type {stringMap} */
+      /** @type {!stringMap} */
       var obj;
+
+      checkArgs(href, 'string=');
 
       href = href || '';
 
       obj = {};
       obj.href = href;
 
-      return Object.freeze(obj);
+      freezeObj(obj);
+
+      return obj;
     }
 
 /* -----------------------------------------------------------------------------
- * | The Highlight Syntax Method                                               |
- * v ------------------------------------------------------------------------- v
-                                                        highlight-syntax.js */
+ * The Highlight Syntax Method (pre-compiled-prettifier/highlight-syntax.js)
+ * -------------------------------------------------------------------------- */
+
     /**
      * ---------------------------------------------
      * Private Method (highlightSyntax)
@@ -7041,6 +8059,8 @@
 
       var highlightSyntax = function(line) {
 
+        checkArgs(line, 'string');
+
         prepareLine(line);
         formatLine();
 
@@ -7048,9 +8068,11 @@
       };
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Vars                                               |
- * v ------------------------------------------------------------------------- v
-                                                   highlight-syntax-vars.js */
+ * The Highlight Syntax Variables (pre-compiled-prettifier/
+ *                                 pre-compiled-syntax-highlighter/
+ *                                 highlight-syntax-vars.js)
+ * -------------------------------------------------------------------------- */
+
 
       /**
        * ---------------------------------------------
@@ -7098,7 +8120,7 @@
        * ---------------------------------------------
        * @desc A hash map that stores the matching character
        *  formatting methods.
-       * @type {objectMap}
+       * @type {!objectMap}
        * @private
        */
       var router = {
@@ -7140,12 +8162,15 @@
         '9': formatNumber,
         '/': handleSlash
       };
-      Object.freeze(router);
+
+      freezeObj(router);
 
 /* -----------------------------------------------------------------------------
- * | The Syntax Highlighter Methods                                            |
- * v ------------------------------------------------------------------------- v
-                                                highlight-syntax-methods.js */
+ * The Highlight Syntax Methods (pre-compiled-prettifier/
+ *                               pre-compiled-syntax-highlighter/
+ *                               highlight-syntax-methods.js)
+ * -------------------------------------------------------------------------- */
+
       /**
        * ---------------------------------------------
        * Private Method (prepareLine)
@@ -7156,8 +8181,10 @@
        */
       function prepareLine(line) {
 
+        checkArgs(line, 'string');
+
         orgLine = line.split('');
-        Object.freeze(orgLine);
+        freezeObj(orgLine);
         newLine = line.split('');
         lineLen = line.length;
         lastIndex = (lineLen) ? lineLen - 1 : 0;
@@ -7193,6 +8220,7 @@
           );
           i = format(i);
         }
+
       }
 
       /**
@@ -7206,36 +8234,45 @@
        */
       function handleSlash(i) {
 
-        /** @type {val} */
+        /** @type {*} */
         var preceding;
         /** @type {number} */
         var end;
+        /** @type {number} */
+        var ii;
+
+        checkArgs(i, 'number');
 
         // Handle line comment
         if (orgLine[i + 1] === '/') {
-          return formatLineComment(i);
+          ii = formatLineComment(i);
         }
-
         // Handle comment opening
-        if (orgLine[i + 1] === '*') {
-          return formatCommentOpen(i);
+        else if (orgLine[i + 1] === '*') {
+          ii = formatCommentOpen(i);
         }
+        else {
 
-        // Save preceding character
-        preceding = ( (orgLine[i - 1] === ' ') ?
-          orgLine[i - 2] : orgLine[i - 1]
-        );
+          // Save preceding character
+          preceding = ( (orgLine[i - 1] === ' ') ?
+            orgLine[i - 2] : orgLine[i - 1]
+          );
 
-        // Handle RegExp
-        if (i === 0 || preRegex.test(preceding)) {
-          end = isRegex(i);
-          if (end) {
-            return formatRegex(i, end);
+          // Handle RegExp
+          if (i === 0 || preRegex.test(preceding)) {
+            end = isRegex(i);
+            if (end) {
+              ii = formatRegex(i, end);
+            }
           }
         }
 
         // Handle operator
-        return formatOperator(i);
+        if (!ii) {
+          ii = formatOperator(i);
+        }
+
+        return ii;
       }
 
       /**
@@ -7255,31 +8292,22 @@
         /** @type {string} */
         var regexBody;
 
-        end = i + 1;
+        checkArgs(i, 'number');
 
-        if (orgLine[end] === '/') {
-          return 0;
-        }
+        end = (orgLine[i + 1] === '/') ? -1 : i;
 
         // Find regex end index
-        while (true) {
-
-          if (end >= lineLen) {
-            return 0;
-          }
+        while (++end && end < lineLen && orgLine[end] !== '/') {
 
           sanitizeCharacter(end);
 
           if (orgLine[end] === '\\') {
             ++end;
-            continue;
           }
+        }
 
-          if (orgLine[end] === '/') {
-            break;
-          }
-
-          ++end;
+        if (end >= lineLen) {
+          end = 0;
         }
 
         regexBody = orgLine.slice(++i, end).join('');
@@ -7304,9 +8332,12 @@
        */
       function sanitizeCharacter(i) {
 
-        if ( htmlEntity.hasOwnProperty(orgLine[i]) ) {
+        checkArgs(i, 'number');
+
+        if ( hasOwnProp(htmlEntity, orgLine[i]) ) {
           newLine[i] = htmlEntity[ orgLine[i] ];
         };
+
       }
 
       /**
@@ -7320,19 +8351,19 @@
        */
       function skipComment(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (i >= lineLen) {
-            return i;
-          }
+        while (++i < lineLen) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '*' && i !== lastIndex && orgLine[i + 1] === '/') {
-            return ++i;
+            ++i;
+            break;
           }
         }
+
+        return i;
       }
 
       /**
@@ -7347,28 +8378,26 @@
       function skipString(i) {
 
         /** @type {string} */
-        var stringType;
+        var strCharacter;
 
-        stringType = orgLine[i];
+        checkArgs(i, 'number');
 
-        while (true) {
-          ++i;
+        strCharacter = orgLine[i];
 
-          if (i >= lineLen) {
-            return lastIndex;
-          }
+        while (++i < lineLen && orgLine[i] !== strCharacter) {
 
           sanitizeCharacter(i);
 
           if (orgLine[i] === '\\') {
             ++i;
-            continue;
-          }
-
-          if (orgLine[i] === stringType) {
-            return i;
           }
         }
+
+        if (i >= lineLen) {
+          i = lastIndex;
+        }
+
+        return i;
       }
 
       /**
@@ -7382,13 +8411,13 @@
        */
       function skipSpace(i) {
 
-        while (true) {
-          ++i;
+        checkArgs(i, 'number');
 
-          if (orgLine[i] !== ' ') {
-            return --i;
-          }
+        while (orgLine[i + 1] === ' ') {
+          ++i;
         }
+
+        return i;
       }
 
       /**
@@ -7407,22 +8436,17 @@
         /** @type {RegExp} */
         var numberOpts;
 
+        checkArgs(i, 'number');
+
         hexStart = (i !== lastIndex) ? orgLine[i] + orgLine[i + 1] : '';
         numberOpts = ( (hexStart === '0x' || hexStart === '0X') ?
           hexNumbers : plainNumbers
         );
 
-        while (true) {
-          ++i;
+        while (++i < lineLen && numberOpts.test(orgLine[i])) {}
+        --i;
 
-          if (i === lineLen) {
-            return lastIndex;
-          }
-
-          if ( !numberOpts.test(orgLine[i]) ) {
-            return --i;
-          }
-        }
+        return i;
       }
 
       /**
@@ -7431,41 +8455,38 @@
        * ---------------------------------------------
        * @desc Moves the index to the end of the identifier.
        * @param {number} i - The starting line index.
-       * @return {number} The end index.
+       * @return {!{
+       *   endIndex   : number,
+       *   name       : string,
+       *   propFollows: boolean
+       * }}
        * @private
        */
       function skipIdentifier(i) {
 
         /** @type {string} */
         var name;
+        /** @type {!Object} */
+        var result;
         /** @type {boolean} */
         var propFollows;
 
+        checkArgs(i, 'number');
+
         name = '_' + orgLine[i];
 
-        while (true) {
-          ++i;
-
-          if (i === lineLen) {
-            return {
-              endIndex   : --i,
-              name       : name,
-              propFollows: false
-            };
-          }
-
-          if ( identifiers.test(orgLine[i]) ) {
-            name += orgLine[i];
-            continue;
-          }
-
-          propFollows = (orgLine[i] === '.');
-          return {
-            endIndex   : --i,
-            name       : name,
-            propFollows: propFollows
-          };
+        while (++i < lineLen && identifiers.test(orgLine[i])) {
+          name += orgLine[i];
         }
+
+        propFollows = (i !== lineLen && orgLine[i] === '.');
+        result = {
+          endIndex   : --i,
+          name       : name,
+          propFollows: propFollows
+        };
+
+        return result;
       }
 
       /**
@@ -7479,30 +8500,31 @@
        */
       function formatCommentLinks(start, end) {
 
-        /** @type {string} */
-        var comment;
         /** @type {number} */
         var i;
+        /** @type {boolean} */
+        var pass;
         /** @type {string} */
         var href;
         /** @type {string} */
         var content;
+        /** @type {string} */
+        var comment;
+
+        checkArgs(start, 'number', end, 'number');
 
         if (end === lastIndex) {
           ++end;
         }
 
         comment = orgLine.slice(start, end).join('');
+        pass = commentLinks.test(comment);
 
-        if ( !commentLinks.test(comment) ) {
-          return;
-        }
-
-        while (true) {
+        while (pass) {
           i = comment.search(commentLinks);
 
           if (i === -1) {
-            return;
+            break;
           }
 
           i += start + 1;
@@ -7539,6 +8561,7 @@
           comment = comment.substr(i);
           start = i;
         }
+
       }
 
       /**
@@ -7556,11 +8579,11 @@
         /** @type {number} */
         var start;
 
-        start = i;
+        checkArgs(i, 'number');
 
+        start = i;
         newLine[i] = '<span class="cmt">/';
-        ++i;
-        i = (i < lastIndex) ? skipComment(i) : ++i;
+        i = (++i < lastIndex) ? skipComment(i) : ++i;
 
         if (i >= lineLen) {
           commentOpen = true;
@@ -7596,20 +8619,22 @@
         if (orgLine[0] === '*' && orgLine[1] === '/') {
           commentOpen = false;
           newLine[1] += '</span>';
-          return 3;
+          i = 3;
         }
+        else {
 
-        i = skipComment(0);
-        commentOpen = (i < lineLen) ? false : true;
+          i = skipComment(0);
+          commentOpen = (i > lastIndex);
 
-        if (i > lastIndex) {
-          i = lastIndex;
-        }
+          if (commentOpen) {
+            i = lastIndex;
+          }
 
-        newLine[i] += '</span>';
+          newLine[i] += '</span>';
 
-        if (config.commentLinks) {
-          formatCommentLinks(0, i);
+          if (config.commentLinks) {
+            formatCommentLinks(0, i);
+          }
         }
 
         return i;
@@ -7625,6 +8650,8 @@
        * @private
        */
       function formatLineComment(i) {
+
+        checkArgs(i, 'number');
 
         if (config.commentLinks) {
           formatCommentLinks(i, lastIndex);
@@ -7649,10 +8676,10 @@
        */
       function formatString(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="str">' + orgLine[i];
-
         i = skipString(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -7676,15 +8703,15 @@
         /** @type {string} */
         var character;
 
+        checkArgs(i, 'number', end, 'number');
+
         newLine[i] = '<span class="rgx">/';
 
         i = end;
         usedFlags = '';
 
         // Check for RegExp flags
-        while (true) {
-          ++i;
-
+        while (++i) {
           character = orgLine[i];
 
           if (regexFlags.test(character) &&
@@ -7715,10 +8742,10 @@
        */
       function formatSpace(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="spc"> ';
-
         i = skipSpace(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -7735,6 +8762,8 @@
        */
       function formatBracket(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="brc">' + orgLine[i] + '</span>';
 
         return i;
@@ -7750,6 +8779,8 @@
        * @private
        */
       function formatOperator(i) {
+
+        checkArgs(i, 'number');
 
         sanitizeCharacter(i);
 
@@ -7769,6 +8800,8 @@
        */
       function formatComma(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cmm">,</span>';
 
         return i;
@@ -7784,6 +8817,8 @@
        * @private
        */
       function formatSemicolon(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="smc">;</span>';
 
@@ -7801,6 +8836,8 @@
        */
       function formatColon(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="cln">:</span>';
 
         return i;
@@ -7816,6 +8853,8 @@
        * @private
        */
       function formatPeriod(i) {
+
+        checkArgs(i, 'number');
 
         newLine[i] = '<span class="per">.</span>';
 
@@ -7834,10 +8873,10 @@
        */
       function formatNumber(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="num">' + orgLine[i];
-
         i = skipNumber(i);
-
         newLine[i] += '</span>';
 
         return i;
@@ -7858,34 +8897,36 @@
        */
       function formatIdentifier(i, extras) {
 
-        /** @type {{ endIndex: number, name: string, propFollows: boolean }} */
+        /** @type {!{ endIndex: number, name: string, propFollows: boolean }} */
         var identifier;
         /** @type {string} */
         var catID;
         /** @type {string} */
         var keyClassName;
 
+        checkArgs(i, 'number', extras, 'string=');
+
         identifier = skipIdentifier(i);
 
         // Setup the keyword category and class name
-        if ( keywords.hasOwnProperty(identifier.name) ) {
+        if ( hasOwnProp(keywords, identifier.name) ) {
 
-          catID = keywords[identifier.name].cat;
-          keyClassName = keywordCategories[catID];
+          catID = keywords[ identifier.name ].cat;
+          keyClassName = keywordCategories[ catID ];
 
           // Special case for the function keyword
           if (identifier.name === '_function' &&
               (orgLine[identifier.endIndex + 1] === '(' ||
                (orgLine[identifier.endIndex + 1] === ' ' &&
                 orgLine[identifier.endIndex + 2] === '('))) {
-            keyClassName = keywordCategories['res'];
+            keyClassName = keywordCategories[ 'res' ];
           }
         }
 
         if (!keyClassName && !!extras) {
-          if ( keywords[extras].props.hasOwnProperty(identifier.name) ) {
-            catID = keywords[extras].cat;
-            keyClassName = keywordCategories[catID];
+          if ( hasOwnProp(keywords[ extras ].props, identifier.name) ) {
+            catID = keywords[ extras ].cat;
+            keyClassName = keywordCategories[ catID ];
           }
         }
 
@@ -7902,8 +8943,8 @@
         // Format the identifier's property (dot notation only)
         if (identifier.propFollows) {
           formatPeriod(++i);
-          extras = ( ( !keywords.hasOwnProperty(identifier.name) ) ?
-            '' : (!keywords[identifier.name].props) ?
+          extras = ( (!hasOwnProp(keywords, identifier.name)) ?
+            '' : (!keywords[ identifier.name ].props) ?
               '' : identifier.name
           );
           i = formatIdentifier(++i, extras);
@@ -7923,22 +8964,25 @@
        */
       function formatMisc(i) {
 
+        checkArgs(i, 'number');
+
         newLine[i] = '<span class="msc">' + orgLine[i] + '</span>';
 
         return i;
       }
 
       return highlightSyntax;
+
     })();
 
     return prettify;
+
   })();
 
-
 /* -----------------------------------------------------------------------------
- * | The Events Class                                                          |
- * v ------------------------------------------------------------------------- v
-                                                          classes/events.js */
+ * The Events Class (classes/events.js)
+ * -------------------------------------------------------------------------- */
+
   /**
    * ----------------------------------------------- 
    * Public Class (Events)
@@ -7954,7 +8998,7 @@
    * Public Method (Events.popState)
    * -----------------------------------------------
    * @desc The onPopState event handler for the window.
-   * @param {Object} newState - The new state to apply to the app.
+   * @param {!Object} newState - The new state to apply to the app.
    */
   Events.popState = function(newState) {
 
@@ -7966,6 +9010,8 @@
     var oldView;
     /** @type {boolean} */
     var flipElems;
+
+    checkArgs(newState, '!object');
 
     oldIds = app.vals.get('ids').slice(0);
     oldIndex = app.vals.get('index');
@@ -8058,6 +9104,8 @@
     /** @type {string} */
     var oldView;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.view != newVal) {
 
       len = app.vals.get('len');
@@ -8088,6 +9136,8 @@
     /** @type {!numbers} */
     var newIds;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.order != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -8117,6 +9167,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(newVal, 'string');
 
     if (app.searchBar.vals.stage != newVal) {
 
@@ -8150,6 +9202,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.source != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -8181,6 +9235,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(newVal, 'string');
 
     if (app.searchBar.vals.mainCat != newVal) {
 
@@ -8215,6 +9271,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(newVal, 'string');
+
     if (app.searchBar.vals.subCat != newVal) {
 
       oldIds = app.vals.get('ids');
@@ -8245,6 +9303,8 @@
     /** @type {string} */
     var oldView;
 
+    checkArgs(id, 'number');
+
     oldIndex = app.vals.get('index');
     oldView = app.searchBar.vals.view;
 
@@ -8271,6 +9331,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(id, 'string');
 
     if (app.searchBar.vals.source != id) {
 
@@ -8306,6 +9368,8 @@
     var newIds;
     /** @type {number} */
     var oldIndex;
+
+    checkArgs(id, 'string');
 
     if (app.searchBar.vals.mainCat != id) {
 
@@ -8344,6 +9408,8 @@
     /** @type {number} */
     var oldIndex;
 
+    checkArgs(id, 'string', parentId, 'string');
+
     if (app.searchBar.vals.subCat != id) {
 
       oldIds = app.vals.get('ids');
@@ -8380,7 +9446,7 @@
    * -----------------------------------------------
    * @desc The onClick event handler for a question code extender.
    * @param {number} overflow - The question's code view overflow pixel count.
-   * @param {elemMap} elems - The code view elements.
+   * @param {elementMap} elems - The code view elements.
    */
   Events.extCodeView = function(overflow, elems) {
 
@@ -8388,6 +9454,8 @@
     var newWidth;
     /** @type {number} */
     var newRight;
+
+    checkArgs(overflow, 'number', elems, 'elemMap');
 
     newWidth = elems.code.clientWidth;
 
@@ -8403,7 +9471,7 @@
       setTimeout(function() {
         elems.extOpen.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'open';
+          setElemText(elems.extOpen, 'open');
           elems.extHovC.style.display = 'none';
           elems.extHovO.style.display = 'block';
         }, 600);
@@ -8422,7 +9490,7 @@
       setTimeout(function() {
         elems.extClose.style.opacity = '0.8';
         setTimeout(function() {
-          elems.extOpen.innerHTML = 'close';
+          setElemText(elems.extOpen, 'close');
           elems.extHovO.style.display = 'none';
           elems.extHovC.style.display = 'block';
         }, 600);
@@ -8431,281 +9499,12 @@
 
   };
 
-  Object.freeze(Events);
+  freezeObj(Events, true);
 
+////////////////////////////////////////////////////////////////////////////////
+// The App Module End
+////////////////////////////////////////////////////////////////////////////////
 
-/* -----------------------------------------------------------------------------
- * | The Polyfill Methods                                                      |
- * v ------------------------------------------------------------------------- v
-                                                        polyfill-methods.js */
-  if (!Object.keys) {
-    /**
-     * ---------------------------------------------
-     * Public Method (Object.keys)
-     * ---------------------------------------------
-     * @desc A polyfill for the native method. For method details
-     *   [see MDN]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys}
-     * @param {!Object} obj
-     * @return {vals}
-     */
-    Object.keys = (function(obj) {
-
-      /** @type {Object} */
-      var testObj;
-      /** @type {boolean} */
-      var enumBug;
-      /** @type {strings} */
-      var notEnum;
-
-      testObj = { toString: null };
-      enumBug = !( testObj.propertyIsEnumerable('toString') );
-      notEnum = [
-        'toString',
-        'toLocaleString',
-        'valueOf',
-        'hasOwnProperty',
-        'isPrototypeOf',
-        'propertyIsEnumerable',
-        'constructor'
-      ];
-
-      return function(obj) {
-
-        if (typeof obj !== 'object' && typeof obj !== 'function') {
-          throw new TypeError('Object.keys only accepts objects.');
-          return;
-        }
-
-        if (obj === null) {
-          throw new TypeError('Object.keys does not accept null types.');
-          return;
-        }
-
-        /** @type {string} */
-        var prop;
-        /** @type {number} */
-        var i;
-        /** @type {vals} */
-        var result;
-
-        result = [];
-
-        for (prop in obj) {
-          if ( obj.hasOwnProperty(prop) ) {
-            result.push(prop);
-          }
-        }
-
-        if (enumBug) {
-          i = notEnum.length;
-          while (i--) {
-            if ( obj.hasOwnProperty(notEnum[i]) ) {
-              result.push(notEnum[i]);
-            }
-          }
-        }
-
-        return result;
-      };
-    })();
-  }
-
-  if (!Object.freeze) {
-    /**
-     * ---------------------------------------------
-     * Public Method (Object.freeze)
-     * ---------------------------------------------
-     * @desc A polyfill for the native method. For method details
-     *   [see MDN]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze}
-     * @param {Object} obj
-     * @return {Object}
-     */
-    Object.freeze = function(obj) {
-
-      if (typeof obj !== 'object' && typeof obj !== 'function') {
-        throw new TypeError('Object.freeze only accepts objects.');
-        return;
-      }
-
-      return obj;
-    };
-  }
-
-  // Fix Object.freeze function param bug
-  try {
-    Object.freeze(function() {});
-  }
-  catch (e) {
-    Object.freeze = (function(originalFreeze) {
-      return function(obj) {
-        if (typeof obj === 'function') {
-          return obj;
-        }
-        else {
-          return originalFreeze(obj);
-        }
-      };
-    }(Object.freeze));
-  }
-
-
-/* -----------------------------------------------------------------------------
- * | The External API for the Module                                           |
- * v ------------------------------------------------------------------------- v
-                                                            external-api.js */
-  /**
-   * -----------------------------------------------------
-   * Private Variable (_initialized)
-   * -----------------------------------------------------
-   * @desc Indicates whether the app has been initialized.
-   * @type {boolean}
-   * @private
-   */
-  var _initialized = false;
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (_init)
-   * -----------------------------------------------------
-   * @desc Initializes the app.
-   * @param {Object} settings - The app's settings.
-   */
-  var _init = function(settings) {
-
-    /** @type {?(string|strings)} */
-    var resourceList;
-    /** @type {objectMap} */
-    var config;
-    /** @type {stringMap} */
-    var sources;
-    /** @type {(objectMap|stringMap)} */
-    var categories;
-    /** @type {!objects} */
-    var questions;
-    /** @type {function} */
-    var setup;
-    /** @type {function} */
-    var callback;
-    /** @type {number} */
-    var i;
-
-    // Check if app has been initialized
-    if (_initialized) {
-      return;
-    }
-
-    // Save the init of this app to prevent second init
-    _initialized = true;
-
-    // Check the settings arg
-    if (!settings || !checkType(settings, 'object')) {
-      settings = {};
-    }
-
-    // Setup the app arguments
-    resourceList = ( ( settings.hasOwnProperty('resources') ) ?
-      settings.resources : null
-    );
-    config = ( ( settings.hasOwnProperty('config') ) ?
-      settings.config : ( settings.hasOwnProperty('configuration') ) ?
-        settings.configuration : null
-    );
-    sources = ( ( settings.hasOwnProperty('sources') ) ?
-      settings.sources : ( settings.hasOwnProperty('source') ) ?
-        settings.source : null
-    );
-    categories = ( ( settings.hasOwnProperty('categories') ) ?
-      settings.categories : ( settings.hasOwnProperty('category') ) ?
-        settings.category : null
-    );
-    questions = ( ( settings.hasOwnProperty('questions') ) ?
-      settings.questions : ( settings.hasOwnProperty('question') ) ?
-        settings.question : []
-    );
-
-    // Check the types of the arguments
-    if ( !checkType(resourceList, 'string|strings') ) {
-      resourceList = null;
-    }
-    if ( !checkType(config, 'objectMap') ) {
-      config = null;
-    }
-    if ( !checkType(sources, 'stringMap') ) {
-      sources = null;
-    }
-    if ( !checkType(categories, 'stringMap|objectMap') ) {
-      categories = null;
-    }
-    if ( !checkType(questions, '!objects') ) {
-      questions = [];
-    }
-
-    // Setup and start the app
-    setup = function() {
-      Object.freeze(resources);
-      app = new App(config, sources, categories, questions);
-      app.setupDisplay();
-    };
-
-    // Save the resources
-    if (resourceList) {
-
-      if (typeof resourceList === 'string') {
-        getResource(resourceList, setup);
-        return;
-      }
-
-      callback = setup;
-      i = resourceList.length;
-      while (--i) {
-        callback = (function(jsonFile, callback) {         
-          return function() {
-            getResource(jsonFile, callback);
-          };
-        })(resourceList[i], callback);
-      }
-      getResource(resourceList[0], callback);
-      return;
-    }
-
-    setup();
-  };
-
-  /**
-   * -----------------------------------------------------
-   * Public Method (_init.getResource)
-   * -----------------------------------------------------
-   * @desc Makes the app's resources publically available.
-   * @param {string=} prop - The specific resource to retrieve.
-   * @return {val} Either the entire resources object or one of its properties.
-   */
-  _init.getResource = function(prop) {
-
-    /** @type {string} */
-    var errorMsg;
-
-    prop = prop || '';
-
-    if (prop && !resources.hasOwnProperty(prop)) {
-      errorMsg = 'The resource you requested does not exist. Please verify that \'';
-      errorMsg += prop + '\' is a correct json file name in the resources folder ';
-      errorMsg += 'and that the file name was included in the setup of the app ';
-      errorMsg += '(see algorithmiv.com/docs/resources).';
-      console.error(errorMsg);
-      return;
-    }
-
-    return (!!prop) ? resources[ prop ] : resources;
-  }
-
-  Object.freeze(_init);
-  Object.freeze(_init.getResource);
-
-
-/* -----------------------------------------------------------------------------
- * | End of module                                                             |
- * v ------------------------------------------------------------------------- v
-                                                                            */
-  return _init;
+  return appModuleAPI;
 
 })(window, document));

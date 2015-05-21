@@ -9,8 +9,10 @@
    */
   var AppFlags = function(pass) {
 
+    checkArgs(pass, 'boolean');
+
     ////////////////////////////////////////////////////////////////////////////
-    // Define The Protected Properties
+    // Define & Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -21,13 +23,7 @@
      * @type {boolean}
      * @private
      */
-    var initArgs;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Setup The Protected Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    initArgs = pass;
+    var initArgs = pass;
 
     ////////////////////////////////////////////////////////////////////////////
     // Define & Setup The Public Methods
@@ -37,48 +33,48 @@
      * ----------------------------------------------- 
      * Public Method (AppFlags.get)
      * -----------------------------------------------
-     * @desc Gets a flag.
+     * @desc Gets an AppFlags protected property.
      * @param {string} prop - The name of the flag to get.
-     * @return {boolean}
+     * @return {boolean} The flag's value.
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, boolean>} */
-      var flags = {
+      /** @type {!Object<string, boolean>} */
+      var props = {
         initArgs: initArgs
       };
 
-      return flags[ prop ];
+      return getter.call(props, prop);
     };
 
     /**
      * ----------------------------------------------- 
      * Public Method (AppFlags.set)
      * -----------------------------------------------
-     * @desc Sets a flag.
+     * @desc Sets an AppFlags protected property.
      * @param {string} prop - The name of the flag to set.
      * @param {boolean} val - The value to set the flag to.
+     * @return {boolean} The setter's success.
      */
     this.set = function(prop, val) {
 
-      /** @type {Object<string, function>} */
-      var flags = {
-        initArgs: function () { initArgs = val; }
+      /** @type {Object<string, function(*): boolean>} */
+      var setters = {
+        initArgs: function(val) {
+          initArgs = val;
+          return checkType(val, 'boolean');
+        }
       };
 
-      flags[ prop ]();
+      return setter.call(setters, prop, val);
     };
-
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.set);
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////

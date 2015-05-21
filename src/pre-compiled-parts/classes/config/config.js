@@ -3,10 +3,12 @@
    * Public Class (Config)
    * -----------------------------------------------------
    * @desc The configuration settings for this app.
-   * @param {?Object} config - The user's config settings.
+   * @param {Object<string, Object>} config - The user's config settings.
    * @constructor
    */
   var Config = function(config) {
+
+    checkArgs(config, 'objectMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -56,20 +58,20 @@
     ////////////////////////////////////////////////////////////////////////////
 
     // Check the given user's config object
-    if (!config || typeof config !== 'object') {
+    if ( !checkType(config, '!object') ) {
       config = {};
     }
 
-    if (!config.searchSettings || typeof config.searchSettings !== 'object') {
+    if ( !checkType(config.searchSettings, '!object') ) {
       config.searchSettings = {};
     }
-    if (!config.questionFormat || typeof config.questionFormat !== 'object') {
+    if ( !checkType(config.questionFormat, '!object') ) {
       config.questionFormat = {};
     }
-    if (!config.prettifyFormat || typeof config.prettifyFormat !== 'object') {
+    if ( !checkType(config.prettifyFormat, '!object') ) {
       config.prettifyFormat = {};
     }
-    if (!config.showLinks || typeof config.showLinks !== 'object') {
+    if ( !checkType(config.showLinks, '!object') ) {
       config.showLinks = {};
     }
 
@@ -83,8 +85,8 @@
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
+    freezeObj(this, true);
+
   };
 
 ////////////////////////////////////////////////////////////////////////////////

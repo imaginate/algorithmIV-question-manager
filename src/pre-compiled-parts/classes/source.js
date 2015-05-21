@@ -8,6 +8,8 @@
    */
   var Source = function(name) {
 
+    checkArgs(name, 'string');
+
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
@@ -27,7 +29,7 @@
      * Protected Property (Source.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this source.
-     * @type {nums}
+     * @type {!numbers}
      * @private
      */
     var ids;
@@ -36,14 +38,12 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    if (!name || typeof name !== 'string') {
+    if (!name || !checkType(name, 'string')) {
       name = '';
       url  = '';
     }
     else {
-      url = name.toLowerCase();
-      url = url.replace(/[^0-9a-z\-\s]/g, '');
-      url = url.replace(/\s/g, '-');
+      url = makeUrl(name);
     }
     ids = [];
 
@@ -56,23 +56,19 @@
      * Public Method (Source.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the source.
-     * @param {string} prop - The name of the property to get.
-     * @return {(string|numbers)}
+     * @param {string} propName - The name of the property to get.
+     * @return {(string|!numbers)}
      */
-    this.get = function(prop) {
+    this.get = function(propName) {
 
-      /** @type {Object<string, (string|function)>} */
+      /** @type {Object<string, (string|!numbers)>} */
       var props = {
         name: name,
         url : url,
-        ids : function() {
-          return Object.freeze( ids.slice(0) );
-        }
+        ids : ids
       };
 
-      prop = props[ prop ];
-
-      return (typeof prop === 'function') ? prop() : prop;
+      return getter.call(props, propName);
     };
 
     /**
@@ -84,21 +80,38 @@
      */
     this.addId = function(id) {
 
-      if (typeof id === 'number' && id > 0) {
-        ids.push(id);
+      /** @type {string} */
+      var errorMsg;
+
+      checkArgs(id, 'number');
+
+      if (id < 1) {
+        errorMsg = 'An aIV.app internal error occurred. A Source.addId call ';
+        errorMsg += 'was given an invalid question id to add. id= ' + id;
+        throw new Error(errorMsg);
       }
+
+      ids.push(id);
+
     };
 
-    // Freeze all of the methods
-    Object.freeze(this.get);
-    Object.freeze(this.addId);
+    /**
+     * ----------------------------------------------- 
+     * Public Method (Source.freezeIds)
+     * -----------------------------------------------
+     * @desc Freezes this category's question ids.
+     * @type {function}
+     */
+    this.freezeIds = function() {
+
+      freezeObj(ids);
+
+    };
 
     ////////////////////////////////////////////////////////////////////////////
     // End Of The Class Setup
     ////////////////////////////////////////////////////////////////////////////
 
-    // Freeze this class instance
-    Object.freeze(this);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
