@@ -277,6 +277,8 @@
         }
       }
     }
+
+    this.debug.end('setElemStyle');
   };
 
   /**

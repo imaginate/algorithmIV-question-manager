@@ -3494,6 +3494,8 @@ aIV.utils.set({
         }
       }
     }
+
+    this.debug.end('setElemStyle');
   };
 
   /**
@@ -5693,6 +5695,8 @@ aIV.utils.set({
         }
       }
     }
+
+    this.debug.end('setElemStyle');
   };
 
   /**
