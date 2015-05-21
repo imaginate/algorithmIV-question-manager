@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name=viewport content="width=device-width, initial-scale=1">
     
-    <title>Algorithm IV</title>
+    <title>Algorithm IV's Question Manager</title>
     
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="icon" href="images/favicon.png" />
@@ -12,21 +12,24 @@
     <meta name="msapplication-TileColor" content="#FFFFFF">
     <meta name="msapplication-TileImage" content="images/tile-icon.png">
     
-    <!-- aIV css tag -->
+    <!-- ADD THE aIV-app CSS HERE -->
     <link href="algorithmIV-app.css" rel="stylesheet" type="text/css" />
-    <!-- aIV css tag -->
+
   </head>
   <body>
-    <!--[if lte IE 8]>
-      <div class="old_browser">
-        <h1>Browser Error</h1>
-        <p>Algorithm IV does not support Internet Explorer 8 or less. To use this application you must use a modern browser.</p>
-     </div>
-    <![endif]-->
 
-    <!-- aIV js tags -->
+    <!-- ADD THE aIV-app JS HERE -->
     <script src="algorithmIV-app.min.js" type="text/javascript"></script>
+
+    <!-- If you want to use resources in your aIV.app you will need to run
+         the app in a test server environment (i.e. localhost/..) or mock
+         your ajax calls. The below script is aIV's own ajax mocker. Feel
+         free to review the unminified version for more info. -->
+    <script src="resources/mock-ajax.min.js" type="text/javascript"></script>
+
+    <!-- ADD YOUR JS AFTER aIV-app -->
     <script src="example-settings.js" type="text/javascript"></script>
-    <!-- aIV js tag -->
+
+    <script type="text/javascript">aIV.mockAjax.reset();</script>
   </body>
 </html>
