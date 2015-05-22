@@ -1,10 +1,9 @@
 
-  // $s$
-  var debug = aIV.debug({
+  var debug = aIV.debug({                  // $s$
     classTitle: 'appModule',
     openGroups: true
-  }); // $e$
-  var debugHelp = aIV.debug('appHelpers');
+  });
+  var debugHelp = aIV.debug('appHelpers'); // $e$
   var debugArgs, debugMsg, debugCheck;
 
   /**
@@ -26,10 +25,13 @@
   var resources = {};
 
   /**
-   * ----------------------------------------------- 
+   * -----------------------------------------------
    * Public Variable (app)
    * -----------------------------------------------
    * @desc The app instance.
-   * @type {!App}
+   * @type {!{
+   *   
+   *   
+   * }}
    */
-  var app;
+  var app = {};
