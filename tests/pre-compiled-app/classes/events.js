@@ -61,7 +61,7 @@
 
     app.vals.reset(newState.ids, newState.index);
 
-    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+    App.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
     this.debug.end('popState');
   };
@@ -84,7 +84,7 @@
 
     app.vals.move('prev');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
     this.debug.end('prev.onclick');
   };
@@ -107,7 +107,7 @@
 
     app.vals.move('next');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
     this.debug.end('next.onclick');
   };
@@ -146,7 +146,7 @@
       app.searchBar.vals.view = newVal;
       app.vals.set(null, newIndex);
 
-      app.updateDisplay(null, oldIndex, oldView);
+      App.updateDisplay(null, oldIndex, oldView);
 
       this.debug.end('searchView.onchange');
     }
@@ -179,7 +179,7 @@
       app.searchBar.vals.order = newVal;
       app.vals.set(newIds);
 
-      app.updateDisplay(oldIds, null, null, true);
+      App.updateDisplay(oldIds, null, null, true);
 
       this.debug.end('searchOrder.onchange');
     }
@@ -216,7 +216,7 @@
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchStage.onchange');
     }
@@ -253,7 +253,7 @@
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchSource.onchange');
     }
@@ -291,7 +291,7 @@
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchMainCat.onchange');
     }
@@ -328,7 +328,7 @@
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchSubCat.onchange');
     }
@@ -360,7 +360,7 @@
 
     app.vals.move(id);
 
-    app.updateDisplay(null, oldIndex, oldView);
+    App.updateDisplay(null, oldIndex, oldView);
 
     this.debug.end('linkId.onclick');
     this.debug.group('linkId.onclick', 'end');
@@ -401,7 +401,7 @@
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkSource.onclick');
       this.debug.group('linkSource.onclick', 'end');
@@ -444,7 +444,7 @@
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkMainCat.onclick');
       this.debug.group('linkMainCat.onclick', 'end');
@@ -498,7 +498,7 @@
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkSubCat.onclick');
       this.debug.group('linkSubCat.onclick', 'end');

@@ -6,24 +6,17 @@
    * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, getSource, getCategory) {
+  var Question = function(question, id, config) {
 
     this.debug = aIV.debug('Question');
 
     this.debug.group('init', 'coll', 'questionID= $$', id);
 
-    this.debug.start('init', question, id, config, getSource, getCategory);
+    this.debug.start('init', question, id, config);
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', id, 'number', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties

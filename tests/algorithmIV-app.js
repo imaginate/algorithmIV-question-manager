@@ -1232,7 +1232,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     if (questions.length) {
-      App.init();
+      App.init(config, sources, categories, questions);
     }
     else {
       app.elems.appendError();
@@ -1271,7 +1271,7 @@ aIV.utils.set({
     /** @type {function} */
     var get;
     
-    app.vals = new AppVals();
+    app.vals = new AppVals(questions.length);
 
     app.config = new Config(config);
 
@@ -1336,7 +1336,7 @@ aIV.utils.set({
 
     freezeObj(app);
 
-    this.debug.end('init', app);
+    app.debug.end('init', app);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1375,7 +1375,7 @@ aIV.utils.set({
       app.questions.addCodeExts();
       app.elems.hold.style.display = 'none';
       flip = (app.searchBar.vals.order === 'desc');
-      app.updateDisplay(null, null, null, flip, true);
+      App.updateDisplay(null, null, null, flip, true);
 
       setTimeout(function() {          // $s$
         app.debug.end('setupDisplay', app);
@@ -1637,7 +1637,7 @@ aIV.utils.set({
    */
   App.setToDefaults = function(newIndex, newIds) {
 
-    app.debugHelp.start('setToDefaults', defaults);
+    app.debugHelp.start('setToDefaults', newIndex, newIds);
 
     checkArgs(newIndex, 'number', newIds, '!numbers');
 
@@ -5953,24 +5953,17 @@ aIV.utils.set({
    * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, getSource, getCategory) {
+  var Question = function(question, id, config) {
 
     this.debug = aIV.debug('Question');
 
     this.debug.group('init', 'coll', 'questionID= $$', id);
 
-    this.debug.start('init', question, id, config, getSource, getCategory);
+    this.debug.start('init', question, id, config);
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', id, 'number', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties
@@ -9611,7 +9604,7 @@ aIV.utils.set({
 
     app.vals.reset(newState.ids, newState.index);
 
-    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+    App.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
     this.debug.end('popState');
   };
@@ -9634,7 +9627,7 @@ aIV.utils.set({
 
     app.vals.move('prev');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
     this.debug.end('prev.onclick');
   };
@@ -9657,7 +9650,7 @@ aIV.utils.set({
 
     app.vals.move('next');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
     this.debug.end('next.onclick');
   };
@@ -9696,7 +9689,7 @@ aIV.utils.set({
       app.searchBar.vals.view = newVal;
       app.vals.set(null, newIndex);
 
-      app.updateDisplay(null, oldIndex, oldView);
+      App.updateDisplay(null, oldIndex, oldView);
 
       this.debug.end('searchView.onchange');
     }
@@ -9729,7 +9722,7 @@ aIV.utils.set({
       app.searchBar.vals.order = newVal;
       app.vals.set(newIds);
 
-      app.updateDisplay(oldIds, null, null, true);
+      App.updateDisplay(oldIds, null, null, true);
 
       this.debug.end('searchOrder.onchange');
     }
@@ -9766,7 +9759,7 @@ aIV.utils.set({
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchStage.onchange');
     }
@@ -9803,7 +9796,7 @@ aIV.utils.set({
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchSource.onchange');
     }
@@ -9841,7 +9834,7 @@ aIV.utils.set({
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchMainCat.onchange');
     }
@@ -9878,7 +9871,7 @@ aIV.utils.set({
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('searchSubCat.onchange');
     }
@@ -9910,7 +9903,7 @@ aIV.utils.set({
 
     app.vals.move(id);
 
-    app.updateDisplay(null, oldIndex, oldView);
+    App.updateDisplay(null, oldIndex, oldView);
 
     this.debug.end('linkId.onclick');
     this.debug.group('linkId.onclick', 'end');
@@ -9951,7 +9944,7 @@ aIV.utils.set({
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkSource.onclick');
       this.debug.group('linkSource.onclick', 'end');
@@ -9994,7 +9987,7 @@ aIV.utils.set({
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkMainCat.onclick');
       this.debug.group('linkMainCat.onclick', 'end');
@@ -10048,7 +10041,7 @@ aIV.utils.set({
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
       this.debug.end('linkSubCat.onclick');
       this.debug.group('linkSubCat.onclick', 'end');

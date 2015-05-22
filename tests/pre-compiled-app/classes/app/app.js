@@ -112,7 +112,7 @@
     ////////////////////////////////////////////////////////////////////////////
 
     if (questions.length) {
-      App.init();
+      App.init(config, sources, categories, questions);
     }
     else {
       app.elems.appendError();
@@ -151,7 +151,7 @@
     /** @type {function} */
     var get;
     
-    app.vals = new AppVals();
+    app.vals = new AppVals(questions.length);
 
     app.config = new Config(config);
 
@@ -216,7 +216,7 @@
 
     freezeObj(app);
 
-    this.debug.end('init', app);
+    app.debug.end('init', app);
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@
       app.questions.addCodeExts();
       app.elems.hold.style.display = 'none';
       flip = (app.searchBar.vals.order === 'desc');
-      app.updateDisplay(null, null, null, flip, true);
+      App.updateDisplay(null, null, null, flip, true);
 
       setTimeout(function() {          // $s$
         app.debug.end('setupDisplay', app);
@@ -517,7 +517,7 @@
    */
   App.setToDefaults = function(newIndex, newIds) {
 
-    app.debugHelp.start('setToDefaults', defaults);
+    app.debugHelp.start('setToDefaults', newIndex, newIds);
 
     checkArgs(newIndex, 'number', newIds, '!numbers');
 
