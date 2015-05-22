@@ -212,7 +212,7 @@
 
       app.searchBar.vals.stage = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -249,7 +249,7 @@
 
       app.searchBar.vals.source = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -286,7 +286,7 @@
 
       app.searchBar.vals.mainCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -324,7 +324,7 @@
 
       app.searchBar.vals.subCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -397,7 +397,7 @@
         app.searchBar.elems.source.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -439,7 +439,7 @@
         app.searchBar.elems.mainCat.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
@@ -494,7 +494,7 @@
         }
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
