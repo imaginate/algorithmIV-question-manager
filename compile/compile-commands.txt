@@ -29,7 +29,6 @@ sed \
   -e "/insert-module-vars/ r module-vars.js" \
   -e "/insert-module-methods/ r module-methods.js" \
   -e "/insert-class-app-base/ r classes/app/app.js" \
-  -e "/insert-class-app-flags/ r classes/app/app-flags.js" \
   -e "/insert-class-app-elems/ r classes/app/app-elems.js" \
   -e "/insert-class-app-vals/ r classes/app/app-vals.js" \
   -e "/insert-class-config/ r classes/config/config.js" \
@@ -73,7 +72,6 @@ sed ^
   -e "/insert-module-vars/ r module-vars.js" ^
   -e "/insert-module-methods/ r module-methods.js" ^
   -e "/insert-class-app-base/ r classes/app/app.js" ^
-  -e "/insert-class-app-flags/ r classes/app/app-flags.js" ^
   -e "/insert-class-app-elems/ r classes/app/app-elems.js" ^
   -e "/insert-class-app-vals/ r classes/app/app-vals.js" ^
   -e "/insert-class-config/ r classes/config/config.js" ^
@@ -323,7 +321,6 @@ sed \
   -e "/insert-module-vars/ r module-vars.js" \
   -e "/insert-module-methods/ r module-methods.js" \
   -e "/insert-class-app-base/ r classes/app/app.js" \
-  -e "/insert-class-app-flags/ r classes/app/app-flags.js" \
   -e "/insert-class-app-elems/ r classes/app/app-elems.js" \
   -e "/insert-class-app-vals/ r classes/app/app-vals.js" \
   -e "/insert-class-config/ r classes/config/config.js" \
@@ -367,7 +364,6 @@ sed ^
   -e "/insert-module-vars/ r module-vars.js" ^
   -e "/insert-module-methods/ r module-methods.js" ^
   -e "/insert-class-app-base/ r classes/app/app.js" ^
-  -e "/insert-class-app-flags/ r classes/app/app-flags.js" ^
   -e "/insert-class-app-elems/ r classes/app/app-elems.js" ^
   -e "/insert-class-app-vals/ r classes/app/app-vals.js" ^
   -e "/insert-class-config/ r classes/config/config.js" ^
