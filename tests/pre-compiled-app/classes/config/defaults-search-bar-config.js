@@ -114,7 +114,7 @@
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (string|number)>} */
+      /** @type {!Object<string, (string|number)>} */
       var props = {
         debug  : thisDebug,
         startID: startID,
@@ -174,21 +174,21 @@
    * ---------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
-   * @param {!Object<string, stringMap>} names - The available search ids and names.
-   * @param {!Object} ids - The available sub category ids.
-   * @param {number} quesLen - The number of user's questions.
    */
-  DefaultsSearchBarConfig.prototype.update = function(defaults, names,
-                                                      ids, quesLen) {
+  DefaultsSearchBarConfig.prototype.update = function(defaults) {
 
-    this.debug.start('update', defaults, names, ids, quesLen);
+    this.debug.start('update', defaults);
 
     /** @type {number} */
     var i;
+    /** @type {!Object} */
+    var ids;
     /** @type {!Array<*>} */
     var args;
     /** @type {string} */
     var prop;
+    /** @type {!Object<string, stringMap>} */
+    var names;
     /** @type {!Array<string>} */
     var props;
     /** @type {(number|string)} */
@@ -196,14 +196,11 @@
     /** @type {string} */
     var mainCat;
 
-    args = [ defaults, 'object', names, 'object', ids, 'object' ];
-    args.push(quesLen, 'number');
-    checkArgs.apply(null, args);
+    checkArgs(defaults, 'object');
 
-    // Check the user supplied defaults
-    if ( !checkType(defaults, '!object') ) {
-      defaults = {};
-    }
+    defaults = defaults || {};
+    ids = app.searchBar.ids.subCat;
+    names = app.searchBar.names;
 
     // Set the view, order, stage, source, & main category
     props = 'view order stage source mainCat'.split(' ');
@@ -223,7 +220,7 @@
         startID = startID.replace(/[^0-9]/g, '');
         startID = startID && Number(startID);
       }
-      if (startID && startID <= quesLen) {
+      if (startID && startID <= app.questions.len) {
         this.set('startID', startID);
       }
     }
