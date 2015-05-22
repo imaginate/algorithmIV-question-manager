@@ -155,6 +155,8 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {function} */
+    var getCategory;
     /** @type {!stringMap} */
     var linkObj;
     /** @type {string} */
@@ -175,9 +177,11 @@
       '' : (question.source === 'all') ?
         '_all' : question.source
     );
-    if ( !getSource(source, 'name') ) {
+    if ( !app.sources.get(source, 'name') ) {
       source = '';
     }
+
+    getCategory = app.categories.get;
 
     mainCat = [];
     if ( checkType(question.mainCat, '!strings') ) {
@@ -256,7 +260,7 @@
       mainCat : mainCat,
       subCat  : subCat,
       solution: solution
-    }, config, getSource, getCategory);
+    }, config);
 
     // Freeze some of the protected properties
     freezeObj(mainCat);

@@ -5,25 +5,18 @@
    * @desc An object containing the formatted details of a question.
    * @param {!Object} question - The pre-formatted details of the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config, getSource, getCategory) {
+  var QuestionFormat = function(question, config) {
 
     var thisDebug;
 
     this.debug = aIV.debug('QuestionFormat');
     thisDebug = this.debug;
 
-    this.debug.start('init', question, config, getSource, getCategory);
+    this.debug.start('init', question, config);
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -102,6 +95,8 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {function} */
+    var getCategory;
     /** @type {!{ result: string, lineCount: number }} */
     var code;
     /** @type {number} */
@@ -118,13 +113,15 @@
     }
 
     source = ( (config.source && question.source) ?
-      getSource(question.source, 'name') : ''
+      app.sources.get(question.source, 'name') : ''
     );
 
     complete = ( (!config.complete) ?
       '' : (question.complete) ?
         'Yes' : 'No'
     );
+
+    getCategory = app.categories.get;
 
     // Format the categories
     mainCat = {
@@ -191,7 +188,7 @@
      */
     this.get = function(propName) {
 
-      /** @type {Object<string, *>} */
+      /** @type {!Object<string, *>} */
       var props = {
         debug   : thisDebug,
         id      : id,
