@@ -87,9 +87,9 @@
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * ----------------------------------------------------
      * Public Method (AppVals.get)
-     * -----------------------------------------------
+     * ----------------------------------------------------
      * @desc Gets an AppVals protected property.
      * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
@@ -109,9 +109,9 @@
     };
 
     /**
-     * ----------------------------------------------- 
+     * ----------------------------------------------------
      * Public Method (AppVals.set)
-     * -----------------------------------------------
+     * ----------------------------------------------------
      * @desc Sets the app's current values.
      * @param {numbers} newIds - The new matching question ids.
      * @param {number=} newIndex - The new starting index.
@@ -150,9 +150,9 @@
   AppVals.prototype.constructor = AppVals;
 
   /**
-   * ----------------------------------------------- 
+   * ----------------------------------------------------
    * Public Method (AppVals.prototype.reset)
-   * -----------------------------------------------
+   * ----------------------------------------------------
    * @desc Resets the app values.
    * @param {numbers} ids - The new matching question ids.
    * @param {number=} index - The new starting index.
@@ -186,9 +186,9 @@
   };
 
   /**
-   * ----------------------------------------------- 
+   * ----------------------------------------------------
    * Public Method (AppVals.prototype.move)
-   * -----------------------------------------------
+   * ----------------------------------------------------
    * @desc Go to the prev, next, or a specific index.
    * @param {(string|number)} way - The location to move the index.
    *   The options are 'prev', 'next', or a question id.
