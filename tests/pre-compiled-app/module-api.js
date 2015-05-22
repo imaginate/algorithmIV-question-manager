@@ -102,8 +102,7 @@
     // Setup and start the app
     setup = function() {
       freezeObj(resources);
-      app = new App(config, sources, categories, questions);
-      app.setupDisplay();
+      App.setup(config, sources, categories, questions);
     };
 
     // Save the resources
