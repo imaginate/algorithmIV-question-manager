@@ -98,7 +98,7 @@
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (number|boolean)>} */
+      /** @type {!Object<string, (number|boolean)>} */
       var props = {
         debug       : thisDebug,
         trimSpace   : trimSpace,
