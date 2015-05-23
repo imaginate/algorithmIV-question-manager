@@ -300,7 +300,9 @@
     checkArgs.apply(null, args);
 
     oldIds = oldIds || app.vals.get('ids').slice(0);
-    oldIndex = oldIndex || app.vals.get('index');
+    if ( !checkType(oldIndex, 'number') ){
+      oldIndex = app.vals.get('index');
+    }
 
     newView = app.searchBar.vals.view;
     oldView = oldView || newView;
