@@ -3,8 +3,7 @@
    * The Configuration
    * -----------------------------------------------
    * @desc An object property of settings that allows you to run
-   *   the question manager like you want. For more details see the
-   *   [online documentation for configuration]{@link algorithmiv.com/docs/configuration}.
+   *   the question manager like you want.
    * @type {{
    *   searchSettings: Object,
    *   searchDefaults: Object,
@@ -20,8 +19,7 @@
    * The Search Settings
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable different search options in the app. For more details see the
-   *   [online documentation for search settings]{@link algorithmiv.com/docs/configuration/search-settings}.
+   *   disable different search options in the app.
    * @type {{
    *   stage   : boolean,
    *   source  : boolean,
@@ -41,8 +39,7 @@
    * The Search Defaults
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to set the
-   *   default search values for a new app init. For more details see the
-   *   [online documentation for search defaults]{@link algorithmiv.com/docs/configuration/search-defaults}.
+   *   default search values for a new app init.
    * @type {{
    *   view   : string,
    *   order  : string,
@@ -68,8 +65,7 @@
    * The Question Format
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable different parts of a question's display. For more details see the
-   *   [online documentation for question format]{@link algorithmiv.com/docs/configuration/question-format}.
+   *   disable different parts of a question's display.
    * @type {{
    *   id      : boolean,
    *   complete: boolean,
@@ -99,8 +95,7 @@
    * The Prettify Format
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to configure
-   *   the built-in prettifier to your liking. For more details see the
-   *   [online documentation for prettify format]{@link algorithmiv.com/docs/configuration/prettify-format}.
+   *   the built-in prettifier to your liking.
    * @type {{
    *   trimSpace   : number,
    *   tabLength   : number,
@@ -118,8 +113,7 @@
    * The Show Links
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable whether question parts have shortcut links. For more details see the
-   *   [online documentation for show links]{@link algorithmiv.com/docs/configuration/show-links}.
+   *   disable whether question parts have shortcut links.
    * @type {{
    *   id      : boolean,
    *   source  : boolean,

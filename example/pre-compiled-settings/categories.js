@@ -3,8 +3,7 @@
    * The Categories
    * -----------------------------------------------
    * @desc An object property of settings that contains all of the
-   *   question manager's category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's category ids and names.
    * @type {(Object<string, string>|{
    *   main: Object<string, string>,
    *   sub : Object<string, Object<string, string>>
@@ -17,8 +16,7 @@
    * The Main Categories
    * -----------------------------------------------
    * @desc An object property of categories that contains all of the
-   *   question manager's main category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's main category ids and names.
    * @type {Object<string, string>}
    */
   settings.categories.main = {
@@ -36,8 +34,7 @@
    * The Sub Categories
    * -----------------------------------------------
    * @desc An object property of categories that contains all of the
-   *   question manager's sub category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's sub category ids and names.
    * @type {Object<string, Object<string, string>>}
    */
   settings.categories.sub = {

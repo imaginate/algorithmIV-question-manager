@@ -28,8 +28,7 @@
    * The Configuration
    * -----------------------------------------------
    * @desc An object property of settings that allows you to run
-   *   the question manager like you want. For more details see the
-   *   [online documentation for configuration]{@link algorithmiv.com/docs/configuration}.
+   *   the question manager like you want.
    * @type {{
    *   searchSettings: Object,
    *   searchDefaults: Object,
@@ -45,8 +44,7 @@
    * The Search Settings
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable different search options in the app. For more details see the
-   *   [online documentation for search settings]{@link algorithmiv.com/docs/configuration/search-settings}.
+   *   disable different search options in the app.
    * @type {{
    *   stage   : boolean,
    *   source  : boolean,
@@ -66,8 +64,7 @@
    * The Search Defaults
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to set the
-   *   default search values for a new app init. For more details see the
-   *   [online documentation for search defaults]{@link algorithmiv.com/docs/configuration/search-defaults}.
+   *   default search values for a new app init.
    * @type {{
    *   view   : string,
    *   order  : string,
@@ -93,8 +90,7 @@
    * The Question Format
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable different parts of a question's display. For more details see the
-   *   [online documentation for question format]{@link algorithmiv.com/docs/configuration/question-format}.
+   *   disable different parts of a question's display.
    * @type {{
    *   id      : boolean,
    *   complete: boolean,
@@ -124,8 +120,7 @@
    * The Prettify Format
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to configure
-   *   the built-in prettifier to your liking. For more details see the
-   *   [online documentation for prettify format]{@link algorithmiv.com/docs/configuration/prettify-format}.
+   *   the built-in prettifier to your liking.
    * @type {{
    *   trimSpace   : number,
    *   tabLength   : number,
@@ -133,7 +128,7 @@
    * }}
    */
   settings.config.prettifyFormat = {
-    trimSpace   : 4,
+    trimSpace   : 0,
     tabLength   : 2,
     commentLinks: true
   };
@@ -143,8 +138,7 @@
    * The Show Links
    * -----------------------------------------------
    * @desc An object property of configuration that allows you to enable or
-   *   disable whether question parts have shortcut links. For more details see the
-   *   [online documentation for show links]{@link algorithmiv.com/docs/configuration/show-links}.
+   *   disable whether question parts have shortcut links.
    * @type {{
    *   id      : boolean,
    *   source  : boolean,
@@ -167,8 +161,7 @@
    * The Sources
    * -----------------------------------------------
    * @desc An object property of settings that contains all of the
-   *   question manager's source ids and names. For more details see the
-   *   [online documentation for sources]{@link algorithmiv.com/docs/sources}.
+   *   question manager's source ids and names.
    * @type {Object<string, string>}
    */
   settings.sources = {
@@ -188,8 +181,7 @@
    * The Categories
    * -----------------------------------------------
    * @desc An object property of settings that contains all of the
-   *   question manager's category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's category ids and names.
    * @type {(Object<string, string>|{
    *   main: Object<string, string>,
    *   sub : Object<string, Object<string, string>>
@@ -202,8 +194,7 @@
    * The Main Categories
    * -----------------------------------------------
    * @desc An object property of categories that contains all of the
-   *   question manager's main category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's main category ids and names.
    * @type {Object<string, string>}
    */
   settings.categories.main = {
@@ -221,8 +212,7 @@
    * The Sub Categories
    * -----------------------------------------------
    * @desc An object property of categories that contains all of the
-   *   question manager's sub category ids and names. For more details see the
-   *   [online documentation for categories]{@link algorithmiv.com/docs/categories}.
+   *   question manager's sub category ids and names.
    * @type {Object<string, Object<string, string>>}
    */
   settings.categories.sub = {
@@ -286,8 +276,7 @@
    * -----------------------------------------------
    * @desc An object property of settings that contains all of the JSON
    *   resources that are made available for use in the questions via the
-   *   public method aIV.app.getResource(resourceName). For more details see the
-   *   [online documentation for resources]{@link algorithmiv.com/docs/resources}.
+   *   public method aIV.app.getResource(resourceName).
    * @type {(string|Array<string>)}
    */
   settings.resources = 'words';
@@ -303,11 +292,7 @@
    * -----------------------------------------------
    * @desc An array property of settings that allows you to add your
    *   questions to the app. Each example question is taken from
-   *   Algorithm IV's library of questions and solutions. For more
-   *   details on questions and how to use them see the
-   *   [online documentation for questions]{@link algorithmiv.com/docs/questions}.
-   *   For more details on the library of questions see the
-   *   [library's repo on GitHub]{@link github.com/imaginate/algorithmIV-answers-in-javascript}.
+   *   Algorithm IV's library of questions and solutions.
    * @type {Array<Object>}
    */
   settings.questions = new Array(10);
@@ -316,8 +301,7 @@
    * -----------------------------------------------
    * The Question Object
    * -----------------------------------------------
-   * @desc The properties for a question object. For more details see the
-   *   [online documentation for questions]{@link algorithmiv.com/docs/questions}.
+   * @desc The properties for a question object.
    * @typedef {{
    *   url     : string,
    *   complete: boolean,

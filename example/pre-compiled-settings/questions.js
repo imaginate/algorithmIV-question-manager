@@ -4,11 +4,7 @@
    * -----------------------------------------------
    * @desc An array property of settings that allows you to add your
    *   questions to the app. Each example question is taken from
-   *   Algorithm IV's library of questions and solutions. For more
-   *   details on questions and how to use them see the
-   *   [online documentation for questions]{@link algorithmiv.com/docs/questions}.
-   *   For more details on the library of questions see the
-   *   [library's repo on GitHub]{@link github.com/imaginate/algorithmIV-answers-in-javascript}.
+   *   Algorithm IV's library of questions and solutions.
    * @type {Array<Object>}
    */
   settings.questions = new Array(10);
@@ -17,8 +13,7 @@
    * -----------------------------------------------
    * The Question Object
    * -----------------------------------------------
-   * @desc The properties for a question object. For more details see the
-   *   [online documentation for questions]{@link algorithmiv.com/docs/questions}.
+   * @desc The properties for a question object.
    * @typedef {{
    *   url     : string,
    *   complete: boolean,
