@@ -64,15 +64,15 @@ The resources object, ``` settings.resources ```, is where you can load JSON res
 The questions array, ``` settings.questions ```, is where you add your questions. Each question's id defined by its order in the array, and each question is represented by an object with its details. Visit the [questions example](https://github.com/imaginate/algorithmIV-question-manager/blob/421dfb8122e/example/pre-compiled-settings/questions.js) to see all of the options available for each question and more.
 
 <br />
-## Example
+## Other Important Information
+
+### Example
 Visit this repository's [example section](https://github.com/imaginate/algorithmIV-question-manager/tree/master/example) for a detailed example of this app in-action.
 
-<br />
-##Contributing
-See our [guideline to contributing](https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md).
+### Contributing
+See our [guideline for contributing](https://github.com/imaginate/algorithmIV-question-manager/blob/master/CONTRIBUTING.md)
 
-<br />
-##Contact Us
+### Contact Us
 - [Open an issue](https://github.com/imaginate/algorithmIV-question-manager/issues) on this GitHub repository
 - Send an email to [learn@algorithmiv.com](mailto:learn@algorithmiv.com)
 
