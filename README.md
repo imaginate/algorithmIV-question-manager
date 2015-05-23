@@ -37,6 +37,8 @@
     </body>
 </html>
 ```
+- Load your HTML document in any browser
+- Learn your algorithms & data structures
 
 <br />
 ## The App's Settings
