@@ -236,7 +236,7 @@
     i = categories.len;
     while (i-- && !pass) {
       mainId = categories.ids[i];
-      pass = !!this.ids.subCat[ mainId ].length;
+      pass = (this.ids.subCat[ mainId ].length > 1);
     }
     config.subCat = (config.subCat && pass);
 
