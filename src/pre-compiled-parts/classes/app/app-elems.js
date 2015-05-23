@@ -16,7 +16,7 @@
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.root;
 
@@ -25,7 +25,7 @@
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.sel;
 
@@ -34,7 +34,7 @@
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.main;
 
@@ -43,7 +43,7 @@
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.nav;
 
@@ -52,7 +52,7 @@
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.ques;
 
@@ -61,7 +61,7 @@
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.hold;
 
@@ -70,7 +70,7 @@
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.none;
 
@@ -101,13 +101,13 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {Element} */
+    /** @type {?Element} */
     var elem;
-    /** @type {Element} */
+    /** @type {?Element} */
     var code;
-    /** @type {Element} */
+    /** @type {?Element} */
     var ol;
-    /** @type {Element} */
+    /** @type {?Element} */
     var li;
 
     this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
@@ -175,6 +175,10 @@
     this.code.li.height = li.offsetHeight;
 
     this.root.removeChild(elem);
+    elem = null;
+    code = null;
+    ol   = null;
+    li   = null;
 
     freezeObj(this.code);
     freezeObj(this.code.ol);
@@ -203,21 +207,21 @@
    */
   AppElems.prototype.appendNav = function() {
 
-    /** @type {Element} */
+    /** @type {!Element} */
     var prev;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pArrow;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pBG;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pTitle;
-    /** @type {Element} */
+    /** @type {!Element} */
     var next;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nArrow;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nBG;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nTitle;
 
     prev = makeElem({ className: 'prev' });
@@ -279,23 +283,23 @@
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {Element} */
+    /** @type {!Element} */
     var errorDiv;
-    /** @type {Element} */
+    /** @type {!Element} */
     var h2;
-    /** @type {Element} */
+    /** @type {!Element} */
     var p;
-    /** @type {Element} */
+    /** @type {!Element} */
     var exampleDiv;
-    /** @type {Element} */
+    /** @type {!Element} */
     var h3;
-    /** @type {Element} */
+    /** @type {!Element} */
     var div;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pre;
-    /** @type {Element} */
+    /** @type {!Element} */
     var code;
-    /** @type {Element} */
+    /** @type {!Element} */
     var ol;
 
     errorMsg = '' +

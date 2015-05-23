@@ -255,8 +255,7 @@ aIV.utils.set({
     // Setup and start the app
     setup = function() {
       freezeObj(resources);
-      app = new App(config, sources, categories, questions);
-      app.setupDisplay();
+      App.setup(config, sources, categories, questions);
     };
 
     // Save the resources
@@ -340,13 +339,16 @@ aIV.utils.set({
   var resources = {};
 
   /**
-   * ----------------------------------------------- 
+   * -----------------------------------------------
    * Public Variable (app)
    * -----------------------------------------------
    * @desc The app instance.
-   * @type {!App}
+   * @type {!{
+   *   
+   *   
+   * }}
    */
-  var app;
+  var app = {};
 
 /* -----------------------------------------------------------------------------
  * The Public Module Methods (module-methods.js)
@@ -1050,92 +1052,92 @@ aIV.utils.set({
    * Public Class (App)
    * -----------------------------------------------------
    * @desc The base class for this app.
+   * @type {!Object<string, *>}
+   * @struct
+   */
+  var App = {};
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (App.setup)
+   * -----------------------------------------------------
+   * @desc Defines app's properties and checks for errors before constructing
+   *   the complete app object.
    * @param {?objectMap} config - The user's config settings.
    * @param {?stringMap} sources - The user's sources.
    * @param {?(objectMap|stringMap)} categories - The user's categories.
    * @param {!objects} questions - The user's questions.
-   * @constructor
    */
-  var App = function(config, sources, categories, questions) {
+  App.setup = function(config, sources, categories, questions) {
 
     /** @type {!Array<*>} */
     var args;
 
-    args = [ config, 'objectMap', sources, 'stringMap' ];
-    args.push(categories, 'objectMap|stringMap', questions, '!objects');
+    args = [ config, 'objectMap', sources, 'stringMap', questions, '!objects' ];
+    args.push(categories, 'objectMap|stringMap');
     checkArgs.apply(null, args);
 
     ////////////////////////////////////////////////////////////////////////////
-    // Define The Public Properties
+    // Define app's Public Properties
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ----------------------------------------------- 
-     * Public Property (App.flags)
-     * -----------------------------------------------
-     * @desc Saves flags that explain the current state of the app.
-     * @type {AppFlags}
-     * @struct
-     */
-    this.flags;
 
     /**
      * ----------------------------------------------- 
      * Public Property (App.elems)
      * -----------------------------------------------
      * @desc Saves a reference to key DOM nodes for this app.
-     * @type {AppElems}
+     * @type {!AppElems}
      */
-    this.elems;
+    app.elems = new AppElems();
 
     /**
      * ----------------------------------------------- 
      * Public Property (App.vals)
      * -----------------------------------------------
      * @desc Saves the current values for this app.
-     * @type {AppVals}
+     * @type {!AppVals}
      */
-    this.vals;
+    app.vals;
 
     /**
      * ---------------------------------------------------
      * Public Property (App.config)
      * ---------------------------------------------------
-     * @type {Config}
+     * @type {!Config}
      */
-    this.config;
+    app.config;
 
     /**
      * ---------------------------------------------------
      * Public Property (App.sources)
      * ---------------------------------------------------
-     * @type {Sources}
+     * @type {!Sources}
      */
-    this.sources;
+    app.sources;
 
     /**
      * ---------------------------------------------------
      * Public Property (App.categories)
      * ---------------------------------------------------
-     * @type {Categories}
+     * @type {!Categories}
      */
-    this.categories;
+    app.categories;
 
     /**
      * ---------------------------------------------------
      * Public Property (App.searchBar)
      * ---------------------------------------------------
-     * @type {SearchBar}
+     * @type {!SearchBar}
      */
-    this.searchBar;
+    app.searchBar;
 
     /**
      * ---------------------------------------------------
      * Public Property (App.questions)
      * ---------------------------------------------------
-     * @type {Questions}
+     * @type {!Questions}
      */
-    this.questions;
+    app.questions;
 
     /**
      * ---------------------------------------------------
@@ -1144,174 +1146,155 @@ aIV.utils.set({
      * @desc Tells whether the browser has a usable History class.
      * @type {boolean}
      */
-    this.isHistory;
+    app.isHistory;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Check for missing questions & init the app
+    ////////////////////////////////////////////////////////////////////////////
+
+    if (questions.length) {
+      App.init(config, sources, categories, questions);
+    }
+    else {
+      app.elems.appendError();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // End of the app's setup routine
+    ////////////////////////////////////////////////////////////////////////////
+
+  };
+
+  /**
+   * -----------------------------------------------------
+   * Public Method (App.init)
+   * -----------------------------------------------------
+   * @desc The constructor for App.
+   * @param {?objectMap} config - The user's config settings.
+   * @param {?stringMap} sources - The user's sources.
+   * @param {?(objectMap|stringMap)} categories - The user's categories.
+   * @param {!objects} questions - The user's questions.
+   */
+  App.init = function(config, sources, categories, questions) {
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {booleanMap} */
+    /** @type {!booleanMap} */
     var tmpConfig;
-    /** @type {?Object<string, (string|number)>} */
+    /** @type {Object<string, (string|number)>} */
     var defaults;
-    /** @type {Object<string, stringMap>} */
-    var names;
-    /** @type {Object<string, strings>} */
-    var ids;
-    /** @type {number} */
-    var len;
-    /** @type {!numbers} */
-    var newIds;
-    /** @type {number} */
-    var newIndex;
+    /** @type {function} */
+    var get;
+    
+    app.vals = new AppVals(questions.length);
 
-    // Save the count of questions for use before questions is setup
-    len = questions.length;
+    app.config = new Config(config);
 
-    // Setup the properties    
-    this.flags   = new AppFlags(!!len);
-    this.elems   = new AppElems();
-    this.vals    = new AppVals(len);
-    this.config  = new Config(config);
-    this.sources = new Sources(sources);
-    this.categories = new Categories(categories);
+    app.sources = new Sources(sources);
 
-    // Setup the prettifier
+    app.categories = new Categories(categories);
+
+    get = app.config.prettifier.get;
     tmpConfig = {
-      trimSpace   : this.config.prettifier.get('trimSpace'),
-      tabLength   : this.config.prettifier.get('tabLength'),
-      commentLinks: this.config.prettifier.get('commentLinks')
+      trimSpace   : get('trimSpace'),
+      tabLength   : get('tabLength'),
+      commentLinks: get('commentLinks')
     };
     prettify.setConfig(tmpConfig);
 
-    // Setup the search bar
+    get = app.config.searchBar.get;
     tmpConfig = {
-      stage   : this.config.searchBar.get('stage'),
-      source  : this.config.searchBar.get('source'),
-      category: this.config.searchBar.get('category'),
-      subCat  : this.config.searchBar.get('subCat')
+      stage   : get('stage'),
+      source  : get('source'),
+      category: get('category'),
+      subCat  : get('subCat')
     };
-    this.searchBar = new SearchBar(tmpConfig, this.sources, this.categories);
+    app.searchBar = new SearchBar(tmpConfig);
 
-    // Setup the questions
+    get = app.config.questions.get;
     tmpConfig = {
-      id      : this.config.questions.get('id'),
-      complete: this.config.questions.get('complete'),
-      source  : this.config.questions.get('source'),
-      category: this.config.questions.get('category'),
-      subCat  : this.config.questions.get('subCat'),
-      links   : this.config.questions.get('links'),
-      output  : this.config.questions.get('output')
+      id      : get('id'),
+      complete: get('complete'),
+      source  : get('source'),
+      category: get('category'),
+      subCat  : get('subCat'),
+      links   : get('links'),
+      output  : get('output')
     };
-    this.questions = new Questions(questions, tmpConfig, this.sources.get,
-                                   this.categories.get);
+    app.questions = new Questions(questions, tmpConfig);
 
-    // Set the search defaults
-    defaults = ( (!!config && hasOwnProp(config, 'searchDefaults')) ?
+    defaults = ( (config && hasOwnProp(config, 'searchDefaults')) ?
       config.searchDefaults : null
     );
-    names = this.searchBar.names;
-    ids = this.searchBar.ids.subCat;
-    this.config.searchBar.defaults.update(defaults, names, ids, len);
+    app.config.searchBar.defaults.update(defaults);
 
-    // Set the search bar to the defaults
+    get = app.config.searchBar.defaults.get;
     defaults = {
-      view   : this.config.searchBar.defaults.get('view'),
-      order  : this.config.searchBar.defaults.get('order'),
-      stage  : this.config.searchBar.defaults.get('stage'),
-      source : this.config.searchBar.defaults.get('source'),
-      mainCat: this.config.searchBar.defaults.get('mainCat'),
-      subCat : this.config.searchBar.defaults.get('subCat')
+      view   : get('view'),
+      order  : get('order'),
+      stage  : get('stage'),
+      source : get('source'),
+      mainCat: get('mainCat'),
+      subCat : get('subCat')
     };
-    this.searchBar.setToDefaults(defaults);
+    app.searchBar.setToDefaults(defaults);
 
-    // Update the current values to match the given defaults
-    newIds = this.findMatches();
-    newIndex = this.config.searchBar.defaults.get('startID');
-    if (newIndex > 0) {
-      this.searchBar.vals.view = 'one';
-      newIndex = newIds.indexOf(newIndex);
-    }
-    len = newIds.length;
-    if (this.searchBar.vals.view === 'all' || !len) {
-      newIndex = -1;
-    }
-    else if (newIndex < 0 || newIndex >= len) {
-      newIndex = 0;
-    }
-    this.vals.set(newIds, newIndex);
+    App.setToDefaults(get('startID'), App.findMatches()); // index, ids);
 
-    // Setup the value of isHistory
-    this.isHistory = true;
-    try {
-      window.history.replaceState(this.getStateObj(), '');
-    }
-    catch (e) {
-      this.isHistory = false;
-    }
+    app.isHistory = App.setHistory();
 
-    // Setup the onpopstate event
-    if (this.isHistory) {
-      window.onpopstate = function(event) {
-        Events.popState( JSON.parse(event.state) );
-      };
-    }
+    App.setupDisplay();
 
     ////////////////////////////////////////////////////////////////////////////
-    // End Of The Class Setup
+    // End of the app's init routine
     ////////////////////////////////////////////////////////////////////////////
 
-    freezeObj(this);
+    freezeObj(app);
 
   };
 
 ////////////////////////////////////////////////////////////////////////////////
-// The Prototype Methods
+// The methods for setting up & updating the app's state & display
 ////////////////////////////////////////////////////////////////////////////////
-
-  App.prototype.constructor = App;
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.setupDisplay)
+   * Public Method (App.setupDisplay)
    * -----------------------------------------------
    * @desc Sets up the display for the app.
    * @type {function}
    */
-  App.prototype.setupDisplay = function() {
+  App.setupDisplay = function() {
 
     /** @type {number} */
     var renderTime;
+    /** @type {boolean} */
+    var flip;
 
-    if ( app.flags.get('initArgs') ) {
+    renderTime = app.questions.len * 50;
 
-      app.elems.appendNav();
-      app.searchBar.setOptElems();
-      app.searchBar.appendElems();
-      app.questions.addIdsToSearch();
-      app.questions.appendElems();
+    app.elems.appendNav();
+    app.searchBar.setOptElems();
+    app.searchBar.appendElems();
+    app.questions.addIdsToSearch();
+    app.questions.appendElems();
 
-      renderTime = app.questions.len * 50;
-      setTimeout(function() {
+    // Allow the DOM time to process the appended elements before continuing
+    setTimeout(function() {
 
-        /** @type {boolean} */
-        var flip;
+      app.questions.addCodeExts();
+      app.elems.hold.style.display = 'none';
+      flip = (app.searchBar.vals.order === 'desc');
+      App.updateDisplay(null, null, null, flip, true);
 
-        app.questions.addCodeExts();
-        app.elems.hold.style.display = 'none';
-        flip = (app.searchBar.vals.order === 'desc');
-        app.updateDisplay(null, null, null, flip, true);
-
-      }, renderTime);
-    }
-    else {
-      app.elems.appendError();
-    }
+    }, renderTime);
   };
 
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.updateDisplay)
+   * Public Method (App.updateDisplay)
    * -----------------------------------------------
    * @desc Show the current matching questions for the app.
    * @param {numbers=} oldIds - The old matching ids.
@@ -1323,8 +1306,8 @@ aIV.utils.set({
    * @param {boolean=} noPushState - If set to true it indicates
    *   that the pushState call should NOT be made.
    */
-  App.prototype.updateDisplay = function(oldIds, oldIndex, oldView,
-                                         flipElems, noPushState) {
+  App.updateDisplay = function(oldIds, oldIndex, oldView,
+                               flipElems, noPushState) {
 
     /** @type {!Array<*>} */
     var args;
@@ -1339,18 +1322,14 @@ aIV.utils.set({
     args.push(flipElems, 'boolean=', noPushState, 'boolean=');
     checkArgs.apply(null, args);
 
-    oldIds = (!!oldIds) ? oldIds : app.vals.get('ids').slice(0);
-    oldIndex = ( ( checkType(oldIndex, '!number') ) ?
-      oldIndex : app.vals.get('index')
-    );
+    oldIds = oldIds || app.vals.get('ids').slice(0);
+    if ( !checkType(oldIndex, 'number') ){
+      oldIndex = app.vals.get('index');
+    }
 
     newView = app.searchBar.vals.view;
-    oldView = ( checkType(oldView, '!string') ) ? oldView : newView;
+    oldView = oldView || newView;
 
-    flipElems = flipElems || false;
-    noPushState = noPushState || false;
-
-    // Save the new matching question ids and index
     newIds = app.vals.get('ids').slice(0);
     newIndex = app.vals.get('index');
 
@@ -1367,20 +1346,12 @@ aIV.utils.set({
             'block' : 'none'
       );
 
-      // Check if the questions order should be flipped
-      if (flipElems) {
-        app.questions.reverseElems();
-      }
-
-      // Hide the old questions
+      flipElems && app.questions.reverseElems();
       app.questions.hideElems(oldIds, oldIndex, oldView);
-
-      // Show the new questions
       app.questions.showElems(newIds, newIndex);
 
-      // Update the state
       if (app.isHistory && !noPushState) {
-        window.history.pushState(app.getStateObj(), '');
+        window.history.pushState(App.makeStateObj(), '');
       }
 
       // Show the question's main element
@@ -1389,15 +1360,19 @@ aIV.utils.set({
     }, 520);
   };
 
+////////////////////////////////////////////////////////////////////////////////
+// The App's helper methods
+////////////////////////////////////////////////////////////////////////////////
+
   /**
    * -----------------------------------------------
-   * Public Method (App.prototype.findMatches)
+   * Public Method (App.findMatches)
    * -----------------------------------------------
    * @desc Finds the matching question ids for the current selected search
    *   values.
-   * @return {numbers} An array of the matching ids.
+   * @return {!numbers} An array of the matching ids.
    */
-  App.prototype.findMatches = function() {
+  App.findMatches = function() {
 
     /** @type {numbers} */
     var stage;
@@ -1417,23 +1392,23 @@ aIV.utils.set({
     var pass;
 
     // Save the current values
-    stage   = this.searchBar.vals.stage;
-    source  = this.searchBar.vals.source;
-    mainCat = this.searchBar.vals.mainCat;
-    subCat  = this.searchBar.vals.subCat;
+    stage   = app.searchBar.vals.stage;
+    source  = app.searchBar.vals.source;
+    mainCat = app.searchBar.vals.mainCat;
+    subCat  = app.searchBar.vals.subCat;
 
     // Save the matching ids
     stage = ( (stage === 'all') ?
-      null : this.searchBar.ques.stage[ stage ].slice(0)
+      null : app.searchBar.ques.stage[ stage ].slice(0)
     );
     source = ( (source === 'all') ?
-      null : this.sources.get(source, 'ids').slice(0)
+      null : app.sources.get(source, 'ids').slice(0)
     );
     mainCat = ( (mainCat === 'all') ?
-      null : this.categories.get(mainCat, 'ids').slice(0)
+      null : app.categories.get(mainCat, 'ids').slice(0)
     );
     subCat = ( (subCat === 'all') ?
-      null : this.categories.get(subCat, 'ids').slice(0)
+      null : app.categories.get(subCat, 'ids').slice(0)
     );
 
     // Check for empty arrays
@@ -1447,15 +1422,15 @@ aIV.utils.set({
 
     // Check for all ids
     if (!stage && !source && !mainCat && !subCat) {
-      newIds = this.vals.get('allIds').slice(0);
-      if (this.searchBar.vals.order === 'desc') {
+      newIds = app.vals.get('allIds').slice(0);
+      if (app.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
       return newIds;
     }
 
     // Find the min length array
-    len = (stage) ? stage.length : this.questions.len;
+    len = (stage) ? stage.length : app.questions.len;
     if (source && source.length < len) {
       len = source.length;
     }
@@ -1486,7 +1461,7 @@ aIV.utils.set({
 
     // Check for all null arrays
     if (!stage && !source && !mainCat && !subCat) {
-      if (this.searchBar.vals.order === 'desc') {
+      if (app.searchBar.vals.order === 'desc') {
         newIds.reverse();
       }
       return newIds;
@@ -1542,7 +1517,7 @@ aIV.utils.set({
       }
     }
 
-    if (this.searchBar.vals.order === 'desc') {
+    if (app.searchBar.vals.order === 'desc') {
       newIds.reverse();
     }
 
@@ -1550,26 +1525,88 @@ aIV.utils.set({
   };
 
   /**
-   * ----------------------------------------------- 
-   * Public Method (AppVals.prototype.getStateObj)
+   * -----------------------------------------------
+   * Public Method (App.setToDefaults)
+   * -----------------------------------------------
+   * @desc Updates the app's values to match the defaults.
+   * @param {number} newIndex
+   * @param {!numbers} newIds
+   */
+  App.setToDefaults = function(newIndex, newIds) {
+
+    checkArgs(newIndex, 'number', newIds, '!numbers');
+
+    if (newIndex > 0) {
+      app.searchBar.vals.view = 'one';
+      newIndex = newIds.indexOf(newIndex);
+    }
+
+    if (app.searchBar.vals.view === 'all' || !newIds.length) {
+      newIndex = -1;
+    }
+    else if (newIndex < 0 || newIndex >= newIds.length) {
+      newIndex = 0;
+    }
+
+    app.vals.set(newIds, newIndex);
+
+  };
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.setHistory)
+   * -----------------------------------------------
+   * @desc Checks whether the browser supports the native History object and if
+   *   the browser supports it this method sets up its properties for the app.
+   * @return {boolean} Whether the browser supports the native History object.
+   */
+  App.setHistory = function() {
+
+    /** @type {boolean} */
+    var pass;
+
+    pass = true;
+
+    try {
+      window.history.replaceState(App.makeStateObj(), '');
+    }
+    catch (e) {
+      pass = false;
+    }
+
+    if (pass) {
+      window.onpopstate = function(event) {
+        Events.popState( JSON.parse(event.state) );
+      };
+    }
+
+    return pass;
+  };
+
+  /**
+   * -----------------------------------------------
+   * Public Method (App.makeStateObj)
    * -----------------------------------------------
    * @desc Returns a state object for the current app values.
-   * @return {Object<string, (string|number|numbers)>}
+   * @return {!Object<string, (string|number|!numbers)>}
    */
-  App.prototype.getStateObj = function() {
+  App.makeStateObj = function() {
 
-    /** @type {Object<string, (string|number|numbers)>} */
+    /** @type {!Object<string, string>} */
+    var searchVals;
+    /** @type {!Object<string, (string|number|!numbers)>} */
     var vals;
 
+    searchVals = app.searchBar.vals;
     vals = {
-      ids    : this.vals.get('ids').slice(0),
-      index  : this.vals.get('index'),
-      view   : this.searchBar.vals.view,
-      order  : this.searchBar.vals.order,
-      stage  : this.searchBar.vals.stage,
-      source : this.searchBar.vals.source,
-      mainCat: this.searchBar.vals.mainCat,
-      subCat : this.searchBar.vals.subCat
+      ids    : app.vals.get('ids').slice(0),
+      index  : app.vals.get('index'),
+      view   : searchVals.view,
+      order  : searchVals.order,
+      stage  : searchVals.stage,
+      source : searchVals.source,
+      mainCat: searchVals.mainCat,
+      subCat : searchVals.subCat
     };
 
     vals = JSON.stringify(vals);
@@ -1577,94 +1614,7 @@ aIV.utils.set({
     return vals;
   };
 
-/* -----------------------------------------------------------------------------
- * The AppFlags Class (classes/app/app-flags.js)
- * -------------------------------------------------------------------------- */
-
-  /**
-   * -----------------------------------------------------
-   * Public Class (AppFlags)
-   * -----------------------------------------------------
-   * @desc The flags that explain states of the environment in the app.
-   * @param {boolean} pass - Indicates whether the user's supplied settings
-   *   were the correct data types.
-   * @constructor
-   */
-  var AppFlags = function(pass) {
-
-    checkArgs(pass, 'boolean');
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Define & Setup The Protected Properties
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ----------------------------------------------- 
-     * Protected Property (AppFlags.initArgs)
-     * -----------------------------------------------
-     * @desc Indicates whether the app was initialized with correct arguments.
-     * @type {boolean}
-     * @private
-     */
-    var initArgs = pass;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Define & Setup The Public Methods
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppFlags.get)
-     * -----------------------------------------------
-     * @desc Gets an AppFlags protected property.
-     * @param {string} prop - The name of the flag to get.
-     * @return {boolean} The flag's value.
-     */
-    this.get = function(prop) {
-
-      /** @type {!Object<string, boolean>} */
-      var props = {
-        initArgs: initArgs
-      };
-
-      return getter.call(props, prop);
-    };
-
-    /**
-     * ----------------------------------------------- 
-     * Public Method (AppFlags.set)
-     * -----------------------------------------------
-     * @desc Sets an AppFlags protected property.
-     * @param {string} prop - The name of the flag to set.
-     * @param {boolean} val - The value to set the flag to.
-     * @return {boolean} The setter's success.
-     */
-    this.set = function(prop, val) {
-
-      /** @type {Object<string, function(*): boolean>} */
-      var setters = {
-        initArgs: function(val) {
-          initArgs = val;
-          return checkType(val, 'boolean');
-        }
-      };
-
-      return setter.call(setters, prop, val);
-    };
-
-    ////////////////////////////////////////////////////////////////////////////
-    // End Of The Class Setup
-    ////////////////////////////////////////////////////////////////////////////
-
-    freezeObj(this, true);
-
-  };
-
-////////////////////////////////////////////////////////////////////////////////
-// The Prototype Methods
-////////////////////////////////////////////////////////////////////////////////
-
-  AppFlags.prototype.constructor = AppFlags;
+  freezeObj(App, true);
 
 /* -----------------------------------------------------------------------------
  * The AppElems Class (classes/app/app-elems.js)
@@ -1688,7 +1638,7 @@ aIV.utils.set({
      * Public Property (AppElems.root)
      * -----------------------------------------------
      * @desc The #aIV element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.root;
 
@@ -1697,7 +1647,7 @@ aIV.utils.set({
      * Public Property (AppElems.sel)
      * -----------------------------------------------
      * @desc The #aIV-selections element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.sel;
 
@@ -1706,7 +1656,7 @@ aIV.utils.set({
      * Public Property (AppElems.main)
      * -----------------------------------------------
      * @desc The #aIV-main element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.main;
 
@@ -1715,7 +1665,7 @@ aIV.utils.set({
      * Public Property (AppElems.nav)
      * -----------------------------------------------
      * @desc The #aIV-nav element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.nav;
 
@@ -1724,7 +1674,7 @@ aIV.utils.set({
      * Public Property (AppElems.ques)
      * -----------------------------------------------
      * @desc The #aIV-questions element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.ques;
 
@@ -1733,7 +1683,7 @@ aIV.utils.set({
      * Public Property (AppElems.hold)
      * -----------------------------------------------
      * @desc The img.loader element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.hold;
 
@@ -1742,7 +1692,7 @@ aIV.utils.set({
      * Public Property (AppElems.none)
      * -----------------------------------------------
      * @desc The section.empty element.
-     * @type {Element}
+     * @type {!Element}
      */
     this.none;
 
@@ -1773,13 +1723,13 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
-    /** @type {Element} */
+    /** @type {?Element} */
     var elem;
-    /** @type {Element} */
+    /** @type {?Element} */
     var code;
-    /** @type {Element} */
+    /** @type {?Element} */
     var ol;
-    /** @type {Element} */
+    /** @type {?Element} */
     var li;
 
     this.root = makeElem({ id: 'aIV', html: '<h1>Algorithm IV</h1>' });
@@ -1847,6 +1797,10 @@ aIV.utils.set({
     this.code.li.height = li.offsetHeight;
 
     this.root.removeChild(elem);
+    elem = null;
+    code = null;
+    ol   = null;
+    li   = null;
 
     freezeObj(this.code);
     freezeObj(this.code.ol);
@@ -1875,21 +1829,21 @@ aIV.utils.set({
    */
   AppElems.prototype.appendNav = function() {
 
-    /** @type {Element} */
+    /** @type {!Element} */
     var prev;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pArrow;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pBG;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pTitle;
-    /** @type {Element} */
+    /** @type {!Element} */
     var next;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nArrow;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nBG;
-    /** @type {Element} */
+    /** @type {!Element} */
     var nTitle;
 
     prev = makeElem({ className: 'prev' });
@@ -1951,23 +1905,23 @@ aIV.utils.set({
     var exampleLineCount;
     /** @type {number} */
     var divHeight;
-    /** @type {Element} */
+    /** @type {!Element} */
     var errorDiv;
-    /** @type {Element} */
+    /** @type {!Element} */
     var h2;
-    /** @type {Element} */
+    /** @type {!Element} */
     var p;
-    /** @type {Element} */
+    /** @type {!Element} */
     var exampleDiv;
-    /** @type {Element} */
+    /** @type {!Element} */
     var h3;
-    /** @type {Element} */
+    /** @type {!Element} */
     var div;
-    /** @type {Element} */
+    /** @type {!Element} */
     var pre;
-    /** @type {Element} */
+    /** @type {!Element} */
     var code;
-    /** @type {Element} */
+    /** @type {!Element} */
     var ol;
 
     errorMsg = '' +
@@ -2201,9 +2155,9 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * ----------------------------------------------------
      * Public Method (AppVals.get)
-     * -----------------------------------------------
+     * ----------------------------------------------------
      * @desc Gets an AppVals protected property.
      * @param {string} prop - The name of the property to get.
      * @return {!(number|numbers)}
@@ -2222,9 +2176,9 @@ aIV.utils.set({
     };
 
     /**
-     * ----------------------------------------------- 
+     * ----------------------------------------------------
      * Public Method (AppVals.set)
-     * -----------------------------------------------
+     * ----------------------------------------------------
      * @desc Sets the app's current values.
      * @param {numbers} newIds - The new matching question ids.
      * @param {number=} newIndex - The new starting index.
@@ -2259,9 +2213,9 @@ aIV.utils.set({
   AppVals.prototype.constructor = AppVals;
 
   /**
-   * ----------------------------------------------- 
+   * ----------------------------------------------------
    * Public Method (AppVals.prototype.reset)
-   * -----------------------------------------------
+   * ----------------------------------------------------
    * @desc Resets the app values.
    * @param {numbers} ids - The new matching question ids.
    * @param {number=} index - The new starting index.
@@ -2292,9 +2246,9 @@ aIV.utils.set({
   };
 
   /**
-   * ----------------------------------------------- 
+   * ----------------------------------------------------
    * Public Method (AppVals.prototype.move)
-   * -----------------------------------------------
+   * ----------------------------------------------------
    * @desc Go to the prev, next, or a specific index.
    * @param {(string|number)} way - The location to move the index.
    *   The options are 'prev', 'next', or a question id.
@@ -2727,7 +2681,7 @@ aIV.utils.set({
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (string|number)>} */
+      /** @type {!Object<string, (string|number)>} */
       var props = {
         startID: startID,
         view   : view,
@@ -2784,19 +2738,19 @@ aIV.utils.set({
    * ---------------------------------------------------------
    * @desc Sets the search defaults to the user's settings.
    * @param {Object} defaults - The user's search defaults.
-   * @param {!Object<string, stringMap>} names - The available search ids and names.
-   * @param {!Object} ids - The available sub category ids.
-   * @param {number} quesLen - The number of user's questions.
    */
-  DefaultsSearchBarConfig.prototype.update = function(defaults, names,
-                                                      ids, quesLen) {
+  DefaultsSearchBarConfig.prototype.update = function(defaults) {
 
     /** @type {number} */
     var i;
+    /** @type {!Object} */
+    var ids;
     /** @type {!Array<*>} */
     var args;
     /** @type {string} */
     var prop;
+    /** @type {!Object<string, stringMap>} */
+    var names;
     /** @type {!Array<string>} */
     var props;
     /** @type {(number|string)} */
@@ -2804,14 +2758,11 @@ aIV.utils.set({
     /** @type {string} */
     var mainCat;
 
-    args = [ defaults, 'object', names, 'object', ids, 'object' ];
-    args.push(quesLen, 'number');
-    checkArgs.apply(null, args);
+    checkArgs(defaults, 'object');
 
-    // Check the user supplied defaults
-    if ( !checkType(defaults, '!object') ) {
-      defaults = {};
-    }
+    defaults = defaults || {};
+    ids = app.searchBar.ids.subCat;
+    names = app.searchBar.names;
 
     // Set the view, order, stage, source, & main category
     props = 'view order stage source mainCat'.split(' ');
@@ -2831,7 +2782,7 @@ aIV.utils.set({
         startID = startID.replace(/[^0-9]/g, '');
         startID = startID && Number(startID);
       }
-      if (startID && startID <= quesLen) {
+      if (startID && startID <= app.questions.len) {
         this.set('startID', startID);
       }
     }
@@ -3024,18 +2975,11 @@ aIV.utils.set({
    * @desc The questions for this app.
    * @param {!objects} questions - The user's questions.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, getSource, getCategory) {
+  var Questions = function(questions, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ questions, '!objects', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(questions, '!objects', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -3085,8 +3029,7 @@ aIV.utils.set({
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config,
-                                     getSource, getCategory);
+      this.list[ id ] = new Question(questions[i], id, config);
     }
 
     // Freeze the public properties that are objects
@@ -3674,7 +3617,7 @@ aIV.utils.set({
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (number|boolean)>} */
+      /** @type {!Object<string, (number|boolean)>} */
       var props = {
         trimSpace   : trimSpace,
         tabLength   : tabLength,
@@ -4137,7 +4080,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Property (Categories.ids)
      * -----------------------------------------------
      * @desc Saves an array of all the main category ids in alphabetical order.
@@ -4146,7 +4089,7 @@ aIV.utils.set({
     this.ids;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Property (Categories.len)
      * -----------------------------------------------
      * @desc Saves the count of main categories.
@@ -4180,7 +4123,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (Categories.data)
      * -----------------------------------------------
      * @desc Saves a hash map of the category objects using the ids as keys.
@@ -4238,7 +4181,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Property (Categories.get)
      * -----------------------------------------------
      * @desc Get a Catgory's object or protected property.
@@ -4330,7 +4273,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (Category.url)
      * -----------------------------------------------
      * @desc The url name for this category.
@@ -4340,7 +4283,7 @@ aIV.utils.set({
     var url;
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Protected Property (Category.ids)
      * -----------------------------------------------
      * @desc The ids of the questions containing this category.
@@ -4368,7 +4311,7 @@ aIV.utils.set({
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Method (Category.get)
      * -----------------------------------------------
      * @desc Gets a protected property's value from the category.
@@ -4389,7 +4332,7 @@ aIV.utils.set({
     };
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Method (Category.addId)
      * -----------------------------------------------
      * @desc Adds a question id to this category.
@@ -4413,7 +4356,7 @@ aIV.utils.set({
     };
 
     /**
-     * ----------------------------------------------- 
+     * -----------------------------------------------
      * Public Method (Category.freezeIds)
      * -----------------------------------------------
      * @desc Freezes this category's question ids.
@@ -4446,16 +4389,12 @@ aIV.utils.set({
    * Public Class (SearchBar)
    * -----------------------------------------------------
    * @desc The search bar's values and elements for this app.
-   * @todo Break this class down into smaller pieces with appropriate
-   *   getters and setters.
    * @param {!booleanMap} config - The app's search bar config settings.
-   * @param {!Sources} sources - The app's sources.
-   * @param {!Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(config, sources, categories) {
 
-    checkArgs(config, '!booleanMap', sources, '!object', categories, '!object');
+    checkArgs(config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -4549,12 +4488,16 @@ aIV.utils.set({
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {!Categories} */
+    var categories;
     /** @type {string} */
     var sourceId;
     /** @type {!strings} */
     var mainSubs;
     /** @type {!Category} */
     var mainCat;
+    /** @type {!Sources} */
+    var sources;
     /** @type {string} */
     var mainId;
     /** @type {string} */
@@ -4565,6 +4508,9 @@ aIV.utils.set({
     var ii;
     /** @type {number} */
     var i;
+
+    sources = app.sources;
+    categories = app.categories;
 
     // Setup the current values
     this.vals = {
@@ -4702,14 +4648,14 @@ aIV.utils.set({
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {!Object<string, string>} defaults - The default values.
+   * @param {!stringMap} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
     /** @type {!stringMap} */
     var vals;
 
-    checkArgs(defaults, '!stringMap');
+    checkArgs(defaults, '!object');
 
     vals = this.vals;
 
@@ -5080,18 +5026,11 @@ aIV.utils.set({
    * @desc The questions for this app.
    * @param {!objects} questions - The user's questions.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, getSource, getCategory) {
+  var Questions = function(questions, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ questions, '!objects', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(questions, '!objects', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -5141,8 +5080,7 @@ aIV.utils.set({
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config,
-                                     getSource, getCategory);
+      this.list[ id ] = new Question(questions[i], id, config);
     }
 
     // Freeze the public properties that are objects
@@ -5645,18 +5583,11 @@ aIV.utils.set({
    * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, getSource, getCategory) {
+  var Question = function(question, id, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', id, 'number', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties
@@ -5788,6 +5719,8 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {function} */
+    var getCategory;
     /** @type {!stringMap} */
     var linkObj;
     /** @type {string} */
@@ -5808,9 +5741,11 @@ aIV.utils.set({
       '' : (question.source === 'all') ?
         '_all' : question.source
     );
-    if ( !getSource(source, 'name') ) {
+    if ( !app.sources.get(source, 'name') ) {
       source = '';
     }
+
+    getCategory = app.categories.get;
 
     mainCat = [];
     if ( checkType(question.mainCat, '!strings') ) {
@@ -5886,7 +5821,7 @@ aIV.utils.set({
       mainCat : mainCat,
       subCat  : subCat,
       solution: solution
-    }, config, getSource, getCategory);
+    }, config);
 
     // Freeze some of the protected properties
     freezeObj(mainCat);
@@ -6068,18 +6003,11 @@ aIV.utils.set({
    * @desc An object containing the formatted details of a question.
    * @param {!Object} question - The pre-formatted details of the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var QuestionFormat = function(question, config, getSource, getCategory) {
+  var QuestionFormat = function(question, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Protected Properties
@@ -6158,6 +6086,8 @@ aIV.utils.set({
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {function} */
+    var getCategory;
     /** @type {!{ result: string, lineCount: number }} */
     var code;
     /** @type {number} */
@@ -6174,13 +6104,15 @@ aIV.utils.set({
     }
 
     source = ( (config.source && question.source) ?
-      getSource(question.source, 'name') : ''
+      app.sources.get(question.source, 'name') : ''
     );
 
     complete = ( (!config.complete) ?
       '' : (question.complete) ?
         'Yes' : 'No'
     );
+
+    getCategory = app.categories.get;
 
     // Format the categories
     mainCat = {
@@ -6247,7 +6179,7 @@ aIV.utils.set({
      */
     this.get = function(propName) {
 
-      /** @type {Object<string, *>} */
+      /** @type {!Object<string, *>} */
       var props = {
         id      : id,
         source  : source,
@@ -9042,7 +8974,7 @@ aIV.utils.set({
 
     app.vals.reset(newState.ids, newState.index);
 
-    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+    App.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
   };
 
@@ -9062,7 +8994,7 @@ aIV.utils.set({
 
     app.vals.move('prev');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
   };
 
@@ -9082,7 +9014,7 @@ aIV.utils.set({
 
     app.vals.move('next');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
   };
 
@@ -9117,7 +9049,7 @@ aIV.utils.set({
       app.searchBar.vals.view = newVal;
       app.vals.set(null, newIndex);
 
-      app.updateDisplay(null, oldIndex, oldView);
+      App.updateDisplay(null, oldIndex, oldView);
 
     }
   };
@@ -9147,7 +9079,7 @@ aIV.utils.set({
       app.searchBar.vals.order = newVal;
       app.vals.set(newIds);
 
-      app.updateDisplay(oldIds, null, null, true);
+      App.updateDisplay(oldIds, null, null, true);
 
     }
   };
@@ -9177,11 +9109,11 @@ aIV.utils.set({
 
       app.searchBar.vals.stage = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9211,11 +9143,11 @@ aIV.utils.set({
 
       app.searchBar.vals.source = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9245,12 +9177,12 @@ aIV.utils.set({
 
       app.searchBar.vals.mainCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9280,11 +9212,11 @@ aIV.utils.set({
 
       app.searchBar.vals.subCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9312,7 +9244,7 @@ aIV.utils.set({
 
     app.vals.move(id);
 
-    app.updateDisplay(null, oldIndex, oldView);
+    App.updateDisplay(null, oldIndex, oldView);
 
   };
 
@@ -9344,11 +9276,11 @@ aIV.utils.set({
         app.searchBar.elems.source.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9381,12 +9313,12 @@ aIV.utils.set({
         app.searchBar.elems.mainCat.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -9431,11 +9363,11 @@ aIV.utils.set({
         }
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };

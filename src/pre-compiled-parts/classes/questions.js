@@ -5,18 +5,11 @@
    * @desc The questions for this app.
    * @param {!objects} questions - The user's questions.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Questions = function(questions, config, getSource, getCategory) {
+  var Questions = function(questions, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ questions, '!objects', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(questions, '!objects', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -66,8 +59,7 @@
     i = -1;
     while (++i < len) {
       id = i + 1;
-      this.list[ id ] = new Question(questions[i], id, config,
-                                     getSource, getCategory);
+      this.list[ id ] = new Question(questions[i], id, config);
     }
 
     // Freeze the public properties that are objects

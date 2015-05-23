@@ -3,16 +3,12 @@
    * Public Class (SearchBar)
    * -----------------------------------------------------
    * @desc The search bar's values and elements for this app.
-   * @todo Break this class down into smaller pieces with appropriate
-   *   getters and setters.
    * @param {!booleanMap} config - The app's search bar config settings.
-   * @param {!Sources} sources - The app's sources.
-   * @param {!Categories} categories - The app's categories.
    * @constructor
    */
   var SearchBar = function(config, sources, categories) {
 
-    checkArgs(config, '!booleanMap', sources, '!object', categories, '!object');
+    checkArgs(config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Define The Public Properties
@@ -106,12 +102,16 @@
     // Setup The Public Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {!Categories} */
+    var categories;
     /** @type {string} */
     var sourceId;
     /** @type {!strings} */
     var mainSubs;
     /** @type {!Category} */
     var mainCat;
+    /** @type {!Sources} */
+    var sources;
     /** @type {string} */
     var mainId;
     /** @type {string} */
@@ -122,6 +122,9 @@
     var ii;
     /** @type {number} */
     var i;
+
+    sources = app.sources;
+    categories = app.categories;
 
     // Setup the current values
     this.vals = {
@@ -259,14 +262,14 @@
    * Public Method (SearchBar.prototype.setToDefaults)
    * -----------------------------------------------------
    * @desc Updates the current search bar's values to the defaults.
-   * @param {!Object<string, string>} defaults - The default values.
+   * @param {!stringMap} defaults - The default values.
    */
   SearchBar.prototype.setToDefaults = function(defaults) {
 
     /** @type {!stringMap} */
     var vals;
 
-    checkArgs(defaults, '!stringMap');
+    checkArgs(defaults, '!object');
 
     vals = this.vals;
 

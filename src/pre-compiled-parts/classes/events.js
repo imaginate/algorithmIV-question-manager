@@ -57,7 +57,7 @@
 
     app.vals.reset(newState.ids, newState.index);
 
-    app.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
+    App.updateDisplay(oldIds, oldIndex, oldView, flipElems, true);
 
   };
 
@@ -77,7 +77,7 @@
 
     app.vals.move('prev');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
   };
 
@@ -97,7 +97,7 @@
 
     app.vals.move('next');
 
-    app.updateDisplay(null, oldIndex);
+    App.updateDisplay(null, oldIndex);
 
   };
 
@@ -132,7 +132,7 @@
       app.searchBar.vals.view = newVal;
       app.vals.set(null, newIndex);
 
-      app.updateDisplay(null, oldIndex, oldView);
+      App.updateDisplay(null, oldIndex, oldView);
 
     }
   };
@@ -162,7 +162,7 @@
       app.searchBar.vals.order = newVal;
       app.vals.set(newIds);
 
-      app.updateDisplay(oldIds, null, null, true);
+      App.updateDisplay(oldIds, null, null, true);
 
     }
   };
@@ -192,11 +192,11 @@
 
       app.searchBar.vals.stage = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -226,11 +226,11 @@
 
       app.searchBar.vals.source = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -260,12 +260,12 @@
 
       app.searchBar.vals.mainCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -295,11 +295,11 @@
 
       app.searchBar.vals.subCat = newVal;
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -327,7 +327,7 @@
 
     app.vals.move(id);
 
-    app.updateDisplay(null, oldIndex, oldView);
+    App.updateDisplay(null, oldIndex, oldView);
 
   };
 
@@ -359,11 +359,11 @@
         app.searchBar.elems.source.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -396,12 +396,12 @@
         app.searchBar.elems.mainCat.value = id;
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
       app.searchBar.updateSubCatOpts();
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };
@@ -446,11 +446,11 @@
         }
       }
 
-      newIds = app.findMatches();
+      newIds = App.findMatches();
 
       app.vals.reset(newIds);
 
-      app.updateDisplay(oldIds, oldIndex);
+      App.updateDisplay(oldIds, oldIndex);
 
     }
   };

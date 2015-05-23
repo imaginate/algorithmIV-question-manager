@@ -6,18 +6,11 @@
    * @param {!Object} question - The details of a new question.
    * @param {number} id - The id for the question.
    * @param {!booleanMap} config - The settings for question formatting.
-   * @param {function} getSource - The getter for the app's sources.
-   * @param {function} getCategory - The getter for the app's categories.
    * @constructor
    */
-  var Question = function(question, id, config, getSource, getCategory) {
+  var Question = function(question, id, config) {
 
-    /** @type {!Array<*>} */
-    var args;
-
-    args = [ question, '!object', id, 'number', config, '!booleanMap' ];
-    args.push(getSource, 'function', getCategory, 'function');
-    checkArgs.apply(null, args);
+    checkArgs(question, '!object', id, 'number', config, '!booleanMap');
 
     ////////////////////////////////////////////////////////////////////////////
     // Setup & Define The Public Properties
@@ -149,6 +142,8 @@
     // Setup The Protected Properties
     ////////////////////////////////////////////////////////////////////////////
 
+    /** @type {function} */
+    var getCategory;
     /** @type {!stringMap} */
     var linkObj;
     /** @type {string} */
@@ -169,9 +164,11 @@
       '' : (question.source === 'all') ?
         '_all' : question.source
     );
-    if ( !getSource(source, 'name') ) {
+    if ( !app.sources.get(source, 'name') ) {
       source = '';
     }
+
+    getCategory = app.categories.get;
 
     mainCat = [];
     if ( checkType(question.mainCat, '!strings') ) {
@@ -247,7 +244,7 @@
       mainCat : mainCat,
       subCat  : subCat,
       solution: solution
-    }, config, getSource, getCategory);
+    }, config);
 
     // Freeze some of the protected properties
     freezeObj(mainCat);

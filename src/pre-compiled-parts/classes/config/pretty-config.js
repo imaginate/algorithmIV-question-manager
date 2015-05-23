@@ -91,7 +91,7 @@
      */
     this.get = function(prop) {
 
-      /** @type {Object<string, (number|boolean)>} */
+      /** @type {!Object<string, (number|boolean)>} */
       var props = {
         trimSpace   : trimSpace,
         tabLength   : tabLength,
