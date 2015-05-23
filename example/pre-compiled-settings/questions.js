@@ -5,7 +5,7 @@
    * @desc An array property of settings that allows you to add your
    *   questions to the app. Each example question is taken from
    *   Algorithm IV's library of questions and solutions.
-   * @type {Array<Object>}
+   * @type {!Array<!Object>}
    */
   settings.questions = new Array(10);
 
@@ -14,8 +14,7 @@
    * The Question Object
    * -----------------------------------------------
    * @desc The properties for a question object.
-   * @typedef {{
-   *   url     : string,
+   * @typedef {!{
    *   complete: boolean,
    *   source  : string,
    *   mainCat : Array<string>,
