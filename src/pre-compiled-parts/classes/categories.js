@@ -144,12 +144,10 @@
      * @desc Get a Catgory's object or protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
-     * @return {!(Category|string|numbers)}
+     * @return {!(Category|string|numbers|boolean)}
      */
     this.get = function(id, prop) {
 
-      /** @type {string} */
-      var errorMsg;
       /** @type {!Category} */
       var category;
       /** @type {!(Category|string|numbers)} */
@@ -157,15 +155,14 @@
 
       checkArgs(id, 'string', prop, 'string=');
 
-      if ( !hasOwnProp(data, id) ) {
-        errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
-        errorMsg += 'was given an invalid category id to get. catID= ' + id;
-        throw new Error(errorMsg);
+      if ( hasOwnProp(data, id) ) {
+        prop = prop || '';
+        category = data[ id ];
+        result = (prop) ? category.get(prop) : category;
       }
-
-      prop = prop || '';
-      category = data[ id ];
-      result = (prop) ? category.get(prop) : category;
+      else {
+        result = false;
+      }
 
       return result;
     };

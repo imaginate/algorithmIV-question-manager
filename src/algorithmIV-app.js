@@ -4187,12 +4187,10 @@ aIV.utils.set({
      * @desc Get a Catgory's object or protected property.
      * @param {string} id - The category id to get.
      * @param {string=} prop - The property to get.
-     * @return {!(Category|string|numbers)}
+     * @return {!(Category|string|numbers|boolean)}
      */
     this.get = function(id, prop) {
 
-      /** @type {string} */
-      var errorMsg;
       /** @type {!Category} */
       var category;
       /** @type {!(Category|string|numbers)} */
@@ -4200,15 +4198,14 @@ aIV.utils.set({
 
       checkArgs(id, 'string', prop, 'string=');
 
-      if ( !hasOwnProp(data, id) ) {
-        errorMsg = 'An aIV.app internal error occurred. A Categories.get call ';
-        errorMsg += 'was given an invalid category id to get. catID= ' + id;
-        throw new Error(errorMsg);
+      if ( hasOwnProp(data, id) ) {
+        prop = prop || '';
+        category = data[ id ];
+        result = (prop) ? category.get(prop) : category;
       }
-
-      prop = prop || '';
-      category = data[ id ];
-      result = (prop) ? category.get(prop) : category;
+      else {
+        result = false;
+      }
 
       return result;
     };
@@ -4615,7 +4612,7 @@ aIV.utils.set({
     i = categories.len;
     while (i-- && !pass) {
       mainId = categories.ids[i];
-      pass = !!this.ids.subCat[ mainId ].length;
+      pass = (this.ids.subCat[ mainId ].length > 1);
     }
     config.subCat = (config.subCat && pass);
 
@@ -5741,11 +5738,11 @@ aIV.utils.set({
       '' : (question.source === 'all') ?
         '_all' : question.source
     );
-    if ( !app.sources.get(source, 'name') ) {
+    if (!app.sources.len || !app.sources.get(source, 'name')) {
       source = '';
     }
 
-    getCategory = app.categories.get;
+    getCategory = (app.categories.len) ? app.categories.get : function(){};
 
     mainCat = [];
     if ( checkType(question.mainCat, '!strings') ) {

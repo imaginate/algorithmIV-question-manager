@@ -164,11 +164,11 @@
       '' : (question.source === 'all') ?
         '_all' : question.source
     );
-    if ( !app.sources.get(source, 'name') ) {
+    if (!app.sources.len || !app.sources.get(source, 'name')) {
       source = '';
     }
 
-    getCategory = app.categories.get;
+    getCategory = (app.categories.len) ? app.categories.get : function(){};
 
     mainCat = [];
     if ( checkType(question.mainCat, '!strings') ) {
