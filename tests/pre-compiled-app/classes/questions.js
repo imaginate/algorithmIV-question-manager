@@ -131,7 +131,7 @@
 
       checkArgs(id, 'number|string', prop, 'string=', formatted, 'boolean=');
 
-      if (!hasOwnProp(this.list, String(id)) && !hasOwnProp(data, String(id))) {
+      if (!hasOwnProp(this.list, id) && !hasOwnProp(data, id)) {
         errorMsg = 'An aIV.app internal error occurred. A Questions.get call was ';
         errorMsg += 'given an invalid question id to get. id= ' + id;
         throw new Error(errorMsg);

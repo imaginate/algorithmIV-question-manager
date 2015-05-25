@@ -23,7 +23,6 @@ sed \
   -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" \
   -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
 sed \
-  -e "/insert-aIV-utils/ r dependencies/algorithmIV-utils.min.js" \
   -e "/insert-public-api/ r public-api.js" \
   -e "/insert-module-api/ r module-api.js" \
   -e "/insert-module-vars/ r module-vars.js" \
@@ -66,7 +65,6 @@ sed ^
   -e "/insert-prettify-methods/ r pre-compiled-prettifier/prettify-methods.js" ^
   -e "/insert-highlight-syntax/ r pre-compiled-prettifier/highlight-syntax.js" <pre-compiled-prettifier/prettify.js>prettify.js
 sed ^
-  -e "/insert-aIV-utils/ r dependencies/algorithmIV-utils.min.js" ^
   -e "/insert-public-api/ r public-api.js" ^
   -e "/insert-module-api/ r module-api.js" ^
   -e "/insert-module-vars/ r module-vars.js" ^
