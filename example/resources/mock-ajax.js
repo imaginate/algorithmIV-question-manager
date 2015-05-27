@@ -1,6 +1,6 @@
 /* Algorithm IV Question Manager (v1.1.2) (learn@algorithmiv.com)
  * Section: Example's Supporting MockAjax
- * Author: Adam Smith (adamsmith@youlum.com)
+ * Author: Adam Smith (adamsmith@algorithmiv.com)
  * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
  * The Apache License (algorithmiv.com/docs/license) */
 
