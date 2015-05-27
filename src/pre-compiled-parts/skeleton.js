@@ -10,9 +10,9 @@
  *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
  * @version 1.1.2
- * @author Adam Smith ({@link adamsmith@youlum.com})
- * @copyright 2015 Adam A Smith ([github.com/imaginate]{@link https://github.com/imaginate})
- * @license The Apache License ([algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license})
+ * @author Adam Smith [adamsmith@algorithmiv.com]{@link mailto:adamsmith@algorithmiv.com}
+ * @copyright 2015 Adam A Smith [github.com/imaginate]{@link https://github.com/imaginate}
+ * @license The Apache License [algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license}
  * @desc More details about aIV's question manager:
  * <ol>
  *   <li>annotations: 
