@@ -51,7 +51,7 @@ sed \
 cd ..
 cp -u pre-compiled-app/algorithmIV-app-temp.js algorithmIV-app.js
 rm -f pre-compiled-app/algorithmIV-app-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-app.js
 rm -f sed*
 
 ## MS-DOS Commands
@@ -93,7 +93,7 @@ sed ^
 cd ..
 copy /y pre-compiled-app\algorithmIV-app-temp.js algorithmIV-app.js
 del /f pre-compiled-app\algorithmIV-app-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-app.js
 del /f sed*
 
 ----------------------------------------------------------------
@@ -118,7 +118,7 @@ sed \
 cd ..
 cp -u pre-compiled-tests/algorithmIV-tests-temp.js algorithmIV-tests.js
 rm -f pre-compiled-tests/algorithmIV-tests-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-tests.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-tests.js
 rm -f sed*
 
 ## MS-DOS Commands
@@ -136,7 +136,7 @@ sed ^
 cd ..
 copy /y pre-compiled-tests\algorithmIV-tests-temp.js algorithmIV-tests.js
 del /f pre-compiled-tests\algorithmIV-tests-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-tests.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-tests.js
 del /f sed*
 
 ----------------------------------------------------------------
@@ -188,7 +188,7 @@ cp -u tests/pre-compiled-app/dependencies/*.js src/pre-compiled-parts/dependenci
 cp -u tests/pre-compiled-app/pre-compiled-prettifier/*.js src/pre-compiled-parts/pre-compiled-prettifier
 cp -u tests/pre-compiled-app/pre-compiled-prettifier/pre-compiled-syntax-highlighter/*.js src/pre-compiled-parts/pre-compiled-prettifier/pre-compiled-syntax-highlighter
 cd src/pre-compiled-parts
-sed -i "s/function setup[a-zA-Z]*(/function(/" skeleton.js
+sed -i "s/(function setup[a-zA-Z0-9\_\$]*(/(function(/" skeleton.js
 rm -f sed*
 find . -type f -exec sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" {} \;
 rm -f sed*
@@ -247,7 +247,7 @@ copy /y tests\pre-compiled-app\dependencies\*.js src\pre-compiled-parts\dependen
 copy /y tests\pre-compiled-app\pre-compiled-prettifier\*.js src\pre-compiled-parts\pre-compiled-prettifier
 copy /y tests\pre-compiled-app\pre-compiled-prettifier\pre-compiled-syntax-highlighter\*.js src\pre-compiled-parts\pre-compiled-prettifier\pre-compiled-syntax-highlighter
 cd src\pre-compiled-parts
-sed -i "s/function setup[a-zA-Z]*(/function(/" skeleton.js
+sed -i "s/(function setup[a-zA-Z0-9\_\$]*(/(function(/" skeleton.js
 del /f sed*
 for /f %f in ('dir /b') do sed -i "/\$s\$/,/\$e\$/ d;/debug/ d;/Debug/ d" %f
 del /f sed*
@@ -342,7 +342,7 @@ sed \
 cd ..
 cp -u pre-compiled-parts/algorithmIV-app-temp.js algorithmIV-app.js
 rm -f pre-compiled-parts/algorithmIV-app-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-app.js
 rm -f sed*
 
 ## MS-DOS Commands
@@ -385,7 +385,7 @@ sed ^
 cd ..
 copy /y pre-compiled-parts\algorithmIV-app-temp.js algorithmIV-app.js
 del /f pre-compiled-parts\algorithmIV-app-temp.js
-sed -i "s/^\/\/ insert-[a-zA-Z\-]*//" algorithmIV-app.js
+sed -i "s/^\/\/ insert-[a-zA-Z0-9\-]*//" algorithmIV-app.js
 del /f sed*
 
 ----------------------------------------------------------------
