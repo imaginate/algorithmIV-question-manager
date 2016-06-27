@@ -17,7 +17,7 @@
 
 <br />
 ## Pointers
-- Follow the coding conventions you see in the existing code (see [Google's style guide](https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml?showone=Code_formatting#Code_formatting) for similar conventions)
+- Follow the coding conventions you see in the existing code (see [Google's style guide](https://google.github.io/styleguide/javascriptguide.xml#Code_formatting) for similar conventions)
 - Know and use [JSDoc3](http://usejsdoc.org/) with [Closure Compiler specific syntax](https://developers.google.com/closure/compiler/docs/js-for-compiler)
 - Know and use our [JavaScript Debugger](https://github.com/imaginate/algorithmIV-javascript-debugger)
 - Ensure that the test app init and events are error-free before submitting a pull request
