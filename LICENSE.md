@@ -1,6 +1,6 @@
 ##License for [Algorithm IV Question Manager](https://github.com/imaginate/algorithmIV-question-manager)
 
-**Copyright 2015 Adam A Smith (github.com/imaginate)**
+**Copyright 2014-2017 Adam A Smith [adam@imaginate.life](http://imaginate.life)**
 
 Licensed under the **Apache License**, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

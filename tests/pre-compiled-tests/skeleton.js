@@ -5,8 +5,8 @@
  * @file The module used to run all tests for aIV's  question manager app.
  * @module aIVAppTests
  * @version 1.1.2
- * @author Adam Smith [adamsmith@algorithmiv.com]{@link mailto:adamsmith@algorithmiv.com}
- * @copyright 2015 Adam A Smith [github.com/imaginate]{@link https://github.com/imaginate}
+ * @author Adam Smith [adam@imaginate.life]{@link http://imaginate.life}
+ * @copyright 2017 Adam A Smith [http://imaginate.life]{@link http://imaginate.life}
  * @license The Apache License [algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license}
  * @desc More details about the module for aIV.tests:
  * <ol>

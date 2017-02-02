@@ -10,8 +10,8 @@
  *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
  * @version 1.1.2
- * @author Adam Smith [adamsmith@algorithmiv.com]{@link mailto:adamsmith@algorithmiv.com}
- * @copyright 2015 Adam A Smith [github.com/imaginate]{@link https://github.com/imaginate}
+ * @author Adam Smith [adam@imaginate.life]{@link http://imaginate.life}
+ * @copyright 2017 Adam A Smith [http://imaginate.life]{@link http://imaginate.life}
  * @license The Apache License [algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license}
  * @desc More details about aIV's question manager:
  * <ol>
@@ -71,8 +71,8 @@ e,c));else C(g,function(a){U(g,a,c)});return c.call(a,b,g)};q.parse=function(a,f
 p&&p.self!==p||(f=p);if(A&&!I)M(f,A);else{var J=f.JSON,K=f.JSON3,L=!1,B=M(f,f.JSON3={noConflict:function(){L||(L=!0,f.JSON=J,f.JSON3=K,J=K=null);return B}});f.JSON={parse:B.parse,stringify:B.stringify}}I&&define(function(){return B})}).call(this);
 
 /* Algorithm IV JavaScript Polyfills (v0.0.2) (learn@algorithmiv.com)
- * Author: Adam Smith (adamsmith@youlum.com)
- * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * Author: Adam Smith <adam@imaginate.life>
+ * Copyright (c) 2017 Adam A Smith <adam@imaginate.life>
  * The Apache License (algorithmiv.com/docs/license) */
 (function(h,m,n){h.console=h.console||{};(function(a,b){a.log||(a.log=b);a.error||(a.error=a.log);a.assert||(a.assert=function(b){var c;if(!b)return c=1<arguments.length?Array.prototype.slice.call(arguments,1):["A console.assert call failed."],a.error.apply(this,c)});a.clear||(a.clear=b);a.count||(a.count=b);a.debug||(a.debug=a.log);a.dir||(a.dir=a.log);a.dirxml||(a.dirxml=a.log);a.exception||(a.exception=a.error);a.group||(a.group=b);a.groupCollapsed||(a.groupCollapsed=a.group);a.groupEnd||(a.groupEnd=
 b);a.info||(a.info=a.log);a.markTimeline||(a.markTimeline=a.timeStamp?a.timeStamp:b);a.profile||(a.profile=b);a.profileEnd||(a.profileEnd=b);a.table||(a.table=b);a.time||(a.time=b);a.timeEnd||(a.timeEnd=b);a.timeline||(a.timeline=b);a.timelineEnd||(a.timelineEnd=b);a.timeStamp||(a.timeStamp=a.markTimeline);a.trace||(a.trace=a.log);a.warn||(a.warn=a.error);(function(b,c,e,h){var f,k,l,g;if(b)if(l=["assert","error","info","log","warn"],g=["clear","dir","profile","profileEnd"],g=l.concat(g),c)for(f=
@@ -83,8 +83,8 @@ try{Object.freeze(function(){})}catch(p){Object.freeze=function(a){return functi
 new ActiveXObject("Microsoft.XMLHTTP")}catch(c){throw Error("Your browser does not support XMLHttpRequest.");}}}return a})})(window,document);
 
 /* Algorithm IV JavaScript Shortcuts (v1.0.6) (learn@algorithmiv.com)
- * Author: Adam Smith (adamsmith@youlum.com)
- * Copyright (c) 2015 Adam A Smith (github.com/imaginate)
+ * Author: Adam Smith <adam@imaginate.life>
+ * Copyright (c) 2017 Adam A Smith <adam@imaginate.life>
  * The Apache License (algorithmiv.com/docs/license) */
 (function(g,v){g.aIV=g.aIV||{};aIV.utils=aIV.utils||v})(window,function(g,v,z){var d={},l={checkArgsErrorMsg:"A function call had an invalid parameter data type.",getElemByClassRoot:v,getElemsByClassRoot:v,getElemByTagRoot:v,getElemsByTagRoot:v,types:{checkArgsErrorMsg:"string|function",getElemByClassRoot:"!(Document|Element)",getElemsByClassRoot:"!(Document|Element)",getElemByTagRoot:"!(Document|Element)",getElemsByTagRoot:"!(Document|Element)"}};Object.freeze(l);Object.freeze(l.types);var p={checkArgsErrorMsg:l.checkArgsErrorMsg,
 getElemByClassRoot:l.getElemByClassRoot,getElemsByClassRoot:l.getElemsByClassRoot,getElemByTagRoot:l.getElemByTagRoot,getElemsByTagRoot:l.getElemsByTagRoot};g={};g.freezeRegExpBug=function(){var c,b;c=/0/g;Object.freeze(c);b=!0;try{"T00 many zer0s... replace them.".replace(c,"o")}catch(a){b=!1}return!b}();Object.freeze(g);d.checkType=function(){var c=/^string$|^number$|^boolean$|^function$|^undefined$/,b=/^string$|^number$|^boolean$|^object$|^function$|^undefined$/,a=/^elem$|^element$|^document$/,
