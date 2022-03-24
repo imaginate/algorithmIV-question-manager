@@ -1,8 +1,8 @@
-/* Algorithm IV Question Manager (v1.1.2) (learn@algorithmiv.com)
+/* Algorithm IV Question Manager (v1.1.2) (imagineadamsmith@gmail.com)
  * Section: Example's Supporting MockAjax
- * Author: Adam Smith <adam@imaginate.life>
- * Copyright (c) 2017 Adam A Smith <adam@imaginate.life>
- * The Apache License (algorithmiv.com/docs/license) */
+ * Author: Adam Smith <imagineadamsmith@gmail.com>
+ * Copyright (c) 2022 Adam A Smith <imagineadamsmith@gmail.com>
+ * The Apache License (www.apache.org/licenses/LICENSE-2.0) */
 
 ////////////////////////////////////////////////////////////////////////////////
 // The Public API

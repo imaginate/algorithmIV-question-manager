@@ -10,9 +10,9 @@
  *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
  * @version 1.1.2
- * @author Adam Smith [adam@imaginate.life]{@link http://imaginate.life}
- * @copyright 2017 Adam A Smith [http://imaginate.life]{@link http://imaginate.life}
- * @license The Apache License [algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license}
+ * @author Adam Smith [imagineadamsmith@gmail.com]{@link https://github.com/imaginate}
+ * @copyright 2022 Adam A Smith [https://github.com/imaginate]{@link https://github.com/imaginate}
+ * @license The Apache License [www.apache.org/licenses/LICENSE-2.0]{@link http://www.apache.org/licenses/LICENSE-2.0}
  * @desc More details about aIV's question manager:
  * <ol>
  *   <li>annotations: 
@@ -2035,8 +2035,8 @@ aIV.utils.set({
       'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
       'class="dark">GitHub repository</a> or send an email to '              +
-      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
-      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      '<a href="mailto:imagineadamsmith@gmail.com" class="dark">'            +
+      'imagineadamsmith@gmail.com</a>. We will solve your problem or answer '+
       'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
       'libraries are able to help you maximize your development skills and ' +
       'projects!<br />'                                                      +

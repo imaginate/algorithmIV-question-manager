@@ -10,9 +10,9 @@
  *   skill-sets, and preparing for technical interviews.
  * @module aIVApp
  * @version 1.1.2
- * @author Adam Smith [adam@imaginate.life]{@link http://imaginate.life}
- * @copyright 2017 Adam A Smith [http://imaginate.life]{@link http://imaginate.life}
- * @license The Apache License [algorithmiv.com/docs/license]{@link http://algorithmiv.com/docs/license}
+ * @author Adam Smith [imagineadamsmith@gmail.com]{@link https://github.com/imaginate}
+ * @copyright 2022 Adam A Smith [https://github.com/imaginate]{@link https://github.com/imaginate}
+ * @license The Apache License [www.apache.org/licenses/LICENSE-2.0]{@link http://www.apache.org/licenses/LICENSE-2.0}
  * @desc More details about aIV's question manager:
  * <ol>
  *   <li>annotations: 
@@ -70,10 +70,10 @@ l&&(d=a.charCodeAt(b),48<=d&&57>=d);b++);if(46==a.charCodeAt(b)){for(e=++b;e<l&&
 e,c));else C(g,function(a){U(g,a,c)});return c.call(a,b,g)};q.parse=function(a,f){var c,g;b=0;H=""+a;c=R(y());"$"!=y()&&m();b=H=null;return f&&"[object Function]"==t.call(f)?T((g={},g[""]=c,g),"",f):c}}}q.runInContext=M;return q}var I=typeof define==="function"&&define.amd,D={"function":!0,object:!0},A=D[typeof exports]&&exports&&!exports.nodeType&&exports,f=D[typeof window]&&window||this,p=A&&D[typeof module]&&module&&!module.nodeType&&"object"==typeof global&&global;!p||p.global!==p&&p.window!==
 p&&p.self!==p||(f=p);if(A&&!I)M(f,A);else{var J=f.JSON,K=f.JSON3,L=!1,B=M(f,f.JSON3={noConflict:function(){L||(L=!0,f.JSON=J,f.JSON3=K,J=K=null);return B}});f.JSON={parse:B.parse,stringify:B.stringify}}I&&define(function(){return B})}).call(this);
 
-/* Algorithm IV JavaScript Polyfills (v0.0.2) (learn@algorithmiv.com)
- * Author: Adam Smith <adam@imaginate.life>
- * Copyright (c) 2017 Adam A Smith <adam@imaginate.life>
- * The Apache License (algorithmiv.com/docs/license) */
+/* Algorithm IV JavaScript Polyfills (v0.0.2) (imagineadamsmith@gmail.com)
+ * Author: Adam Smith <imagineadamsmith@gmail.com>
+ * Copyright (c) 2022 Adam A Smith <imagineadamsmith@gmail.com>
+ * The Apache License (www.apache.org/licenses/LICENSE-2.0) */
 (function(h,m,n){h.console=h.console||{};(function(a,b){a.log||(a.log=b);a.error||(a.error=a.log);a.assert||(a.assert=function(b){var c;if(!b)return c=1<arguments.length?Array.prototype.slice.call(arguments,1):["A console.assert call failed."],a.error.apply(this,c)});a.clear||(a.clear=b);a.count||(a.count=b);a.debug||(a.debug=a.log);a.dir||(a.dir=a.log);a.dirxml||(a.dirxml=a.log);a.exception||(a.exception=a.error);a.group||(a.group=b);a.groupCollapsed||(a.groupCollapsed=a.group);a.groupEnd||(a.groupEnd=
 b);a.info||(a.info=a.log);a.markTimeline||(a.markTimeline=a.timeStamp?a.timeStamp:b);a.profile||(a.profile=b);a.profileEnd||(a.profileEnd=b);a.table||(a.table=b);a.time||(a.time=b);a.timeEnd||(a.timeEnd=b);a.timeline||(a.timeline=b);a.timelineEnd||(a.timelineEnd=b);a.timeStamp||(a.timeStamp=a.markTimeline);a.trace||(a.trace=a.log);a.warn||(a.warn=a.error);(function(b,c,e,h){var f,k,l,g;if(b)if(l=["assert","error","info","log","warn"],g=["clear","dir","profile","profileEnd"],g=l.concat(g),c)for(f=
 g.length;f--;)k=a[g[f]],a[g[f]]=c.call(k,a);else for(f=l.length;f--;)k=a[l[f]],e.call(k,a,h.call(arguments))})("object"===typeof a.log,Function.prototype.bind,Function.prototype.call,Array.prototype.slice)})(h.console,function(){});Object.keys||(Object.keys=function(){var a,b;a=!{toString:null}.propertyIsEnumerable("toString");b="toString toLocaleString valueOf hasOwnProperty isPrototypeOf propertyIsEnumerable constructor".split(" ");return function(d){var c,e;if(!d||"object"!==typeof d&&"function"!==
@@ -82,10 +82,10 @@ try{Object.freeze(function(){})}catch(p){Object.freeze=function(a){return functi
 (a=[8,9],a=-1===a.indexOf(8,2)&&-1===a.indexOf(9,-1));return a})(!!Array.prototype.indexOf)||(Array.prototype.indexOf=function(a,b){var d,c,e;if(!Array.isArray(this))throw new TypeError("An Array.prototype.indexOf call was made on a non-array.");"number"!==typeof b&&(b=0);c=this.length;d=-1;if(0!==c&&Math.abs(b)<c)for(0>b&&(c-=b),e=0>b?-1:--b;++e<c;)if(this[e]===a){d=e;break}return d});XMLHttpRequest||(XMLHttpRequest=function(){var a;try{a=new ActiveXObject("Msxml2.XMLHTTP.6.0")}catch(b){try{a=new ActiveXObject("Msxml2.XMLHTTP.3.0")}catch(d){try{a=
 new ActiveXObject("Microsoft.XMLHTTP")}catch(c){throw Error("Your browser does not support XMLHttpRequest.");}}}return a})})(window,document);
 
-/* Algorithm IV JavaScript Shortcuts (v1.0.6) (learn@algorithmiv.com)
- * Author: Adam Smith <adam@imaginate.life>
- * Copyright (c) 2017 Adam A Smith <adam@imaginate.life>
- * The Apache License (algorithmiv.com/docs/license) */
+/* Algorithm IV JavaScript Shortcuts (v1.0.6) (imagineadamsmith@gmail.com)
+ * Author: Adam Smith <imagineadamsmith@gmail.com>
+ * Copyright (c) 2022 Adam A Smith <imagineadamsmith@gmail.com>
+ * The Apache License (www.apache.org/licenses/LICENSE-2.0) */
 (function(g,v){g.aIV=g.aIV||{};aIV.utils=aIV.utils||v})(window,function(g,v,z){var d={},l={checkArgsErrorMsg:"A function call had an invalid parameter data type.",getElemByClassRoot:v,getElemsByClassRoot:v,getElemByTagRoot:v,getElemsByTagRoot:v,types:{checkArgsErrorMsg:"string|function",getElemByClassRoot:"!(Document|Element)",getElemsByClassRoot:"!(Document|Element)",getElemByTagRoot:"!(Document|Element)",getElemsByTagRoot:"!(Document|Element)"}};Object.freeze(l);Object.freeze(l.types);var p={checkArgsErrorMsg:l.checkArgsErrorMsg,
 getElemByClassRoot:l.getElemByClassRoot,getElemsByClassRoot:l.getElemsByClassRoot,getElemByTagRoot:l.getElemByTagRoot,getElemsByTagRoot:l.getElemsByTagRoot};g={};g.freezeRegExpBug=function(){var c,b;c=/0/g;Object.freeze(c);b=!0;try{"T00 many zer0s... replace them.".replace(c,"o")}catch(a){b=!1}return!b}();Object.freeze(g);d.checkType=function(){var c=/^string$|^number$|^boolean$|^function$|^undefined$/,b=/^string$|^number$|^boolean$|^object$|^function$|^undefined$/,a=/^elem$|^element$|^document$/,
 f=/^array$|^strings$|^numbers$|^booleans$|^objects$|^arrays$|^elems$|^elements$|^functions$/,d=/^stringmap$|^numbermap$|^booleanmap$|^objectmap$|^arraymap$|^functionmap$|^elemmap$|^elementmap$/,m=/\!/,g=/\?/,n=/\=/,v=/\*/,p=function(a,b){return null===a?!1:typeof a===b},l=function(a,b){return a&&p(a,"object")&&a.nodeType?a.nodeType==={elem:1,element:1,document:9}[b]:!1};return function(k,e,r){var t,w,q,h;if(!p(e,"string"))throw new TypeError("An aIV.utils.checkType call received an invalid (a non-string) type parameter.");
@@ -1952,8 +1952,8 @@ aIV.utils.set({
       'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
       'class="dark">GitHub repository</a> or send an email to '              +
-      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
-      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      '<a href="mailto:imagineadamsmith@gmail.com" class="dark">'            +
+      'imagineadamsmith@gmail.com</a>. We will solve your problem or answer '+
       'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
       'libraries are able to help you maximize your development skills and ' +
       'projects!<br />'                                                      +

@@ -310,8 +310,8 @@
       'below). If this error persists please open an issue on our '          +
       '<a href="https://github.com/imaginate/algorithmiv/issues" '           +
       'class="dark">GitHub repository</a> or send an email to '              +
-      '<a href="mailto:learn@algorithmiv.com" class="dark">'                 +
-      'learn@algorithmiv.com</a>. We will solve your problem or answer '     +
+      '<a href="mailto:imagineadamsmith@gmail.com" class="dark">'            +
+      'imagineadamsmith@gmail.com</a>. We will solve your problem or answer '+
       'your question as quickly as we can. We hope aIV\'s apps, tools, and ' +
       'libraries are able to help you maximize your development skills and ' +
       'projects!<br />'                                                      +
